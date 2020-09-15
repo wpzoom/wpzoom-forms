@@ -1,0 +1,12 @@
+.zoom-forms_form {
+	.wp-block-group__inner-container {
+		.wp-block-columns {
+			align-items: center;
+			margin: 0 0 4rem;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+}

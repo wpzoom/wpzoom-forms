@@ -1,0 +1,70 @@
+@import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/colors.native';
+
+.components-searchable-select-control__button {
+	width: 100%;
+}
+
+.components-searchable-select-control__menu {
+	max-height: none;
+	overflow: visible;
+	margin: 0.2em 0 0;
+
+	&:focus {
+		border: none;
+		border-radius: 0;
+	}
+}
+
+.components-searchable-select-control__menu-inner {
+	border: $border-width solid $gray-900;
+	border-radius: $radius-block-ui;
+	overflow: hidden;
+}
+
+.components-searchable-select-control__search {
+	padding: 0.2em;
+	margin: 0 !important;
+
+	* {
+		margin: 0 !important;
+	}
+}
+
+.components-searchable-select-control__items {
+	max-height: 200px;
+	overflow: auto;
+	margin: 0;
+}
+
+.components-searchable-select-control__item {
+	cursor: pointer;
+	padding-top: 5px;
+	padding-left: 35px;
+	padding-bottom: 5px;
+	margin: 0;
+
+	&.is-selected {
+		cursor: default;
+		pointer-events: none;
+		color: $white;
+		background: $button-default-bg;
+	}
+}
+
+.components-searchable-select-control__item-icon {
+	min-height: 24px;
+	min-width: 24px;
+	margin-left: -30px;
+	margin-right: 5px;
+}
+
+.is-selected .components-searchable-select-control__item-icon {
+	fill: currentColor;
+}
+
+.components-searchable-select-control__button-text {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
