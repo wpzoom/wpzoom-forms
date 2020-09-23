@@ -1,8 +1,13 @@
 @import '~@wordpress/base-styles/variables';
 @import '~@wordpress/base-styles/colors.native';
 
+.components-placeholder .components-searchable-select-control__label {
+	display: none;
+}
+
 .components-searchable-select-control__button {
 	width: 100%;
+	min-width: 250px;
 }
 
 .components-searchable-select-control__menu {
@@ -31,14 +36,18 @@
 	}
 }
 
-.components-searchable-select-control__items {
+.components-searchable-select-control__menu-inner .components-searchable-select-control__items {
 	max-height: 200px;
+	padding: 0;
 	overflow: auto;
 	margin: 0;
 }
 
 .components-searchable-select-control__item {
 	cursor: pointer;
+	font-family: $default-font;
+	font-size: $default-font-size;
+	line-height: $default-line-height;
 	padding-top: 5px;
 	padding-left: 35px;
 	padding-bottom: 5px;

@@ -11,6 +11,7 @@ module.exports = {
 	entry: {
 		'main/backend/script':        path.resolve( __dirname, 'src', 'main', 'backend', 'script.js' ),
 		'main/backend/style':         path.resolve( __dirname, 'src', 'main', 'backend', 'style.scss' ),
+		'submissions/backend/style':  path.resolve( __dirname, 'src', 'submissions', 'backend', 'style.scss' ),
 		'form-block/backend/script':  path.resolve( __dirname, 'src', 'form-block', 'backend', 'script.js' ),
 		'form-block/backend/style':   path.resolve( __dirname, 'src', 'form-block', 'backend', 'style.scss' ),
 		'form-block/frontend/script': path.resolve( __dirname, 'src', 'form-block', 'frontend', 'script.js' ),
@@ -23,6 +24,12 @@ module.exports = {
 				mainBackendStyle: {
 					name:   'main/backend/style',
 					test:   ( m, c, entry = 'main/backend/style' ) => m.constructor.name === 'CssModule' && recursiveIssuer( m ) === entry,
+					chunks: 'all',
+					enforce: true
+				},
+				submissionsBackendStyle: {
+					name:   'submissions/backend/style',
+					test:   ( m, c, entry = 'submissions/backend/style' ) => m.constructor.name === 'CssModule' && recursiveIssuer( m ) === entry,
 					chunks: 'all',
 					enforce: true
 				},

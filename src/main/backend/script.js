@@ -1,6 +1,6 @@
 import { InspectorControls } from '@wordpress/block-editor';
 import { registerBlockType, updateCategory } from '@wordpress/blocks';
-import { Card, CardBody, CardHeader, Flex, FlexBlock, FlexItem, IconButton, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl } from '@wordpress/components';
+import { Card, CardBody, CardHeader, Disabled, Flex, FlexBlock, FlexItem, IconButton, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { useSelect } from '@wordpress/data';
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
@@ -88,19 +88,16 @@ registerBlockType( 'zoom-forms/text-field', {
 			type:      'string',
 			default:   ''
 		},
+		name: {
+			type:      'string',
+			default:   ''
+		},
 		type: {
 			type:      'string',
 			source:    'attribute',
 			attribute: 'type',
 			selector:  'input',
 			default:   'text'
-		},
-		name: {
-			type:      'string',
-			source:    'attribute',
-			attribute: 'name',
-			selector:  'input',
-			default:   ''
 		},
 		placeholder: {
 			type:      'string',
@@ -120,11 +117,9 @@ registerBlockType( 'zoom-forms/text-field', {
 	example:     {},
 	edit:        ( props ) => {
 		const { attributes, setAttributes, clientId } = props;
-		const { id, type, name, placeholder, required } = attributes;
+		const { id, name, type, placeholder, required } = attributes;
 
-		if ( ! ( id in attributes ) || '' == id.trim() ) {
-			setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
-		}
+		if ( ! id ) setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
 
 		return (
 			<>
@@ -132,10 +127,9 @@ registerBlockType( 'zoom-forms/text-field', {
 					<PanelBody title={ __( 'Options', 'zoom-forms' ) }>
 						<TextControl
 							label={ __( 'Name', 'zoom-forms' ) }
-							help={ __( 'Only alphanumeric, underscores, and dashes allowed.', 'zoom-forms' ) }
 							value={ name }
-							placeholder={ id }
-							onChange={ ( value ) => setAttributes( { name: value.toLowerCase().trim().replace( /\s+/, '_' ).replace( /[^a-z\d_-]/, '' ) } ) }
+							placeholder={ __( 'e.g. My Text Field', 'zoom-forms' ) }
+							onChange={ ( value ) => setAttributes( { name: value } ) }
 						/>
 
 						<SelectControl
@@ -173,16 +167,16 @@ registerBlockType( 'zoom-forms/text-field', {
 				</InspectorControls>
 
 				<Fragment>
-					<input type={ type } name={ name || id } id={ name || id } placeholder={ placeholder } required={ !! required } />
+					<input type={ type } name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
 				</Fragment>
 			</>
 		);
 	},
 	save:        ( { attributes } ) => {
-		const { id, type, name, placeholder, required } = attributes;
+		const { id, name, type, placeholder, required } = attributes;
 
 		return (
-			<input type={ type } name={ name || id } id={ name || id } placeholder={ placeholder } required={ !! required } />
+			<input type={ type } name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
 		);
 	}
 } );
@@ -209,9 +203,6 @@ registerBlockType( 'zoom-forms/textarea-field', {
 		},
 		name: {
 			type:      'string',
-			source:    'attribute',
-			attribute: 'name',
-			selector:  'textarea',
 			default:   ''
 		},
 		cols: {
@@ -248,9 +239,7 @@ registerBlockType( 'zoom-forms/textarea-field', {
 		const { attributes, setAttributes, clientId } = props;
 		const { id, name, cols, rows, placeholder, required } = attributes;
 
-		if ( ! ( id in attributes ) || '' == id.trim() ) {
-			setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
-		}
+		if ( ! id ) setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
 
 		return (
 			<>
@@ -258,10 +247,9 @@ registerBlockType( 'zoom-forms/textarea-field', {
 					<PanelBody title={ __( 'Options', 'zoom-forms' ) }>
 						<TextControl
 							label={ __( 'Name', 'zoom-forms' ) }
-							help={ __( 'Only alphanumeric, underscores, and dashes allowed.', 'zoom-forms' ) }
 							value={ name }
-							placeholder={ id }
-							onChange={ ( value ) => setAttributes( { name: value.toLowerCase().trim().replace( /\s+/, '_' ).replace( /[^a-z\d_-]/, '' ) } ) }
+							placeholder={ __( 'e.g. My Textarea Field', 'zoom-forms' ) }
+							onChange={ ( value ) => setAttributes( { name: value } ) }
 						/>
 
 						<RangeControl
@@ -295,7 +283,7 @@ registerBlockType( 'zoom-forms/textarea-field', {
 				</InspectorControls>
 
 				<Fragment>
-					<textarea name={ name || id } id={ name || id } cols={ cols } rows={ rows } placeholder={ placeholder } required={ !! required }></textarea>
+					<textarea name={ id } id={ id } cols={ cols } rows={ rows } placeholder={ placeholder } required={ !! required }></textarea>
 				</Fragment>
 			</>
 		);
@@ -304,7 +292,7 @@ registerBlockType( 'zoom-forms/textarea-field', {
 		const { id, name, cols, rows, placeholder, required } = attributes;
 
 		return (
-			<textarea name={ name || id } id={ name || id } cols={ cols } rows={ rows } placeholder={ placeholder } required={ !! required }></textarea>
+			<textarea name={ id } id={ id } cols={ cols } rows={ rows } placeholder={ placeholder } required={ !! required }></textarea>
 		);
 	}
 } );
@@ -327,9 +315,6 @@ registerBlockType( 'zoom-forms/select-field', {
 		},
 		name: {
 			type:      'string',
-			source:    'attribute',
-			attribute: 'name',
-			selector:  'select',
 			default:   ''
 		},
 		options: {
@@ -384,13 +369,9 @@ registerBlockType( 'zoom-forms/select-field', {
 			setAttributes( { options: opts } );
 		};
 
-		if ( ! ( id in attributes ) || '' == id.trim() ) {
-			setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
-		}
+		if ( ! id ) setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
 
-		if ( options.length < 1 ) {
-			options = [ __( 'Item #1', 'zoom-forms' ) ];
-		}
+		if ( options.length < 1 ) options = [ __( 'Item #1', 'zoom-forms' ) ];
 
 		return (
 			<>
@@ -398,10 +379,9 @@ registerBlockType( 'zoom-forms/select-field', {
 					<PanelBody title={ __( 'Options', 'zoom-forms' ) }>
 						<TextControl
 							label={ __( 'Name', 'zoom-forms' ) }
-							help={ __( 'Only alphanumeric, underscores, and dashes allowed.', 'zoom-forms' ) }
 							value={ name }
-							placeholder={ id }
-							onChange={ ( value ) => setAttributes( { name: value.toLowerCase().trim().replace( /\s+/, '_' ).replace( /[^a-z\d_-]/, '' ) } ) }
+							placeholder={ __( 'e.g. My Dropdown Select Field', 'zoom-forms' ) }
+							onChange={ ( value ) => setAttributes( { name: value } ) }
 						/>
 
 						<Card size="small">
@@ -460,7 +440,7 @@ registerBlockType( 'zoom-forms/select-field', {
 				</InspectorControls>
 
 				<Fragment>
-					<select name={ name || id } id={ name || id } required={ !! required } multiple={ !! multiple } defaultValue={ defaultValue }>
+					<select name={ id } id={ id } required={ !! required } multiple={ !! multiple } defaultValue={ defaultValue }>
 						{ options.map( ( option, index ) => ( <option key={ index } value={ option }>{ option }</option> ) ) }
 					</select>
 				</Fragment>
@@ -471,7 +451,7 @@ registerBlockType( 'zoom-forms/select-field', {
 		const { id, name, options, defaultValue, multiple, required } = attributes;
 
 		return (
-			<select name={ name || id } id={ name || id } required={ !! required } multiple={ !! multiple } defaultValue={ defaultValue }>
+			<select name={ id } id={ id } required={ !! required } multiple={ !! multiple } defaultValue={ defaultValue }>
 				{ options.map( ( option, index ) => ( <option key={ index } value={ option }>{ option }</option> ) ) }
 			</select>
 		);
@@ -497,9 +477,6 @@ registerBlockType( 'zoom-forms/checkbox-field', {
 		},
 		name: {
 			type:      'string',
-			source:    'attribute',
-			attribute: 'name',
-			selector:  'input',
 			default:   ''
 		},
 		defaultValue: {
@@ -522,9 +499,7 @@ registerBlockType( 'zoom-forms/checkbox-field', {
 		const { attributes, setAttributes, clientId } = props;
 		const { id, name, defaultValue, required } = attributes;
 
-		if ( ! ( id in attributes ) || '' == id.trim() ) {
-			setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
-		}
+		if ( ! id ) setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
 
 		return (
 			<>
@@ -532,10 +507,9 @@ registerBlockType( 'zoom-forms/checkbox-field', {
 					<PanelBody title={ __( 'Options', 'zoom-forms' ) }>
 						<TextControl
 							label={ __( 'Name', 'zoom-forms' ) }
-							help={ __( 'Only alphanumeric, underscores, and dashes allowed.', 'zoom-forms' ) }
 							value={ name }
-							placeholder={ id }
-							onChange={ ( value ) => setAttributes( { name: value.toLowerCase().trim().replace( /\s+/, '_' ).replace( /[^a-z\d_-]/, '' ) } ) }
+							placeholder={ __( 'e.g. My Checkbox Field', 'zoom-forms' ) }
+							onChange={ ( value ) => setAttributes( { name: value } ) }
 						/>
 
 						<ToggleControl
@@ -553,7 +527,7 @@ registerBlockType( 'zoom-forms/checkbox-field', {
 				</InspectorControls>
 
 				<Fragment>
-					<input type="checkbox" name={ name || id } id={ name || id } defaultChecked={ !! defaultValue } required={ !! required } />
+					<input type="checkbox" name={ id } id={ id } defaultChecked={ !! defaultValue } required={ !! required } />
 				</Fragment>
 			</>
 		);
@@ -562,7 +536,7 @@ registerBlockType( 'zoom-forms/checkbox-field', {
 		const { id, name, defaultValue, required } = attributes;
 
 		return (
-			<input type="checkbox" name={ name || id } id={ name || id } defaultChecked={ !! defaultValue } required={ !! required } />
+			<input type="checkbox" name={ id } id={ id } defaultChecked={ !! defaultValue } required={ !! required } />
 		);
 	}
 } );
@@ -591,9 +565,6 @@ registerBlockType( 'zoom-forms/radio-field', {
 		},
 		name: {
 			type:      'string',
-			source:    'attribute',
-			attribute: 'name',
-			selector:  'input',
 			default:   ''
 		},
 		options: {
@@ -647,13 +618,9 @@ registerBlockType( 'zoom-forms/radio-field', {
 			setAttributes( { options: opts } );
 		};
 
-		if ( ! ( id in attributes ) || '' == id.trim() ) {
-			setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
-		}
+		if ( ! id ) setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
 
-		if ( options.length < 1 ) {
-			options = [ __( 'Item #1', 'zoom-forms' ) ];
-		}
+		if ( options.length < 1 ) options = [ __( 'Item #1', 'zoom-forms' ) ];
 
 		return (
 			<>
@@ -661,10 +628,9 @@ registerBlockType( 'zoom-forms/radio-field', {
 					<PanelBody title={ __( 'Options', 'zoom-forms' ) }>
 						<TextControl
 							label={ __( 'Name', 'zoom-forms' ) }
-							help={ __( 'Only alphanumeric, underscores, and dashes allowed.', 'zoom-forms' ) }
 							value={ name }
-							placeholder={ id }
-							onChange={ ( value ) => setAttributes( { name: value.toLowerCase().trim().replace( /\s+/, '_' ).replace( /[^a-z\d_-]/, '' ) } ) }
+							placeholder={ __( 'e.g. My Radio Field', 'zoom-forms' ) }
+							onChange={ ( value ) => setAttributes( { name: value } ) }
 						/>
 
 						<Card size="small">
@@ -721,7 +687,7 @@ registerBlockType( 'zoom-forms/radio-field', {
 						{ options.map( ( option, index ) =>
 							( <li key={ index }>
 								<label>
-									<input type="radio" name={ name || id } id={ name || id } value={ option } defaultChecked={ option == defaultValue } required={ !! required } />
+									<input type="radio" name={ id } id={ id } value={ option } defaultChecked={ option == defaultValue } required={ !! required } />
 									{ option }
 								</label>
 							</li> )
@@ -738,7 +704,7 @@ registerBlockType( 'zoom-forms/radio-field', {
 			{ options.map( ( option, index ) =>
 				( <li key={ index }>
 					<label>
-						<input type="radio" name={ name || id } id={ name || id } value={ option } defaultChecked={ option == defaultValue } required={ !! required } />
+						<input type="radio" name={ id } id={ id } value={ option } defaultChecked={ option == defaultValue } required={ !! required } />
 						{ option }
 					</label>
 				</li> )
@@ -763,59 +729,77 @@ registerBlockType( 'zoom-forms/label-field', {
 			type:      'string',
 			default:   ''
 		},
+		name: {
+			type:      'string',
+			source:    'html',
+			selector:  'label',
+			default:   __( '[No Name]', 'zoom-forms' )
+		},
 		forInput: {
 			type:      'string',
 			source:    'attribute',
 			attribute: 'for',
 			selector:  'label',
 			default:   ''
-		},
-		text: {
-			type:      'string',
-			source:    'html',
-			selector:  'label',
-			default:   __( 'Label', 'zoom-forms' )
 		}
 	},
 	example:     {},
 	edit:        ( props ) => {
 		const { attributes, setAttributes, clientId } = props;
-		const { id, forInput, text } = attributes;
+		const { id, name, forInput } = attributes;
 
-		if ( ! ( id in attributes ) || '' == id.trim() ) {
-			setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+		if ( ! id ) setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+
+		const zoomFormBlocks = blocks => {
+			let result = [];
+
+			blocks.forEach( block => {
+				if ( block.name.startsWith( 'zoom-forms/' ) && ! block.name.endsWith( 'label-field' ) ) {
+					result.push( { value: block.attributes.id, label: block.attributes.name } );
+				}
+
+				if ( block.innerBlocks ) {
+					result = [ ...result, ...zoomFormBlocks( block.innerBlocks ) ];
+				}
+			} );
+
+			return result;
+		};
+
+		const allBlocks = useSelect( ( select ) => select( 'core/editor' ).getBlocks(), [] );
+		const allZoomFormBlocks = allBlocks && allBlocks.length > 0 ? zoomFormBlocks( allBlocks ) : [];
+		const label = allZoomFormBlocks?.find( x => x.value == forInput )?.label;
+
+		if ( label ) {
+			setAttributes( { name: ( label || __( '[No Name]', 'zoom-forms' ) ) } );
 		}
+
+		const inputSelect = ( <SelectControl
+			label={ __( 'For Input', 'zoom-forms' ) }
+			value={ forInput }
+			options={ allZoomFormBlocks.length > 0 ? allZoomFormBlocks : [ { value: '-1', label: __( 'No inputs found...', 'zoom-forms' ) } ] }
+			onChange={ ( value ) => setAttributes( { forInput: value } ) }
+		/> );
 
 		return (
 			<>
 				<InspectorControls>
 					<PanelBody title={ __( 'Options', 'zoom-forms' ) }>
-						<TextControl
-							label={ __( 'Label Text', 'zoom-forms' ) }
-							value={ text }
-							onChange={ ( value ) => setAttributes( { text: value } ) }
-						/>
-
-						<TextControl
-							label={ __( 'For Input', 'zoom-forms' ) }
-							help={ __( 'Only alphanumeric, underscores, and dashes allowed. Must match the name of an input.', 'zoom-forms' ) }
-							value={ forInput }
-							onChange={ ( value ) => setAttributes( { forInput: value.toLowerCase().trim().replace( /\s+/, '_' ).replace( /[^a-z\d_-]/, '' ) } ) }
-						/>
+						{ allZoomFormBlocks.length > 0 ? inputSelect : <Disabled>{ inputSelect }</Disabled> }
 					</PanelBody>
 				</InspectorControls>
 
 				<Fragment>
-					<label htmlFor={ forInput }>{ text }</label>
+					<label htmlFor={ forInput }>{ name }</label>
 				</Fragment>
 			</>
 		);
 	},
 	save:        ( { attributes } ) => {
-		const { id, forInput, text } = attributes;
+		const { id, name, forInput } = attributes;
 
 		return (
-			<label htmlFor={ forInput }>{ text }</label>
+			<label htmlFor={ forInput }>{ name }</label>
 		);
 	}
 } );
@@ -844,13 +828,6 @@ registerBlockType( 'zoom-forms/submit-field', {
 		name: {
 			type:      'string',
 			source:    'attribute',
-			attribute: 'id',
-			selector:  'input',
-			default:   ''
-		},
-		label: {
-			type:      'string',
-			source:    'attribute',
 			attribute: 'value',
 			selector:  'input',
 			default:   __( 'Submit', 'zoom-forms' )
@@ -859,11 +836,9 @@ registerBlockType( 'zoom-forms/submit-field', {
 	example:     {},
 	edit:        ( props ) => {
 		const { attributes, setAttributes, clientId } = props;
-		const { id, name, label } = attributes;
+		const { id, name } = attributes;
 
-		if ( ! ( id in attributes ) || '' == id.trim() ) {
-			setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
-		}
+		if ( ! id ) setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
 
 		return (
 			<>
@@ -871,31 +846,23 @@ registerBlockType( 'zoom-forms/submit-field', {
 					<PanelBody title={ __( 'Options', 'zoom-forms' ) }>
 						<TextControl
 							label={ __( 'Name', 'zoom-forms' ) }
-							help={ __( 'Only alphanumeric, underscores, and dashes allowed.', 'zoom-forms' ) }
 							value={ name }
-							placeholder={ id }
-							onChange={ ( value ) => setAttributes( { name: value.toLowerCase().trim().replace( /\s+/, '_' ).replace( /[^a-z\d_-]/, '' ) } ) }
-						/>
-
-						<TextControl
-							label={ __( 'Label', 'zoom-forms' ) }
-							value={ label }
-							onChange={ ( value ) => setAttributes( { label: value } ) }
+							onChange={ ( value ) => setAttributes( { name: value } ) }
 						/>
 					</PanelBody>
 				</InspectorControls>
 
 				<Fragment>
-					<input type="submit" id={ name || id } value={ label } />
+					<input type="submit" id={ id } value={ name } />
 				</Fragment>
 			</>
 		);
 	},
 	save:        ( { attributes } ) => {
-		const { id, name, label } = attributes;
+		const { id, name } = attributes;
 
 		return (
-			<input type="submit" id={ name || id } value={ label } />
+			<input type="submit" id={ id } value={ name } />
 		);
 	}
 } );

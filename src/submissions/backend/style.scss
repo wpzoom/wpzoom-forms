@@ -1,0 +1,52 @@
+@import '~@wordpress/base-styles/colors.native';
+
+#post-body {
+	#post-body-content,
+	#postbox-container-1,
+	#advanced-sortables {
+		display: none;
+	}
+}
+
+#wpzf-submission-mb {
+	margin: 0;
+
+	.postbox-header {
+		display: none;
+	}
+
+	.inside {
+		padding: 0;
+		margin: 0;
+
+		.wpzf-submission-view {
+			padding: 0;
+			margin: 0;
+
+			li {
+				padding: 1.5em 2em;
+				border-bottom: 1px solid $light-gray-700;
+				margin: 0;
+
+				&:last-child {
+					border-bottom: 0;
+				}
+
+				h3 {
+					padding: 0;
+					margin: 0 0 0.5em;
+				}
+
+				div {
+					padding: 0;
+					margin: 0;
+				}
+			}
+		}
+	}
+
+	.empty {
+		font-style: italic;
+		color: $dark-gray-300;
+	}
+}

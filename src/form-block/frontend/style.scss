@@ -1,3 +1,5 @@
+@import '~@wordpress/base-styles/colors.native';
+
 .zoom-forms_form {
 	.wp-block-group__inner-container {
 		.wp-block-columns {
@@ -7,6 +9,36 @@
 			&:last-child {
 				margin-bottom: 0;
 			}
+		}
+	}
+
+	.wp-block-zoom-forms-required {
+		margin: 0 0 0 0.5em;
+	}
+
+	.nomarginright {
+		margin-right: 0;
+	}
+
+	.notice {
+		background-color: $white;
+		padding: 8px 16px;
+		border-left: 4px solid $blue-medium-focus;
+		margin: 1em 0;
+
+		&.success {
+			background-color: lighten($alert-green, 45%);
+			border-left-color: $alert-green;
+		}
+
+		&.error {
+			background-color: lighten($alert-red, 35%);
+			border-left-color: $alert-red;
+		}
+
+		p {
+			padding: 0;
+			margin: 0;
 		}
 	}
 }

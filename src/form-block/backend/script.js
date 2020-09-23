@@ -1,6 +1,6 @@
 import { InspectorControls } from '@wordpress/block-editor';
 import { registerBlockType, updateCategory } from '@wordpress/blocks';
-import { Disabled, PanelBody } from '@wordpress/components';
+import { Disabled, PanelBody, Placeholder } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import { Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -89,16 +89,23 @@ registerBlockType( 'zoom-forms/form-block', {
 			<>
 				<InspectorControls>
 					<PanelBody title={ __( 'Options', 'zoom-forms' ) }>
-						{ forms.length > 0 && formSelect }
-						{ forms.length < 1 && <Disabled>{ formSelect }</Disabled> }
+						{ forms.length > 0 ? formSelect : <Disabled>{ formSelect }</Disabled> }
 					</PanelBody>
 				</InspectorControls>
 
 				<Fragment>
-					<ServerSideRender
-						block="zoom-forms/form-block"
-						attributes={ attributes }
-					/>
+					{ '-1' != _formId
+						? <ServerSideRender
+							block="zoom-forms/form-block"
+							attributes={ attributes }
+						  />
+						: <Placeholder
+							icon={ zoomFormsIcon }
+							label={ __( 'ZOOM Forms', 'zoom-forms' ) }
+						  >
+							{ forms.length > 0 ? formSelect : <Disabled>{ formSelect }</Disabled> }
+						  </Placeholder>
+					}
 				</Fragment>
 			</>
 		);
