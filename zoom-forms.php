@@ -122,20 +122,24 @@ class ZOOM_Forms {
 
 			load_plugin_textdomain( 'zoom-forms', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
-			add_filter( 'allowed_block_types', array( $this, 'filter_allowed_block_types' ), 10, 2 );
-			add_filter( 'block_categories', array( $this, 'filter_block_categories' ), 10, 2 );
-			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 100 );
-			add_action( 'enqueue_block_editor_assets', array( $this, 'register_backend_assets' ) );
-			add_action( 'enqueue_block_assets', array( $this, 'register_frontend_assets' ) );
-			add_filter( 'post_row_actions', array( $this, 'modify_row_actions' ), 10, 2 );
-			add_filter( 'bulk_actions-edit-wpzf-form', array( $this, 'remove_bulk_actions' ) );
-			add_filter( 'bulk_actions-edit-wpzf-submission', array( $this, 'remove_bulk_actions' ) );
-			add_filter( 'manage_edit-wpzf-submission_columns', array( $this, 'post_list_columns' ) );
-			add_filter( 'screen_options_show_screen', array( $this, 'remove_screen_options' ), 10, 2 );
-			add_filter( 'views_edit-wpzf-submission', array( $this, 'post_list_views' ) );
-			add_action( 'in_admin_header', array( $this, 'remove_meta_boxes' ), 100 );
-			add_action( 'add_meta_boxes_wpzf-submission', array( $this, 'add_meta_boxes' ) );
-			add_action( 'admin_post_wpzf_submit', array( $this, 'action_form_post' ) );
+			add_filter( 'allowed_block_types',                          array( $this, 'filter_allowed_block_types' ), 10, 2 );
+			add_filter( 'block_categories',                             array( $this, 'filter_block_categories' ),    10, 2 );
+			add_filter( 'post_row_actions',                             array( $this, 'modify_row_actions' ),         10, 2 );
+			add_filter( 'bulk_actions-edit-wpzf-form',                  array( $this, 'remove_bulk_actions' ),        10 );
+			add_filter( 'bulk_actions-edit-wpzf-submission',            array( $this, 'remove_bulk_actions' ),        10 );
+			add_filter( 'manage_edit-wpzf-submission_columns',          array( $this, 'post_list_columns' ),          10 );
+			add_filter( 'manage_edit-wpzf-submission_sortable_columns', array( $this, 'post_list_sortable_columns' ), 10 );
+			add_filter( 'screen_options_show_screen',                   array( $this, 'remove_screen_options' ),      10, 2 );
+			add_filter( 'views_edit-wpzf-submission',                   array( $this, 'post_list_views' ),            10 );
+			add_filter( 'list_table_primary_column',                    array( $this, 'post_list_primary_column' ),   10, 2 );
+			add_action( 'admin_enqueue_scripts',                        array( $this, 'admin_enqueue_scripts' ),      100 );
+			add_action( 'enqueue_block_editor_assets',                  array( $this, 'register_backend_assets' ),    10 );
+			add_action( 'enqueue_block_assets',                         array( $this, 'register_frontend_assets' ),   10 );
+			add_action( 'manage_wpzf-submission_posts_custom_column',   array( $this, 'post_list_custom_columns' ),   10, 2 );
+			add_action( 'pre_get_posts',                                array( $this, 'sort_custom_column' ),         10 );
+			add_action( 'in_admin_header',                              array( $this, 'remove_meta_boxes' ),          100 );
+			add_action( 'add_meta_boxes_wpzf-submission',               array( $this, 'add_meta_boxes' ),             10 );
+			add_action( 'admin_post_wpzf_submit',                       array( $this, 'action_form_post' ),           10 );
 
 			register_post_type(
 				'wpzf-form',
@@ -187,21 +191,21 @@ class ZOOM_Forms {
 					'label'               => __( 'ZOOM Form Submissions', 'zoom-forms' ),
 					'labels'              => array(
 						'name'                     => _x( 'ZOOM Form Submissions', 'post type general name', 'zoom-forms' ),
-						'singular_name'            => _x( 'Form Submission', 'post type singular name', 'zoom-forms' ),
+						'singular_name'            => _x( 'ZOOM Form Submission', 'post type singular name', 'zoom-forms' ),
 						'add_new'                  => _x( 'Add New', 'post', 'zoom-forms' ),
-						'add_new_item'             => __( 'Add New Form Submission', 'zoom-forms' ),
-						'edit_item'                => __( 'Form Submission', 'zoom-forms' ),
-						'new_item'                 => __( 'New Form Submission', 'zoom-forms' ),
-						'view_item'                => __( 'View Form Submission', 'zoom-forms' ),
-						'view_items'               => __( 'View Form Submissions', 'zoom-forms' ),
-						'search_items'             => __( 'Search Form Submissions', 'zoom-forms' ),
-						'not_found'                => __( 'No form submissions found.', 'zoom-forms' ),
-						'not_found_in_trash'       => __( 'No form submissions found in Trash.', 'zoom-forms' ),
+						'add_new_item'             => __( 'Add New Submission', 'zoom-forms' ),
+						'edit_item'                => __( 'ZOOM Form Submission', 'zoom-forms' ),
+						'new_item'                 => __( 'New Submission', 'zoom-forms' ),
+						'view_item'                => __( 'View Submission', 'zoom-forms' ),
+						'view_items'               => __( 'View Submissions', 'zoom-forms' ),
+						'search_items'             => __( 'Search Submissions', 'zoom-forms' ),
+						'not_found'                => __( 'No submissions found.', 'zoom-forms' ),
+						'not_found_in_trash'       => __( 'No submissions found in Trash.', 'zoom-forms' ),
 						'all_items'                => __( 'Submissions', 'zoom-forms' ),
-						'archives'                 => __( 'Form Submission Archives', 'zoom-forms' ),
-						'attributes'               => __( 'Form Submission Attributes', 'zoom-forms' ),
-						'insert_into_item'         => __( 'Insert into form submission', 'zoom-forms' ),
-						'uploaded_to_this_item'    => __( 'Uploaded to this form submission', 'zoom-forms' ),
+						'archives'                 => __( 'Submission Archives', 'zoom-forms' ),
+						'attributes'               => __( 'Submission Attributes', 'zoom-forms' ),
+						'insert_into_item'         => __( 'Insert into submission', 'zoom-forms' ),
+						'uploaded_to_this_item'    => __( 'Uploaded to this submission', 'zoom-forms' ),
 						'featured_image'           => _x( 'Featured image', 'post', 'zoom-forms' ),
 						'set_featured_image'       => _x( 'Set featured image', 'post', 'zoom-forms' ),
 						'remove_featured_image'    => _x( 'Remove featured image', 'post', 'zoom-forms' ),
@@ -302,11 +306,13 @@ class ZOOM_Forms {
 		global $wp_post_statuses;
 
 		$publish = $wp_post_statuses[ 'publish' ];
-		$publish->label = __( 'Saved', 'zoom-forms' );
-		$publish->label_count[0] = __( 'Saved <span class="count">(%s)</span>', 'zoom-forms' );
-		$publish->label_count[1] = __( 'Saved <span class="count">(%s)</span>', 'zoom-forms' );
+
+		$publish->label                     = __( 'Saved', 'zoom-forms' );
+		$publish->label_count[ 0 ]          = __( 'Saved <span class="count">(%s)</span>', 'zoom-forms' );
+		$publish->label_count[ 1 ]          = __( 'Saved <span class="count">(%s)</span>', 'zoom-forms' );
 		$publish->label_count[ 'singular' ] = __( 'Saved <span class="count">(%s)</span>', 'zoom-forms' );
-		$publish->label_count[ 'plural' ] = __( 'Saved <span class="count">(%s)</span>', 'zoom-forms' );
+		$publish->label_count[ 'plural' ]   = __( 'Saved <span class="count">(%s)</span>', 'zoom-forms' );
+
 		$wp_post_statuses[ 'publish' ] = $publish;
 
 		$wp_post_statuses = array_diff_key(
@@ -323,7 +329,7 @@ class ZOOM_Forms {
 		);
 
 		add_filter( 'post_date_column_status', function() { return __( 'Last Modified', 'zoom-forms' ); } );
-		add_filter( 'post_date_column_time', function( $time, $post ) {
+		add_filter( 'post_date_column_time',   function( $time, $post ) {
 			return sprintf(
 				__( '%1$s at %2$s', 'zoom-forms' ),
 				get_the_modified_time( __( 'Y/m/d', 'zoom-forms' ), $post ),
@@ -798,9 +804,113 @@ class ZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function post_list_columns( $columns ) {
-		$columns[ 'title' ] = __( 'Submission', 'zoom-forms' );
+		return array(
+			'cb'   => $columns[ 'cb' ],
+			'desc' => __( 'Submission', 'zoom-forms' ),
+			'form' => __( 'Form', 'zoom-forms' ),
+			'date' => $columns[ 'date' ]
+		);
+	}
+
+	/**
+	 * Changes the sortable columns displayed in the post list for certain post types.
+	 *
+	 * @access public
+	 * @param  array  $columns An array of all the sortable columns.
+	 * @return array
+	 * @since  1.0.0
+	 */
+	public function post_list_sortable_columns( $columns ) {
+		$columns[ 'desc' ] = 'wpzf_desc';
+		$columns[ 'form' ] = 'wpzf_form';
 
 		return $columns;
+	}
+
+	/**
+	 * Changes the column content displayed in the post list for certain post types.
+	 *
+	 * @access public
+	 * @param  string $column  The name of the column to display.
+	 * @param  int    $post_id The ID of the current post.
+	 * @return array
+	 * @since  1.0.0
+	 */
+	public function post_list_custom_columns( $column, $post_id ) {
+		if ( 'desc' == $column ) {
+			$data = get_post_meta( $post_id, '_wpzf_fields', true );
+			$title = __( '[Unknown]', 'zoom-forms' );
+
+			if ( ! is_null( $data ) && false !== $data && is_array( $data ) && ! empty( $data ) ) {
+				$title = '';
+
+				foreach ( $data as $name => $value ) {
+					$title .= '<span class="field-name">' . esc_html( substr( $name, 0, 250 ) ) . ( strlen( $name ) > 250 ? '&hellip;' : '' ) . '</span>
+					           <span class="field-value">' . esc_html( substr( $value, 0, 250 ) ) . ( strlen( $value ) > 250 ? '&hellip;' : '' ) . '</span>';
+				}
+			}
+
+			printf( '<a href="%s" class="row-title">%s</a>', esc_url( get_edit_post_link( $post_id ) ), $title );
+		} elseif ( 'form' == $column ) {
+			$form_id = intval( get_post_meta( $post_id, '_wpzf_form_id', true ) );
+			$form_name = __( '[Unknown]', 'zoom-forms' );
+
+			if ( $form_id > 0 ) {
+				$form_name = $form_id;
+
+				if ( ! is_null( get_post( $form_id ) ) ) {
+					$form_name = '<a href="' . esc_url( get_edit_post_link( $form_id ) ) . '">' . get_the_title( $form_id ) . '</a>';
+				}
+			}
+
+			echo $form_name;
+		}
+	}
+
+	/**
+	 * Sets what the primary column is in the post list for certain post types.
+	 *
+	 * @access public
+	 * @param  string $default The default/primary column.
+	 * @param  string $screen  Which screen is currently being rendered.
+	 * @return array
+	 * @since  1.0.0
+	 */
+	public function post_list_primary_column( $default, $screen ) {
+		if ( 'edit-wpzf-submission' == $screen ) {
+			$default = 'desc';
+		}
+
+		return $default;
+	}
+
+	/**
+	 * Handles sorting of custom columns in the post list for certain post types.
+	 *
+	 * @access public
+	 * @param  WP_Query $query The current query.
+	 * @return array
+	 * @since  1.0.0
+	 */
+	public function sort_custom_column( $query ) {
+		$orderby = $query->get( 'orderby' );
+
+		if ( 'wpzf_desc' == $orderby || 'wpzf_form' == $orderby ) {
+			$key = 'wpzf_desc' == $orderby ? '_wpzf_fields' : '_wpzf_form_id';
+
+			$query->set( 'meta_query', array(
+				'relation' => 'OR',
+				array(
+					'key'     => $key,
+					'compare' => 'NOT EXISTS'
+				),
+				array(
+					'key'     => $key
+				)
+			) );
+
+			$query->set( 'orderby', 'meta_value' );
+		}
 	}
 
 	/**
@@ -887,11 +997,34 @@ class ZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function submission_meta_box() {
-		if ( ! empty( trim( strip_tags( get_the_content() ) ) ) ) {
-			echo make_clickable( apply_filters( 'the_content', get_the_content() ) );
-		} else {
-			printf( '<p class="empty">%s</p>', __( 'Submission is empty&hellip;', 'zoom-forms' ) );
+		$fields = get_post_meta( get_the_ID(), '_wpzf_fields', true );
+
+		if ( ! is_null( $fields ) && false !== $fields && is_array( $fields ) && ! empty( $fields ) ) {
+			echo '<ul class="wpzf-submission-view">';
+
+			$form_id = intval( get_post_meta( get_the_ID(), '_wpzf_form_id', true ) );
+			$form_name = __( '[Unknown]', 'zoom-forms' );
+
+			if ( $form_id > 0 ) {
+				$form_name = $form_id;
+
+				if ( ! is_null( get_post( $form_id ) ) ) {
+					$form_name = '<a href="' . esc_url( get_edit_post_link( $form_id ) ) . '">' . get_the_title( $form_id ) . '</a>';
+				}
+			}
+
+			echo '<li class="top"><h3>' . sprintf( __( 'Form: %s', 'zoom-forms' ), $form_name ) . '</h3></li>';
+
+			foreach ( $fields as $name => $value ) {
+				echo '<li><h3>' . esc_html( $name ) . '</h3><div>' . make_clickable( apply_filters( 'the_content', esc_html( $value ) ) ) . '</div></li>';
+			}
+
+			echo '</ul>';
+
+			return;
 		}
+
+		printf( '<p class="empty">%s</p>', __( 'Submission is empty&hellip;', 'zoom-forms' ) );
 	}
 
 	/**
@@ -1012,22 +1145,21 @@ class ZOOM_Forms {
 						array( 'Content-Type: text/html; charset=UTF-8' )
 					);
 				} elseif ( 'db' == $form_method ) {
-					$content = '<ul class="wpzf-submission-view">';
+					$content = array(
+						'_wpzf_form_id' => $form_id,
+						'_wpzf_fields'  => array()
+					);
 
 					foreach ( $_REQUEST as $key => $value ) {
 						if ( strpos( $key, 'wpzf_' ) === 0 ) {
 							$id = substr( $key, 5 );
 							$name = isset( $input_blocks[ $id ] ) ? $input_blocks[ $id ] : __( 'Unnamed Input', 'zoom-forms' );
 
-							$content .= '<li><h3>' . $name . '</h3><div>' . esc_html( $value ) . '</div></li>';
-
-							// Probably need to store the fields in the post content in some other way (maybe json encoded?) instead of hardcoding it.
+							$content[ '_wpzf_fields' ][ $name ] = $value;
 						}
 					}
 
-					$content .= '</ul>';
-
-					$success = 0 < wp_insert_post( array(
+					$success = false !== $content && 0 < wp_insert_post( array(
 						'post_type'      => 'wpzf-submission',
 						'post_status'    => 'publish',
 						'comment_status' => 'closed',
@@ -1035,7 +1167,8 @@ class ZOOM_Forms {
 						'post_title'     => __( 'Submission', 'zoom-forms' ),
 						'post_author'    => 1,
 						'post_category'  => array( 1 ),
-						'post_content'   => $content
+						'post_content'   => __( 'Submission', 'zoom-forms' ),
+						'meta_input'     => $content
 					) );
 				}
 			}
