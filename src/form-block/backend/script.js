@@ -49,7 +49,7 @@ updateCategory( 'wpzoom-blocks', {
 } );
 
 registerBlockType( 'zoom-forms/form-block', {
-	title:       __( 'Form', 'wpzoom-blocks' ),
+	title:       __( 'ZOOM Form', 'wpzoom-blocks' ),
 	description: __( 'A custom form for accepting input from users.', 'wpzoom-blocks' ),
 	icon:        zoomFormsIcon,
 	category:    'wpzoom-blocks',
