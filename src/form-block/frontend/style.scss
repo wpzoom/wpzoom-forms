@@ -9,11 +9,26 @@
 			&:last-child {
 				margin-bottom: 0;
 			}
+
+			.wp-block-column {
+				label {
+					margin: 0;
+				}
+
+				input:not([type='submit']):not([type='button']), textarea, select {
+					width: 100%;
+				}
+			}
 		}
 	}
 
 	.wp-block-zoom-forms-required {
+		color: $alert-red;
 		margin: 0 0 0 0.5em;
+	}
+
+	strong.has-accent-color.has-text-color {
+		color: $alert-red;
 	}
 
 	.nomarginright {
