@@ -1,8 +1,9 @@
-import { InspectorControls } from '@wordpress/block-editor';
+import { useBlockProps, InspectorControls, InnerBlocks } from '@wordpress/block-editor';
 import { registerBlockType, updateCategory } from '@wordpress/blocks';
 import { Card, CardBody, CardHeader, Disabled, Flex, FlexBlock, FlexItem, IconButton, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { useSelect } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import { __, setLocaleData, sprintf } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
@@ -72,6 +73,316 @@ registerPlugin( 'zoom-forms-document-settings', {
 
 setLocaleData( { 'Publish': [ __( 'Save', 'zoom-forms' ) ] } );
 
+registerBlockType( 'zoom-forms/form', {
+	title:       __( 'Form', 'wpzoom-blocks' ),
+	description: __( 'A form.', 'wpzoom-blocks' ),
+	icon:        ( <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 36 36">
+                       <path d="M21,12H7a1,1,0,0,1-1-1V7A1,1,0,0,1,7,6H21a1,1,0,0,1,1,1v4A1,1,0,0,1,21,12ZM8,10H20V7.94H8Z"/>
+                       <path d="M21,14.08H7a1,1,0,0,0-1,1V19a1,1,0,0,0,1,1H18.36L22,16.3V15.08A1,1,0,0,0,21,14.08ZM20,18H8V16H20Z"/>
+                       <path d="M11.06,31.51v-.06l.32-1.39H4V4h20V14.25L26,12.36V3a1,1,0,0,0-1-1H3A1,1,0,0,0,2,3V31a1,1,0,0,0,1,
+	                            1h8A3.44,3.44,0,0,1,11.06,31.51Z"/>
+                       <path d="M22,19.17l-.78.79A1,1,0,0,0,22,19.17Z"/>
+                       <path d="M6,26.94a1,1,0,0,0,1,1h4.84l.3-1.3.13-.55,0-.05H8V24h6.34l2-2H7a1,1,0,0,0-1,1Z"/>
+                       <path d="M33.49,16.67,30.12,13.3a1.61,1.61,0,0,0-2.28,0h0L14.13,27.09,13,31.9a1.61,1.61,0,0,0,1.26,1.9,1.55,
+	                            1.55,0,0,0,.31,0,1.15,1.15,0,0,0,.37,0l4.85-1.07L33.49,19a1.6,1.6,0,0,0,0-2.27ZM18.77,30.91l-3.66.81L16,
+	                            28.09,26.28,17.7l2.82,2.82ZM30.23,19.39l-2.82-2.82L29,15l2.84,2.84Z"/>
+                   </svg> ),
+	category:    'zoom-forms',
+	supports:    { align: true, html: false },
+	example:     {},
+	edit:        () => {
+		const blockProps = useBlockProps();
+
+		return (
+			<div { ...blockProps }>
+				<InnerBlocks
+					allowedBlocks={ [
+						'zoom-forms/text-field',
+						'zoom-forms/textarea-field',
+						'zoom-forms/select-field',
+						'zoom-forms/checkbox-field',
+						'zoom-forms/radio-field',
+						'zoom-forms/label-field',
+						'zoom-forms/submit-field'
+					] }
+					template={ [
+						[
+							'core/group',
+							{
+								'tagName': 'div',
+								'style':   {
+									'color': {
+										'background': '#ffffff'
+									}
+								}
+							},
+							[
+								[
+									'core/columns',
+									{
+										'isStackedOnMobile': true
+									},
+									[
+										[
+											'core/column',
+											{
+												'width': '20%'
+											},
+											[
+												[
+													'core/paragraph',
+													{
+														'align':     'right',
+														'content':   '<strong><sup>*</sup></strong>',
+														'dropCap':   false,
+														'textColor': 'accent',
+														'className': 'wp-block-zoom-forms-required alignright'
+													}
+												],
+												[
+													'zoom-forms/label-field',
+													{
+														'id':        'input_label1',
+														'name':      __( 'Name', 'wpzoom-blocks' ),
+														'forInput':  'input_name',
+														'align':     'right'
+													}
+												]
+											]
+										],
+										[
+											'core/column',
+											{
+												'width': '80%'
+											},
+											[
+												[
+													'zoom-forms/text-field',
+													{
+														'id':        'input_name',
+														'name':      __( 'Name', 'wpzoom-blocks' ),
+														'type':      'text',
+														'required':  true,
+														'align':     'left'
+													}
+												]
+											]
+										]
+									]
+								],
+								[
+									'core/columns',
+									{
+										'isStackedOnMobile': true
+									},
+									[
+										[
+											'core/column',
+											{
+												'width': '20%'
+											},
+											[
+												[
+													'core/paragraph',
+													{
+														'align':     'right',
+														'content':   '<strong><sup>*</sup></strong>',
+														'dropCap':   false,
+														'textColor': 'accent',
+														'className': 'wp-block-zoom-forms-required alignright'
+													}
+												],
+												[
+													'zoom-forms/label-field',
+													{
+														'id':        'input_label2',
+														'name':      __( 'Email', 'wpzoom-blocks' ),
+														'forInput':  'input_email',
+														'align':     'right'
+													}
+												]
+											]
+										],
+										[
+											'core/column',
+											{
+												'width': '80%'
+											},
+											[
+												[
+													'zoom-forms/text-field',
+													{
+														'id':            'input_email',
+														'name':          __( 'Email', 'wpzoom-blocks' ),
+														'type':          'email',
+														'required':      true,
+														'align':         'left'
+													}
+												]
+											]
+										]
+									]
+								],
+								[
+									'core/columns',
+									{
+										'isStackedOnMobile': true
+									},
+									[
+										[
+											'core/column',
+											{
+												'width': '20%'
+											},
+											[
+												[
+													'core/paragraph',
+													{
+														'align':     'right',
+														'content':   '<strong><sup>*</sup></strong>',
+														'dropCap':   false,
+														'textColor': 'accent',
+														'className': 'wp-block-zoom-forms-required alignright'
+													}
+												],
+												[
+													'zoom-forms/label-field',
+													{
+														'id':        'input_label3',
+														'name':      __( 'Subject', 'wpzoom-blocks' ),
+														'forInput':  'input_subject',
+														'align':     'right'
+													}
+												]
+											]
+										],
+										[
+											'core/column',
+											{
+												'width': '80%'
+											},
+											[
+												[
+													'zoom-forms/text-field',
+													{
+														'id':        'input_subject',
+														'name':      __( 'Subject', 'wpzoom-blocks' ),
+														'type':      'text',
+														'required':  true,
+														'align':     'left'
+													}
+												]
+											]
+										]
+									]
+								],
+								[
+									'core/columns',
+									{
+										'isStackedOnMobile': true
+									},
+									[
+										[
+											'core/column',
+											{
+												'width': '100%'
+											},
+											[
+												[
+													'zoom-forms/label-field',
+													{
+														'id':        'input_label4',
+														'name':      __( 'Message', 'wpzoom-blocks' ),
+														'forInput':  'input_message',
+														'align':     'left',
+														'className': 'nomarginright'
+													}
+												],
+												[
+													'core/paragraph',
+													{
+														'content':   '<strong><sup>*</sup></strong>',
+														'dropCap':   false,
+														'textColor': 'accent',
+														'className': 'wp-block-zoom-forms-required alignleft'
+													}
+												],
+												[
+													'zoom-forms/textarea-field',
+													{
+														'id':        'input_message',
+														'name':      __( 'Message', 'wpzoom-blocks' ),
+														'cols':      '55',
+														'rows':      '10',
+														'required':  true
+													}
+												]
+											]
+										]
+									]
+								],
+								[
+									'core/columns',
+									{
+										'isStackedOnMobile': true
+									},
+									[
+										[
+											'core/column',
+											{
+												'width': '30%'
+											},
+											[
+												[
+													'zoom-forms/submit-field',
+													{
+														'id':        'input_submit',
+														'name':      __( 'Submit', 'wpzoom-blocks' )
+													}
+												]
+											]
+										],
+										[
+											'core/column',
+											{
+												'width': '70%'
+											},
+											[
+												[
+													'core/paragraph',
+													{
+														'align':     'right',
+														'content':   __( 'Fields marked with <strong class="has-accent-color has-text-color">*</strong> are required.', 'wpzoom-blocks' ),
+														'dropCap':   false,
+														'style':     {
+															'typography': {
+																'fontSize': 16
+															}
+														}
+													}
+												]
+											]
+										]
+									]
+								]
+							]
+						]
+					] }
+				/>
+			</div>
+		);
+	},
+	save:        () => {
+		const blockProps = useBlockProps.save();
+
+		return (
+			<div { ...blockProps }>
+				<InnerBlocks.Content />
+			</div>
+		);
+	}
+} );
+
 registerBlockType( 'zoom-forms/text-field', {
 	title:       __( 'Text', 'wpzoom-blocks' ),
 	description: __( 'A text input field.', 'wpzoom-blocks' ),
@@ -82,6 +393,7 @@ registerBlockType( 'zoom-forms/text-field', {
 	                            C95,31.119,93.881,30,92.5,30z M90,65H10V35h80V65z"/>
 	               </svg> ),
 	category:    'zoom-forms',
+	parent:      [ 'zoom-forms/form' ],
 	supports:    { align: true, html: false },
 	attributes:  {
 		id: {
@@ -119,7 +431,11 @@ registerBlockType( 'zoom-forms/text-field', {
 		const { attributes, setAttributes, clientId } = props;
 		const { id, name, type, placeholder, required } = attributes;
 
-		if ( ! id ) setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+		useEffect( () => {
+			if ( ! id ) {
+				setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+			}
+		}, [] );
 
 		return (
 			<>
@@ -195,6 +511,7 @@ registerBlockType( 'zoom-forms/textarea-field', {
 	                            c-0.488-0.488-1.279-0.488-1.768,0l-5,5c-0.357,0.357-0.464,0.895-0.271,1.362C71.539,22.195,71.995,22.5,72.5,22.5z"/>
 	               </svg> ),
 	category:    'zoom-forms',
+	parent:      [ 'zoom-forms/form' ],
 	supports:    { align: true, html: false },
 	attributes:  {
 		id: {
@@ -239,7 +556,11 @@ registerBlockType( 'zoom-forms/textarea-field', {
 		const { attributes, setAttributes, clientId } = props;
 		const { id, name, cols, rows, placeholder, required } = attributes;
 
-		if ( ! id ) setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+		useEffect( () => {
+			if ( ! id ) {
+				setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+			}
+		}, [] );
 
 		return (
 			<>
@@ -307,6 +628,7 @@ registerBlockType( 'zoom-forms/select-field', {
 	                            c-0.193-0.467-0.649-0.771-1.155-0.771h-10c-0.505,0-0.961,0.305-1.155,0.771c-0.193,0.467-0.086,1.005,0.271,1.362L76.616,53.384z"/>
 	               </svg> ),
 	category:    'zoom-forms',
+	parent:      [ 'zoom-forms/form' ],
 	supports:    { align: true, html: false },
 	attributes:  {
 		id: {
@@ -369,7 +691,11 @@ registerBlockType( 'zoom-forms/select-field', {
 			setAttributes( { options: opts } );
 		};
 
-		if ( ! id ) setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+		useEffect( () => {
+			if ( ! id ) {
+				setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+			}
+		}, [] );
 
 		if ( options.length < 1 ) options = [ __( 'Item #1', 'zoom-forms' ) ];
 
@@ -469,6 +795,7 @@ registerBlockType( 'zoom-forms/checkbox-field', {
 	                            C59.542,41.631,57.958,41.631,56.982,42.607z"/>
 	               </svg> ),
 	category:    'zoom-forms',
+	parent:      [ 'zoom-forms/form' ],
 	supports:    { align: true, html: false },
 	attributes:  {
 		id: {
@@ -499,7 +826,11 @@ registerBlockType( 'zoom-forms/checkbox-field', {
 		const { attributes, setAttributes, clientId } = props;
 		const { id, name, defaultValue, required } = attributes;
 
-		if ( ! id ) setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+		useEffect( () => {
+			if ( ! id ) {
+				setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+			}
+		}, [] );
 
 		return (
 			<>
@@ -557,6 +888,7 @@ registerBlockType( 'zoom-forms/radio-field', {
 	                   <path d="M92.5,77.5H45c-1.381,0-2.5,1.119-2.5,2.5s1.119,2.5,2.5,2.5h47.5c1.381,0,2.5-1.119,2.5-2.5S93.881,77.5,92.5,77.5z"/>
 	               </svg> ),
 	category:    'zoom-forms',
+	parent:      [ 'zoom-forms/form' ],
 	supports:    { align: true, html: false },
 	attributes:  {
 		id: {
@@ -618,7 +950,11 @@ registerBlockType( 'zoom-forms/radio-field', {
 			setAttributes( { options: opts } );
 		};
 
-		if ( ! id ) setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+		useEffect( () => {
+			if ( ! id ) {
+				setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+			}
+		}, [] );
 
 		if ( options.length < 1 ) options = [ __( 'Item #1', 'zoom-forms' ) ];
 
@@ -723,6 +1059,7 @@ registerBlockType( 'zoom-forms/label-field', {
 	                            1,0,0,0,0-1.41L9.64,11a1,1,0,0,0-1.41,1.41L16,20.24a1,1,0,0,0,1.41,0Z"/>
 	               </svg> ),
 	category:    'zoom-forms',
+	parent:      [ 'zoom-forms/form' ],
 	supports:    { align: true, html: false },
 	attributes:  {
 		id: {
@@ -748,7 +1085,11 @@ registerBlockType( 'zoom-forms/label-field', {
 		const { attributes, setAttributes, clientId } = props;
 		const { id, name, forInput } = attributes;
 
-		if ( ! id ) setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+		useEffect( () => {
+			if ( ! id ) {
+				setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+			}
+		}, [] );
 
 		const zoomFormBlocks = blocks => {
 			let result = [];
@@ -766,13 +1107,15 @@ registerBlockType( 'zoom-forms/label-field', {
 			return result;
 		};
 
-		const allBlocks = useSelect( ( select ) => select( 'core/editor' ).getBlocks(), [] );
+		const allBlocks = useSelect( ( select ) => select( 'core/block-editor' ).getBlocks(), [] );
 		const allZoomFormBlocks = allBlocks && allBlocks.length > 0 ? zoomFormBlocks( allBlocks ) : [];
 		const label = allZoomFormBlocks?.find( x => x.value == forInput )?.label;
 
-		if ( label ) {
-			setAttributes( { name: ( label || __( '[No Name]', 'zoom-forms' ) ) } );
-		}
+		useEffect( () => {
+			if ( label ) {
+				setAttributes( { name: ( label || __( '[No Name]', 'zoom-forms' ) ) } );
+			}
+		}, [] );
 
 		const inputSelect = ( <SelectControl
 			label={ __( 'For Input', 'zoom-forms' ) }
@@ -819,6 +1162,7 @@ registerBlockType( 'zoom-forms/submit-field', {
 	                            h0.631c2.721,0,4.926-2.206,4.926-4.925v-19.7C88.482,36.154,86.277,33.948,83.559,33.948z"/>
 	               </svg> ),
 	category:    'zoom-forms',
+	parent:      [ 'zoom-forms/form' ],
 	supports:    { align: true, html: false },
 	attributes:  {
 		id: {
@@ -838,7 +1182,11 @@ registerBlockType( 'zoom-forms/submit-field', {
 		const { attributes, setAttributes, clientId } = props;
 		const { id, name } = attributes;
 
-		if ( ! id ) setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+		useEffect( () => {
+			if ( ! id ) {
+				setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+			}
+		}, [] );
 
 		return (
 			<>

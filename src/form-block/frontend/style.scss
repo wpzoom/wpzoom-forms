@@ -1,6 +1,8 @@
 @import '~@wordpress/base-styles/colors.native';
 
-.zoom-forms_form {
+.zoom-forms_form,
+.wp-block-zoom-forms-form {
+	.wp-block-group,
 	.wp-block-group__inner-container {
 		.wp-block-columns {
 			align-items: center;
@@ -38,7 +40,7 @@
 	.notice {
 		background-color: $white;
 		padding: 8px 16px;
-		border-left: 4px solid $blue-medium-focus;
+		border-left: 4px solid $blue-wordpress;
 		margin: 1em 0;
 
 		&.success {

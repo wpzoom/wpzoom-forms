@@ -54,7 +54,7 @@
 
 			li {
 				padding: 1.5em 2em;
-				border-bottom: 1px solid $light-gray-700;
+				border-bottom: 1px solid $light-gray-500;
 				margin: 0;
 
 				&:last-child {
@@ -93,7 +93,7 @@
 
 	.empty {
 		font-style: italic;
-		color: $dark-gray-300;
+		color: $gray-40;
 		padding: 12px;
 		margin: 0;
 	}

@@ -93,15 +93,6 @@ class ZOOM_Forms {
 	public $main_dir_url;
 
 	/**
-	 * Presets used in the form builder.
-	 *
-	 * @var    ZOOM_Form_Presets
-	 * @access public
-	 * @since  1.0.0
-	 */
-	public $presets;
-
-	/**
 	 * Initializes the plugin and sets up needed hooks and features.
 	 *
 	 * @access public
@@ -115,10 +106,6 @@ class ZOOM_Forms {
 			$this->plugin_dir_url = plugin_dir_url( __FILE__ );
 			$this->main_dir_path = trailingslashit( $this->plugin_dir_path . 'build' );
 			$this->main_dir_url = trailingslashit( $this->plugin_dir_url . 'build' );
-
-			require_once( $this->plugin_dir_path . 'presets.php' );
-
-			$this->presets = new ZOOM_Forms_Presets();
 
 			load_plugin_textdomain( 'zoom-forms', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
@@ -267,10 +254,12 @@ class ZOOM_Forms {
 				)
 			);
 
+			$form_pto = get_post_type_object( 'wpzf-form' );
+			$form_pto->template = array( array( 'zoom-forms/form' ) );
+
 			if ( $this->is_post_type( 'wpzf-form' ) ) {
 				$this->forms_display();
 				$this->register_blocks();
-				$this->block_patterns();
 			} elseif ( $this->is_post_type( 'wpzf-submission' ) ) {
 				$this->submissions_display();
 			} else {
@@ -519,10 +508,19 @@ class ZOOM_Forms {
 			)
 		);
 
+		register_block_type(
+			'zoom-forms/form',
+			array(
+				'editor_script' => 'zoom-forms-js-backend-main',
+				'editor_style'  => 'zoom-forms-css-backend-main'
+			)
+		);
+
 		foreach ( $input_blocks as $block => $attributes ) {
 			register_block_type(
 				"zoom-forms/$block-field",
 				array(
+					'parent'        => array( 'zoom-forms/form' ),
 					'attributes'    => $attributes,
 					'editor_script' => 'zoom-forms-js-backend-main',
 					'editor_style'  => 'zoom-forms-css-backend-main'
@@ -558,29 +556,6 @@ class ZOOM_Forms {
 	}
 
 	/**
-	 * Registers custom block patterns for the form post type.
-	 *
-	 * @access public
-	 * @return void
-	 * @since  1.0.0
-	 */
-	public function block_patterns() {
-		remove_theme_support( 'core-block-patterns' );
-
-		register_block_pattern_category(
-			'zoom-forms',
-			array(
-				'label' => __( 'ZOOM Forms', 'zoom-forms' )
-			)
-		);
-
-		register_block_pattern(
-			'zoom-forms/contact-form',
-			$this->presets->contact_form
-		);
-	}
-
-	/**
 	 * Filters the allowed Gutenberg block types for a given post.
 	 *
 	 * @access public
@@ -592,6 +567,7 @@ class ZOOM_Forms {
 	public function filter_allowed_block_types( $allowed_block_types, $post ) {
 		if ( 'wpzf-form' == $post->post_type ) {
 			$allowed_block_types = array(
+				'zoom-forms/form',
 				'zoom-forms/text-field',
 				'zoom-forms/textarea-field',
 				'zoom-forms/select-field',
