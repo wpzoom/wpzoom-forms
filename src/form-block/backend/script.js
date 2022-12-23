@@ -1,7 +1,7 @@
 import { InspectorControls } from '@wordpress/block-editor';
 import { registerBlockType, updateCategory } from '@wordpress/blocks';
-import { Disabled, PanelBody, Placeholder } from '@wordpress/components';
-import { withSelect } from '@wordpress/data';
+import { Disabled, PanelBody, Placeholder, Button, __experimentalHStack as HStack } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import ServerSideRender from '@wordpress/server-side-render';
@@ -61,17 +61,13 @@ registerBlockType( 'zoom-forms/form-block', {
 		}
 	},
 	example:     {},
-	edit:        withSelect( ( select ) => {
-		const { getEntityRecords } = select( 'core' );
-
-		return {
-			posts: getEntityRecords( 'postType', 'wpzf-form', { order: 'asc', orderby: 'title', per_page: -1 } )
-		};
-	} )( ( props ) => {
-		const { attributes, posts, setAttributes } = props;
+	edit:        props => {
+		const { attributes, setAttributes } = props;
 		const { formId } = attributes;
 		const _formId = formId && String( formId ).trim() != '' ? String( formId ) : '-1';
-		const forms = posts && posts.length > 0 ? posts.map( ( x ) => { return { key: String( x.id ), name: x.title.raw } } ) : [];
+		const posts = useSelect( select => select( 'core' ).getEntityRecords( 'postType', 'wpzf-form', { order: 'asc', orderby: 'title', per_page: -1 } ), [] );
+		const forms = posts && posts.length > 0 ? posts.map( x => { return { key: String( x.id ), name: x.title.raw } } ) : [];
+		const theForm = forms.find( x => x.key == _formId );
 
 		const formSelect = (
 			<SearchableSelectControl
@@ -80,9 +76,25 @@ registerBlockType( 'zoom-forms/form-block', {
 				searchPlaceholder={ __( 'Search...', 'zoom-forms' ) }
 				noResultsLabel={ __( 'Nothing found...', 'zoom-forms' ) }
 				options={ forms }
-				value={ forms.find( x => x.key == _formId ) }
+				value={ typeof theForm !== 'undefined' ? theForm : '' }
 				onChange={ ( value ) => setAttributes( { formId: String( value.selectedItem.key ) } ) }
 			/>
+		);
+
+		const formEditLink = (
+			<HStack
+				expanded={ true }
+				alignment="right"
+			>
+				<Button
+					variant="link"
+					text={ __( 'Edit form', 'zoom-forms' ) }
+					icon={ <svg viewBox="0 0 24 24"><path d="M20.1 5.1L16.9 2 6.2 12.7l-1.3 4.4 4.5-1.3L20.1 5.1zM4 20.8h8v-1.5H4v1.5z"></path></svg> }
+					iconSize={ 20 }
+					href={ wpzf_formblock.admin_url + 'post.php?post=' + _formId + '&action=edit' }
+					style={ { textDecoration: 'none' } }
+				/>
+			</HStack>
 		);
 
 		return (
@@ -90,6 +102,7 @@ registerBlockType( 'zoom-forms/form-block', {
 				<InspectorControls>
 					<PanelBody title={ __( 'Options', 'zoom-forms' ) }>
 						{ forms.length > 0 ? formSelect : <Disabled>{ formSelect }</Disabled> }
+						{ '-1' !== _formId && formEditLink }
 					</PanelBody>
 				</InspectorControls>
 
@@ -109,5 +122,5 @@ registerBlockType( 'zoom-forms/form-block', {
 				</Fragment>
 			</>
 		);
-	} )
+	}
 } );

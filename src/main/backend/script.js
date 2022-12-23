@@ -1,9 +1,9 @@
 import { useBlockProps, InspectorControls, InnerBlocks } from '@wordpress/block-editor';
 import { registerBlockType, updateCategory } from '@wordpress/blocks';
-import { Card, CardBody, CardHeader, Disabled, Flex, FlexBlock, FlexItem, IconButton, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl } from '@wordpress/components';
+import { Card, CardBody, CardHeader, Disabled, Flex, FlexBlock, FlexItem, IconButton, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl, ClipboardButton, Icon, __experimentalHStack as HStack } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { useSelect } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import { __, setLocaleData, sprintf } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
@@ -35,38 +35,76 @@ updateCategory( 'zoom-forms', {
 
 registerPlugin( 'zoom-forms-document-settings', {
 	icon: '',
-	render: ( props ) => {
-		const postType = useSelect( ( select ) => select( 'core/editor' ).getCurrentPostType(), [] );
+	render: props => {
+		const postID = useSelect( select => select( 'core/editor' ).getCurrentPostId(), [] );
+		const postType = useSelect( select => select( 'core/editor' ).getCurrentPostType(), [] );
 		const [ meta, setMeta ] = useEntityProp( 'postType', postType, 'meta' );
 		const formMethod = meta[ '_form_method' ] || 'email';
 		const formEmail = meta[ '_form_email' ] || '';
+		const [ hasCopiedShortcode, setHasCopiedShortcode ] = useState( false );
+		const copyBtnStyle = { minHeight: '30px', height: 'auto', minWidth: 'fit-content', margin: '0px 0px 8px 0px' };
+
+		if ( hasCopiedShortcode ) {
+			copyBtnStyle.backgroundColor = 'green';
+		}
 
 		return (
-			<PluginDocumentSettingPanel className="zoom-forms-document-settings" title={ __( 'Form Settings', 'zoom-forms' ) }>
-				<SelectControl
-					label={ __( 'Form Method', 'zoom-forms' ) }
-					value={ formMethod }
-					options={ [
-						{
-							label: __( 'Save to Database', 'zoom-forms' ),
-							value: 'db'
-						},
-						{
-							label: __( 'Email', 'zoom-forms' ),
-							value: 'email'
-						}
-					] }
-					onChange={ ( value ) => setMeta( { ...meta, '_form_method': value } ) }
-				/>
+			<>
+				<PluginDocumentSettingPanel className="zoom-forms-document-settings" title={ __( 'Form Settings', 'zoom-forms' ) }>
+					<SelectControl
+						label={ __( 'Form Method', 'zoom-forms' ) }
+						value={ formMethod }
+						options={ [
+							{
+								label: __( 'Save to Database', 'zoom-forms' ),
+								value: 'db'
+							},
+							{
+								label: __( 'Email', 'zoom-forms' ),
+								value: 'email'
+							}
+						] }
+						onChange={ ( value ) => setMeta( { ...meta, '_form_method': value } ) }
+					/>
 
-				{ formMethod == 'email' && <TextControl
-					type="email"
-					label={ __( 'Send To', 'zoom-forms' ) }
-					value={ formEmail }
-					placeholder={ __( 'someone@somedomain.com', 'zoom-forms' ) }
-					onChange={ ( value ) => setMeta( { ...meta, '_form_email': value } ) }
-				/> }
-			</PluginDocumentSettingPanel>
+					{ formMethod == 'email' && <TextControl
+						type="email"
+						label={ __( 'Send To', 'zoom-forms' ) }
+						value={ formEmail }
+						placeholder={ __( 'someone@somedomain.com', 'zoom-forms' ) }
+						onChange={ ( value ) => setMeta( { ...meta, '_form_email': value } ) }
+					/> }
+				</PluginDocumentSettingPanel>
+
+				<PluginDocumentSettingPanel className="zoom-forms-document-settings-details" title={ __( 'Form Details', 'zoom-forms' ) }>
+					<HStack alignment="flex-end">
+						<TextControl
+							type="text"
+							label={ __( 'Shortcode', 'zoom-forms' ) }
+							value={ '[wpzf_form id="' + postID + '"]' }
+							readOnly={ true }
+						/>
+
+						<ClipboardButton
+							variant="primary"
+							style={ copyBtnStyle }
+							text={ '[wpzf_form id="' + postID + '"]' }
+							label={ __( 'Copy shortcode', 'zoom-forms' ) }
+							showTooltip={ true }
+							onCopy={ () => setHasCopiedShortcode( true ) }
+							onFinishCopy={ () => setHasCopiedShortcode( false ) }
+						>
+							<Icon
+								icon={ hasCopiedShortcode
+									? <svg viewBox="0 0 24 24"><path d="M16.7 7.1l-6.3 8.5-3.3-2.5-.9 1.2 4.5 3.4L17.9 8z"></path></svg>
+									: <svg viewBox="0 0 24 24"><path d="M20.2 8v11c0 .7-.6 1.2-1.2 1.2H6v1.5h13c1.5 0 2.7-1.2 2.7-2.8V8zM18 16.4V4.6c0-.9-.7-1.6-1.6-1.6H4.6C3.7 3 3 3.7 3 4.6v11.8c0 .9.7 1.6 1.6 1.6h11.8c.9 0 1.6-.7 1.6-1.6zm-13.5 0V4.6c0-.1.1-.1.1-.1h11.8c.1 0 .1.1.1.1v11.8c0 .1-.1.1-.1.1H4.6l-.1-.1z"></path></svg>
+								}
+								size={ 16 }
+							/>
+						</ClipboardButton>
+					</HStack>
+				</PluginDocumentSettingPanel>
+			</>
 		);
 	}
 } );
@@ -97,7 +135,11 @@ registerBlockType( 'zoom-forms/form', {
 			<div { ...blockProps }>
 				<InnerBlocks
 					allowedBlocks={ [
-						'zoom-forms/text-field',
+						'zoom-forms/text-plain-field',
+						'zoom-forms/text-name-field',
+						'zoom-forms/text-email-field',
+						'zoom-forms/text-website-field',
+						'zoom-forms/text-phone-field',
 						'zoom-forms/textarea-field',
 						'zoom-forms/select-field',
 						'zoom-forms/checkbox-field',
@@ -157,7 +199,7 @@ registerBlockType( 'zoom-forms/form', {
 											},
 											[
 												[
-													'zoom-forms/text-field',
+													'zoom-forms/text-name-field',
 													{
 														'id':        'input_name',
 														'name':      __( 'Name', 'wpzoom-blocks' ),
@@ -210,7 +252,7 @@ registerBlockType( 'zoom-forms/form', {
 											},
 											[
 												[
-													'zoom-forms/text-field',
+													'zoom-forms/text-email-field',
 													{
 														'id':            'input_email',
 														'name':          __( 'Email', 'wpzoom-blocks' ),
@@ -263,7 +305,7 @@ registerBlockType( 'zoom-forms/form', {
 											},
 											[
 												[
-													'zoom-forms/text-field',
+													'zoom-forms/text-plain-field',
 													{
 														'id':        'input_subject',
 														'name':      __( 'Subject', 'wpzoom-blocks' ),
@@ -383,9 +425,9 @@ registerBlockType( 'zoom-forms/form', {
 	}
 } );
 
-registerBlockType( 'zoom-forms/text-field', {
-	title:       __( 'Text', 'wpzoom-blocks' ),
-	description: __( 'A text input field.', 'wpzoom-blocks' ),
+registerBlockType( 'zoom-forms/text-plain-field', {
+	title:       __( 'Text Input', 'wpzoom-blocks' ),
+	description: __( 'A text input field for inputting plain text.', 'wpzoom-blocks' ),
 	icon:        ( <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100">
 	                   <path d="M15,58.75c-0.69,0-1.25,0.56-1.25,1.25s0.56,1.25,1.25,1.25h10c0.69,0,1.25-0.56,1.25-1.25s-0.56-1.25-1.25-1.25h-3.75  
 	                            v-17.5H25c0.69,0,1.25-0.56,1.25-1.25s-0.56-1.25-1.25-1.25H15c-0.69,0-1.25,0.56-1.25,1.25s0.56,1.25,1.25,1.25h3.75v17.5H15z"/>
@@ -457,12 +499,8 @@ registerBlockType( 'zoom-forms/text-field', {
 									value: 'text'
 								},
 								{
-									label: __( 'Email', 'zoom-forms' ),
-									value: 'email'
-								},
-								{
-									label: __( 'URL', 'zoom-forms' ),
-									value: 'url'
+									label: __( 'Number', 'zoom-forms' ),
+									value: 'number'
 								}
 							] }
 							onChange={ ( value ) => setAttributes( { type: value } ) }
@@ -493,6 +531,424 @@ registerBlockType( 'zoom-forms/text-field', {
 
 		return (
 			<input type={ type } name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
+		);
+	}
+} );
+
+registerBlockType( 'zoom-forms/text-name-field', {
+	title:       __( 'Name Input', 'wpzoom-blocks' ),
+	description: __( 'A text input field for inputting names of people.', 'wpzoom-blocks' ),
+	icon:        ( <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+	                   <path d="M15,58.75c-0.69,0-1.25,0.56-1.25,1.25s0.56,1.25,1.25,1.25h10c0.69,0,1.25-0.56,1.25-1.25s-0.56-1.25-1.25-1.25h-3.75  
+	                            v-17.5H25c0.69,0,1.25-0.56,1.25-1.25s-0.56-1.25-1.25-1.25H15c-0.69,0-1.25,0.56-1.25,1.25s0.56,1.25,1.25,1.25h3.75v17.5H15z"/>
+	                   <path d="M92.5,30h-85C6.119,30,5,31.119,5,32.5v35C5,68.881,6.119,70,7.5,70h85c1.381,0,2.5-1.119,2.5-2.5v-35  
+	                            C95,31.119,93.881,30,92.5,30z M90,65H10V35h80V65z"/>
+	                   <path d="M51.554 41.097q0 .966-.168 1.68h-2.52q.168.672.168 1.68 0 .966-.168 1.68.168.672.168 1.68 0 .966-.168 1.68.168.672.168
+	                            1.68 0 .966-.168 1.68.168.672.168 1.68 0 .966-.168 1.68.168.672.168 1.68 0 .966-.168 1.68h-1.68q.168.672.168 1.68 0
+	                            .966-.168 1.68h-6.72q-.168-.714-.168-1.68 0-1.008.168-1.68h-1.68q-.168-.714-.168-1.68 0-1.008.168-1.68h3.36q.168.672.168
+	                            1.68 0 .966-.168 1.68h3.36q-.168-.714-.168-1.68 0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68-.168-.714-.168-1.68
+	                            0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68h-2.52q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68h8.4q.168.672.168 1.68Zm17.636 13.44q0 .966-.168 1.68h-1.26q.168.672.168 1.68 0 .966-.168 1.68h-2.1q.168.672.168
+	                            1.68 0 .966-.168 1.68h-6.72q-.168-.714-.168-1.68 0-1.008.168-1.68h-2.1q-.168-.714-.168-1.68 0-1.008.168-1.68h-1.26q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68h1.26q-.168-.714-.168-1.68 0-1.008.168-1.68h2.1q-.168-.714-.168-1.68 0-1.008.168-1.68h6.72q.168.672.168 1.68 0
+	                            .966-.168 1.68h2.1q.168.672.168 1.68 0 .966-.168 1.68h1.26q.168.672.168 1.68Zm-3.528 1.68q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68h-1.26q-.168-.714-.168-1.68 0-1.008.168-1.68h-4.2q.168.672.168 1.68 0 .966-.168 1.68h-1.26q.168.672.168 1.68
+	                            0 .966-.168 1.68h1.26q.168.672.168 1.68 0 .966-.168 1.68h4.2q-.168-.714-.168-1.68 0-1.008.168-1.68Zm20.325-5.04q0 .966-.168
+	                            1.68.168.672.168 1.68 0 .966-.168 1.68h-8.82q.168.672.168 1.68 0 .966-.168 1.68h7.14q.168.672.168 1.68 0 .966-.168 1.68h-8.4q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68h-2.1q-.168-.714-.168-1.68 0-1.008.168-1.68h-1.26q-.168-.714-.168-1.68 0-1.008.168-1.68h1.26q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68h2.1q-.168-.714-.168-1.68 0-1.008.168-1.68h8.4q.168.672.168 1.68 0 .966-.168 1.68h1.68q.168.672.168 1.68Zm-3.528
+	                            1.68q-.168-.714-.168-1.68 0-1.008.168-1.68h-5.46q.168.672.168 1.68 0 .966-.168 1.68h5.46Z"/>
+	               </svg> ),
+	category:    'zoom-forms',
+	parent:      [ 'zoom-forms/form' ],
+	supports:    { align: true, html: false },
+	attributes:  {
+		id: {
+			type:      'string',
+			default:   ''
+		},
+		name: {
+			type:      'string',
+			default:   ''
+		},
+		placeholder: {
+			type:      'string',
+			source:    'attribute',
+			attribute: 'placeholder',
+			selector:  'input',
+			default:   ''
+		},
+		required: {
+			type:      'boolean',
+			source:    'attribute',
+			attribute: 'required',
+			selector:  'input',
+			default:   false
+		}
+	},
+	example:     {},
+	edit:        ( props ) => {
+		const { attributes, setAttributes, clientId } = props;
+		const { id, name, placeholder, required } = attributes;
+
+		useEffect( () => {
+			if ( ! id ) {
+				setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+			}
+		}, [] );
+
+		return (
+			<>
+				<InspectorControls>
+					<PanelBody title={ __( 'Options', 'zoom-forms' ) }>
+						<TextControl
+							label={ __( 'Name', 'zoom-forms' ) }
+							value={ name }
+							placeholder={ __( 'e.g. My Name Field', 'zoom-forms' ) }
+							onChange={ ( value ) => setAttributes( { name: value } ) }
+						/>
+
+						<TextControl
+							label={ __( 'Placeholder', 'zoom-forms' ) }
+							value={ placeholder }
+							onChange={ ( value ) => setAttributes( { placeholder: value } ) }
+						/>
+
+						<ToggleControl
+							label={ __( 'Required', 'zoom-forms' ) }
+							checked={ !! required }
+							onChange={ ( value ) => setAttributes( { required: !! value } ) }
+						/>
+					</PanelBody>
+				</InspectorControls>
+
+				<Fragment>
+					<input type="text" name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
+				</Fragment>
+			</>
+		);
+	},
+	save:        ( { attributes } ) => {
+		const { id, name, placeholder, required } = attributes;
+
+		return (
+			<input type="text" name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
+		);
+	}
+} );
+
+registerBlockType( 'zoom-forms/text-email-field', {
+	title:       __( 'Email Input', 'wpzoom-blocks' ),
+	description: __( 'A text input field for inputting an email address.', 'wpzoom-blocks' ),
+	icon:        ( <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100">
+	                   <path d="M15,58.75c-0.69,0-1.25,0.56-1.25,1.25s0.56,1.25,1.25,1.25h10c0.69,0,1.25-0.56,1.25-1.25s-0.56-1.25-1.25-1.25h-3.75  
+	                            v-17.5H25c0.69,0,1.25-0.56,1.25-1.25s-0.56-1.25-1.25-1.25H15c-0.69,0-1.25,0.56-1.25,1.25s0.56,1.25,1.25,1.25h3.75v17.5H15z"/>
+	                   <path d="M92.5,30h-85C6.119,30,5,31.119,5,32.5v35C5,68.881,6.119,70,7.5,70h85c1.381,0,2.5-1.119,2.5-2.5v-35  
+	                            C95,31.119,93.881,30,92.5,30z M90,65H10V35h80V65z"/>
+	                   <path d="M84.455 46.937c.106.427.16.96.16 1.6 0 .614-.054 1.147-.16 1.6.106.427.16.96.16 1.6 0 .614-.054 1.147-.16
+	                            1.6.106.427.16.96.16 1.6 0 .614-.054 1.147-.16 1.6h-6.4c-.107-.453-.16-.986-.16-1.6 0-.64.053-1.173.16-1.6h-1.2c-.107-.453-.16-.986-.16-1.6
+	                            0-.64.053-1.173.16-1.6-.107-.453-.16-.986-.16-1.6 0-.64.053-1.173.16-1.6h1.2c-.107-.453-.16-.986-.16-1.6 0-.64.053-1.173.16-1.6h1.6c-.107-.453-.16-.986-.16-1.6
+	                            0-.64.053-1.173.16-1.6h-4c.106.427.16.96.16 1.6 0 .614-.054 1.147-.16 1.6h-1.6c.106.427.16.96.16 1.6 0 .614-.054 1.147-.16 1.6.106.427.16.96.16
+	                            1.6 0 .614-.054 1.147-.16 1.6.106.427.16.96.16 1.6 0 .614-.054 1.147-.16 1.6.106.427.16.96.16 1.6 0 .614-.054 1.147-.16 1.6h1.6c.106.427.16.96.16
+	                            1.6 0 .614-.054 1.147-.16 1.6h7.2c.106.427.16.96.16 1.6 0 .614-.054 1.147-.16 1.6h-8c-.107-.453-.16-.986-.16-1.6
+	                            0-.64.053-1.173.16-1.6h-1.6c-.107-.453-.16-.986-.16-1.6 0-.64.053-1.173.16-1.6h-1.6c-.107-.453-.16-.986-.16-1.6
+	                            0-.64.053-1.173.16-1.6-.107-.453-.16-.986-.16-1.6 0-.64.053-1.173.16-1.6-.107-.453-.16-.986-.16-1.6
+	                            0-.64.053-1.173.16-1.6-.107-.453-.16-.986-.16-1.6 0-.64.053-1.173.16-1.6h1.6c-.107-.453-.16-.986-.16-1.6
+	                            0-.64.053-1.173.16-1.6h1.6c-.107-.453-.16-.986-.16-1.6 0-.64.053-1.173.16-1.6h6.4c.106.427.16.96.16 1.6 0
+	                            .614-.054 1.147-.16 1.6h1.6c.106.427.16.96.16 1.6 0 .614-.054 1.147-.16 1.6h1.6c.106.427.16.96.16 1.6 0
+	                            .614-.054 1.147-.16 1.6Zm-2.4 6.4c-.107-.453-.16-.986-.16-1.6 0-.64.053-1.173.16-1.6-.107-.453-.16-.986-.16-1.6
+	                            0-.64.053-1.173.16-1.6h-2.8c.106.427.16.96.16 1.6 0 .614-.054 1.147-.16 1.6.106.427.16.96.16 1.6 0 .614-.054 1.147-.16 1.6h2.8Z"/>
+	               </svg> ),
+	category:    'zoom-forms',
+	parent:      [ 'zoom-forms/form' ],
+	supports:    { align: true, html: false },
+	attributes:  {
+		id: {
+			type:      'string',
+			default:   ''
+		},
+		name: {
+			type:      'string',
+			default:   ''
+		},
+		placeholder: {
+			type:      'string',
+			source:    'attribute',
+			attribute: 'placeholder',
+			selector:  'input',
+			default:   ''
+		},
+		required: {
+			type:      'boolean',
+			source:    'attribute',
+			attribute: 'required',
+			selector:  'input',
+			default:   false
+		}
+	},
+	example:     {},
+	edit:        ( props ) => {
+		const { attributes, setAttributes, clientId } = props;
+		const { id, name, placeholder, required } = attributes;
+
+		useEffect( () => {
+			if ( ! id ) {
+				setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+			}
+		}, [] );
+
+		return (
+			<>
+				<InspectorControls>
+					<PanelBody title={ __( 'Options', 'zoom-forms' ) }>
+						<TextControl
+							label={ __( 'Name', 'zoom-forms' ) }
+							value={ name }
+							placeholder={ __( 'e.g. My Email Field', 'zoom-forms' ) }
+							onChange={ ( value ) => setAttributes( { name: value } ) }
+						/>
+
+						<TextControl
+							label={ __( 'Placeholder', 'zoom-forms' ) }
+							value={ placeholder }
+							onChange={ ( value ) => setAttributes( { placeholder: value } ) }
+						/>
+
+						<ToggleControl
+							label={ __( 'Required', 'zoom-forms' ) }
+							checked={ !! required }
+							onChange={ ( value ) => setAttributes( { required: !! value } ) }
+						/>
+					</PanelBody>
+				</InspectorControls>
+
+				<Fragment>
+					<input type="email" name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
+				</Fragment>
+			</>
+		);
+	},
+	save:        ( { attributes } ) => {
+		const { id, name, placeholder, required } = attributes;
+
+		return (
+			<input type="email" name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
+		);
+	}
+} );
+
+registerBlockType( 'zoom-forms/text-website-field', {
+	title:       __( 'Website Input', 'wpzoom-blocks' ),
+	description: __( 'A text input field for inputting an website URL.', 'wpzoom-blocks' ),
+	icon:        ( <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100">
+	                   <path d="M15,58.75c-0.69,0-1.25,0.56-1.25,1.25s0.56,1.25,1.25,1.25h10c0.69,0,1.25-0.56,1.25-1.25s-0.56-1.25-1.25-1.25h-3.75  
+	                            v-17.5H25c0.69,0,1.25-0.56,1.25-1.25s-0.56-1.25-1.25-1.25H15c-0.69,0-1.25,0.56-1.25,1.25s0.56,1.25,1.25,1.25h3.75v17.5H15z"/>
+	                   <path d="M92.5,30h-85C6.119,30,5,31.119,5,32.5v35C5,68.881,6.119,70,7.5,70h85c1.381,0,2.5-1.119,2.5-2.5v-35  
+	                            C95,31.119,93.881,30,92.5,30z M90,65H10V35h80V65z"/>
+	                   <path d="M51.364 45.243q0 .966-.168 1.68.168.672.168 1.68 0 .966-.168 1.68h-1.26q.168.672.168 1.68 0 .966-.168 1.68.168.672.168
+	                            1.68 0 .966-.168 1.68h-.84q.168.672.168 1.68 0 .966-.168 1.68h-2.52q-.168-.714-.168-1.68 0-1.008.168-1.68h-.84q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68h-2.52q.168.672.168 1.68 0 .966-.168 1.68h-.84q.168.672.168 1.68 0 .966-.168 1.68h-2.52q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68h-.84q-.168-.714-.168-1.68 0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68h-1.26q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68h3.36q.168.672.168 1.68 0 .966-.168 1.68.168.672.168 1.68 0 .966-.168
+	                            1.68.168.672.168 1.68 0 .966-.168 1.68h1.26q-.168-.714-.168-1.68 0-1.008.168-1.68h.84q-.168-.714-.168-1.68 0-1.008.168-1.68-.168-.714-.168-1.68
+	                            0-1.008.168-1.68h2.52q.168.672.168 1.68 0 .966-.168 1.68.168.672.168 1.68 0 .966-.168 1.68h.84q.168.672.168 1.68 0
+	                            .966-.168 1.68h1.26q-.168-.714-.168-1.68 0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68-.168-.714-.168-1.68
+	                            0-1.008.168-1.68h3.36q.168.672.168 1.68Zm16.796 0q0 .966-.168 1.68.168.672.168 1.68 0 .966-.168 1.68h-1.26q.168.672.168 1.68 0
+	                            .966-.168 1.68.168.672.168 1.68 0 .966-.168 1.68h-.84q.168.672.168 1.68 0 .966-.168 1.68h-2.52q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68h-.84q-.168-.714-.168-1.68 0-1.008.168-1.68h-2.52q.168.672.168 1.68 0 .966-.168 1.68h-.84q.168.672.168 1.68 0
+	                            .966-.168 1.68h-2.52q-.168-.714-.168-1.68 0-1.008.168-1.68h-.84q-.168-.714-.168-1.68 0-1.008.168-1.68-.168-.714-.168-1.68
+	                            0-1.008.168-1.68h-1.26q-.168-.714-.168-1.68 0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68h3.36q.168.672.168 1.68 0
+	                            .966-.168 1.68.168.672.168 1.68 0 .966-.168 1.68.168.672.168 1.68 0 .966-.168 1.68h1.26q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68h.84q-.168-.714-.168-1.68 0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68h2.52q.168.672.168 1.68 0
+	                            .966-.168 1.68.168.672.168 1.68 0 .966-.168 1.68h.84q.168.672.168 1.68 0 .966-.168 1.68h1.26q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68h3.36q.168.672.168 1.68Zm16.797 0q0
+	                            .966-.168 1.68.168.672.168 1.68 0 .966-.168 1.68h-1.26q.168.672.168 1.68 0 .966-.168 1.68.168.672.168 1.68 0 .966-.168 1.68h-.84q.168.672.168
+	                            1.68 0 .966-.168 1.68h-2.52q-.168-.714-.168-1.68 0-1.008.168-1.68h-.84q-.168-.714-.168-1.68 0-1.008.168-1.68h-2.52q.168.672.168 1.68 0
+	                            .966-.168 1.68h-.84q.168.672.168 1.68 0 .966-.168 1.68h-2.52q-.168-.714-.168-1.68 0-1.008.168-1.68h-.84q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68h-1.26q-.168-.714-.168-1.68 0-1.008.168-1.68-.168-.714-.168-1.68
+	                            0-1.008.168-1.68h3.36q.168.672.168 1.68 0 .966-.168 1.68.168.672.168 1.68 0 .966-.168 1.68.168.672.168 1.68 0 .966-.168
+	                            1.68h1.26q-.168-.714-.168-1.68 0-1.008.168-1.68h.84q-.168-.714-.168-1.68 0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68h2.52q.168.672.168
+	                            1.68 0 .966-.168 1.68.168.672.168 1.68 0 .966-.168 1.68h.84q.168.672.168 1.68 0 .966-.168 1.68h1.26q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68h3.36q.168.672.168 1.68Z"/>
+	               </svg> ),
+	category:    'zoom-forms',
+	parent:      [ 'zoom-forms/form' ],
+	supports:    { align: true, html: false },
+	attributes:  {
+		id: {
+			type:      'string',
+			default:   ''
+		},
+		name: {
+			type:      'string',
+			default:   ''
+		},
+		placeholder: {
+			type:      'string',
+			source:    'attribute',
+			attribute: 'placeholder',
+			selector:  'input',
+			default:   ''
+		},
+		required: {
+			type:      'boolean',
+			source:    'attribute',
+			attribute: 'required',
+			selector:  'input',
+			default:   false
+		}
+	},
+	example:     {},
+	edit:        ( props ) => {
+		const { attributes, setAttributes, clientId } = props;
+		const { id, name, placeholder, required } = attributes;
+
+		useEffect( () => {
+			if ( ! id ) {
+				setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+			}
+		}, [] );
+
+		return (
+			<>
+				<InspectorControls>
+					<PanelBody title={ __( 'Options', 'zoom-forms' ) }>
+						<TextControl
+							label={ __( 'Name', 'zoom-forms' ) }
+							value={ name }
+							placeholder={ __( 'e.g. My Website Field', 'zoom-forms' ) }
+							onChange={ ( value ) => setAttributes( { name: value } ) }
+						/>
+
+						<TextControl
+							label={ __( 'Placeholder', 'zoom-forms' ) }
+							value={ placeholder }
+							onChange={ ( value ) => setAttributes( { placeholder: value } ) }
+						/>
+
+						<ToggleControl
+							label={ __( 'Required', 'zoom-forms' ) }
+							checked={ !! required }
+							onChange={ ( value ) => setAttributes( { required: !! value } ) }
+						/>
+					</PanelBody>
+				</InspectorControls>
+
+				<Fragment>
+					<input type="url" name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
+				</Fragment>
+			</>
+		);
+	},
+	save:        ( { attributes } ) => {
+		const { id, name, placeholder, required } = attributes;
+
+		return (
+			<input type="url" name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
+		);
+	}
+} );
+
+registerBlockType( 'zoom-forms/text-phone-field', {
+	title:       __( 'Phone Input', 'wpzoom-blocks' ),
+	description: __( 'A text input field for inputting a phone number.', 'wpzoom-blocks' ),
+	icon:        ( <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100">
+	                   <path d="M15,58.75c-0.69,0-1.25,0.56-1.25,1.25s0.56,1.25,1.25,1.25h10c0.69,0,1.25-0.56,1.25-1.25s-0.56-1.25-1.25-1.25h-3.75  
+	                            v-17.5H25c0.69,0,1.25-0.56,1.25-1.25s-0.56-1.25-1.25-1.25H15c-0.69,0-1.25,0.56-1.25,1.25s0.56,1.25,1.25,1.25h3.75v17.5H15z"/>
+	                   <path d="M92.5,30h-85C6.119,30,5,31.119,5,32.5v35C5,68.881,6.119,70,7.5,70h85c1.381,0,2.5-1.119,2.5-2.5v-35  
+	                            C95,31.119,93.881,30,92.5,30z M90,65H10V35h80V65z"/>
+	                   <path d="M51.061 59.577q.168.672.168 1.68 0 .966-.168 1.68h-10.08q-.168-.714-.168-1.68 0-1.008.168-1.68h3.36q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68-.168-.714-.168-1.68
+	                            0-1.008.168-1.68h-2.52q-.168-.714-.168-1.68 0-1.008.168-1.68h2.52q-.168-.714-.168-1.68 0-1.008.168-1.68h3.36q.168.672.168
+	                            1.68 0 .966-.168 1.68.168.672.168 1.68 0 .966-.168 1.68.168.672.168 1.68 0 .966-.168 1.68.168.672.168 1.68 0
+	                            .966-.168 1.68.168.672.168 1.68 0 .966-.168 1.68.168.672.168 1.68 0 .966-.168 1.68h3.36Zm17.804-11.76q0 .966-.168
+	                            1.68h-2.1q.168.672.168 1.68 0 .966-.168 1.68h-2.1q.168.672.168 1.68 0 .966-.168 1.68h-2.1q.168.672.168 1.68 0
+	                            .966-.168 1.68h6.3q.168.672.168 1.68 0 .966-.168 1.68h-11.76q-.168-.714-.168-1.68 0-1.008.168-1.68h2.1q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68h2.1q-.168-.714-.168-1.68 0-1.008.168-1.68h2.1q-.168-.714-.168-1.68 0-1.008.168-1.68h2.1q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68h-5.88q.168.672.168 1.68 0 .966-.168 1.68h-2.52q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68h1.68q-.168-.714-.168-1.68 0-1.008.168-1.68h8.4q.168.672.168 1.68 0 .966-.168 1.68h1.68q.168.672.168 1.68 0
+	                            .966-.168 1.68.168.672.168 1.68Zm16.797 0q0 .966-.168 1.68h-1.68q.168.672.168 1.68 0 .966-.168 1.68h1.68q.168.672.168 1.68 0
+	                            .966-.168 1.68.168.672.168 1.68 0 .966-.168 1.68h-1.68q.168.672.168 1.68 0 .966-.168 1.68h-8.4q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68h-1.68q-.168-.714-.168-1.68 0-1.008.168-1.68h3.36q.168.672.168 1.68 0 .966-.168 1.68h5.04q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68h-4.2q-.168-.714-.168-1.68 0-1.008.168-1.68h4.2q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68h-5.04q.168.672.168 1.68 0 .966-.168 1.68h-3.36q-.168-.714-.168-1.68
+	                            0-1.008.168-1.68h1.68q-.168-.714-.168-1.68 0-1.008.168-1.68h8.4q.168.672.168 1.68 0 .966-.168 1.68h1.68q.168.672.168 1.68
+	                            0 .966-.168 1.68.168.672.168 1.68Z"/>
+	               </svg> ),
+	category:    'zoom-forms',
+	parent:      [ 'zoom-forms/form' ],
+	supports:    { align: true, html: false },
+	attributes:  {
+		id: {
+			type:      'string',
+			default:   ''
+		},
+		name: {
+			type:      'string',
+			default:   ''
+		},
+		placeholder: {
+			type:      'string',
+			source:    'attribute',
+			attribute: 'placeholder',
+			selector:  'input',
+			default:   ''
+		},
+		required: {
+			type:      'boolean',
+			source:    'attribute',
+			attribute: 'required',
+			selector:  'input',
+			default:   false
+		}
+	},
+	example:     {},
+	edit:        ( props ) => {
+		const { attributes, setAttributes, clientId } = props;
+		const { id, name, placeholder, required } = attributes;
+
+		useEffect( () => {
+			if ( ! id ) {
+				setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+			}
+		}, [] );
+
+		return (
+			<>
+				<InspectorControls>
+					<PanelBody title={ __( 'Options', 'zoom-forms' ) }>
+						<TextControl
+							label={ __( 'Name', 'zoom-forms' ) }
+							value={ name }
+							placeholder={ __( 'e.g. My Email Field', 'zoom-forms' ) }
+							onChange={ ( value ) => setAttributes( { name: value } ) }
+						/>
+
+						<TextControl
+							label={ __( 'Placeholder', 'zoom-forms' ) }
+							value={ placeholder }
+							onChange={ ( value ) => setAttributes( { placeholder: value } ) }
+						/>
+
+						<ToggleControl
+							label={ __( 'Required', 'zoom-forms' ) }
+							checked={ !! required }
+							onChange={ ( value ) => setAttributes( { required: !! value } ) }
+						/>
+					</PanelBody>
+				</InspectorControls>
+
+				<Fragment>
+					<input type="tel" name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
+				</Fragment>
+			</>
+		);
+	},
+	save:        ( { attributes } ) => {
+		const { id, name, placeholder, required } = attributes;
+
+		return (
+			<input type="tel" name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
 		);
 	}
 } );

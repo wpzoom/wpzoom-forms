@@ -1,13 +1,19 @@
 @import '~@wordpress/base-styles/variables';
 @import '~@wordpress/base-styles/colors.native';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
 
 .components-placeholder .components-searchable-select-control__label {
 	display: none;
 }
 
 .components-searchable-select-control__button {
+	@include input-control;
+	align-items: center;
+	justify-content: space-between;
 	width: 100%;
 	min-width: 250px;
+	padding-right: 6px !important;
 }
 
 .components-searchable-select-control__menu {

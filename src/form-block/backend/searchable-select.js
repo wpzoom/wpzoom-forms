@@ -108,7 +108,7 @@ export default function SearchableSelectControl( {
 					'aria-label': label,
 					'aria-labelledby': undefined,
 					className: classnames( 'components-custom-select-control__button', 'components-searchable-select-control__button' ),
-					isSmall: true,
+					isSmall: false,
 				} ) }
 			>
 				<span className="components-searchable-select-control__button-text" title={ itemToString( selectedItem ) }>

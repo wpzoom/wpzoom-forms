@@ -109,24 +109,26 @@ class ZOOM_Forms {
 
 			load_plugin_textdomain( 'zoom-forms', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
-			add_filter( 'allowed_block_types',                          array( $this, 'filter_allowed_block_types' ), 10, 2 );
-			add_filter( 'block_categories',                             array( $this, 'filter_block_categories' ),    10, 2 );
-			add_filter( 'post_row_actions',                             array( $this, 'modify_row_actions' ),         10, 2 );
-			add_filter( 'bulk_actions-edit-wpzf-form',                  array( $this, 'remove_bulk_actions' ),        10 );
-			add_filter( 'bulk_actions-edit-wpzf-submission',            array( $this, 'remove_bulk_actions' ),        10 );
-			add_filter( 'manage_edit-wpzf-submission_columns',          array( $this, 'post_list_columns' ),          10 );
-			add_filter( 'manage_edit-wpzf-submission_sortable_columns', array( $this, 'post_list_sortable_columns' ), 10 );
-			add_filter( 'screen_options_show_screen',                   array( $this, 'remove_screen_options' ),      10, 2 );
-			add_filter( 'views_edit-wpzf-submission',                   array( $this, 'post_list_views' ),            10 );
-			add_filter( 'list_table_primary_column',                    array( $this, 'post_list_primary_column' ),   10, 2 );
-			add_action( 'admin_enqueue_scripts',                        array( $this, 'admin_enqueue_scripts' ),      100 );
-			add_action( 'enqueue_block_editor_assets',                  array( $this, 'register_backend_assets' ),    10 );
-			add_action( 'enqueue_block_assets',                         array( $this, 'register_frontend_assets' ),   10 );
-			add_action( 'manage_wpzf-submission_posts_custom_column',   array( $this, 'post_list_custom_columns' ),   10, 2 );
-			add_action( 'pre_get_posts',                                array( $this, 'sort_custom_column' ),         10 );
-			add_action( 'in_admin_header',                              array( $this, 'remove_meta_boxes' ),          100 );
-			add_action( 'add_meta_boxes_wpzf-submission',               array( $this, 'add_meta_boxes' ),             10 );
-			add_action( 'admin_post_wpzf_submit',                       array( $this, 'action_form_post' ),           10 );
+			add_filter( 'allowed_block_types_all',                      array( $this, 'filter_allowed_block_types' ),        10, 2 );
+			add_filter( 'block_categories_all',                         array( $this, 'filter_block_categories' ),           10, 2 );
+			add_filter( 'post_row_actions',                             array( $this, 'modify_row_actions' ),                10, 2 );
+			add_filter( 'bulk_actions-edit-wpzf-form',                  array( $this, 'remove_bulk_actions' ),               10 );
+			add_filter( 'bulk_actions-edit-wpzf-submission',            array( $this, 'remove_bulk_actions' ),               10 );
+			add_filter( 'manage_edit-wpzf-form_columns',                array( $this, 'post_list_columns_form' ),            10 );
+			add_filter( 'manage_edit-wpzf-submission_columns',          array( $this, 'post_list_columns_submit' ),          10 );
+			add_filter( 'manage_edit-wpzf-submission_sortable_columns', array( $this, 'post_list_sortable_columns_submit' ), 10 );
+			add_filter( 'screen_options_show_screen',                   array( $this, 'remove_screen_options' ),             10, 2 );
+			add_filter( 'views_edit-wpzf-submission',                   array( $this, 'post_list_views' ),                   10 );
+			add_filter( 'list_table_primary_column',                    array( $this, 'post_list_primary_column' ),          10, 2 );
+			add_action( 'admin_enqueue_scripts',                        array( $this, 'admin_enqueue_scripts' ),             100 );
+			add_action( 'enqueue_block_editor_assets',                  array( $this, 'register_backend_assets' ),           10 );
+			add_action( 'enqueue_block_assets',                         array( $this, 'register_frontend_assets' ),          10 );
+			add_action( 'manage_wpzf-form_posts_custom_column',         array( $this, 'post_list_custom_columns_form' ),     10, 2 );
+			add_action( 'manage_wpzf-submission_posts_custom_column',   array( $this, 'post_list_custom_columns_submit' ),   10, 2 );
+			add_action( 'pre_get_posts',                                array( $this, 'sort_custom_column' ),                10 );
+			add_action( 'in_admin_header',                              array( $this, 'remove_meta_boxes' ),                 100 );
+			add_action( 'add_meta_boxes_wpzf-submission',               array( $this, 'add_meta_boxes' ),                    10 );
+			add_action( 'admin_post_wpzf_submit',                       array( $this, 'action_form_post' ),                  10 );
 
 			register_post_type(
 				'wpzf-form',
@@ -254,6 +256,8 @@ class ZOOM_Forms {
 				)
 			);
 
+			add_shortcode( 'wpzf_form', array( $this, 'shortcode_output' ) );
+
 			$form_pto = get_post_type_object( 'wpzf-form' );
 			$form_pto->template = array( array( 'zoom-forms/form' ) );
 
@@ -362,7 +366,7 @@ class ZOOM_Forms {
 	 */
 	public function register_blocks() {
 		$input_blocks = array(
-			'text'     => array(
+			'text-plain'   => array(
 				'id'          => array(
 					'type'    => 'string',
 					'default' => ''
@@ -371,7 +375,7 @@ class ZOOM_Forms {
 					'type'    => 'string',
 					'default' => ''
 				),
-				'type'        => array(
+				'type'        => array( // Text, Number
 					'type'    => 'string',
 					'default' => 'text'
 				),
@@ -384,7 +388,79 @@ class ZOOM_Forms {
 					'default' => false
 				)
 			),
-			'textarea' => array(
+			'text-name'    => array(
+				'id'          => array(
+					'type'    => 'string',
+					'default' => ''
+				),
+				'name'        => array(
+					'type'    => 'string',
+					'default' => ''
+				),
+				'placeholder' => array(
+					'type'    => 'string',
+					'default' => ''
+				),
+				'required'    => array(
+					'type'    => 'boolean',
+					'default' => false
+				)
+			),
+			'text-email'   => array(
+				'id'          => array(
+					'type'    => 'string',
+					'default' => ''
+				),
+				'name'        => array(
+					'type'    => 'string',
+					'default' => ''
+				),
+				'placeholder' => array(
+					'type'    => 'string',
+					'default' => ''
+				),
+				'required'    => array(
+					'type'    => 'boolean',
+					'default' => false
+				)
+			),
+			'text-website' => array(
+				'id'          => array(
+					'type'    => 'string',
+					'default' => ''
+				),
+				'name'        => array(
+					'type'    => 'string',
+					'default' => ''
+				),
+				'placeholder' => array(
+					'type'    => 'string',
+					'default' => ''
+				),
+				'required'    => array(
+					'type'    => 'boolean',
+					'default' => false
+				)
+			),
+			'text-phone'   => array(
+				'id'          => array(
+					'type'    => 'string',
+					'default' => ''
+				),
+				'name'        => array(
+					'type'    => 'string',
+					'default' => ''
+				),
+				'placeholder' => array(
+					'type'    => 'string',
+					'default' => ''
+				),
+				'required'    => array(
+					'type'    => 'boolean',
+					'default' => false
+				)
+			),
+			'textarea'     => array(
 				'id'          => array(
 					'type'    => 'string',
 					'default' => ''
@@ -410,7 +486,7 @@ class ZOOM_Forms {
 					'default' => false
 				)
 			),
-			'select'   => array(
+			'select'       => array(
 				'id'           => array(
 					'type'    => 'string',
 					'default' => ''
@@ -439,7 +515,7 @@ class ZOOM_Forms {
 					'default' => false
 				)
 			),
-			'checkbox' => array(
+			'checkbox'     => array(
 				'id'           => array(
 					'type'    => 'string',
 					'default' => ''
@@ -457,7 +533,7 @@ class ZOOM_Forms {
 					'default' => false
 				)
 			),
-			'radio'    => array(
+			'radio'        => array(
 				'id'           => array(
 					'type'    => 'string',
 					'default' => ''
@@ -482,7 +558,7 @@ class ZOOM_Forms {
 					'default' => false
 				)
 			),
-			'label'    => array(
+			'label'        => array(
 				'id'           => array(
 					'type'    => 'string',
 					'default' => ''
@@ -496,7 +572,7 @@ class ZOOM_Forms {
 					'default' => ''
 				)
 			),
-			'submit'   => array(
+			'submit'       => array(
 				'id'          => array(
 					'type'    => 'string',
 					'default' => ''
@@ -538,7 +614,7 @@ class ZOOM_Forms {
 	 */
 	public function register_form_block() {
 		register_block_type(
-			"zoom-forms/form-block",
+			'zoom-forms/form-block',
 			array(
 				'attributes'    => array(
 					'formId' => array(
@@ -559,16 +635,20 @@ class ZOOM_Forms {
 	 * Filters the allowed Gutenberg block types for a given post.
 	 *
 	 * @access public
-	 * @param  array   $allowed_block_types An array of all the allowed block types.
-	 * @param  WP_Post $post                The post that is currently being rendered.
+	 * @param  array                   $allowed_block_types  An array of all the allowed block types.
+	 * @param  WP_Block_Editor_Context $block_editor_context The current block editor context.
 	 * @return array
 	 * @since  1.0.0
 	 */
-	public function filter_allowed_block_types( $allowed_block_types, $post ) {
-		if ( 'wpzf-form' == $post->post_type ) {
+	public function filter_allowed_block_types( $allowed_block_types, $block_editor_context ) {
+		if ( null !== $block_editor_context->post && 'wpzf-form' == $block_editor_context->post->post_type ) {
 			$allowed_block_types = array(
 				'zoom-forms/form',
-				'zoom-forms/text-field',
+				'zoom-forms/text-plain-field',
+				'zoom-forms/text-name-field',
+				'zoom-forms/text-email-field',
+				'zoom-forms/text-website-field',
+				'zoom-forms/text-phone-field',
 				'zoom-forms/textarea-field',
 				'zoom-forms/select-field',
 				'zoom-forms/checkbox-field',
@@ -608,13 +688,13 @@ class ZOOM_Forms {
 	 * Adds needed categories to the Gutenberg block categories, if not already present.
 	 *
 	 * @access public
-	 * @param  array   $categories Array containing all registered Gutenberg block categories.
-	 * @param  WP_Post $post       A WP_Post object representing the post being loaded.
+	 * @param  array                   $categories           Array containing all registered Gutenberg block categories.
+	 * @param  WP_Block_Editor_Context $block_editor_context The current block editor context.
 	 * @return array
 	 * @since  1.0.0
 	 */
-	public function filter_block_categories( $categories, $post ) {
-		if ( 'wpzf-form' == $post->post_type ) {
+	public function filter_block_categories( $categories, $block_editor_context ) {
+		if ( null !== $block_editor_context->post && 'wpzf-form' == $block_editor_context->post->post_type ) {
 			$category_slugs = wp_list_pluck( $categories, 'slug' );
 
 			if ( ! in_array( 'zoom-forms', $category_slugs, true ) ) {
@@ -699,6 +779,14 @@ class ZOOM_Forms {
 				true
 			);
 
+			wp_localize_script(
+				'zoom-forms-js-backend-formblock',
+				'wpzf_formblock',
+				array(
+					'admin_url' => trailingslashit( admin_url() )
+				)
+			);
+
 			wp_register_style(
 				'zoom-forms-css-backend-formblock',
 				trailingslashit( $this->main_dir_url ) . 'form-block/backend/style.css',
@@ -772,14 +860,31 @@ class ZOOM_Forms {
 	}
 
 	/**
-	 * Changes the columns displayed in the post list for certain post types.
+	 * Changes the columns displayed in the post list for the form custom post type.
 	 *
 	 * @access public
 	 * @param  array  $columns An array of all the columns.
 	 * @return array
 	 * @since  1.0.0
 	 */
-	public function post_list_columns( $columns ) {
+	public function post_list_columns_form( $columns ) {
+		return array(
+			'cb'        => $columns[ 'cb' ],
+			'title'     => __( 'Title', 'zoom-forms' ),
+			'shortcode' => __( 'Shortcode', 'zoom-forms' ),
+			'date'      => $columns[ 'date' ]
+		);
+	}
+
+	/**
+	 * Changes the columns displayed in the post list for the submissions custom post type.
+	 *
+	 * @access public
+	 * @param  array  $columns An array of all the columns.
+	 * @return array
+	 * @since  1.0.0
+	 */
+	public function post_list_columns_submit( $columns ) {
 		return array(
 			'cb'   => $columns[ 'cb' ],
 			'desc' => __( 'Submission', 'zoom-forms' ),
@@ -789,14 +894,14 @@ class ZOOM_Forms {
 	}
 
 	/**
-	 * Changes the sortable columns displayed in the post list for certain post types.
+	 * Changes the sortable columns displayed in the post list for the submissions custom post type.
 	 *
 	 * @access public
 	 * @param  array  $columns An array of all the sortable columns.
 	 * @return array
 	 * @since  1.0.0
 	 */
-	public function post_list_sortable_columns( $columns ) {
+	public function post_list_sortable_columns_submit( $columns ) {
 		$columns[ 'desc' ] = 'wpzf_desc';
 		$columns[ 'form' ] = 'wpzf_form';
 
@@ -804,7 +909,7 @@ class ZOOM_Forms {
 	}
 
 	/**
-	 * Changes the column content displayed in the post list for certain post types.
+	 * Changes the column content displayed in the post list for the form custom post type.
 	 *
 	 * @access public
 	 * @param  string $column  The name of the column to display.
@@ -812,7 +917,22 @@ class ZOOM_Forms {
 	 * @return array
 	 * @since  1.0.0
 	 */
-	public function post_list_custom_columns( $column, $post_id ) {
+	public function post_list_custom_columns_form( $column, $post_id ) {
+		if ( 'shortcode' == $column ) {
+			printf( '<input type="text" value="[wpzf_form id=&quot;%s&quot;]" readonly />', $post_id );
+		}
+	}
+
+	/**
+	 * Changes the column content displayed in the post list for the submissions custom post type.
+	 *
+	 * @access public
+	 * @param  string $column  The name of the column to display.
+	 * @param  int    $post_id The ID of the current post.
+	 * @return array
+	 * @since  1.0.0
+	 */
+	public function post_list_custom_columns_submit( $column, $post_id ) {
 		if ( 'desc' == $column ) {
 			$data = get_post_meta( $post_id, '_wpzf_fields', true );
 			$title = __( '[Unknown]', 'zoom-forms' );
@@ -1048,7 +1168,7 @@ class ZOOM_Forms {
 	 * @return string
 	 * @since  1.0.0
 	 */
-	public function form_block_render( $attributes, $content, $block ) {
+	public function form_block_render( $attributes, $content = '', $block = null ) {
 		global $current_screen;
 
 		$current_screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
@@ -1188,5 +1308,29 @@ class ZOOM_Forms {
 		}
 
 		return $found;
+	}
+
+	/**
+	 * Returns the output for the form shortcode.
+	 *
+	 * @access public
+	 * @param  array|string $atts    Shortcode attributes array or empty string.
+	 * @param  string       $content The shortcode content, or null if not set.
+	 * @param  string       $tag     The shortcode name.
+	 * @return string                The shortcode output.
+	 * @since  1.0.0
+	 */
+	public function shortcode_output( $atts, $content, $tag ) {
+		$id = is_array( $atts ) && array_key_exists( 'id', $atts ) ? intval( $atts['id'] ) : -1;
+		$output = '';
+
+		if ( $id > 0 ) {
+			wp_enqueue_script( 'zoom-forms-js-frontend-formblock' );
+			wp_enqueue_style( 'zoom-forms-css-frontend-formblock' );
+
+			$output = $this->form_block_render( array( 'formId' => $id ) );
+		}
+
+		return $output;
 	}
 }
