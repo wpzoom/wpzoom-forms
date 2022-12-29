@@ -246,7 +246,7 @@ registerBlockType( 'zoom-forms/form', {
 														'id':        'input_label4',
 														'name':      __( 'Message *', 'wpzoom-blocks' ),
 														'forInput':  'input_message',
-														'align':     'left',
+														'align':     'none',
 														'className': 'nomarginright'
 													}
 												],
