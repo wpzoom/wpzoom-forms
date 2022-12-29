@@ -151,173 +151,83 @@ registerBlockType( 'zoom-forms/form', {
 						[
 							'core/group',
 							{
-								'tagName': 'div',
-								'style':   {
-									'color': {
-										'background': '#ffffff'
-									}
-								}
+								'tagName': 'div'
 							},
-							[
-								[
-									'core/columns',
-									{
-										'isStackedOnMobile': true
-									},
-									[
-										[
-											'core/column',
-											{
-												'width': '20%'
-											},
-											[
-												[
-													'core/paragraph',
-													{
-														'align':     'right',
-														'content':   '<strong><sup>*</sup></strong>',
-														'dropCap':   false,
-														'textColor': 'accent',
-														'className': 'wp-block-zoom-forms-required alignright'
-													}
-												],
-												[
-													'zoom-forms/label-field',
-													{
-														'id':        'input_label1',
-														'name':      __( 'Name', 'wpzoom-blocks' ),
-														'forInput':  'input_name',
-														'align':     'right'
-													}
-												]
-											]
-										],
-										[
-											'core/column',
-											{
-												'width': '80%'
-											},
-											[
-												[
-													'zoom-forms/text-name-field',
-													{
-														'id':        'input_name',
-														'name':      __( 'Name', 'wpzoom-blocks' ),
-														'type':      'text',
-														'required':  true,
-														'align':     'left'
-													}
-												]
-											]
-										]
-									]
-								],
-								[
-									'core/columns',
-									{
-										'isStackedOnMobile': true
-									},
-									[
-										[
-											'core/column',
-											{
-												'width': '20%'
-											},
-											[
-												[
-													'core/paragraph',
-													{
-														'align':     'right',
-														'content':   '<strong><sup>*</sup></strong>',
-														'dropCap':   false,
-														'textColor': 'accent',
-														'className': 'wp-block-zoom-forms-required alignright'
-													}
-												],
-												[
-													'zoom-forms/label-field',
-													{
-														'id':        'input_label2',
-														'name':      __( 'Email', 'wpzoom-blocks' ),
-														'forInput':  'input_email',
-														'align':     'right'
-													}
-												]
-											]
-										],
-										[
-											'core/column',
-											{
-												'width': '80%'
-											},
-											[
-												[
-													'zoom-forms/text-email-field',
-													{
-														'id':            'input_email',
-														'name':          __( 'Email', 'wpzoom-blocks' ),
-														'type':          'email',
-														'required':      true,
-														'align':         'left'
-													}
-												]
-											]
-										]
-									]
-								],
-								[
-									'core/columns',
-									{
-										'isStackedOnMobile': true
-									},
-									[
-										[
-											'core/column',
-											{
-												'width': '20%'
-											},
-											[
-												[
-													'core/paragraph',
-													{
-														'align':     'right',
-														'content':   '<strong><sup>*</sup></strong>',
-														'dropCap':   false,
-														'textColor': 'accent',
-														'className': 'wp-block-zoom-forms-required alignright'
-													}
-												],
-												[
-													'zoom-forms/label-field',
-													{
-														'id':        'input_label3',
-														'name':      __( 'Subject', 'wpzoom-blocks' ),
-														'forInput':  'input_subject',
-														'align':     'right'
-													}
-												]
-											]
-										],
-										[
-											'core/column',
-											{
-												'width': '80%'
-											},
-											[
-												[
-													'zoom-forms/text-plain-field',
-													{
-														'id':        'input_subject',
-														'name':      __( 'Subject', 'wpzoom-blocks' ),
-														'type':      'text',
-														'required':  true,
-														'align':     'left'
-													}
-												]
-											]
-										]
-									]
-								],
+
+                            [
+                                [
+                                    'core/columns',
+                                    {
+                                        'isStackedOnMobile': true
+                                    },
+                                    [
+                                        [
+                                            'core/column',
+                                            {
+                                                'width': '60%'
+                                            },
+                                            [
+                								[
+                									'zoom-forms/label-field',
+                									{
+                										'id':        'input_label1',
+                										'name':      __( 'Name *', 'wpzoom-blocks' ),
+                										'forInput':  'input_name',
+                										'align':     'none'
+                									}
+                								],
+                                                [
+                									'zoom-forms/text-name-field',
+                									{
+                										'id':        'input_name',
+                										'name':      __( 'Name', 'wpzoom-blocks' ),
+                										'type':      'text',
+                										'required':  true,
+                										'align':     'none'
+                									}
+                								],
+                								[
+                									'zoom-forms/label-field',
+                									{
+                										'id':        'input_label2',
+                										'name':      __( 'Email *', 'wpzoom-blocks' ),
+                										'forInput':  'input_email',
+                										'align':     'none'
+                									}
+                								],
+                								[
+                									'zoom-forms/text-email-field',
+                									{
+                										'id':            'input_email',
+                										'name':          __( 'Email', 'wpzoom-blocks' ),
+                										'type':          'email',
+                										'required':      true,
+                										'align':         'none'
+                									}
+                								],
+                								[
+                									'zoom-forms/label-field',
+                									{
+                										'id':        'input_label3',
+                										'name':      __( 'Subject *', 'wpzoom-blocks' ),
+                										'forInput':  'input_subject',
+                										'align':     'none'
+                									}
+                								],
+                								[
+                									'zoom-forms/text-plain-field',
+                									{
+                										'id':        'input_subject',
+                										'name':      __( 'Subject', 'wpzoom-blocks' ),
+                										'type':      'text',
+                										'required':  true,
+                										'align':     'none'
+                									}
+                								]
+                                            ]
+                                        ]
+                                    ]
+                                ],
 								[
 									'core/columns',
 									{
@@ -334,19 +244,10 @@ registerBlockType( 'zoom-forms/form', {
 													'zoom-forms/label-field',
 													{
 														'id':        'input_label4',
-														'name':      __( 'Message', 'wpzoom-blocks' ),
+														'name':      __( 'Message *', 'wpzoom-blocks' ),
 														'forInput':  'input_message',
 														'align':     'left',
 														'className': 'nomarginright'
-													}
-												],
-												[
-													'core/paragraph',
-													{
-														'content':   '<strong><sup>*</sup></strong>',
-														'dropCap':   false,
-														'textColor': 'accent',
-														'className': 'wp-block-zoom-forms-required alignleft'
 													}
 												],
 												[
