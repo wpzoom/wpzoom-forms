@@ -1223,22 +1223,133 @@ class ZOOM_Forms {
 				$form_email = trim( get_post_meta( $form_id, '_form_email', true ) );
 
 				if ( 'email' == $form_method && filter_var( $form_email, FILTER_VALIDATE_EMAIL ) ) {
-					$email_body = '';
+					$email_body = '<html>
+                                <head>
+                                    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+                                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                                    <meta name="viewport" content="width=device-width">
+
+                                    <style type="text/css">
+                                        body {
+                                            -ms-text-size-adjust: 100%; width: 100% !important; height: 100%; line-height: 1.6;
+                                            font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+                                        }
+                                        a { color: #4477bd; }
+                                        a:hover {
+                                        color: #e2911a !important;
+                                        }
+                                        a:active {
+                                        color: #0d3d62 !important;
+                                        }
+                                        p{
+                                            margin:10px 0;
+                                            padding:0;
+                                            font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+                                        }
+                                        table{
+                                            border-collapse:collapse;
+                                        }
+                                        h1,h2,h3,h4,h5,h6{
+                                            display:block;
+                                            margin:0;
+                                            padding:0;
+                                        }
+                                        img,a img{
+                                            border:0;
+                                            height:auto;
+                                            outline:none;
+                                            text-decoration:none;
+                                        }
+                                        body,#bodyTable,#bodyCell{
+                                            height:100%;
+                                            margin:0;
+                                            padding:0;
+                                            width:100%;
+                                        }
+                                        #outlook a{
+                                            padding:0;
+                                        }
+                                        img{
+                                            -ms-interpolation-mode:bicubic;
+                                        }
+                                        table{
+                                            mso-table-lspace:0pt;
+                                            mso-table-rspace:0pt;
+                                        }
+                                        p,a,li,td,blockquote{
+                                            mso-line-height-rule:exactly;
+                                        }
+                                        a[href^=tel],a[href^=sms]{
+                                            color:inherit;
+                                            cursor:default;
+                                            text-decoration:none;
+                                        }
+                                        p,a,li,td,body,table,blockquote{
+                                            -ms-text-size-adjust:100%;
+                                            -webkit-text-size-adjust:100%;
+                                        }
+                                        a[x-apple-data-detectors]{
+                                            color:inherit !important;
+                                            text-decoration:none !important;
+                                            font-size:inherit !important;
+                                            font-family:inherit !important;
+                                            font-weight:inherit !important;
+                                            line-height:inherit !important;
+                                        }
+                                        @media only screen and (max-width: 480px){
+                                            body,table,td,p,a,li,blockquote{
+                                                -webkit-text-size-adjust:none !important;
+                                            }
+                                        }
+                                        @media only screen and (max-width: 480px){
+                                            body{
+                                                width:100% !important;
+                                                min-width:100% !important;
+                                            }
+                                        }
+                                    </style>
+                                </head>
+                                <body style="height: 100%;margin: 0;padding: 0;width: 100%;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
+                                    <div style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5;max-width:600px;overflow:visible;display:block;margin:0">
+                                        <table width="100%" cellpadding="0" cellspacing="0" style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
+                                        <tbody>
+                                        <tr style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
+                                            <td style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5;vertical-align:top;color:#222222;padding:25px" valign="top">';
 
 					foreach ( $_REQUEST as $key => $value ) {
 						if ( strpos( $key, 'wpzf_' ) === 0 ) {
 							$id = substr( $key, 5 );
 							$name = isset( $input_blocks[ $id ] ) ? $input_blocks[ $id ] : __( 'Unnamed Input', 'zoom-forms' );
 
-							$email_body .= '<strong>' . $name . ':</strong><br/>' . esc_html( $value ) . '<br/><br/>';
+                            $email_body .= '<strong>' . $name . ':</strong><br/>' . esc_html( $value ) . '<br/><br/>';
+
 						}
 					}
+
+                    $email_body .= '</td>
+                                </tr>
+                                </tbody></table>
+                            </div>
+
+                            <div style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5;max-width:600px;overflow:visible;display:block;margin:0">
+                                <table width="100%" cellpadding="0" cellspacing="0" style="font-family:&quot;Helvetica Neue&quot;,&quot;Helvetica&quot;,Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
+                                    <tbody><tr style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
+                                    <td style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5;vertical-align:top;width:100%;clear:both;color:#777;border-top-width:1px;border-top-color:#d0d0d0;border-top-style:solid;padding:25px" valign="top">
+                                        <p>Sent from <a href="'.get_bloginfo( 'url' ).'">'.get_bloginfo( 'name' ).'</a> using the <strong>ZOOM Forms</strong> plugin.</p>
+                                        <br style="font-family:&quot;Helvetica Neue&quot;,&quot;Helvetica&quot;,Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
+                                    </td>
+                                    </tr>
+                                </tbody></table>
+                            </div>
+                        </body>
+                    </html>';
 
 					$success = wp_mail(
 						$form_email,
 						sprintf( __( 'New Form Submission From %s', 'zoom-forms' ), esc_html( get_bloginfo( 'name' ) ) ),
 						$email_body,
-						array( 'Content-Type: text/html; charset=UTF-8' )
+                        sprintf( "Content-Type: text/html; charset=UTF-8\r\nFrom: %s <%s>\r\nReply-To: %s\r\n", get_bloginfo( 'name' ), esc_html( $form_email ), esc_html( $form_email ) ) /*TODO: change Reply-To email */
+
 					);
 				} elseif ( 'db' == $form_method ) {
 					$content = array(
