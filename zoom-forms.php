@@ -609,7 +609,7 @@ class ZOOM_Forms {
 			register_block_type(
 				"zoom-forms/$block-field",
 				array(
-					'parent'        => array( 'zoom-forms/form' ),
+					'ancestor'      => array( 'zoom-forms/form' ),
 					'attributes'    => $attributes,
 					'script'        => 'zoom-forms-js-frontend-formblock',
 					'style'         => 'zoom-forms-css-frontend-formblock',

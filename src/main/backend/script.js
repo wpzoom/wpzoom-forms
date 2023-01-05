@@ -339,7 +339,7 @@ registerBlockType( 'zoom-forms/text-plain-field', {
 	                            C95,31.119,93.881,30,92.5,30z M90,65H10V35h80V65z"/>
 	               </svg> ),
 	category:    'zoom-forms',
-	parent:      [ 'zoom-forms/form' ],
+	ancestor:    [ 'zoom-forms/form' ],
 	supports:    { align: true, html: false },
 	attributes:  {
 		id: {
@@ -496,7 +496,7 @@ registerBlockType( 'zoom-forms/text-name-field', {
 	                            1.68q-.168-.714-.168-1.68 0-1.008.168-1.68h-5.46q.168.672.168 1.68 0 .966-.168 1.68h5.46Z"/>
 	               </svg> ),
 	category:    'zoom-forms',
-	parent:      [ 'zoom-forms/form' ],
+	ancestor:    [ 'zoom-forms/form' ],
 	supports:    { align: true, html: false },
 	attributes:  {
 		id: {
@@ -612,7 +612,7 @@ registerBlockType( 'zoom-forms/text-email-field', {
 	                            0-.64.053-1.173.16-1.6h-2.8c.106.427.16.96.16 1.6 0 .614-.054 1.147-.16 1.6.106.427.16.96.16 1.6 0 .614-.054 1.147-.16 1.6h2.8Z"/>
 	               </svg> ),
 	category:    'zoom-forms',
-	parent:      [ 'zoom-forms/form' ],
+	ancestor:    [ 'zoom-forms/form' ],
 	supports:    { align: true, html: false },
 	attributes:  {
 		id: {
@@ -756,7 +756,7 @@ registerBlockType( 'zoom-forms/text-website-field', {
 	                            0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68-.168-.714-.168-1.68 0-1.008.168-1.68h3.36q.168.672.168 1.68Z"/>
 	               </svg> ),
 	category:    'zoom-forms',
-	parent:      [ 'zoom-forms/form' ],
+	ancestor:    [ 'zoom-forms/form' ],
 	supports:    { align: true, html: false },
 	attributes:  {
 		id: {
@@ -876,7 +876,7 @@ registerBlockType( 'zoom-forms/text-phone-field', {
 	                            0 .966-.168 1.68.168.672.168 1.68Z"/>
 	               </svg> ),
 	category:    'zoom-forms',
-	parent:      [ 'zoom-forms/form' ],
+	ancestor:    [ 'zoom-forms/form' ],
 	supports:    { align: true, html: false },
 	attributes:  {
 		id: {
@@ -983,7 +983,7 @@ registerBlockType( 'zoom-forms/textarea-field', {
 	                            c-0.488-0.488-1.279-0.488-1.768,0l-5,5c-0.357,0.357-0.464,0.895-0.271,1.362C71.539,22.195,71.995,22.5,72.5,22.5z"/>
 	               </svg> ),
 	category:    'zoom-forms',
-	parent:      [ 'zoom-forms/form' ],
+	ancestor:    [ 'zoom-forms/form' ],
 	supports:    { align: true, html: false },
 	attributes:  {
 		id: {
@@ -1118,7 +1118,7 @@ registerBlockType( 'zoom-forms/select-field', {
 	                            c-0.193-0.467-0.649-0.771-1.155-0.771h-10c-0.505,0-0.961,0.305-1.155,0.771c-0.193,0.467-0.086,1.005,0.271,1.362L76.616,53.384z"/>
 	               </svg> ),
 	category:    'zoom-forms',
-	parent:      [ 'zoom-forms/form' ],
+	ancestor:    [ 'zoom-forms/form' ],
 	supports:    { align: true, html: false },
 	attributes:  {
 		id: {
@@ -1301,7 +1301,7 @@ registerBlockType( 'zoom-forms/checkbox-field', {
 	                            C59.542,41.631,57.958,41.631,56.982,42.607z"/>
 	               </svg> ),
 	category:    'zoom-forms',
-	parent:      [ 'zoom-forms/form' ],
+	ancestor:    [ 'zoom-forms/form' ],
 	supports:    { align: true, html: false },
 	attributes:  {
 		id: {
@@ -1410,7 +1410,7 @@ registerBlockType( 'zoom-forms/radio-field', {
 	                   <path d="M92.5,77.5H45c-1.381,0-2.5,1.119-2.5,2.5s1.119,2.5,2.5,2.5h47.5c1.381,0,2.5-1.119,2.5-2.5S93.881,77.5,92.5,77.5z"/>
 	               </svg> ),
 	category:    'zoom-forms',
-	parent:      [ 'zoom-forms/form' ],
+	ancestor:    [ 'zoom-forms/form' ],
 	supports:    { align: true, html: false },
 	attributes:  {
 		id: {
@@ -1583,7 +1583,7 @@ registerBlockType( 'zoom-forms/label-field', {
 	                            1,0,0,0,0-1.41L9.64,11a1,1,0,0,0-1.41,1.41L16,20.24a1,1,0,0,0,1.41,0Z"/>
 	               </svg> ),
 	category:    'zoom-forms',
-	parent:      [ 'zoom-forms/form' ],
+	ancestor:    [ 'zoom-forms/form' ],
 	supports:    { align: true, html: false },
 	attributes:  {
 		id: {
@@ -1677,7 +1677,7 @@ registerBlockType( 'zoom-forms/label-field', {
 						placeholder={ __( 'Label', 'zoom-forms' ) }
 						value={ name }
 						htmlFor={ forInput }
-						onChange={ value => setAttributes( { name: !! value } ) }
+						onChange={ value => setAttributes( { name: value } ) }
 						data-required={ !! required }
 						{ ...blockProps }
 					/>
@@ -1726,7 +1726,7 @@ registerBlockType( 'zoom-forms/submit-field', {
 	                            h0.631c2.721,0,4.926-2.206,4.926-4.925v-19.7C88.482,36.154,86.277,33.948,83.559,33.948z"/>
 	               </svg> ),
 	category:    'zoom-forms',
-	parent:      [ 'zoom-forms/form' ],
+	ancestor:    [ 'zoom-forms/form' ],
 	supports:    { align: true, html: false },
 	attributes:  {
 		id: {
