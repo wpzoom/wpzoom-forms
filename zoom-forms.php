@@ -4,7 +4,7 @@
  *
  * @package   ZOOM_Forms
  * @author    WPZOOM
- * @copyright 2020 WPZOOM
+ * @copyright 2022 WPZOOM
  * @license   GPL-2.0-or-later
  *
  * @wordpress-plugin
@@ -103,9 +103,9 @@ class ZOOM_Forms {
 	public function init() {
 		if ( false === $this->initialized ) {
 			$this->plugin_dir_path = plugin_dir_path( __FILE__ );
-			$this->plugin_dir_url = plugin_dir_url( __FILE__ );
-			$this->main_dir_path = trailingslashit( $this->plugin_dir_path . 'build' );
-			$this->main_dir_url = trailingslashit( $this->plugin_dir_url . 'build' );
+			$this->plugin_dir_url  = plugin_dir_url( __FILE__ );
+			$this->main_dir_path   = trailingslashit( $this->plugin_dir_path . 'build' );
+			$this->main_dir_url    = trailingslashit( $this->plugin_dir_url . 'build' );
 
 			load_plugin_textdomain( 'zoom-forms', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
@@ -258,7 +258,7 @@ class ZOOM_Forms {
 
 			add_shortcode( 'wpzf_form', array( $this, 'shortcode_output' ) );
 
-			$form_pto = get_post_type_object( 'wpzf-form' );
+			$form_pto           = get_post_type_object( 'wpzf-form' );
 			$form_pto->template = array( array( 'zoom-forms/form' ) );
 
 			if ( $this->is_post_type( 'wpzf-form' ) ) {
@@ -298,19 +298,18 @@ class ZOOM_Forms {
 	public function forms_display() {
 		global $wp_post_statuses;
 
-		$publish = $wp_post_statuses[ 'publish' ];
+		$publish                          = $wp_post_statuses['publish'];
+		$publish->label                   = __( 'Saved', 'zoom-forms' );
+		$publish->label_count[0]          = __( 'Saved <span class="count">(%s)</span>', 'zoom-forms' );
+		$publish->label_count[1]          = __( 'Saved <span class="count">(%s)</span>', 'zoom-forms' );
+		$publish->label_count['singular'] = __( 'Saved <span class="count">(%s)</span>', 'zoom-forms' );
+		$publish->label_count['plural']   = __( 'Saved <span class="count">(%s)</span>', 'zoom-forms' );
 
-		$publish->label                     = __( 'Saved', 'zoom-forms' );
-		$publish->label_count[ 0 ]          = __( 'Saved <span class="count">(%s)</span>', 'zoom-forms' );
-		$publish->label_count[ 1 ]          = __( 'Saved <span class="count">(%s)</span>', 'zoom-forms' );
-		$publish->label_count[ 'singular' ] = __( 'Saved <span class="count">(%s)</span>', 'zoom-forms' );
-		$publish->label_count[ 'plural' ]   = __( 'Saved <span class="count">(%s)</span>', 'zoom-forms' );
-
-		$wp_post_statuses[ 'publish' ] = $publish;
+		$wp_post_statuses['publish']      = $publish;
 
 		$wp_post_statuses = array_diff_key(
 			$wp_post_statuses,
-			array_flip( [
+			array_flip( array(
 				'future',
 				'pending',
 				'private',
@@ -318,7 +317,7 @@ class ZOOM_Forms {
 				'request-confirmed',
 				'request-failed',
 				'request-completed'
-			] )
+			) )
 		);
 
 		add_filter( 'post_date_column_status', function() { return __( 'Last Modified', 'zoom-forms' ); } );
@@ -386,6 +385,10 @@ class ZOOM_Forms {
 				'required'    => array(
 					'type'    => 'boolean',
 					'default' => false
+				),
+				'subject'     => array(
+					'type'    => 'boolean',
+					'default' => false
 				)
 			),
 			'text-name'    => array(
@@ -420,6 +423,10 @@ class ZOOM_Forms {
 					'default' => ''
 				),
 				'required'    => array(
+					'type'    => 'boolean',
+					'default' => false
+				),
+				'replyto'     => array(
 					'type'    => 'boolean',
 					'default' => false
 				)
@@ -570,6 +577,10 @@ class ZOOM_Forms {
 				'forInput'     => array(
 					'type'    => 'string',
 					'default' => ''
+				),
+				'required'     => array(
+					'type'    => 'boolean',
+					'default' => false
 				)
 			),
 			'submit'       => array(
@@ -587,6 +598,8 @@ class ZOOM_Forms {
 		register_block_type(
 			'zoom-forms/form',
 			array(
+				'script'        => 'zoom-forms-js-frontend-formblock',
+				'style'         => 'zoom-forms-css-frontend-formblock',
 				'editor_script' => 'zoom-forms-js-backend-main',
 				'editor_style'  => 'zoom-forms-css-backend-main'
 			)
@@ -598,6 +611,8 @@ class ZOOM_Forms {
 				array(
 					'parent'        => array( 'zoom-forms/form' ),
 					'attributes'    => $attributes,
+					'script'        => 'zoom-forms-js-frontend-formblock',
+					'style'         => 'zoom-forms-css-frontend-formblock',
 					'editor_script' => 'zoom-forms-js-backend-main',
 					'editor_style'  => 'zoom-forms-css-backend-main'
 				)
@@ -831,12 +846,12 @@ class ZOOM_Forms {
 	 */
 	public function modify_row_actions( $actions, $post ) {
 		if ( 'wpzf-form' == $post->post_type || 'wpzf-submission' == $post->post_type ) {
-			if ( 'wpzf-submission' == $post->post_type && isset( $actions[ 'edit' ] ) ) {
-				$actions[ 'edit' ] = preg_replace( '/\<a([^>]+)\>(.+)\<\/a\>/i', '<a$1>' . __( 'View', 'zoom-forms' ) . '</a>', $actions[ 'edit' ] );
+			if ( 'wpzf-submission' == $post->post_type && isset( $actions['edit'] ) ) {
+				$actions['edit'] = preg_replace( '/\<a([^>]+)\>(.+)\<\/a\>/i', '<a$1>' . __( 'View', 'zoom-forms' ) . '</a>', $actions['edit'] );
 			}
 
-			if ( isset( $actions[ 'inline hide-if-no-js' ] ) ) {
-				unset( $actions[ 'inline hide-if-no-js' ] );
+			if ( isset( $actions['inline hide-if-no-js'] ) ) {
+				unset( $actions['inline hide-if-no-js'] );
 			}
 		}
 
@@ -852,8 +867,8 @@ class ZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function remove_bulk_actions( $actions ) {
-		if ( isset( $actions[ 'edit' ] ) ) {
-			unset( $actions[ 'edit' ] );
+		if ( isset( $actions['edit'] ) ) {
+			unset( $actions['edit'] );
 		}
 
 		return $actions;
@@ -869,10 +884,10 @@ class ZOOM_Forms {
 	 */
 	public function post_list_columns_form( $columns ) {
 		return array(
-			'cb'        => $columns[ 'cb' ],
+			'cb'        => $columns['cb'],
 			'title'     => __( 'Title', 'zoom-forms' ),
 			'shortcode' => __( 'Shortcode', 'zoom-forms' ),
-			'date'      => $columns[ 'date' ]
+			'date'      => $columns['date']
 		);
 	}
 
@@ -886,10 +901,10 @@ class ZOOM_Forms {
 	 */
 	public function post_list_columns_submit( $columns ) {
 		return array(
-			'cb'   => $columns[ 'cb' ],
+			'cb'   => $columns['cb'],
 			'desc' => __( 'Submission', 'zoom-forms' ),
 			'form' => __( 'Form', 'zoom-forms' ),
-			'date' => $columns[ 'date' ]
+			'date' => $columns['date']
 		);
 	}
 
@@ -902,8 +917,8 @@ class ZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function post_list_sortable_columns_submit( $columns ) {
-		$columns[ 'desc' ] = 'wpzf_desc';
-		$columns[ 'form' ] = 'wpzf_form';
+		$columns['desc'] = 'wpzf_desc';
+		$columns['form'] = 'wpzf_form';
 
 		return $columns;
 	}
@@ -1028,7 +1043,7 @@ class ZOOM_Forms {
 					'side'     => array(),
 					'normal'   => array(
 						'high' => array(
-							'wpzf-submission-mb' => $wp_meta_boxes[ 'wpzf-submission' ][ 'normal' ][ 'high' ][ 'wpzf-submission-mb' ]
+							'wpzf-submission-mb' => $wp_meta_boxes['wpzf-submission']['normal']['high']['wpzf-submission-mb']
 						)
 					)
 				)
@@ -1060,8 +1075,8 @@ class ZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function post_list_views( $views ) {
-		if ( isset( $views[ 'publish' ] ) ) {
-			unset( $views[ 'publish' ] );
+		if ( isset( $views['publish'] ) ) {
+			unset( $views['publish'] );
 		}
 
 		return $views;
@@ -1135,17 +1150,17 @@ class ZOOM_Forms {
 		$typenow = '';
 
 		if ( is_admin() && current_user_can( 'edit_posts' ) ) {
-			if ( isset( $_REQUEST[ 'post_type' ] ) && post_type_exists( $_REQUEST[ 'post_type' ] ) ) {
-				$typenow = $_REQUEST[ 'post_type' ];
+			if ( isset( $_REQUEST['post_type'] ) && post_type_exists( $_REQUEST['post_type'] ) ) {
+				$typenow = $_REQUEST['post_type'];
 			} else {
 				$post_id = -1;
 
-				if ( isset( $_GET[ 'post' ] ) && isset( $_POST[ 'post_ID' ] ) && (int) $_GET[ 'post' ] !== (int) $_POST[ 'post_ID' ] ) {
+				if ( isset( $_GET['post'] ) && isset( $_POST['post_ID'] ) && (int) $_GET['post'] !== (int) $_POST['post_ID'] ) {
 					// Do nothing
-				} elseif ( isset( $_GET[ 'post' ] ) ) {
-					$post_id = (int) $_GET[ 'post' ];
-				} elseif ( isset( $_POST[ 'post_ID' ] ) ) {
-					$post_id = (int) $_POST[ 'post_ID' ];
+				} elseif ( isset( $_GET['post'] ) ) {
+					$post_id = (int) $_GET['post'];
+				} elseif ( isset( $_POST['post_ID'] ) ) {
+					$post_id = (int) $_POST['post_ID'];
 				}
 
 				if ( $post_id > -1 ) {
@@ -1175,7 +1190,7 @@ class ZOOM_Forms {
 
 		if ( is_admin() || ( ! is_null( $current_screen ) && $current_screen->is_block_editor() ) ) return '';
 
-		return sprintf(
+		$content = sprintf(
 			'<!-- ZOOM Forms Start -->
 			<form id="wpzf-%2$s" method="post" action="%1$s" class="zoom-forms_form">
 			<input type="hidden" name="action" value="wpzf_submit" />
@@ -1186,20 +1201,33 @@ class ZOOM_Forms {
 			</form>
 			<!-- ZOOM Forms End -->',
 			admin_url( 'admin-post.php' ),
-			intval( $attributes[ 'formId' ] ),
+			intval( $attributes['formId'] ),
 			wp_nonce_field( 'wpzf_submit', '_wpnonce', true, false ),
-			( isset( $_GET[ 'success' ] )
-				? '<div class="notice ' . ( '1' == $_GET[ 'success' ] ? 'success' : 'error' ) . '"><p>' .
-				  ( '1' == $_GET[ 'success' ] ? __( 'Submitted successfully!', 'zoom-forms' ) : __( 'Submission failed!', 'zoom-forms' ) ) .
+			( isset( $_GET['success'] )
+				? '<div class="notice ' . ( '1' == $_GET['success'] ? 'success' : 'error' ) . '"><p>' .
+				  ( '1' == $_GET['success'] ? __( 'Submitted successfully!', 'zoom-forms' ) : __( 'Submission failed!', 'zoom-forms' ) ) .
 				  '</p></div>'
 				: ''
 			),
 			preg_replace(
 				array( '/<!--(.*)-->/Uis', '/<(input|textarea|select)(.*)name="([^"]+)"/Uis' ),
 				array( '', '<$1$2name="wpzf_$3"' ),
-				get_post_field( 'post_content', intval( $attributes[ 'formId' ] ), 'display' )
+				get_post_field( 'post_content', intval( $attributes['formId'] ), 'display' )
 			)
 		);
+
+		preg_match( '/<input(?:.*)name="([^"]+)"(?:.*)data-replyto="true"/is', $content, $match1 );
+		preg_match( '/<input(?:.*)name="([^"]+)"(?:.*)data-subject="true"/is', $content, $match2 );
+
+		if ( ! empty( $match1 ) && is_array( $match1 ) && isset( $match1[1] ) ) {
+			$content = preg_replace( '/<\/form>/is', '<input type="hidden" name="wpzf_replyto" value="' . $match1[1] . '" /></form>', $content );
+		}
+
+		if ( ! empty( $match2 ) && is_array( $match2 ) && isset( $match2[1] ) ) {
+			$content = preg_replace( '/<\/form>/is', '<input type="hidden" name="wpzf_subject" value="' . $match2[1] . '" /></form>', $content );
+		}
+
+		return $content;
 	}
 
 	/**
@@ -1211,146 +1239,164 @@ class ZOOM_Forms {
 	 */
 	public function action_form_post() {
 		$success = false;
-		$url = isset( $_POST[ '_wp_http_referer' ] ) ? sanitize_text_field( wp_unslash( $_POST[ '_wp_http_referer' ] ) ) : home_url();
+		$url     = isset( $_POST['_wp_http_referer'] ) ? sanitize_text_field( wp_unslash( $_POST['_wp_http_referer'] ) ) : home_url();
 
-		if ( isset( $_POST[ '_wpnonce' ] ) && wp_verify_nonce( $_POST[ '_wpnonce' ], 'wpzf_submit' ) ) {
-			$form_id = isset( $_POST[ 'form_id' ] ) ? intval( $_POST[ 'form_id' ] ) : -1;
-			$blocks = parse_blocks( $form_id > -1 ? get_post_field( 'post_content', $form_id, 'raw' ) : '' );
+		if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'wpzf_submit' ) ) {
+			$form_id = isset( $_POST['form_id'] ) ? intval( $_POST['form_id'] ) : -1;
+			$blocks  = parse_blocks( $form_id > -1 ? get_post_field( 'post_content', $form_id, 'raw' ) : '' );
 
 			if ( count( $blocks ) > 0 ) {
-				$input_blocks = $this->get_input_blocks( $blocks );
-				$form_method = get_post_meta( $form_id, '_form_method', true ) ?: 'email';
-				$form_email = trim( get_post_meta( $form_id, '_form_email', true ) );
+				$input_blocks   = $this->get_input_blocks( $blocks );
+				$form_method    = get_post_meta( $form_id, '_form_method', true ) ?: 'email';
+				$form_email     = get_post_meta( $form_id, '_form_email', true );
+				$fallback_email = trim( get_option( 'admin_email' ) );
+				$sendto         = false !== $form_email && ! empty( $form_email ) && filter_var( $form_email, FILTER_VALIDATE_EMAIL ) ? $form_email : $fallback_email;
 
-				if ( 'email' == $form_method && filter_var( $form_email, FILTER_VALIDATE_EMAIL ) ) {
+				if ( 'email' == $form_method ) {
 					$email_body = '<html>
-                                <head>
-                                    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-                                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                                    <meta name="viewport" content="width=device-width">
+						<head>
+							<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+							<meta http-equiv="X-UA-Compatible" content="IE=edge">
+							<meta name="viewport" content="width=device-width">
 
-                                    <style type="text/css">
-                                        body {
-                                            -ms-text-size-adjust: 100%; width: 100% !important; height: 100%; line-height: 1.6;
-                                            font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
-                                        }
-                                        a { color: #4477bd; }
-                                        a:hover {
-                                        color: #e2911a !important;
-                                        }
-                                        a:active {
-                                        color: #0d3d62 !important;
-                                        }
-                                        p{
-                                            margin:10px 0;
-                                            padding:0;
-                                            font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
-                                        }
-                                        table{
-                                            border-collapse:collapse;
-                                        }
-                                        h1,h2,h3,h4,h5,h6{
-                                            display:block;
-                                            margin:0;
-                                            padding:0;
-                                        }
-                                        img,a img{
-                                            border:0;
-                                            height:auto;
-                                            outline:none;
-                                            text-decoration:none;
-                                        }
-                                        body,#bodyTable,#bodyCell{
-                                            height:100%;
-                                            margin:0;
-                                            padding:0;
-                                            width:100%;
-                                        }
-                                        #outlook a{
-                                            padding:0;
-                                        }
-                                        img{
-                                            -ms-interpolation-mode:bicubic;
-                                        }
-                                        table{
-                                            mso-table-lspace:0pt;
-                                            mso-table-rspace:0pt;
-                                        }
-                                        p,a,li,td,blockquote{
-                                            mso-line-height-rule:exactly;
-                                        }
-                                        a[href^=tel],a[href^=sms]{
-                                            color:inherit;
-                                            cursor:default;
-                                            text-decoration:none;
-                                        }
-                                        p,a,li,td,body,table,blockquote{
-                                            -ms-text-size-adjust:100%;
-                                            -webkit-text-size-adjust:100%;
-                                        }
-                                        a[x-apple-data-detectors]{
-                                            color:inherit !important;
-                                            text-decoration:none !important;
-                                            font-size:inherit !important;
-                                            font-family:inherit !important;
-                                            font-weight:inherit !important;
-                                            line-height:inherit !important;
-                                        }
-                                        @media only screen and (max-width: 480px){
-                                            body,table,td,p,a,li,blockquote{
-                                                -webkit-text-size-adjust:none !important;
-                                            }
-                                        }
-                                        @media only screen and (max-width: 480px){
-                                            body{
-                                                width:100% !important;
-                                                min-width:100% !important;
-                                            }
-                                        }
-                                    </style>
-                                </head>
-                                <body style="height: 100%;margin: 0;padding: 0;width: 100%;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
-                                    <div style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5;max-width:600px;overflow:visible;display:block;margin:0">
-                                        <table width="100%" cellpadding="0" cellspacing="0" style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
-                                        <tbody>
-                                        <tr style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
-                                            <td style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5;vertical-align:top;color:#222222;padding:25px" valign="top">';
+							<style type="text/css">
+								body {
+									-ms-text-size-adjust: 100%; width: 100% !important; height: 100%; line-height: 1.6;
+									font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+								}
+								a { color: #4477bd; }
+								a:hover {
+								color: #e2911a !important;
+								}
+								a:active {
+								color: #0d3d62 !important;
+								}
+								p{
+									margin:10px 0;
+									padding:0;
+									font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+								}
+								table{
+									border-collapse:collapse;
+								}
+								h1,h2,h3,h4,h5,h6{
+									display:block;
+									margin:0;
+									padding:0;
+								}
+								img,a img{
+									border:0;
+									height:auto;
+									outline:none;
+									text-decoration:none;
+								}
+								body,#bodyTable,#bodyCell{
+									height:100%;
+									margin:0;
+									padding:0;
+									width:100%;
+								}
+								#outlook a{
+									padding:0;
+								}
+								img{
+									-ms-interpolation-mode:bicubic;
+								}
+								table{
+									mso-table-lspace:0pt;
+									mso-table-rspace:0pt;
+								}
+								p,a,li,td,blockquote{
+									mso-line-height-rule:exactly;
+								}
+								a[href^=tel],a[href^=sms]{
+									color:inherit;
+									cursor:default;
+									text-decoration:none;
+								}
+								p,a,li,td,body,table,blockquote{
+									-ms-text-size-adjust:100%;
+									-webkit-text-size-adjust:100%;
+								}
+								a[x-apple-data-detectors]{
+									color:inherit !important;
+									text-decoration:none !important;
+									font-size:inherit !important;
+									font-family:inherit !important;
+									font-weight:inherit !important;
+									line-height:inherit !important;
+								}
+								@media only screen and (max-width: 480px){
+									body,table,td,p,a,li,blockquote{
+										-webkit-text-size-adjust:none !important;
+									}
+								}
+								@media only screen and (max-width: 480px){
+									body{
+										width:100% !important;
+										min-width:100% !important;
+									}
+								}
+							</style>
+						</head>
+						<body style="height: 100%;margin: 0;padding: 0;width: 100%;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
+							<div style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5;max-width:600px;overflow:visible;display:block;margin:0">
+								<table width="100%" cellpadding="0" cellspacing="0" style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
+								<tbody>
+								<tr style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
+									<td style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5;vertical-align:top;color:#222222;padding:25px" valign="top">';
+					$replyto = '';
+					$sbj = '';
 
 					foreach ( $_REQUEST as $key => $value ) {
 						if ( strpos( $key, 'wpzf_' ) === 0 ) {
 							$id = substr( $key, 5 );
 							$name = isset( $input_blocks[ $id ] ) ? $input_blocks[ $id ] : __( 'Unnamed Input', 'zoom-forms' );
 
-                            $email_body .= '<strong>' . $name . ':</strong><br/>' . esc_html( $value ) . '<br/><br/>';
+                            if ( 'wpzf_replyto' == $key ) {
+								$replyto = $value;
+								continue;
+							} elseif ( 'wpzf_subject' == $key ) {
+								$sbj = $value;
+								continue;
+							}
 
+							$email_body .= '<strong>' . esc_html( wp_unslash( $name ) ) . ':</strong><br/><br/>' . esc_html( wp_unslash( $value ) ) . '<br/><br/><hr/><br/>';
 						}
 					}
 
-                    $email_body .= '</td>
-                                </tr>
-                                </tbody></table>
-                            </div>
+					$fromaddr     = ! empty( $replyto ) && isset( $_REQUEST[ $replyto ] ) ? $_REQUEST[ $replyto ] : $sendto;
+					$subjectline  = ! empty( $sbj ) && isset( $_REQUEST[ $sbj ] ) ? esc_html( $_REQUEST[ $sbj ] ) : esc_html__( 'New Form Submission!', 'zoom-forms' );
+					$subjectline .= sprintf( __( ' -- %s', 'zoom-forms' ), esc_html( get_bloginfo( 'name' ) ) );
 
-                            <div style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5;max-width:600px;overflow:visible;display:block;margin:0">
-                                <table width="100%" cellpadding="0" cellspacing="0" style="font-family:&quot;Helvetica Neue&quot;,&quot;Helvetica&quot;,Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
-                                    <tbody><tr style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
-                                    <td style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5;vertical-align:top;width:100%;clear:both;color:#777;border-top-width:1px;border-top-color:#d0d0d0;border-top-style:solid;padding:25px" valign="top">
-                                        <p>Sent from <a href="'.get_bloginfo( 'url' ).'">'.get_bloginfo( 'name' ).'</a> using the <strong>ZOOM Forms</strong> plugin.</p>
-                                        <br style="font-family:&quot;Helvetica Neue&quot;,&quot;Helvetica&quot;,Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
-                                    </td>
-                                    </tr>
-                                </tbody></table>
-                            </div>
-                        </body>
-                    </html>';
+					$email_body   = '<html style="background-color:#dddddd;"><body style="background-color:#dddddd;padding:2em;"><div style="background-color:#ffffff;width:70%;padding:2em;border-radius:10px;box-shadow:0px 5px 5px #aaaaaa;">' . preg_replace( '/<br\/><br\/><hr\/><br\/>$/is', '', $email_body ) . '</div></body></html>';
 
-					$success = wp_mail(
-						$form_email,
-						sprintf( __( 'New Form Submission From %s', 'zoom-forms' ), esc_html( get_bloginfo( 'name' ) ) ),
-						$email_body,
-                        sprintf( "Content-Type: text/html; charset=UTF-8\r\nFrom: %s <%s>\r\nReply-To: %s\r\n", get_bloginfo( 'name' ), esc_html( $form_email ), esc_html( $form_email ) ) /*TODO: change Reply-To email */
-
+					$headers      = sprintf(
+						"Content-Type: text/html; charset=UTF-8\r\nFrom: %s <%s>\r\nReply-To: %s",
+						esc_html( get_bloginfo( 'name' ) ),
+						esc_html( $fromaddr ),
+						esc_html( $fromaddr )
 					);
+
+					$email_body  .= '</td>
+								</tr>
+								</tbody></table>
+							</div>
+
+							<div style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5;max-width:600px;overflow:visible;display:block;margin:0">
+								<table width="100%" cellpadding="0" cellspacing="0" style="font-family:&quot;Helvetica Neue&quot;,&quot;Helvetica&quot;,Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
+									<tbody><tr style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
+									<td style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5;vertical-align:top;width:100%;clear:both;color:#777;border-top-width:1px;border-top-color:#d0d0d0;border-top-style:solid;padding:25px" valign="top">
+										<p>Sent from <a href="' . get_bloginfo( 'url' ) . '">' . get_bloginfo( 'name' ) . '</a> using the <strong>ZOOM Forms</strong> plugin.</p>
+										<br style="font-family:&quot;Helvetica Neue&quot;,&quot;Helvetica&quot;,Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
+									</td>
+									</tr>
+								</tbody></table>
+							</div>
+						</body>
+					</html>';
+
+					$success = wp_mail( $sendto, $subjectline, $email_body, $headers );
 				} elseif ( 'db' == $form_method ) {
 					$content = array(
 						'_wpzf_form_id' => $form_id,
@@ -1359,10 +1405,10 @@ class ZOOM_Forms {
 
 					foreach ( $_REQUEST as $key => $value ) {
 						if ( strpos( $key, 'wpzf_' ) === 0 ) {
-							$id = substr( $key, 5 );
+							$id   = substr( $key, 5 );
 							$name = isset( $input_blocks[ $id ] ) ? $input_blocks[ $id ] : __( 'Unnamed Input', 'zoom-forms' );
 
-							$content[ '_wpzf_fields' ][ $name ] = $value;
+							$content['_wpzf_fields'][ $name ] = $value;
 						}
 					}
 
@@ -1398,22 +1444,25 @@ class ZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function get_input_blocks( $blocks ) {
-		$found = [];
+		$found = array();
 
 		if ( is_array( $blocks ) && count( $blocks ) > 0 ) {
 			for ( $i = 0; $i < count( $blocks ); $i++ ) { 
 				$block = $blocks[ $i ];
 
-				if ( isset( $block[ 'blockName' ] ) &&
-				     preg_match( '/^zoom\-forms\//i', $block[ 'blockName' ] ) &&
-				     ! preg_match( '/(label|submit)\-field$/i', $block[ 'blockName' ] ) &&
-				     isset( $block[ 'attrs' ] ) ) {
-					$attrs = $block[ 'attrs' ];
-					$found[ $attrs[ 'id' ] ] = $attrs[ 'name' ];
+				if ( isset( $block['blockName'] ) &&
+				     preg_match( '/^zoom\-forms\//i', $block['blockName'] ) &&
+				     ! preg_match( '/(label|submit)\-field$/i', $block['blockName'] ) &&
+				     isset( $block['attrs'] ) ) {
+					$attrs = $block['attrs'];
+
+					if ( array_key_exists( 'id', $attrs ) && array_key_exists( 'name', $attrs ) ) {
+						$found[ $attrs['id'] ] = $attrs['name'];
+					}
 				}
 
-				if ( isset( $block[ 'innerBlocks' ] ) ) {
-					$found = array_merge( $found, $this->get_input_blocks( $block[ 'innerBlocks' ] ) );
+				if ( isset( $block['innerBlocks'] ) ) {
+					$found = array_merge( $found, $this->get_input_blocks( $block['innerBlocks'] ) );
 				}
 			}
 		}
@@ -1432,7 +1481,7 @@ class ZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function shortcode_output( $atts, $content, $tag ) {
-		$id = is_array( $atts ) && array_key_exists( 'id', $atts ) ? intval( $atts['id'] ) : -1;
+		$id     = is_array( $atts ) && array_key_exists( 'id', $atts ) ? intval( $atts['id'] ) : -1;
 		$output = '';
 
 		if ( $id > 0 ) {

@@ -1,4 +1,4 @@
-import { useBlockProps, InspectorControls, InnerBlocks } from '@wordpress/block-editor';
+import { useBlockProps, InspectorControls, InnerBlocks, RichText } from '@wordpress/block-editor';
 import { registerBlockType, updateCategory } from '@wordpress/blocks';
 import { Card, CardBody, CardHeader, Disabled, Flex, FlexBlock, FlexItem, IconButton, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl, ClipboardButton, Icon, __experimentalHStack as HStack } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
@@ -64,7 +64,7 @@ registerPlugin( 'zoom-forms-document-settings', {
 								value: 'email'
 							}
 						] }
-						onChange={ ( value ) => setMeta( { ...meta, '_form_method': value } ) }
+						onChange={ value => setMeta( { ...meta, '_form_method': value } ) }
 					/>
 
 					{ formMethod == 'email' && <TextControl
@@ -72,7 +72,7 @@ registerPlugin( 'zoom-forms-document-settings', {
 						label={ __( 'Send To', 'zoom-forms' ) }
 						value={ formEmail }
 						placeholder={ __( 'someone@somedomain.com', 'zoom-forms' ) }
-						onChange={ ( value ) => setMeta( { ...meta, '_form_email': value } ) }
+						onChange={ value => setMeta( { ...meta, '_form_email': value } ) }
 					/> }
 				</PluginDocumentSettingPanel>
 
@@ -129,7 +129,7 @@ registerBlockType( 'zoom-forms/form', {
 	supports:    { align: true, html: false },
 	example:     {},
 	edit:        () => {
-		const blockProps = useBlockProps();
+		const blockProps = useBlockProps( { className: 'zoom-forms_form' } );
 
 		return (
 			<div { ...blockProps }>
@@ -153,81 +153,139 @@ registerBlockType( 'zoom-forms/form', {
 							{
 								'tagName': 'div'
 							},
-
-                            [
-                                [
-                                    'core/columns',
-                                    {
-                                        'isStackedOnMobile': true
-                                    },
-                                    [
-                                        [
-                                            'core/column',
-                                            {
-                                                'width': '60%'
-                                            },
-                                            [
-                								[
-                									'zoom-forms/label-field',
-                									{
-                										'id':        'input_label1',
-                										'name':      __( 'Name *', 'wpzoom-blocks' ),
-                										'forInput':  'input_name',
-                										'align':     'none'
-                									}
-                								],
-                                                [
-                									'zoom-forms/text-name-field',
-                									{
-                										'id':        'input_name',
-                										'name':      __( 'Name', 'wpzoom-blocks' ),
-                										'type':      'text',
-                										'required':  true,
-                										'align':     'none'
-                									}
-                								],
-                								[
-                									'zoom-forms/label-field',
-                									{
-                										'id':        'input_label2',
-                										'name':      __( 'Email *', 'wpzoom-blocks' ),
-                										'forInput':  'input_email',
-                										'align':     'none'
-                									}
-                								],
-                								[
-                									'zoom-forms/text-email-field',
-                									{
-                										'id':            'input_email',
-                										'name':          __( 'Email', 'wpzoom-blocks' ),
-                										'type':          'email',
-                										'required':      true,
-                										'align':         'none'
-                									}
-                								],
-                								[
-                									'zoom-forms/label-field',
-                									{
-                										'id':        'input_label3',
-                										'name':      __( 'Subject *', 'wpzoom-blocks' ),
-                										'forInput':  'input_subject',
-                										'align':     'none'
-                									}
-                								],
-                								[
-                									'zoom-forms/text-plain-field',
-                									{
-                										'id':        'input_subject',
-                										'name':      __( 'Subject', 'wpzoom-blocks' ),
-                										'type':      'text',
-                										'required':  true,
-                										'align':     'none'
-                									}
-                								]
-                                            ]
-                                        ]
-                                    ]
-                                ],
+							[
+								[
+									'core/columns',
+									{
+										'isStackedOnMobile': true
+									},
+									[
+										[
+											'core/column',
+											{
+												'width': '60%'
+											},
+											[
+												[
+													'zoom-forms/label-field',
+													{
+														'id':       'input_label1',
+														'name':     __( 'Name', 'wpzoom-blocks' ),
+														'forInput': 'input_name',
+														'required': true
+													}
+												]
+											]
+										],
+										[
+											'core/column',
+											{
+												'width': '80%'
+											},
+											[
+												[
+													'zoom-forms/text-name-field',
+													{
+														'id':        'input_name',
+														'name':      __( 'Name', 'wpzoom-blocks' ),
+														'type':      'text',
+														'required':  true,
+														'replyto':   true,
+														'className': 'fullwidth'
+													}
+												]
+											]
+										]
+									]
+								],
+								[
+									'core/columns',
+									{
+										'isStackedOnMobile': true
+									},
+									[
+										[
+											'core/column',
+											{
+												'width': '60%'
+											},
+											[
+												[
+													'zoom-forms/label-field',
+													{
+														'id':       'input_label2',
+														'name':     __( 'Email', 'wpzoom-blocks' ),
+														'forInput': 'input_email',
+														'required': true
+													}
+												]
+											]
+										],
+										[
+											'core/column',
+											{
+												'width': '80%'
+											},
+											[
+												[
+													'zoom-forms/text-email-field',
+													{
+														'id':        'input_email',
+														'name':      __( 'Email', 'wpzoom-blocks' ),
+														'type':      'email',
+														'required':  true,
+														'replyto':   true,
+														'className': 'fullwidth'
+													}
+												]
+											]
+										]
+									]
+								],
+								[
+									'core/columns',
+									{
+										'isStackedOnMobile': true
+									},
+									[
+										[
+											'core/column',
+											{
+												'width': '60%'
+											},
+											[
+												[
+													'zoom-forms/label-field',
+													{
+														'id':       'input_label3',
+														'name':     __( 'Subject', 'wpzoom-blocks' ),
+														'forInput': 'input_subject',
+														'required': true
+													}
+												]
+											]
+										],
+										[
+											'core/column',
+											{
+												'width': '80%'
+											},
+											[
+												[
+													'zoom-forms/text-plain-field',
+													{
+														'id':        'input_subject',
+														'name':      __( 'Subject', 'wpzoom-blocks' ),
+														'type':      'text',
+														'required':  true,
+														'subject':   true,
+														'className': 'fullwidth'
+													}
+												]
+											]
+										]
+									]
+								],
 								[
 									'core/columns',
 									{
@@ -244,10 +302,10 @@ registerBlockType( 'zoom-forms/form', {
 													'zoom-forms/label-field',
 													{
 														'id':        'input_label4',
-														'name':      __( 'Message *', 'wpzoom-blocks' ),
+														'name':      __( 'Message', 'wpzoom-blocks' ),
 														'forInput':  'input_message',
-														'align':     'none',
-														'className': 'nomarginright'
+														'className': 'nomarginright',
+														'required':  true
 													}
 												],
 												[
@@ -257,7 +315,8 @@ registerBlockType( 'zoom-forms/form', {
 														'name':      __( 'Message', 'wpzoom-blocks' ),
 														'cols':      '55',
 														'rows':      '10',
-														'required':  true
+														'required':  true,
+														'className': 'fullwidth'
 													}
 												]
 											]
@@ -279,8 +338,8 @@ registerBlockType( 'zoom-forms/form', {
 												[
 													'zoom-forms/submit-field',
 													{
-														'id':        'input_submit',
-														'name':      __( 'Submit', 'wpzoom-blocks' )
+														'id':   'input_submit',
+														'name': __( 'Submit', 'wpzoom-blocks' )
 													}
 												]
 											]
@@ -294,10 +353,10 @@ registerBlockType( 'zoom-forms/form', {
 												[
 													'core/paragraph',
 													{
-														'align':     'right',
-														'content':   __( 'Fields marked with <strong class="has-accent-color has-text-color">*</strong> are required.', 'wpzoom-blocks' ),
-														'dropCap':   false,
-														'style':     {
+														'align':   'right',
+														'content': __( 'Fields marked with <strong class="has-accent-color has-text-color">*</strong> are required.', 'wpzoom-blocks' ),
+														'dropCap': false,
+														'style':   {
 															'typography': {
 																'fontSize': 16
 															}
@@ -367,12 +426,20 @@ registerBlockType( 'zoom-forms/text-plain-field', {
 			attribute: 'required',
 			selector:  'input',
 			default:   false
+		},
+		subject: {
+			type:      'boolean',
+			source:    'attribute',
+			attribute: 'data-subject',
+			selector:  'input',
+			default:   false
 		}
 	},
 	example:     {},
-	edit:        ( props ) => {
+	edit:        props => {
+		const blockProps = useBlockProps();
 		const { attributes, setAttributes, clientId } = props;
-		const { id, name, type, placeholder, required } = attributes;
+		const { id, name, type, placeholder, required, subject } = attributes;
 
 		useEffect( () => {
 			if ( ! id ) {
@@ -388,7 +455,7 @@ registerBlockType( 'zoom-forms/text-plain-field', {
 							label={ __( 'Name', 'zoom-forms' ) }
 							value={ name }
 							placeholder={ __( 'e.g. My Text Field', 'zoom-forms' ) }
-							onChange={ ( value ) => setAttributes( { name: value } ) }
+							onChange={ value => setAttributes( { name: value } ) }
 						/>
 
 						<SelectControl
@@ -404,34 +471,58 @@ registerBlockType( 'zoom-forms/text-plain-field', {
 									value: 'number'
 								}
 							] }
-							onChange={ ( value ) => setAttributes( { type: value } ) }
+							onChange={ value => setAttributes( { type: value } ) }
 						/>
 
 						<TextControl
 							label={ __( 'Placeholder', 'zoom-forms' ) }
 							value={ placeholder }
-							onChange={ ( value ) => setAttributes( { placeholder: value } ) }
+							onChange={ value => setAttributes( { placeholder: value } ) }
 						/>
 
 						<ToggleControl
 							label={ __( 'Required', 'zoom-forms' ) }
 							checked={ !! required }
-							onChange={ ( value ) => setAttributes( { required: !! value } ) }
+							onChange={ value => setAttributes( { required: !! value } ) }
+						/>
+
+						<ToggleControl
+							label={ __( 'Is Subject', 'zoom-forms' ) }
+							help={ __( 'Whether this text field should be used as the subject field in the form (useful for contact forms).', 'zoom-forms' ) }
+							checked={ !! subject }
+							onChange={ value => setAttributes( { subject: !! value } ) }
 						/>
 					</PanelBody>
 				</InspectorControls>
 
 				<Fragment>
-					<input type={ type } name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
+					<input
+						type={ type }
+						name={ id }
+						id={ id }
+						placeholder={ placeholder }
+						required={ !! required }
+						data-subject={ !! subject }
+						{ ...blockProps }
+					/>
 				</Fragment>
 			</>
 		);
 	},
 	save:        ( { attributes } ) => {
-		const { id, name, type, placeholder, required } = attributes;
+		const blockProps = useBlockProps.save();
+		const { id, name, type, placeholder, required, subject } = attributes;
 
 		return (
-			<input type={ type } name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
+			<input
+				type={ type }
+				name={ id }
+				id={ id }
+				placeholder={ placeholder }
+				required={ !! required }
+				data-subject={ !! subject }
+				{ ...blockProps }
+			/>
 		);
 	}
 } );
@@ -488,7 +579,8 @@ registerBlockType( 'zoom-forms/text-name-field', {
 		}
 	},
 	example:     {},
-	edit:        ( props ) => {
+	edit:        props => {
+		const blockProps = useBlockProps();
 		const { attributes, setAttributes, clientId } = props;
 		const { id, name, placeholder, required } = attributes;
 
@@ -506,34 +598,49 @@ registerBlockType( 'zoom-forms/text-name-field', {
 							label={ __( 'Name', 'zoom-forms' ) }
 							value={ name }
 							placeholder={ __( 'e.g. My Name Field', 'zoom-forms' ) }
-							onChange={ ( value ) => setAttributes( { name: value } ) }
+							onChange={ value => setAttributes( { name: value } ) }
 						/>
 
 						<TextControl
 							label={ __( 'Placeholder', 'zoom-forms' ) }
 							value={ placeholder }
-							onChange={ ( value ) => setAttributes( { placeholder: value } ) }
+							onChange={ value => setAttributes( { placeholder: value } ) }
 						/>
 
 						<ToggleControl
 							label={ __( 'Required', 'zoom-forms' ) }
 							checked={ !! required }
-							onChange={ ( value ) => setAttributes( { required: !! value } ) }
+							onChange={ value => setAttributes( { required: !! value } ) }
 						/>
 					</PanelBody>
 				</InspectorControls>
 
 				<Fragment>
-					<input type="text" name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
+					<input
+						type="text"
+						name={ id }
+						id={ id }
+						placeholder={ placeholder }
+						required={ !! required }
+						{ ...blockProps }
+					/>
 				</Fragment>
 			</>
 		);
 	},
 	save:        ( { attributes } ) => {
+		const blockProps = useBlockProps.save();
 		const { id, name, placeholder, required } = attributes;
 
 		return (
-			<input type="text" name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
+			<input
+				type="text"
+				name={ id }
+				id={ id }
+				placeholder={ placeholder }
+				required={ !! required }
+				{ ...blockProps }
+			/>
 		);
 	}
 } );
@@ -585,12 +692,20 @@ registerBlockType( 'zoom-forms/text-email-field', {
 			attribute: 'required',
 			selector:  'input',
 			default:   false
+		},
+		replyto: {
+			type:      'boolean',
+			source:    'attribute',
+			attribute: 'data-replyto',
+			selector:  'input',
+			default:   false
 		}
 	},
 	example:     {},
-	edit:        ( props ) => {
+	edit:        props => {
+		const blockProps = useBlockProps();
 		const { attributes, setAttributes, clientId } = props;
-		const { id, name, placeholder, required } = attributes;
+		const { id, name, placeholder, required, replyto } = attributes;
 
 		useEffect( () => {
 			if ( ! id ) {
@@ -606,34 +721,58 @@ registerBlockType( 'zoom-forms/text-email-field', {
 							label={ __( 'Name', 'zoom-forms' ) }
 							value={ name }
 							placeholder={ __( 'e.g. My Email Field', 'zoom-forms' ) }
-							onChange={ ( value ) => setAttributes( { name: value } ) }
+							onChange={ value => setAttributes( { name: value } ) }
 						/>
 
 						<TextControl
 							label={ __( 'Placeholder', 'zoom-forms' ) }
 							value={ placeholder }
-							onChange={ ( value ) => setAttributes( { placeholder: value } ) }
+							onChange={ value => setAttributes( { placeholder: value } ) }
 						/>
 
 						<ToggleControl
 							label={ __( 'Required', 'zoom-forms' ) }
 							checked={ !! required }
-							onChange={ ( value ) => setAttributes( { required: !! value } ) }
+							onChange={ value => setAttributes( { required: !! value } ) }
+						/>
+
+						<ToggleControl
+							label={ __( 'Is Reply-To Address', 'zoom-forms' ) }
+							help={ __( 'Whether this email field should be used as the reply-to address in the form (useful for contact forms).', 'zoom-forms' ) }
+							checked={ !! replyto }
+							onChange={ value => setAttributes( { replyto: !! value } ) }
 						/>
 					</PanelBody>
 				</InspectorControls>
 
 				<Fragment>
-					<input type="email" name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
+					<input
+						type="email"
+						name={ id }
+						id={ id }
+						placeholder={ placeholder }
+						required={ !! required }
+						data-replyto={ !! replyto }
+						{ ...blockProps }
+					/>
 				</Fragment>
 			</>
 		);
 	},
 	save:        ( { attributes } ) => {
-		const { id, name, placeholder, required } = attributes;
+		const blockProps = useBlockProps.save();
+		const { id, name, placeholder, required, replyto } = attributes;
 
 		return (
-			<input type="email" name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
+			<input
+				type="email"
+				name={ id }
+				id={ id }
+				placeholder={ placeholder }
+				required={ !! required }
+				data-replyto={ !! replyto }
+				{ ...blockProps }
+			/>
 		);
 	}
 } );
@@ -700,7 +839,8 @@ registerBlockType( 'zoom-forms/text-website-field', {
 		}
 	},
 	example:     {},
-	edit:        ( props ) => {
+	edit:        props => {
+		const blockProps = useBlockProps();
 		const { attributes, setAttributes, clientId } = props;
 		const { id, name, placeholder, required } = attributes;
 
@@ -718,34 +858,49 @@ registerBlockType( 'zoom-forms/text-website-field', {
 							label={ __( 'Name', 'zoom-forms' ) }
 							value={ name }
 							placeholder={ __( 'e.g. My Website Field', 'zoom-forms' ) }
-							onChange={ ( value ) => setAttributes( { name: value } ) }
+							onChange={ value => setAttributes( { name: value } ) }
 						/>
 
 						<TextControl
 							label={ __( 'Placeholder', 'zoom-forms' ) }
 							value={ placeholder }
-							onChange={ ( value ) => setAttributes( { placeholder: value } ) }
+							onChange={ value => setAttributes( { placeholder: value } ) }
 						/>
 
 						<ToggleControl
 							label={ __( 'Required', 'zoom-forms' ) }
 							checked={ !! required }
-							onChange={ ( value ) => setAttributes( { required: !! value } ) }
+							onChange={ value => setAttributes( { required: !! value } ) }
 						/>
 					</PanelBody>
 				</InspectorControls>
 
 				<Fragment>
-					<input type="url" name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
+					<input
+						type="url"
+						name={ id }
+						id={ id }
+						placeholder={ placeholder }
+						required={ !! required }
+						{ ...blockProps }
+					/>
 				</Fragment>
 			</>
 		);
 	},
 	save:        ( { attributes } ) => {
+		const blockProps = useBlockProps.save();
 		const { id, name, placeholder, required } = attributes;
 
 		return (
-			<input type="url" name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
+			<input
+				type="url"
+				name={ id }
+				id={ id }
+				placeholder={ placeholder }
+				required={ !! required }
+				{ ...blockProps }
+			/>
 		);
 	}
 } );
@@ -804,7 +959,8 @@ registerBlockType( 'zoom-forms/text-phone-field', {
 		}
 	},
 	example:     {},
-	edit:        ( props ) => {
+	edit:        props => {
+		const blockProps = useBlockProps();
 		const { attributes, setAttributes, clientId } = props;
 		const { id, name, placeholder, required } = attributes;
 
@@ -822,34 +978,49 @@ registerBlockType( 'zoom-forms/text-phone-field', {
 							label={ __( 'Name', 'zoom-forms' ) }
 							value={ name }
 							placeholder={ __( 'e.g. My Email Field', 'zoom-forms' ) }
-							onChange={ ( value ) => setAttributes( { name: value } ) }
+							onChange={ value => setAttributes( { name: value } ) }
 						/>
 
 						<TextControl
 							label={ __( 'Placeholder', 'zoom-forms' ) }
 							value={ placeholder }
-							onChange={ ( value ) => setAttributes( { placeholder: value } ) }
+							onChange={ value => setAttributes( { placeholder: value } ) }
 						/>
 
 						<ToggleControl
 							label={ __( 'Required', 'zoom-forms' ) }
 							checked={ !! required }
-							onChange={ ( value ) => setAttributes( { required: !! value } ) }
+							onChange={ value => setAttributes( { required: !! value } ) }
 						/>
 					</PanelBody>
 				</InspectorControls>
 
 				<Fragment>
-					<input type="tel" name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
+					<input
+						type="tel"
+						name={ id }
+						id={ id }
+						placeholder={ placeholder }
+						required={ !! required }
+						{ ...blockProps }
+					/>
 				</Fragment>
 			</>
 		);
 	},
 	save:        ( { attributes } ) => {
+		const blockProps = useBlockProps.save();
 		const { id, name, placeholder, required } = attributes;
 
 		return (
-			<input type="tel" name={ id } id={ id } placeholder={ placeholder } required={ !! required } />
+			<input
+				type="tel"
+				name={ id }
+				id={ id }
+				placeholder={ placeholder }
+				required={ !! required }
+				{ ...blockProps }
+			/>
 		);
 	}
 } );
@@ -909,7 +1080,8 @@ registerBlockType( 'zoom-forms/textarea-field', {
 		}
 	},
 	example:     {},
-	edit:        ( props ) => {
+	edit:        props => {
+		const blockProps = useBlockProps();
 		const { attributes, setAttributes, clientId } = props;
 		const { id, name, cols, rows, placeholder, required } = attributes;
 
@@ -927,7 +1099,7 @@ registerBlockType( 'zoom-forms/textarea-field', {
 							label={ __( 'Name', 'zoom-forms' ) }
 							value={ name }
 							placeholder={ __( 'e.g. My Textarea Field', 'zoom-forms' ) }
-							onChange={ ( value ) => setAttributes( { name: value } ) }
+							onChange={ value => setAttributes( { name: value } ) }
 						/>
 
 						<RangeControl
@@ -935,7 +1107,7 @@ registerBlockType( 'zoom-forms/textarea-field', {
 							max={ 500 }
 							min={ 1 }
 							value={ Number( cols ) }
-							onChange={ ( value ) => setAttributes( { cols: value } ) }
+							onChange={ value => setAttributes( { cols: value } ) }
 						/>
 
 						<RangeControl
@@ -943,34 +1115,51 @@ registerBlockType( 'zoom-forms/textarea-field', {
 							max={ 100 }
 							min={ 1 }
 							value={ Number( rows ) }
-							onChange={ ( value ) => setAttributes( { rows: value } ) }
+							onChange={ value => setAttributes( { rows: value } ) }
 						/>
 
 						<TextControl
 							label={ __( 'Placeholder', 'zoom-forms' ) }
 							value={ placeholder }
-							onChange={ ( value ) => setAttributes( { placeholder: value } ) }
+							onChange={ value => setAttributes( { placeholder: value } ) }
 						/>
 
 						<ToggleControl
 							label={ __( 'Required', 'zoom-forms' ) }
 							checked={ !! required }
-							onChange={ ( value ) => setAttributes( { required: !! value } ) }
+							onChange={ value => setAttributes( { required: !! value } ) }
 						/>
 					</PanelBody>
 				</InspectorControls>
 
 				<Fragment>
-					<textarea name={ id } id={ id } cols={ cols } rows={ rows } placeholder={ placeholder } required={ !! required }></textarea>
+					<textarea
+						name={ id }
+						id={ id }
+						cols={ cols }
+						rows={ rows }
+						placeholder={ placeholder }
+						required={ !! required }
+						{ ...blockProps }
+					></textarea>
 				</Fragment>
 			</>
 		);
 	},
 	save:        ( { attributes } ) => {
+		const blockProps = useBlockProps.save();
 		const { id, name, cols, rows, placeholder, required } = attributes;
 
 		return (
-			<textarea name={ id } id={ id } cols={ cols } rows={ rows } placeholder={ placeholder } required={ !! required }></textarea>
+			<textarea
+				name={ id }
+				id={ id }
+				cols={ cols }
+				rows={ rows }
+				placeholder={ placeholder }
+				required={ !! required }
+				{ ...blockProps }
+			></textarea>
 		);
 	}
 } );
@@ -1026,7 +1215,8 @@ registerBlockType( 'zoom-forms/select-field', {
 		}
 	},
 	example:     {},
-	edit:        ( props ) => {
+	edit:        props => {
+		const blockProps = useBlockProps();
 		const { attributes, setAttributes, clientId } = props;
 		const { id, name, options, defaultValue, multiple, required } = attributes;
 
@@ -1064,7 +1254,7 @@ registerBlockType( 'zoom-forms/select-field', {
 							label={ __( 'Name', 'zoom-forms' ) }
 							value={ name }
 							placeholder={ __( 'e.g. My Dropdown Select Field', 'zoom-forms' ) }
-							onChange={ ( value ) => setAttributes( { name: value } ) }
+							onChange={ value => setAttributes( { name: value } ) }
 						/>
 
 						<Card size="small">
@@ -1084,7 +1274,7 @@ registerBlockType( 'zoom-forms/select-field', {
 											<FlexBlock>
 												<TextControl
 													value={ options[ index ] }
-													onChange={ ( value ) => optionChange( value, index ) }
+													onChange={ value => optionChange( value, index ) }
 												/>
 											</FlexBlock>
 
@@ -1105,25 +1295,32 @@ registerBlockType( 'zoom-forms/select-field', {
 							label={ __( 'Default Value', 'zoom-forms' ) }
 							value={ defaultValue }
 							options={ options.map( ( option, index ) => { return { label: option, value: option } } ) }
-							onChange={ ( value ) => setAttributes( { defaultValue: value } ) }
+							onChange={ value => setAttributes( { defaultValue: value } ) }
 						/>
 
 						<ToggleControl
 							label={ __( 'Allow Multiple Selections', 'zoom-forms' ) }
 							checked={ !! multiple }
-							onChange={ ( value ) => setAttributes( { multiple: !! value } ) }
+							onChange={ value => setAttributes( { multiple: !! value } ) }
 						/>
 
 						<ToggleControl
 							label={ __( 'Required', 'zoom-forms' ) }
 							checked={ !! required }
-							onChange={ ( value ) => setAttributes( { required: !! value } ) }
+							onChange={ value => setAttributes( { required: !! value } ) }
 						/>
 					</PanelBody>
 				</InspectorControls>
 
 				<Fragment>
-					<select name={ id } id={ id } required={ !! required } multiple={ !! multiple } defaultValue={ defaultValue }>
+					<select
+						name={ id }
+						id={ id }
+						required={ !! required }
+						multiple={ !! multiple }
+						defaultValue={ defaultValue }
+						{ ...blockProps }
+					>
 						{ options.map( ( option, index ) => ( <option key={ index } value={ option }>{ option }</option> ) ) }
 					</select>
 				</Fragment>
@@ -1131,10 +1328,18 @@ registerBlockType( 'zoom-forms/select-field', {
 		);
 	},
 	save:        ( { attributes } ) => {
+		const blockProps = useBlockProps.save();
 		const { id, name, options, defaultValue, multiple, required } = attributes;
 
 		return (
-			<select name={ id } id={ id } required={ !! required } multiple={ !! multiple } defaultValue={ defaultValue }>
+			<select
+				name={ id }
+				id={ id }
+				required={ !! required }
+				multiple={ !! multiple }
+				defaultValue={ defaultValue }
+				{ ...blockProps }
+			>
 				{ options.map( ( option, index ) => ( <option key={ index } value={ option }>{ option }</option> ) ) }
 			</select>
 		);
@@ -1179,7 +1384,8 @@ registerBlockType( 'zoom-forms/checkbox-field', {
 		}
 	},
 	example:     {},
-	edit:        ( props ) => {
+	edit:        props => {
+		const blockProps = useBlockProps();
 		const { attributes, setAttributes, clientId } = props;
 		const { id, name, defaultValue, required } = attributes;
 
@@ -1197,34 +1403,49 @@ registerBlockType( 'zoom-forms/checkbox-field', {
 							label={ __( 'Name', 'zoom-forms' ) }
 							value={ name }
 							placeholder={ __( 'e.g. My Checkbox Field', 'zoom-forms' ) }
-							onChange={ ( value ) => setAttributes( { name: value } ) }
+							onChange={ value => setAttributes( { name: value } ) }
 						/>
 
 						<ToggleControl
 							label={ __( 'Checked By Default', 'zoom-forms' ) }
 							checked={ !! defaultValue }
-							onChange={ ( value ) => setAttributes( { defaultValue: !! value } ) }
+							onChange={ value => setAttributes( { defaultValue: !! value } ) }
 						/>
 
 						<ToggleControl
 							label={ __( 'Required', 'zoom-forms' ) }
 							checked={ !! required }
-							onChange={ ( value ) => setAttributes( { required: !! value } ) }
+							onChange={ value => setAttributes( { required: !! value } ) }
 						/>
 					</PanelBody>
 				</InspectorControls>
 
 				<Fragment>
-					<input type="checkbox" name={ id } id={ id } defaultChecked={ !! defaultValue } required={ !! required } />
+					<input
+						type="checkbox"
+						name={ id }
+						id={ id }
+						defaultChecked={ !! defaultValue }
+						required={ !! required }
+						{ ...blockProps }
+					/>
 				</Fragment>
 			</>
 		);
 	},
 	save:        ( { attributes } ) => {
+		const blockProps = useBlockProps.save();
 		const { id, name, defaultValue, required } = attributes;
 
 		return (
-			<input type="checkbox" name={ id } id={ id } defaultChecked={ !! defaultValue } required={ !! required } />
+			<input
+				type="checkbox"
+				name={ id }
+				id={ id }
+				defaultChecked={ !! defaultValue }
+				required={ !! required }
+				{ ...blockProps }
+			/>
 		);
 	}
 } );
@@ -1285,7 +1506,8 @@ registerBlockType( 'zoom-forms/radio-field', {
 		}
 	},
 	example:     {},
-	edit:        ( props ) => {
+	edit:        props => {
+		const blockProps = useBlockProps( { className: 'unstyled-list' } );
 		const { attributes, setAttributes, clientId } = props;
 		const { id, name, options, defaultValue, required } = attributes;
 
@@ -1323,7 +1545,7 @@ registerBlockType( 'zoom-forms/radio-field', {
 							label={ __( 'Name', 'zoom-forms' ) }
 							value={ name }
 							placeholder={ __( 'e.g. My Radio Field', 'zoom-forms' ) }
-							onChange={ ( value ) => setAttributes( { name: value } ) }
+							onChange={ value => setAttributes( { name: value } ) }
 						/>
 
 						<Card size="small">
@@ -1343,7 +1565,7 @@ registerBlockType( 'zoom-forms/radio-field', {
 											<FlexBlock>
 												<TextControl
 													value={ options[ index ] }
-													onChange={ ( value ) => optionChange( value, index ) }
+													onChange={ value => optionChange( value, index ) }
 												/>
 											</FlexBlock>
 
@@ -1364,19 +1586,19 @@ registerBlockType( 'zoom-forms/radio-field', {
 							label={ __( 'Default Value', 'zoom-forms' ) }
 							value={ defaultValue }
 							options={ options.map( ( option, index ) => { return { label: option, value: option } } ) }
-							onChange={ ( value ) => setAttributes( { defaultValue: value } ) }
+							onChange={ value => setAttributes( { defaultValue: value } ) }
 						/>
 
 						<ToggleControl
 							label={ __( 'Required', 'zoom-forms' ) }
 							checked={ !! required }
-							onChange={ ( value ) => setAttributes( { required: !! value } ) }
+							onChange={ value => setAttributes( { required: !! value } ) }
 						/>
 					</PanelBody>
 				</InspectorControls>
 
 				<Fragment>
-					<ul className="unstyled-list">
+					<ul { ...blockProps }>
 						{ options.map( ( option, index ) =>
 							( <li key={ index }>
 								<label>
@@ -1391,9 +1613,10 @@ registerBlockType( 'zoom-forms/radio-field', {
 		);
 	},
 	save:        ( { attributes } ) => {
+		const blockProps = useBlockProps.save();
 		const { id, name, options, defaultValue, required } = attributes;
 
-		return ( <ul>
+		return ( <ul { ...blockProps }>
 			{ options.map( ( option, index ) =>
 				( <li key={ index }>
 					<label>
@@ -1435,12 +1658,20 @@ registerBlockType( 'zoom-forms/label-field', {
 			attribute: 'for',
 			selector:  'label',
 			default:   ''
+		},
+		required: {
+			type:      'boolean',
+			source:    'attribute',
+			attribute: 'data-required',
+			selector:  'label',
+			default:   false
 		}
 	},
 	example:     {},
-	edit:        ( props ) => {
+	edit:        props => {
+		const blockProps = useBlockProps();
 		const { attributes, setAttributes, clientId } = props;
-		const { id, name, forInput } = attributes;
+		const { id, name, forInput, required } = attributes;
 
 		useEffect( () => {
 			if ( ! id ) {
@@ -1464,7 +1695,7 @@ registerBlockType( 'zoom-forms/label-field', {
 			return result;
 		};
 
-		const allBlocks = useSelect( ( select ) => select( 'core/block-editor' ).getBlocks(), [] );
+		const allBlocks = useSelect( select => select( 'core/block-editor' ).getBlocks(), [] );
 		const allZoomFormBlocks = allBlocks && allBlocks.length > 0 ? zoomFormBlocks( allBlocks ) : [];
 		const label = allZoomFormBlocks?.find( x => x.value == forInput )?.label;
 
@@ -1474,12 +1705,19 @@ registerBlockType( 'zoom-forms/label-field', {
 			}
 		}, [] );
 
-		const inputSelect = ( <SelectControl
-			label={ __( 'For Input', 'zoom-forms' ) }
-			value={ forInput }
-			options={ allZoomFormBlocks.length > 0 ? allZoomFormBlocks : [ { value: '-1', label: __( 'No inputs found...', 'zoom-forms' ) } ] }
-			onChange={ ( value ) => setAttributes( { forInput: value } ) }
-		/> );
+		const inputSelect = ( <>
+			<SelectControl
+				label={ __( 'For Input', 'zoom-forms' ) }
+				value={ forInput }
+				options={ allZoomFormBlocks.length > 0 ? allZoomFormBlocks : [ { value: '-1', label: __( 'No inputs found...', 'zoom-forms' ) } ] }
+				onChange={ value => setAttributes( { forInput: value } ) }
+			/>
+			<ToggleControl
+				label={ __( 'Required', 'zoom-forms' ) }
+				checked={ !! required }
+				onChange={ value => setAttributes( { required: !! value } ) }
+			/>
+		</> );
 
 		return (
 			<>
@@ -1490,16 +1728,41 @@ registerBlockType( 'zoom-forms/label-field', {
 				</InspectorControls>
 
 				<Fragment>
-					<label htmlFor={ forInput }>{ name }</label>
+					<RichText
+						tagName="label"
+						placeholder={ __( 'Label', 'zoom-forms' ) }
+						value={ name }
+						htmlFor={ forInput }
+						onChange={ value => setAttributes( { name: !! value } ) }
+						data-required={ !! required }
+						{ ...blockProps }
+					/>
+
+					{ required && (
+						<sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup>
+					) }
 				</Fragment>
 			</>
 		);
 	},
 	save:        ( { attributes } ) => {
-		const { id, name, forInput } = attributes;
+		const blockProps = useBlockProps.save();
+		const { id, name, forInput, required } = attributes;
 
 		return (
-			<label htmlFor={ forInput }>{ name }</label>
+			<>
+				<RichText.Content
+					tagName="label"
+					value={ name }
+					htmlFor={ forInput }
+					data-required={ !! required }
+					{ ...blockProps }
+				/>
+
+				{ required && (
+					<sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup>
+				) }
+			</>
 		);
 	}
 } );
@@ -1535,7 +1798,8 @@ registerBlockType( 'zoom-forms/submit-field', {
 		}
 	},
 	example:     {},
-	edit:        ( props ) => {
+	edit:        props => {
+		const blockProps = useBlockProps();
 		const { attributes, setAttributes, clientId } = props;
 		const { id, name } = attributes;
 
@@ -1552,22 +1816,33 @@ registerBlockType( 'zoom-forms/submit-field', {
 						<TextControl
 							label={ __( 'Name', 'zoom-forms' ) }
 							value={ name }
-							onChange={ ( value ) => setAttributes( { name: value } ) }
+							onChange={ value => setAttributes( { name: value } ) }
 						/>
 					</PanelBody>
 				</InspectorControls>
 
 				<Fragment>
-					<input type="submit" id={ id } value={ name } />
+					<input
+						type="submit"
+						id={ id }
+						value={ name }
+						{ ...blockProps }
+					/>
 				</Fragment>
 			</>
 		);
 	},
 	save:        ( { attributes } ) => {
+		const blockProps = useBlockProps.save();
 		const { id, name } = attributes;
 
 		return (
-			<input type="submit" id={ id } value={ name } />
+			<input
+				type="submit"
+				id={ id }
+				value={ name }
+				{ ...blockProps }
+			/>
 		);
 	}
 } );
