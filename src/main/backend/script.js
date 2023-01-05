@@ -166,50 +166,26 @@ registerBlockType( 'zoom-forms/form', {
 												'width': '60%'
 											},
 											[
-												[
-													'zoom-forms/label-field',
-													{
-														'id':       'input_label1',
-														'name':     __( 'Name', 'wpzoom-blocks' ),
-														'forInput': 'input_name',
-														'required': true
-													}
-												]
-											]
-										],
-										[
-											'core/column',
-											{
-												'width': '80%'
-											},
-											[
-												[
-													'zoom-forms/text-name-field',
-													{
-														'id':        'input_name',
-														'name':      __( 'Name', 'wpzoom-blocks' ),
-														'type':      'text',
-														'required':  true,
-														'replyto':   true,
-														'className': 'fullwidth'
-													}
-												]
-											]
-										]
-									]
-								],
-								[
-									'core/columns',
-									{
-										'isStackedOnMobile': true
-									},
-									[
-										[
-											'core/column',
-											{
-												'width': '60%'
-											},
-											[
+                                                [
+                                                    'zoom-forms/label-field',
+                                                    {
+                                                        'id':       'input_label1',
+                                                        'name':     __( 'Name', 'wpzoom-blocks' ),
+                                                        'forInput': 'input_name',
+                                                        'required': true
+                                                    }
+                                                ],
+                                                [
+                                                    'zoom-forms/text-name-field',
+                                                    {
+                                                        'id':        'input_name',
+                                                        'name':      __( 'Name', 'wpzoom-blocks' ),
+                                                        'type':      'text',
+                                                        'required':  true,
+                                                        'replyto':   true,
+                                                        'className': 'fullwidth'
+                                                    }
+                                                ],
 												[
 													'zoom-forms/label-field',
 													{
@@ -218,70 +194,38 @@ registerBlockType( 'zoom-forms/form', {
 														'forInput': 'input_email',
 														'required': true
 													}
-												]
-											]
-										],
-										[
-											'core/column',
-											{
-												'width': '80%'
-											},
-											[
-												[
-													'zoom-forms/text-email-field',
-													{
-														'id':        'input_email',
-														'name':      __( 'Email', 'wpzoom-blocks' ),
-														'type':      'email',
-														'required':  true,
-														'replyto':   true,
-														'className': 'fullwidth'
-													}
-												]
-											]
-										]
-									]
-								],
-								[
-									'core/columns',
-									{
-										'isStackedOnMobile': true
-									},
-									[
-										[
-											'core/column',
-											{
-												'width': '60%'
-											},
-											[
-												[
-													'zoom-forms/label-field',
-													{
-														'id':       'input_label3',
-														'name':     __( 'Subject', 'wpzoom-blocks' ),
-														'forInput': 'input_subject',
-														'required': true
-													}
-												]
-											]
-										],
-										[
-											'core/column',
-											{
-												'width': '80%'
-											},
-											[
-												[
-													'zoom-forms/text-plain-field',
-													{
-														'id':        'input_subject',
-														'name':      __( 'Subject', 'wpzoom-blocks' ),
-														'type':      'text',
-														'required':  true,
-														'subject':   true,
-														'className': 'fullwidth'
-													}
-												]
+												],
+                                                [
+                                                    'zoom-forms/text-email-field',
+                                                    {
+                                                        'id':        'input_email',
+                                                        'name':      __( 'Email', 'wpzoom-blocks' ),
+                                                        'type':      'email',
+                                                        'required':  true,
+                                                        'replyto':   true,
+                                                        'className': 'fullwidth'
+                                                    }
+                                                ],
+                                                [
+                                                    'zoom-forms/label-field',
+                                                    {
+                                                        'id':       'input_label3',
+                                                        'name':     __( 'Subject', 'wpzoom-blocks' ),
+                                                        'forInput': 'input_subject',
+                                                        'required': true
+                                                    }
+                                                ],
+                                                [
+                                                    'zoom-forms/text-plain-field',
+                                                    {
+                                                        'id':        'input_subject',
+                                                        'name':      __( 'Subject', 'wpzoom-blocks' ),
+                                                        'type':      'text',
+                                                        'required':  true,
+                                                        'subject':   true,
+                                                        'className': 'fullwidth'
+                                                    }
+                                                ]
 											]
 										]
 									]
