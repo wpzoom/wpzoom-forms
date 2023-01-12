@@ -382,6 +382,14 @@ class ZOOM_Forms {
 					'type'    => 'string',
 					'default' => ''
 				),
+				'label'       => array(
+					'type'    => 'string',
+					'default' => __( 'My Text Field', 'zoom-forms' )
+				),
+				'showLabel'   => array(
+					'type'    => 'boolean',
+					'default' => true
+				),
 				'required'    => array(
 					'type'    => 'boolean',
 					'default' => false
@@ -404,6 +412,14 @@ class ZOOM_Forms {
 					'type'    => 'string',
 					'default' => ''
 				),
+				'label'       => array(
+					'type'    => 'string',
+					'default' => __( 'My Name Field', 'zoom-forms' )
+				),
+				'showLabel'   => array(
+					'type'    => 'boolean',
+					'default' => true
+				),
 				'required'    => array(
 					'type'    => 'boolean',
 					'default' => false
@@ -421,6 +437,14 @@ class ZOOM_Forms {
 				'placeholder' => array(
 					'type'    => 'string',
 					'default' => ''
+				),
+				'label'       => array(
+					'type'    => 'string',
+					'default' => __( 'My Email Field', 'zoom-forms' )
+				),
+				'showLabel'   => array(
+					'type'    => 'boolean',
+					'default' => true
 				),
 				'required'    => array(
 					'type'    => 'boolean',
@@ -444,6 +468,14 @@ class ZOOM_Forms {
 					'type'    => 'string',
 					'default' => ''
 				),
+				'label'       => array(
+					'type'    => 'string',
+					'default' => __( 'My Website Field', 'zoom-forms' )
+				),
+				'showLabel'   => array(
+					'type'    => 'boolean',
+					'default' => true
+				),
 				'required'    => array(
 					'type'    => 'boolean',
 					'default' => false
@@ -461,6 +493,14 @@ class ZOOM_Forms {
 				'placeholder' => array(
 					'type'    => 'string',
 					'default' => ''
+				),
+				'label'       => array(
+					'type'    => 'string',
+					'default' => __( 'My Phone Field', 'zoom-forms' )
+				),
+				'showLabel'   => array(
+					'type'    => 'boolean',
+					'default' => true
 				),
 				'required'    => array(
 					'type'    => 'boolean',
@@ -488,6 +528,14 @@ class ZOOM_Forms {
 					'type'    => 'string',
 					'default' => ''
 				),
+				'label'       => array(
+					'type'    => 'string',
+					'default' => __( 'My Textarea Field', 'zoom-forms' )
+				),
+				'showLabel'   => array(
+					'type'    => 'boolean',
+					'default' => true
+				),
 				'required'    => array(
 					'type'    => 'boolean',
 					'default' => false
@@ -513,6 +561,14 @@ class ZOOM_Forms {
 					'type'    => 'string',
 					'default' => __( 'Item #1', 'zoom-forms' )
 				),
+				'label'       => array(
+					'type'    => 'string',
+					'default' => __( 'My Select Field', 'zoom-forms' )
+				),
+				'showLabel'   => array(
+					'type'    => 'boolean',
+					'default' => true
+				),
 				'multiple'     => array(
 					'type'    => 'boolean',
 					'default' => false
@@ -530,6 +586,14 @@ class ZOOM_Forms {
 				'name'         => array(
 					'type'    => 'string',
 					'default' => ''
+				),
+				'label'       => array(
+					'type'    => 'string',
+					'default' => __( 'My Checkbox Field', 'zoom-forms' )
+				),
+				'showLabel'   => array(
+					'type'    => 'boolean',
+					'default' => true
 				),
 				'defaultValue' => array(
 					'type'    => 'boolean',
@@ -555,6 +619,14 @@ class ZOOM_Forms {
 						'type' => 'string'
 					),
 					'default' => array( __( 'Item #1', 'zoom-forms' ) )
+				),
+				'label'       => array(
+					'type'    => 'string',
+					'default' => __( 'My Radio Field', 'zoom-forms' )
+				),
+				'showLabel'   => array(
+					'type'    => 'boolean',
+					'default' => true
 				),
 				'defaultValue' => array(
 					'type'    => 'string',
