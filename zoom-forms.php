@@ -1237,7 +1237,10 @@ class ZOOM_Forms {
 
 				if ( $post_id > -1 ) {
 					$post = get_post( $post_id );
-					$typenow = $post->post_type;
+
+					if ( ! is_null( $post ) && $post instanceof WP_Post ) {
+						$typenow = $post->post_type;
+					}
 				}
 			}
 		}

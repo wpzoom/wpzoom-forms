@@ -51,7 +51,12 @@ registerPlugin( 'zoom-forms-document-settings', {
 		}
 
 		return <>
-			<PluginDocumentSettingPanel className="zoom-forms-document-settings" title={ __( 'Form Settings', 'zoom-forms' ) }>
+			<PluginDocumentSettingPanel
+				name="zoom-forms-document-settings"
+				className="zoom-forms-document-settings"
+				title={ __( 'Form Settings', 'zoom-forms' ) }
+				opened={ true }
+			>
 				<SelectControl
 					label={ __( 'Form Method', 'zoom-forms' ) }
 					value={ formMethod }
@@ -77,7 +82,12 @@ registerPlugin( 'zoom-forms-document-settings', {
 				/> }
 			</PluginDocumentSettingPanel>
 
-			<PluginDocumentSettingPanel className="zoom-forms-document-settings-details" title={ __( 'Form Details', 'zoom-forms' ) }>
+			<PluginDocumentSettingPanel
+				name="zoom-forms-document-settings-details"
+				className="zoom-forms-document-settings-details"
+				title={ __( 'Form Details', 'zoom-forms' ) }
+				opened={ true }
+			>
 				<HStack alignment="flex-end">
 					<TextControl
 						type="text"
@@ -110,6 +120,44 @@ registerPlugin( 'zoom-forms-document-settings', {
 } );
 
 setLocaleData( { 'Publish': [ __( 'Save', 'zoom-forms' ) ] } );
+
+const DragHandle = SortableHandle( () => <IconButton
+	icon="move"
+	label={ __( 'Re-arrange Item', 'zoom-forms' ) }
+	className="zoom-forms-move-button"
+/> );
+
+const SortableItem = SortableElement( ( { value, optsId, options, changeCallback, removeCallback } ) => <Fragment>
+	<Flex>
+		<FlexBlock>
+			<TextControl
+				value={ value }
+				onChange={ val => changeCallback( val, optsId ) }
+			/>
+		</FlexBlock>
+
+		{ options.length > 1 && <FlexItem>
+			<DragHandle />
+
+			<IconButton
+				icon="no-alt"
+				label={ __( 'Delete Item', 'zoom-forms' ) }
+				onClick={ () => removeCallback( optsId ) }
+			/>
+		</FlexItem> }
+	</Flex>
+</Fragment> );
+
+const SortableList = SortableContainer( ( { items, changeCallback, removeCallback } ) => <div>
+	{ items.map( ( value, index ) => <SortableItem
+		index={ index }
+		optsId={ index }
+		value={ value }
+		options={ items }
+		changeCallback={ changeCallback }
+		removeCallback={ removeCallback }
+	/> ) }
+</div> );
 
 registerBlockType( 'zoom-forms/form', {
 	title:       __( 'Form', 'wpzoom-blocks' ),
@@ -162,37 +210,20 @@ registerBlockType( 'zoom-forms/form', {
 									[
 										'core/column',
 										{
-											'width': '60%'
+											'width': '100%'
 										},
 										[
-											[
-												'zoom-forms/label-field',
-												{
-													'id':       'input_label1',
-													'name':     __( 'Name', 'wpzoom-blocks' ),
-													'forInput': 'input_name',
-													'required': true
-												}
-											],
 											[
 												'zoom-forms/text-name-field',
 												{
 													'id':        'input_name',
 													'name':      __( 'Name', 'wpzoom-blocks' ),
 													'type':      'text',
-													'showLabel': false,
+													'showLabel': true,
+													'label':     __( 'Name', 'wpzoom-blocks' ),
 													'required':  true,
 													'replyto':   true,
 													'className': 'fullwidth'
-												}
-											],
-											[
-												'zoom-forms/label-field',
-												{
-													'id':       'input_label2',
-													'name':     __( 'Email', 'wpzoom-blocks' ),
-													'forInput': 'input_email',
-													'required': true
 												}
 											],
 											[
@@ -201,19 +232,11 @@ registerBlockType( 'zoom-forms/form', {
 													'id':        'input_email',
 													'name':      __( 'Email', 'wpzoom-blocks' ),
 													'type':      'email',
-													'showLabel': false,
+													'showLabel': true,
+													'label':     __( 'Email', 'wpzoom-blocks' ),
 													'required':  true,
 													'replyto':   true,
 													'className': 'fullwidth'
-												}
-											],
-											[
-												'zoom-forms/label-field',
-												{
-													'id':       'input_label3',
-													'name':     __( 'Subject', 'wpzoom-blocks' ),
-													'forInput': 'input_subject',
-													'required': true
 												}
 											],
 											[
@@ -222,36 +245,11 @@ registerBlockType( 'zoom-forms/form', {
 													'id':        'input_subject',
 													'name':      __( 'Subject', 'wpzoom-blocks' ),
 													'type':      'text',
-													'showLabel': false,
+													'showLabel': true,
+													'label':     __( 'Subject', 'wpzoom-blocks' ),
 													'required':  true,
 													'subject':   true,
 													'className': 'fullwidth'
-												}
-											]
-										]
-									]
-								]
-							],
-							[
-								'core/columns',
-								{
-									'isStackedOnMobile': true
-								},
-								[
-									[
-										'core/column',
-										{
-											'width': '100%'
-										},
-										[
-											[
-												'zoom-forms/label-field',
-												{
-													'id':        'input_label4',
-													'name':      __( 'Message', 'wpzoom-blocks' ),
-													'forInput':  'input_message',
-													'className': 'nomarginright',
-													'required':  true
 												}
 											],
 											[
@@ -261,7 +259,8 @@ registerBlockType( 'zoom-forms/form', {
 													'name':      __( 'Message', 'wpzoom-blocks' ),
 													'cols':      '55',
 													'rows':      '10',
-													'showLabel': false,
+													'showLabel': true,
+													'label':     __( 'Message', 'wpzoom-blocks' ),
 													'required':  true,
 													'className': 'fullwidth'
 												}
@@ -366,8 +365,6 @@ registerBlockType( 'zoom-forms/text-plain-field', {
 		},
 		label: {
 			type:      'string',
-			source:    'text',
-			selector:  'label',
 			default:   __( 'My Text Field', 'zoom-forms' )
 		},
 		showLabel: {
@@ -461,7 +458,10 @@ registerBlockType( 'zoom-forms/text-plain-field', {
 			</InspectorControls>
 
 			<Fragment>
-				{ showLabel && <label htmlFor={ id }>{ label }</label> }
+				{ showLabel && <label htmlFor={ id }>
+					{ label }
+					{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
+				</label> }
 
 				<input
 					type={ type }
@@ -480,7 +480,10 @@ registerBlockType( 'zoom-forms/text-plain-field', {
 		const { id, name, type, placeholder, label, showLabel, required, subject } = attributes;
 
 		return <>
-			{ showLabel && <label htmlFor={ id }>{ label }</label> }
+			{ showLabel && <label htmlFor={ id }>
+				{ label }
+				{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
+			</label> }
 
 			<input
 				type={ type }
@@ -540,8 +543,6 @@ registerBlockType( 'zoom-forms/text-name-field', {
 		},
 		label: {
 			type:      'string',
-			source:    'text',
-			selector:  'label',
 			default:   __( 'My Name Field', 'zoom-forms' )
 		},
 		showLabel: {
@@ -605,7 +606,10 @@ registerBlockType( 'zoom-forms/text-name-field', {
 			</InspectorControls>
 
 			<Fragment>
-				{ showLabel && <label htmlFor={ id }>{ label }</label> }
+				{ showLabel && <label htmlFor={ id }>
+					{ label }
+					{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
+				</label> }
 
 				<input
 					type="text"
@@ -623,7 +627,10 @@ registerBlockType( 'zoom-forms/text-name-field', {
 		const { id, name, placeholder, label, showLabel, required } = attributes;
 
 		return <>
-			{ showLabel && <label htmlFor={ id }>{ label }</label> }
+			{ showLabel && <label htmlFor={ id }>
+				{ label }
+				{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
+			</label> }
 
 			<input
 				type="text"
@@ -680,8 +687,6 @@ registerBlockType( 'zoom-forms/text-email-field', {
 		},
 		label: {
 			type:      'string',
-			source:    'text',
-			selector:  'label',
 			default:   __( 'My Email Field', 'zoom-forms' )
 		},
 		showLabel: {
@@ -759,7 +764,10 @@ registerBlockType( 'zoom-forms/text-email-field', {
 			</InspectorControls>
 
 			<Fragment>
-				{ showLabel && <label htmlFor={ id }>{ label }</label> }
+				{ showLabel && <label htmlFor={ id }>
+					{ label }
+					{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
+				</label> }
 
 				<input
 					type="email"
@@ -778,7 +786,10 @@ registerBlockType( 'zoom-forms/text-email-field', {
 		const { id, name, placeholder, label, showLabel, required, replyto } = attributes;
 
 		return <>
-			{ showLabel && <label htmlFor={ id }>{ label }</label> }
+			{ showLabel && <label htmlFor={ id }>
+				{ label }
+				{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
+			</label> }
 
 			<input
 				type="email"
@@ -848,8 +859,6 @@ registerBlockType( 'zoom-forms/text-website-field', {
 		},
 		label: {
 			type:      'string',
-			source:    'text',
-			selector:  'label',
 			default:   __( 'My Website Field', 'zoom-forms' )
 		},
 		showLabel: {
@@ -913,7 +922,10 @@ registerBlockType( 'zoom-forms/text-website-field', {
 			</InspectorControls>
 
 			<Fragment>
-				{ showLabel && <label htmlFor={ id }>{ label }</label> }
+				{ showLabel && <label htmlFor={ id }>
+					{ label }
+					{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
+				</label> }
 
 				<input
 					type="url"
@@ -931,7 +943,10 @@ registerBlockType( 'zoom-forms/text-website-field', {
 		const { id, name, placeholder, label, showLabel, required } = attributes;
 
 		return <>
-			{ showLabel && <label htmlFor={ id }>{ label }</label> }
+			{ showLabel && <label htmlFor={ id }>
+				{ label }
+				{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
+			</label> }
 
 			<input
 				type="url"
@@ -992,8 +1007,6 @@ registerBlockType( 'zoom-forms/text-phone-field', {
 		},
 		label: {
 			type:      'string',
-			source:    'text',
-			selector:  'label',
 			default:   __( 'My Phone Field', 'zoom-forms' )
 		},
 		showLabel: {
@@ -1057,7 +1070,10 @@ registerBlockType( 'zoom-forms/text-phone-field', {
 			</InspectorControls>
 
 			<Fragment>
-				{ showLabel && <label htmlFor={ id }>{ label }</label> }
+				{ showLabel && <label htmlFor={ id }>
+					{ label }
+					{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
+				</label> }
 
 				<input
 					type="tel"
@@ -1075,7 +1091,10 @@ registerBlockType( 'zoom-forms/text-phone-field', {
 		const { id, name, placeholder, label, showLabel, required } = attributes;
 
 		return <>
-			{ showLabel && <label htmlFor={ id }>{ label }</label> }
+			{ showLabel && <label htmlFor={ id }>
+				{ label }
+				{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
+			</label> }
 
 			<input
 				type="tel"
@@ -1137,8 +1156,6 @@ registerBlockType( 'zoom-forms/textarea-field', {
 		},
 		label: {
 			type:      'string',
-			source:    'text',
-			selector:  'label',
 			default:   __( 'My Textarea Field', 'zoom-forms' )
 		},
 		showLabel: {
@@ -1218,7 +1235,10 @@ registerBlockType( 'zoom-forms/textarea-field', {
 			</InspectorControls>
 
 			<Fragment>
-				{ showLabel && <label htmlFor={ id }>{ label }</label> }
+				{ showLabel && <label htmlFor={ id }>
+					{ label }
+					{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
+				</label> }
 
 				<textarea
 					name={ id }
@@ -1237,7 +1257,10 @@ registerBlockType( 'zoom-forms/textarea-field', {
 		const { id, name, cols, rows, placeholder, label, showLabel, required } = attributes;
 
 		return <>
-			{ showLabel && <label htmlFor={ id }>{ label }</label> }
+			{ showLabel && <label htmlFor={ id }>
+				{ label }
+				{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
+			</label> }
 
 			<textarea
 				name={ id }
@@ -1286,8 +1309,6 @@ registerBlockType( 'zoom-forms/select-field', {
 		},
 		label: {
 			type:      'string',
-			source:    'text',
-			selector:  'label',
 			default:   __( 'My Select Field', 'zoom-forms' )
 		},
 		showLabel: {
@@ -1344,37 +1365,6 @@ registerBlockType( 'zoom-forms/select-field', {
 			}
 		}, [] );
 
-		const DragHandle = SortableHandle( () => <IconButton
-			icon="move"
-			label={ __( 'Re-arrange Item', 'zoom-forms' ) }
-			className="zoom-forms-move-button"
-		/> );
-
-		const SortableItem = SortableElement( ( { value, optsId } ) => <Fragment>
-			<Flex>
-				<FlexBlock>
-					<TextControl
-						value={ value }
-						onChange={ val => optionChange( val, optsId ) }
-					/>
-				</FlexBlock>
-
-				{ options.length > 1 && <FlexItem>
-					<DragHandle />
-
-					<IconButton
-						icon="no-alt"
-						label={ __( 'Delete Item', 'zoom-forms' ) }
-						onClick={ () => optionRemove( optsId ) }
-					/>
-				</FlexItem> }
-			</Flex>
-		</Fragment> );
-
-		const SortableList = SortableContainer( ( { items } ) => <div>
-			{ items.map( ( value, index ) => <SortableItem index={ index } optsId={ index } value={ value } /> ) }
-		</div> );
-
 		return <>
 			<InspectorControls>
 				<PanelBody title={ __( 'Options', 'zoom-forms' ) }>
@@ -1398,6 +1388,8 @@ registerBlockType( 'zoom-forms/select-field', {
 						<CardBody>
 							<SortableList
 								items={ options }
+								changeCallback={ optionChange }
+								removeCallback={ optionRemove }
 								lockAxis="y"
 								useDragHandle={ true }
 								onSortEnd={ ( { oldIndex, newIndex } ) => optionsSort( oldIndex, newIndex ) }
@@ -1439,7 +1431,10 @@ registerBlockType( 'zoom-forms/select-field', {
 			</InspectorControls>
 
 			<Fragment>
-				{ showLabel && <label htmlFor={ id }>{ label }</label> }
+				{ showLabel && <label htmlFor={ id }>
+					{ label }
+					{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
+				</label> }
 
 				<select
 					name={ id }
@@ -1459,7 +1454,10 @@ registerBlockType( 'zoom-forms/select-field', {
 		const { id, name, options, defaultValue, label, showLabel, multiple, required } = attributes;
 
 		return <>
-			{ showLabel && <label htmlFor={ id }>{ label }</label> }
+			{ showLabel && <label htmlFor={ id }>
+				{ label }
+				{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
+			</label> }
 
 			<select
 				name={ id }
@@ -1506,8 +1504,6 @@ registerBlockType( 'zoom-forms/checkbox-field', {
 		},
 		label: {
 			type:      'string',
-			source:    'text',
-			selector:  'label',
 			default:   __( 'My Checkbox Field', 'zoom-forms' )
 		},
 		showLabel: {
@@ -1571,7 +1567,10 @@ registerBlockType( 'zoom-forms/checkbox-field', {
 			</InspectorControls>
 
 			<Fragment>
-				{ showLabel && <label htmlFor={ id }>{ label }</label> }
+				{ showLabel && <label htmlFor={ id }>
+					{ label }
+					{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
+				</label> }
 
 				<input
 					type="checkbox"
@@ -1589,7 +1588,10 @@ registerBlockType( 'zoom-forms/checkbox-field', {
 		const { id, name, defaultValue, label, showLabel, required } = attributes;
 
 		return <>
-			{ showLabel && <label htmlFor={ id }>{ label }</label> }
+			{ showLabel && <label htmlFor={ id }>
+				{ label }
+				{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
+			</label> }
 
 			<input
 				type="checkbox"
@@ -1632,28 +1634,14 @@ registerBlockType( 'zoom-forms/radio-field', {
 		},
 		options: {
 			type:      'array',
-			source:    'query',
-			selector:  'input',
-			query:     {
-				name: {
-					type:      'string',
-					source:    'attribute',
-					attribute: 'value'
-				}
-			},
 			default:   [ __( 'Item #1', 'zoom-forms' ) ]
 		},
-		defaultValue: {
+		startValue: {
 			type:      'string',
-			source:    'attribute',
-			attribute: 'defaultValue',
-			selector:  'input',
 			default:   __( 'Item #1', 'zoom-forms' )
 		},
 		label: {
 			type:      'string',
-			source:    'text',
-			selector:  'label',
 			default:   __( 'My Radio Field', 'zoom-forms' )
 		},
 		showLabel: {
@@ -1672,7 +1660,7 @@ registerBlockType( 'zoom-forms/radio-field', {
 	edit:        props => {
 		const blockProps = useBlockProps( { className: 'unstyled-list' } );
 		const { attributes, setAttributes, clientId } = props;
-		const { id, name, options, defaultValue, label, showLabel, required } = attributes;
+		const { id, name, options, startValue, label, showLabel, required } = attributes;
 
 		const optionAdd = () => {
 			const opts = [ ...options ];
@@ -1697,8 +1685,6 @@ registerBlockType( 'zoom-forms/radio-field', {
 				setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
 			}
 		}, [] );
-
-		if ( options.length < 1 ) options = [ __( 'Item #1', 'zoom-forms' ) ];
 
 		return <>
 			<InspectorControls>
@@ -1746,9 +1732,9 @@ registerBlockType( 'zoom-forms/radio-field', {
 
 					<SelectControl
 						label={ __( 'Default Value', 'zoom-forms' ) }
-						value={ defaultValue }
+						value={ startValue }
 						options={ options.map( ( option, index ) => ( { label: option, value: option } ) ) }
-						onChange={ value => setAttributes( { defaultValue: value } ) }
+						onChange={ value => setAttributes( { startValue: value } ) }
 					/>
 
 					<ToggleControl
@@ -1772,13 +1758,16 @@ registerBlockType( 'zoom-forms/radio-field', {
 			</InspectorControls>
 
 			<Fragment>
-				{ showLabel && <label htmlFor={ id }>{ label }</label> }
+				{ showLabel && <label htmlFor={ id }>
+					{ label }
+					{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
+				</label> }
 
 				<ul { ...blockProps }>
 					{ options.map( ( option, index ) =>
 						<li key={ index }>
 							<label>
-								<input type="radio" name={ id } id={ id } value={ option } defaultChecked={ option == defaultValue } required={ !! required } />
+								<input type="radio" name={ id } id={ id } value={ option } checked={ option == startValue } onChange={ e => {} } required={ !! required } />
 								{ option }
 							</label>
 						</li>
@@ -1789,16 +1778,19 @@ registerBlockType( 'zoom-forms/radio-field', {
 	},
 	save:        ( { attributes } ) => {
 		const blockProps = useBlockProps.save();
-		const { id, name, options, defaultValue, label, showLabel, required } = attributes;
+		const { id, name, options, startValue, label, showLabel, required } = attributes;
 
 		return <>
-			{ showLabel && <label htmlFor={ id }>{ label }</label> }
+			{ showLabel && <label htmlFor={ id }>
+				{ label }
+				{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
+			</label> }
 
 			<ul { ...blockProps }>
 				{ options.map( ( option, index ) =>
 					<li key={ index }>
 						<label>
-							<input type="radio" name={ id } id={ id } value={ option } defaultChecked={ option == defaultValue } required={ !! required } />
+							<input type="radio" name={ id } id={ id } value={ option } checked={ option == startValue } onChange={ e => {} } required={ !! required } />
 							{ option }
 						</label>
 					</li>
@@ -1877,12 +1869,6 @@ registerBlockType( 'zoom-forms/label-field', {
 		const allBlocks = useSelect( select => select( 'core/block-editor' ).getBlocks(), [] );
 		const allZoomFormBlocks = allBlocks && allBlocks.length > 0 ? zoomFormBlocks( allBlocks ) : [];
 		const label = allZoomFormBlocks?.find( x => x.value == forInput )?.label;
-
-		useEffect( () => {
-			if ( label ) {
-				setAttributes( { name: ( label || __( '[No Name]', 'zoom-forms' ) ) } );
-			}
-		}, [] );
 
 		const inputSelect = <>
 			<SelectControl
