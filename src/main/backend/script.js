@@ -380,9 +380,6 @@ registerBlockType( 'zoom-forms/text-plain-field', {
 		},
 		subject: {
 			type:      'boolean',
-			source:    'attribute',
-			attribute: 'data-subject',
-			selector:  'input',
 			default:   false
 		}
 	},
@@ -459,7 +456,13 @@ registerBlockType( 'zoom-forms/text-plain-field', {
 
 			<Fragment>
 				{ showLabel && <label htmlFor={ id }>
-					{ label }
+					<RichText
+						tagName="label"
+						placeholder={ __( 'Label', 'zoom-forms' ) }
+						value={ label }
+						htmlFor={ id }
+						onChange={ value => setAttributes( { label: value } ) }
+					/>
 					{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
 				</label> }
 
@@ -481,7 +484,11 @@ registerBlockType( 'zoom-forms/text-plain-field', {
 
 		return <>
 			{ showLabel && <label htmlFor={ id }>
-				{ label }
+				<RichText.Content
+					tagName="label"
+					value={ label }
+					htmlFor={ id }
+				/>
 				{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
 			</label> }
 
@@ -607,7 +614,13 @@ registerBlockType( 'zoom-forms/text-name-field', {
 
 			<Fragment>
 				{ showLabel && <label htmlFor={ id }>
-					{ label }
+					<RichText
+						tagName="label"
+						placeholder={ __( 'Label', 'zoom-forms' ) }
+						value={ label }
+						htmlFor={ id }
+						onChange={ value => setAttributes( { label: value } ) }
+					/>
 					{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
 				</label> }
 
@@ -628,7 +641,11 @@ registerBlockType( 'zoom-forms/text-name-field', {
 
 		return <>
 			{ showLabel && <label htmlFor={ id }>
-				{ label }
+				<RichText.Content
+					tagName="label"
+					value={ label }
+					htmlFor={ id }
+				/>
 				{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
 			</label> }
 
@@ -702,9 +719,6 @@ registerBlockType( 'zoom-forms/text-email-field', {
 		},
 		replyto: {
 			type:      'boolean',
-			source:    'attribute',
-			attribute: 'data-replyto',
-			selector:  'input',
 			default:   false
 		}
 	},
@@ -765,7 +779,13 @@ registerBlockType( 'zoom-forms/text-email-field', {
 
 			<Fragment>
 				{ showLabel && <label htmlFor={ id }>
-					{ label }
+					<RichText
+						tagName="label"
+						placeholder={ __( 'Label', 'zoom-forms' ) }
+						value={ label }
+						htmlFor={ id }
+						onChange={ value => setAttributes( { label: value } ) }
+					/>
 					{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
 				</label> }
 
@@ -787,7 +807,11 @@ registerBlockType( 'zoom-forms/text-email-field', {
 
 		return <>
 			{ showLabel && <label htmlFor={ id }>
-				{ label }
+				<RichText.Content
+					tagName="label"
+					value={ label }
+					htmlFor={ id }
+				/>
 				{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
 			</label> }
 
@@ -923,7 +947,13 @@ registerBlockType( 'zoom-forms/text-website-field', {
 
 			<Fragment>
 				{ showLabel && <label htmlFor={ id }>
-					{ label }
+					<RichText
+						tagName="label"
+						placeholder={ __( 'Label', 'zoom-forms' ) }
+						value={ label }
+						htmlFor={ id }
+						onChange={ value => setAttributes( { label: value } ) }
+					/>
 					{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
 				</label> }
 
@@ -944,7 +974,11 @@ registerBlockType( 'zoom-forms/text-website-field', {
 
 		return <>
 			{ showLabel && <label htmlFor={ id }>
-				{ label }
+				<RichText.Content
+					tagName="label"
+					value={ label }
+					htmlFor={ id }
+				/>
 				{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
 			</label> }
 
@@ -1071,7 +1105,13 @@ registerBlockType( 'zoom-forms/text-phone-field', {
 
 			<Fragment>
 				{ showLabel && <label htmlFor={ id }>
-					{ label }
+					<RichText
+						tagName="label"
+						placeholder={ __( 'Label', 'zoom-forms' ) }
+						value={ label }
+						htmlFor={ id }
+						onChange={ value => setAttributes( { label: value } ) }
+					/>
 					{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
 				</label> }
 
@@ -1092,7 +1132,11 @@ registerBlockType( 'zoom-forms/text-phone-field', {
 
 		return <>
 			{ showLabel && <label htmlFor={ id }>
-				{ label }
+				<RichText.Content
+					tagName="label"
+					value={ label }
+					htmlFor={ id }
+				/>
 				{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
 			</label> }
 
@@ -1236,7 +1280,13 @@ registerBlockType( 'zoom-forms/textarea-field', {
 
 			<Fragment>
 				{ showLabel && <label htmlFor={ id }>
-					{ label }
+					<RichText
+						tagName="label"
+						placeholder={ __( 'Label', 'zoom-forms' ) }
+						value={ label }
+						htmlFor={ id }
+						onChange={ value => setAttributes( { label: value } ) }
+					/>
 					{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
 				</label> }
 
@@ -1258,7 +1308,11 @@ registerBlockType( 'zoom-forms/textarea-field', {
 
 		return <>
 			{ showLabel && <label htmlFor={ id }>
-				{ label }
+				<RichText.Content
+					tagName="label"
+					value={ label }
+					htmlFor={ id }
+				/>
 				{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
 			</label> }
 
@@ -1432,7 +1486,13 @@ registerBlockType( 'zoom-forms/select-field', {
 
 			<Fragment>
 				{ showLabel && <label htmlFor={ id }>
-					{ label }
+					<RichText
+						tagName="label"
+						placeholder={ __( 'Label', 'zoom-forms' ) }
+						value={ label }
+						htmlFor={ id }
+						onChange={ value => setAttributes( { label: value } ) }
+					/>
 					{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
 				</label> }
 
@@ -1455,7 +1515,11 @@ registerBlockType( 'zoom-forms/select-field', {
 
 		return <>
 			{ showLabel && <label htmlFor={ id }>
-				{ label }
+				<RichText.Content
+					tagName="label"
+					value={ label }
+					htmlFor={ id }
+				/>
 				{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
 			</label> }
 
@@ -1497,9 +1561,6 @@ registerBlockType( 'zoom-forms/checkbox-field', {
 		},
 		defaultValue: {
 			type:      'boolean',
-			source:    'attribute',
-			attribute: 'defaultValue',
-			selector:  'input',
 			default:   false
 		},
 		label: {
@@ -1568,7 +1629,13 @@ registerBlockType( 'zoom-forms/checkbox-field', {
 
 			<Fragment>
 				{ showLabel && <label htmlFor={ id }>
-					{ label }
+					<RichText
+						tagName="label"
+						placeholder={ __( 'Label', 'zoom-forms' ) }
+						value={ label }
+						htmlFor={ id }
+						onChange={ value => setAttributes( { label: value } ) }
+					/>
 					{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
 				</label> }
 
@@ -1576,7 +1643,8 @@ registerBlockType( 'zoom-forms/checkbox-field', {
 					type="checkbox"
 					name={ id }
 					id={ id }
-					defaultChecked={ !! defaultValue }
+					checked={ true == defaultValue }
+					onChange={ e => {} }
 					required={ !! required }
 					{ ...blockProps }
 				/>
@@ -1589,7 +1657,11 @@ registerBlockType( 'zoom-forms/checkbox-field', {
 
 		return <>
 			{ showLabel && <label htmlFor={ id }>
-				{ label }
+				<RichText.Content
+					tagName="label"
+					value={ label }
+					htmlFor={ id }
+				/>
 				{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
 			</label> }
 
@@ -1597,7 +1669,8 @@ registerBlockType( 'zoom-forms/checkbox-field', {
 				type="checkbox"
 				name={ id }
 				id={ id }
-				defaultChecked={ !! defaultValue }
+				checked={ true == defaultValue }
+				onChange={ e => {} }
 				required={ !! required }
 				{ ...blockProps }
 			/>
@@ -1636,7 +1709,7 @@ registerBlockType( 'zoom-forms/radio-field', {
 			type:      'array',
 			default:   [ __( 'Item #1', 'zoom-forms' ) ]
 		},
-		startValue: {
+		defaultValue: {
 			type:      'string',
 			default:   __( 'Item #1', 'zoom-forms' )
 		},
@@ -1660,7 +1733,7 @@ registerBlockType( 'zoom-forms/radio-field', {
 	edit:        props => {
 		const blockProps = useBlockProps( { className: 'unstyled-list' } );
 		const { attributes, setAttributes, clientId } = props;
-		const { id, name, options, startValue, label, showLabel, required } = attributes;
+		const { id, name, options, defaultValue, label, showLabel, required } = attributes;
 
 		const optionAdd = () => {
 			const opts = [ ...options ];
@@ -1732,9 +1805,9 @@ registerBlockType( 'zoom-forms/radio-field', {
 
 					<SelectControl
 						label={ __( 'Default Value', 'zoom-forms' ) }
-						value={ startValue }
+						value={ defaultValue }
 						options={ options.map( ( option, index ) => ( { label: option, value: option } ) ) }
-						onChange={ value => setAttributes( { startValue: value } ) }
+						onChange={ value => setAttributes( { defaultValue: value } ) }
 					/>
 
 					<ToggleControl
@@ -1759,7 +1832,13 @@ registerBlockType( 'zoom-forms/radio-field', {
 
 			<Fragment>
 				{ showLabel && <label htmlFor={ id }>
-					{ label }
+					<RichText
+						tagName="label"
+						placeholder={ __( 'Label', 'zoom-forms' ) }
+						value={ label }
+						htmlFor={ id }
+						onChange={ value => setAttributes( { label: value } ) }
+					/>
 					{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
 				</label> }
 
@@ -1767,7 +1846,15 @@ registerBlockType( 'zoom-forms/radio-field', {
 					{ options.map( ( option, index ) =>
 						<li key={ index }>
 							<label>
-								<input type="radio" name={ id } id={ id } value={ option } checked={ option == startValue } onChange={ e => {} } required={ !! required } />
+								<input
+									type="radio"
+									name={ id }
+									id={ id }
+									value={ option }
+									checked={ option == defaultValue }
+									onChange={ e => {} }
+									required={ !! required }
+								/>
 								{ option }
 							</label>
 						</li>
@@ -1778,11 +1865,15 @@ registerBlockType( 'zoom-forms/radio-field', {
 	},
 	save:        ( { attributes } ) => {
 		const blockProps = useBlockProps.save();
-		const { id, name, options, startValue, label, showLabel, required } = attributes;
+		const { id, name, options, defaultValue, label, showLabel, required } = attributes;
 
 		return <>
 			{ showLabel && <label htmlFor={ id }>
-				{ label }
+				<RichText.Content
+					tagName="label"
+					value={ label }
+					htmlFor={ id }
+				/>
 				{ required && <sup className="wp-block-zoom-forms-required">{ __( '*', 'zoom-forms' ) }</sup> }
 			</label> }
 
@@ -1790,7 +1881,15 @@ registerBlockType( 'zoom-forms/radio-field', {
 				{ options.map( ( option, index ) =>
 					<li key={ index }>
 						<label>
-							<input type="radio" name={ id } id={ id } value={ option } checked={ option == startValue } onChange={ e => {} } required={ !! required } />
+							<input
+								type="radio"
+								name={ id }
+								id={ id }
+								value={ option }
+								checked={ option == defaultValue }
+								onChange={ e => {} }
+								required={ !! required }
+							/>
 							{ option }
 						</label>
 					</li>
