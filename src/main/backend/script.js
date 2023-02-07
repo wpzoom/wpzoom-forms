@@ -42,7 +42,7 @@ registerPlugin( 'zoom-forms-document-settings', {
 		const postType = useSelect( select => select( 'core/editor' ).getCurrentPostType(), [] );
 		const [ meta, setMeta ] = useEntityProp( 'postType', postType, 'meta' );
 		const formMethod = meta[ '_form_method' ] || 'email';
-		const formEmail = meta[ '_form_email' ] || '';
+		const formEmail = meta[ '_form_email' ] || ( typeof wpzf_formblock !== 'undefined' && 'admin_email' in wpzf_formblock ? wpzf_formblock.admin_email : '' );
 		const [ hasCopiedShortcode, setHasCopiedShortcode ] = useState( false );
 		const copyBtnStyle = { minHeight: '30px', height: 'auto', minWidth: 'fit-content', margin: '0px 0px 8px 0px' };
 

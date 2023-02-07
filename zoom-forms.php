@@ -851,6 +851,15 @@ class ZOOM_Forms {
 				true
 			);
 
+			wp_localize_script(
+				'zoom-forms-js-backend-main',
+				'wpzf_formblock',
+				array(
+					'admin_url'   => trailingslashit( admin_url() ),
+					'admin_email' => '' . get_site_option( 'admin_email', '' )
+				)
+			);
+
 			wp_register_style(
 				'zoom-forms-css-backend-main',
 				trailingslashit( $this->main_dir_url ) . 'main/backend/style.css',
@@ -870,7 +879,8 @@ class ZOOM_Forms {
 				'zoom-forms-js-backend-formblock',
 				'wpzf_formblock',
 				array(
-					'admin_url' => trailingslashit( admin_url() )
+					'admin_url'   => trailingslashit( admin_url() ),
+					'admin_email' => '' . get_site_option( 'admin_email', '' )
 				)
 			);
 
