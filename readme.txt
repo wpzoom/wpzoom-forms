@@ -59,6 +59,9 @@ To export form submissions, navigate to the Tools > Export page in Dashboard and
 == Screenshots ==
 
 1. Form builder block
+1. Add a form in a page
+1. Add fields to forms
+1. Form submissions
 
 
 == Changelog ==

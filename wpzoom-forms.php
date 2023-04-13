@@ -789,7 +789,7 @@ class WPZOOM_Forms {
 					$categories,
 					array(
 						'slug' => 'wpzoom-forms',
-						'title' => __( 'wpzoom Forms', 'wpzoom-forms' ),
+						'title' => __( 'WPZOOM Forms', 'wpzoom-forms' ),
 						'icon' => 'wordpress'
 					)
 				);
