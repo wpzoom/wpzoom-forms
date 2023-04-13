@@ -1,18 +1,18 @@
 <?php
 /**
- * ZOOM Forms - Custom forms for WordPress, by WPZOOM.
+ * WPZOOM Forms - Custom forms for WordPress, by WPZOOM.
  *
- * @package   ZOOM_Forms
+ * @package   WPZOOM_Forms
  * @author    WPZOOM
  * @copyright 2022 WPZOOM
  * @license   GPL-2.0-or-later
  *
  * @wordpress-plugin
- * Plugin Name: ZOOM Forms
+ * Plugin Name: WPZOOM Forms
  * Plugin URI:  https://wpzoom.com/plugins/forms/
  * Description: Custom forms for WordPress, by WPZOOM.
  * Author:      WPZOOM
- * Author URI:  https://wpzoom.com
+ * Author URI:  https://www.wpzoom.com
  * Version:     1.0.0
  * License:     GPL2+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -22,22 +22,22 @@
 defined( 'ABSPATH' ) || exit;
 
 // Instance the plugin
-$zoom_forms = new ZOOM_Forms();
+$wpzoom_forms = new WPZOOM_Forms();
 
 // Register plugin activation hook
-register_activation_hook( __FILE__, array( $zoom_forms, 'activate' ) );
+register_activation_hook( __FILE__, array( $wpzoom_forms, 'activate' ) );
 
 // Hook the plugin into WordPress
-add_action( 'init', array( $zoom_forms, 'init' ), 9 );
+add_action( 'init', array( $wpzoom_forms, 'init' ), 9 );
 
 /**
- * Class ZOOM_Forms
+ * Class WPZOOM_Forms
  *
  * Main container class of the ZOOM Forms WordPress plugin.
  *
  * @since 1.0.0
  */
-class ZOOM_Forms {
+class WPZOOM_Forms {
 	/**
 	 * The version of this plugin.
 	 *
@@ -107,7 +107,7 @@ class ZOOM_Forms {
 			$this->main_dir_path   = trailingslashit( $this->plugin_dir_path . 'build' );
 			$this->main_dir_url    = trailingslashit( $this->plugin_dir_url . 'build' );
 
-			load_plugin_textdomain( 'zoom-forms', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+			load_plugin_textdomain( 'wpzoom-forms', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
 			add_filter( 'allowed_block_types_all',                      array( $this, 'filter_allowed_block_types' ),        10, 2 );
 			add_filter( 'block_categories_all',                         array( $this, 'filter_block_categories' ),           10, 2 );
@@ -133,43 +133,43 @@ class ZOOM_Forms {
 			register_post_type(
 				'wpzf-form',
 				array(
-					'label'               => __( 'ZOOM Forms', 'zoom-forms' ),
+					'label'               => __( 'WPZOOM Forms', 'wpzoom-forms' ),
 					'labels'              => array(
-						'name'                     => _x( 'ZOOM Forms', 'post type general name', 'zoom-forms' ),
-						'singular_name'            => _x( 'Form', 'post type singular name', 'zoom-forms' ),
-						'add_new'                  => _x( 'Add New', 'post', 'zoom-forms' ),
-						'add_new_item'             => __( 'Add New Form', 'zoom-forms' ),
-						'edit_item'                => __( 'Edit Form', 'zoom-forms' ),
-						'new_item'                 => __( 'New Form', 'zoom-forms' ),
-						'view_item'                => __( 'View Form', 'zoom-forms' ),
-						'view_items'               => __( 'View Forms', 'zoom-forms' ),
-						'search_items'             => __( 'Search Forms', 'zoom-forms' ),
-						'not_found'                => __( 'No forms found.', 'zoom-forms' ),
-						'not_found_in_trash'       => __( 'No forms found in Trash.', 'zoom-forms' ),
-						'all_items'                => __( 'All Forms', 'zoom-forms' ),
-						'archives'                 => __( 'Form Archives', 'zoom-forms' ),
-						'attributes'               => __( 'Form Attributes', 'zoom-forms' ),
-						'insert_into_item'         => __( 'Insert into form', 'zoom-forms' ),
-						'uploaded_to_this_item'    => __( 'Uploaded to this form', 'zoom-forms' ),
-						'featured_image'           => _x( 'Featured image', 'post', 'zoom-forms' ),
-						'set_featured_image'       => _x( 'Set featured image', 'post', 'zoom-forms' ),
-						'remove_featured_image'    => _x( 'Remove featured image', 'post', 'zoom-forms' ),
-						'use_featured_image'       => _x( 'Use as featured image', 'post', 'zoom-forms' ),
-						'filter_items_list'        => __( 'Filter forms list', 'zoom-forms' ),
-						'items_list_navigation'    => __( 'Forms list navigation', 'zoom-forms' ),
-						'items_list'               => __( 'Forms list', 'zoom-forms' ),
-						'item_published'           => __( 'Form saved.', 'zoom-forms' ),
-						'item_published_privately' => __( 'Form saved privately.', 'zoom-forms' ),
-						'item_reverted_to_draft'   => __( 'Form reverted to draft.', 'zoom-forms' ),
-						'item_scheduled'           => __( 'Form scheduled.', 'zoom-forms' ),
-						'item_updated'             => __( 'Form updated.', 'zoom-forms' )
+						'name'                     => _x( 'WPZOOM Forms', 'post type general name', 'wpzoom-forms' ),
+						'singular_name'            => _x( 'Form', 'post type singular name', 'wpzoom-forms' ),
+						'add_new'                  => _x( 'Add New', 'post', 'wpzoom-forms' ),
+						'add_new_item'             => __( 'Add New Form', 'wpzoom-forms' ),
+						'edit_item'                => __( 'Edit Form', 'wpzoom-forms' ),
+						'new_item'                 => __( 'New Form', 'wpzoom-forms' ),
+						'view_item'                => __( 'View Form', 'wpzoom-forms' ),
+						'view_items'               => __( 'View Forms', 'wpzoom-forms' ),
+						'search_items'             => __( 'Search Forms', 'wpzoom-forms' ),
+						'not_found'                => __( 'No forms found.', 'wpzoom-forms' ),
+						'not_found_in_trash'       => __( 'No forms found in Trash.', 'wpzoom-forms' ),
+						'all_items'                => __( 'All Forms', 'wpzoom-forms' ),
+						'archives'                 => __( 'Form Archives', 'wpzoom-forms' ),
+						'attributes'               => __( 'Form Attributes', 'wpzoom-forms' ),
+						'insert_into_item'         => __( 'Insert into form', 'wpzoom-forms' ),
+						'uploaded_to_this_item'    => __( 'Uploaded to this form', 'wpzoom-forms' ),
+						'featured_image'           => _x( 'Featured image', 'post', 'wpzoom-forms' ),
+						'set_featured_image'       => _x( 'Set featured image', 'post', 'wpzoom-forms' ),
+						'remove_featured_image'    => _x( 'Remove featured image', 'post', 'wpzoom-forms' ),
+						'use_featured_image'       => _x( 'Use as featured image', 'post', 'wpzoom-forms' ),
+						'filter_items_list'        => __( 'Filter forms list', 'wpzoom-forms' ),
+						'items_list_navigation'    => __( 'Forms list navigation', 'wpzoom-forms' ),
+						'items_list'               => __( 'Forms list', 'wpzoom-forms' ),
+						'item_published'           => __( 'Form saved.', 'wpzoom-forms' ),
+						'item_published_privately' => __( 'Form saved privately.', 'wpzoom-forms' ),
+						'item_reverted_to_draft'   => __( 'Form reverted to draft.', 'wpzoom-forms' ),
+						'item_scheduled'           => __( 'Form scheduled.', 'wpzoom-forms' ),
+						'item_updated'             => __( 'Form updated.', 'wpzoom-forms' )
 					),
 					'public'              => true,
 					'exclude_from_search' => true,
 					'publicly_queryable'  => false,
 					'show_in_rest'        => true,
 					'menu_position'       => 30,
-					'menu_icon'           => 'dashicons-feedback',
+					'menu_icon'           => 'dashicons-email-alt2',
 					'supports'            => array( 'title', 'editor', 'custom-fields' )
 				)
 			);
@@ -177,36 +177,36 @@ class ZOOM_Forms {
 			register_post_type(
 				'wpzf-submission',
 				array(
-					'label'               => __( 'ZOOM Form Submissions', 'zoom-forms' ),
+					'label'               => __( 'WPZOOM Form Submissions', 'wpzoom-forms' ),
 					'labels'              => array(
-						'name'                     => _x( 'ZOOM Form Submissions', 'post type general name', 'zoom-forms' ),
-						'singular_name'            => _x( 'ZOOM Form Submission', 'post type singular name', 'zoom-forms' ),
-						'add_new'                  => _x( 'Add New', 'post', 'zoom-forms' ),
-						'add_new_item'             => __( 'Add New Submission', 'zoom-forms' ),
-						'edit_item'                => __( 'ZOOM Form Submission', 'zoom-forms' ),
-						'new_item'                 => __( 'New Submission', 'zoom-forms' ),
-						'view_item'                => __( 'View Submission', 'zoom-forms' ),
-						'view_items'               => __( 'View Submissions', 'zoom-forms' ),
-						'search_items'             => __( 'Search Submissions', 'zoom-forms' ),
-						'not_found'                => __( 'No submissions found.', 'zoom-forms' ),
-						'not_found_in_trash'       => __( 'No submissions found in Trash.', 'zoom-forms' ),
-						'all_items'                => __( 'Submissions', 'zoom-forms' ),
-						'archives'                 => __( 'Submission Archives', 'zoom-forms' ),
-						'attributes'               => __( 'Submission Attributes', 'zoom-forms' ),
-						'insert_into_item'         => __( 'Insert into submission', 'zoom-forms' ),
-						'uploaded_to_this_item'    => __( 'Uploaded to this submission', 'zoom-forms' ),
-						'featured_image'           => _x( 'Featured image', 'post', 'zoom-forms' ),
-						'set_featured_image'       => _x( 'Set featured image', 'post', 'zoom-forms' ),
-						'remove_featured_image'    => _x( 'Remove featured image', 'post', 'zoom-forms' ),
-						'use_featured_image'       => _x( 'Use as featured image', 'post', 'zoom-forms' ),
-						'filter_items_list'        => __( 'Filter form submission list', 'zoom-forms' ),
-						'items_list_navigation'    => __( 'Form Submissions list navigation', 'zoom-forms' ),
-						'items_list'               => __( 'Form Submissions list', 'zoom-forms' ),
-						'item_published'           => __( 'Form Submission saved.', 'zoom-forms' ),
-						'item_published_privately' => __( 'Form Submission saved privately.', 'zoom-forms' ),
-						'item_reverted_to_draft'   => __( 'Form Submission reverted to draft.', 'zoom-forms' ),
-						'item_scheduled'           => __( 'Form Submission scheduled.', 'zoom-forms' ),
-						'item_updated'             => __( 'Form Submission updated.', 'zoom-forms' )
+						'name'                     => _x( 'WPZOOM Form Submissions', 'post type general name', 'wpzoom-forms' ),
+						'singular_name'            => _x( 'WPZOOM Form Submission', 'post type singular name', 'wpzoom-forms' ),
+						'add_new'                  => _x( 'Add New', 'post', 'wpzoom-forms' ),
+						'add_new_item'             => __( 'Add New Submission', 'wpzoom-forms' ),
+						'edit_item'                => __( 'WPZOOM Form Submission', 'wpzoom-forms' ),
+						'new_item'                 => __( 'New Submission', 'wpzoom-forms' ),
+						'view_item'                => __( 'View Submission', 'wpzoom-forms' ),
+						'view_items'               => __( 'View Submissions', 'wpzoom-forms' ),
+						'search_items'             => __( 'Search Submissions', 'wpzoom-forms' ),
+						'not_found'                => __( 'No submissions found.', 'wpzoom-forms' ),
+						'not_found_in_trash'       => __( 'No submissions found in Trash.', 'wpzoom-forms' ),
+						'all_items'                => __( 'Submissions', 'wpzoom-forms' ),
+						'archives'                 => __( 'Submission Archives', 'wpzoom-forms' ),
+						'attributes'               => __( 'Submission Attributes', 'wpzoom-forms' ),
+						'insert_into_item'         => __( 'Insert into submission', 'wpzoom-forms' ),
+						'uploaded_to_this_item'    => __( 'Uploaded to this submission', 'wpzoom-forms' ),
+						'featured_image'           => _x( 'Featured image', 'post', 'wpzoom-forms' ),
+						'set_featured_image'       => _x( 'Set featured image', 'post', 'wpzoom-forms' ),
+						'remove_featured_image'    => _x( 'Remove featured image', 'post', 'wpzoom-forms' ),
+						'use_featured_image'       => _x( 'Use as featured image', 'post', 'wpzoom-forms' ),
+						'filter_items_list'        => __( 'Filter form submission list', 'wpzoom-forms' ),
+						'items_list_navigation'    => __( 'Form Submissions list navigation', 'wpzoom-forms' ),
+						'items_list'               => __( 'Form Submissions list', 'wpzoom-forms' ),
+						'item_published'           => __( 'Form Submission saved.', 'wpzoom-forms' ),
+						'item_published_privately' => __( 'Form Submission saved privately.', 'wpzoom-forms' ),
+						'item_reverted_to_draft'   => __( 'Form Submission reverted to draft.', 'wpzoom-forms' ),
+						'item_scheduled'           => __( 'Form Submission scheduled.', 'wpzoom-forms' ),
+						'item_updated'             => __( 'Form Submission updated.', 'wpzoom-forms' )
 					),
 					'public'              => true,
 					'exclude_from_search' => true,
@@ -216,7 +216,7 @@ class ZOOM_Forms {
 					'show_in_rest'        => false,
 					'show_in_menu'        => 'edit.php?post_type=wpzf-form',
 					'menu_position'       => 31,
-					'menu_icon'           => 'dashicons-feedback',
+					'menu_icon'           => 'dashicons-email-alt2',
 					'supports'            => array( '' ),
 					'capabilities'        => array(
 						'create_posts'  => 'do_not_allow',
@@ -259,7 +259,7 @@ class ZOOM_Forms {
 			add_shortcode( 'wpzf_form', array( $this, 'shortcode_output' ) );
 
 			$form_pto           = get_post_type_object( 'wpzf-form' );
-			$form_pto->template = array( array( 'zoom-forms/form' ) );
+			$form_pto->template = array( array( 'wpzoom-forms/form' ) );
 
 			if ( $this->is_post_type( 'wpzf-form' ) ) {
 				$this->forms_display();
@@ -299,11 +299,11 @@ class ZOOM_Forms {
 		global $wp_post_statuses;
 
 		$publish                          = $wp_post_statuses['publish'];
-		$publish->label                   = __( 'Saved', 'zoom-forms' );
-		$publish->label_count[0]          = __( 'Saved <span class="count">(%s)</span>', 'zoom-forms' );
-		$publish->label_count[1]          = __( 'Saved <span class="count">(%s)</span>', 'zoom-forms' );
-		$publish->label_count['singular'] = __( 'Saved <span class="count">(%s)</span>', 'zoom-forms' );
-		$publish->label_count['plural']   = __( 'Saved <span class="count">(%s)</span>', 'zoom-forms' );
+		$publish->label                   = __( 'Saved', 'wpzoom-forms' );
+		$publish->label_count[0]          = __( 'Saved <span class="count">(%s)</span>', 'wpzoom-forms' );
+		$publish->label_count[1]          = __( 'Saved <span class="count">(%s)</span>', 'wpzoom-forms' );
+		$publish->label_count['singular'] = __( 'Saved <span class="count">(%s)</span>', 'wpzoom-forms' );
+		$publish->label_count['plural']   = __( 'Saved <span class="count">(%s)</span>', 'wpzoom-forms' );
 
 		$wp_post_statuses['publish']      = $publish;
 
@@ -320,12 +320,12 @@ class ZOOM_Forms {
 			) )
 		);
 
-		add_filter( 'post_date_column_status', function() { return __( 'Last Modified', 'zoom-forms' ); } );
+		add_filter( 'post_date_column_status', function() { return __( 'Last Modified', 'wpzoom-forms' ); } );
 		add_filter( 'post_date_column_time',   function( $time, $post ) {
 			return sprintf(
-				__( '%1$s at %2$s', 'zoom-forms' ),
-				get_the_modified_time( __( 'Y/m/d', 'zoom-forms' ), $post ),
-				get_the_modified_time( __( 'g:i a', 'zoom-forms' ), $post )
+				__( '%1$s at %2$s', 'wpzoom-forms' ),
+				get_the_modified_time( __( 'Y/m/d', 'wpzoom-forms' ), $post ),
+				get_the_modified_time( __( 'g:i a', 'wpzoom-forms' ), $post )
 			);
 		}, 10, 2 );
 	}
@@ -353,7 +353,7 @@ class ZOOM_Forms {
 			] )
 		);
 
-		add_filter( 'post_date_column_status', function() { return __( 'Submitted', 'zoom-forms' ); } );
+		add_filter( 'post_date_column_status', function() { return __( 'Submitted', 'wpzoom-forms' ); } );
 	}
 
 	/**
@@ -384,7 +384,7 @@ class ZOOM_Forms {
 				),
 				'label'       => array(
 					'type'    => 'string',
-					'default' => __( 'My Text Field', 'zoom-forms' )
+					'default' => __( 'My Text Field', 'wpzoom-forms' )
 				),
 				'showLabel'   => array(
 					'type'    => 'boolean',
@@ -414,7 +414,7 @@ class ZOOM_Forms {
 				),
 				'label'       => array(
 					'type'    => 'string',
-					'default' => __( 'My Name Field', 'zoom-forms' )
+					'default' => __( 'My Name Field', 'wpzoom-forms' )
 				),
 				'showLabel'   => array(
 					'type'    => 'boolean',
@@ -440,7 +440,7 @@ class ZOOM_Forms {
 				),
 				'label'       => array(
 					'type'    => 'string',
-					'default' => __( 'My Email Field', 'zoom-forms' )
+					'default' => __( 'My Email Field', 'wpzoom-forms' )
 				),
 				'showLabel'   => array(
 					'type'    => 'boolean',
@@ -470,7 +470,7 @@ class ZOOM_Forms {
 				),
 				'label'       => array(
 					'type'    => 'string',
-					'default' => __( 'My Website Field', 'zoom-forms' )
+					'default' => __( 'My Website Field', 'wpzoom-forms' )
 				),
 				'showLabel'   => array(
 					'type'    => 'boolean',
@@ -496,7 +496,7 @@ class ZOOM_Forms {
 				),
 				'label'       => array(
 					'type'    => 'string',
-					'default' => __( 'My Phone Field', 'zoom-forms' )
+					'default' => __( 'My Phone Field', 'wpzoom-forms' )
 				),
 				'showLabel'   => array(
 					'type'    => 'boolean',
@@ -530,7 +530,7 @@ class ZOOM_Forms {
 				),
 				'label'       => array(
 					'type'    => 'string',
-					'default' => __( 'My Textarea Field', 'zoom-forms' )
+					'default' => __( 'My Textarea Field', 'wpzoom-forms' )
 				),
 				'showLabel'   => array(
 					'type'    => 'boolean',
@@ -555,15 +555,15 @@ class ZOOM_Forms {
 					'items'   => array(
 						'type' => 'string'
 					),
-					'default' => array( __( 'Item #1', 'zoom-forms' ) )
+					'default' => array( __( 'Item #1', 'wpzoom-forms' ) )
 				),
 				'defaultValue' => array(
 					'type'    => 'string',
-					'default' => __( 'Item #1', 'zoom-forms' )
+					'default' => __( 'Item #1', 'wpzoom-forms' )
 				),
 				'label'       => array(
 					'type'    => 'string',
-					'default' => __( 'My Select Field', 'zoom-forms' )
+					'default' => __( 'My Select Field', 'wpzoom-forms' )
 				),
 				'showLabel'   => array(
 					'type'    => 'boolean',
@@ -589,7 +589,7 @@ class ZOOM_Forms {
 				),
 				'label'       => array(
 					'type'    => 'string',
-					'default' => __( 'My Checkbox Field', 'zoom-forms' )
+					'default' => __( 'My Checkbox Field', 'wpzoom-forms' )
 				),
 				'showLabel'   => array(
 					'type'    => 'boolean',
@@ -618,11 +618,11 @@ class ZOOM_Forms {
 					'items'   => array(
 						'type' => 'string'
 					),
-					'default' => array( __( 'Item #1', 'zoom-forms' ) )
+					'default' => array( __( 'Item #1', 'wpzoom-forms' ) )
 				),
 				'label'       => array(
 					'type'    => 'string',
-					'default' => __( 'My Radio Field', 'zoom-forms' )
+					'default' => __( 'My Radio Field', 'wpzoom-forms' )
 				),
 				'showLabel'   => array(
 					'type'    => 'boolean',
@@ -630,7 +630,7 @@ class ZOOM_Forms {
 				),
 				'defaultValue' => array(
 					'type'    => 'string',
-					'default' => __( 'Item #1', 'zoom-forms' )
+					'default' => __( 'Item #1', 'wpzoom-forms' )
 				),
 				'required'     => array(
 					'type'    => 'boolean',
@@ -662,31 +662,31 @@ class ZOOM_Forms {
 				),
 				'name'        => array(
 					'type'    => 'string',
-					'default' => __( 'Submit', 'zoom-forms' )
+					'default' => __( 'Submit', 'wpzoom-forms' )
 				)
 			)
 		);
 
 		register_block_type(
-			'zoom-forms/form',
+			'wpzoom-forms/form',
 			array(
-				'script'        => 'zoom-forms-js-frontend-formblock',
-				'style'         => 'zoom-forms-css-frontend-formblock',
-				'editor_script' => 'zoom-forms-js-backend-main',
-				'editor_style'  => 'zoom-forms-css-backend-main'
+				'script'        => 'wpzoom-forms-js-frontend-formblock',
+				'style'         => 'wpzoom-forms-css-frontend-formblock',
+				'editor_script' => 'wpzoom-forms-js-backend-main',
+				'editor_style'  => 'wpzoom-forms-css-backend-main'
 			)
 		);
 
 		foreach ( $input_blocks as $block => $attributes ) {
 			register_block_type(
-				"zoom-forms/$block-field",
+				"wpzoom-forms/$block-field",
 				array(
-					'ancestor'      => array( 'zoom-forms/form' ),
+					'ancestor'      => array( 'wpzoom-forms/form' ),
 					'attributes'    => $attributes,
-					'script'        => 'zoom-forms-js-frontend-formblock',
-					'style'         => 'zoom-forms-css-frontend-formblock',
-					'editor_script' => 'zoom-forms-js-backend-main',
-					'editor_style'  => 'zoom-forms-css-backend-main'
+					'script'        => 'wpzoom-forms-js-frontend-formblock',
+					'style'         => 'wpzoom-forms-css-frontend-formblock',
+					'editor_script' => 'wpzoom-forms-js-backend-main',
+					'editor_style'  => 'wpzoom-forms-css-backend-main'
 				)
 			);
 		}
@@ -701,7 +701,7 @@ class ZOOM_Forms {
 	 */
 	public function register_form_block() {
 		register_block_type(
-			'zoom-forms/form-block',
+			'wpzoom-forms/form-block',
 			array(
 				'attributes'    => array(
 					'formId' => array(
@@ -709,10 +709,10 @@ class ZOOM_Forms {
 						'default' => '-1'
 					)
 				),
-				'script'          => 'zoom-forms-js-frontend-formblock',
-				'style'           => 'zoom-forms-css-frontend-formblock',
-				'editor_script'   => 'zoom-forms-js-backend-formblock',
-				'editor_style'    => 'zoom-forms-css-backend-formblock',
+				'script'          => 'wpzoom-forms-js-frontend-formblock',
+				'style'           => 'wpzoom-forms-css-frontend-formblock',
+				'editor_script'   => 'wpzoom-forms-js-backend-formblock',
+				'editor_style'    => 'wpzoom-forms-css-backend-formblock',
 				'render_callback' => array( $this, 'form_block_render' )
 			)
 		);
@@ -730,18 +730,18 @@ class ZOOM_Forms {
 	public function filter_allowed_block_types( $allowed_block_types, $block_editor_context ) {
 		if ( null !== $block_editor_context->post && 'wpzf-form' == $block_editor_context->post->post_type ) {
 			$allowed_block_types = array(
-				'zoom-forms/form',
-				'zoom-forms/text-plain-field',
-				'zoom-forms/text-name-field',
-				'zoom-forms/text-email-field',
-				'zoom-forms/text-website-field',
-				'zoom-forms/text-phone-field',
-				'zoom-forms/textarea-field',
-				'zoom-forms/select-field',
-				'zoom-forms/checkbox-field',
-				'zoom-forms/radio-field',
-				'zoom-forms/label-field',
-				'zoom-forms/submit-field',
+				'wpzoom-forms/form',
+				'wpzoom-forms/text-plain-field',
+				'wpzoom-forms/text-name-field',
+				'wpzoom-forms/text-email-field',
+				'wpzoom-forms/text-website-field',
+				'wpzoom-forms/text-phone-field',
+				'wpzoom-forms/textarea-field',
+				'wpzoom-forms/select-field',
+				'wpzoom-forms/checkbox-field',
+				'wpzoom-forms/radio-field',
+				'wpzoom-forms/label-field',
+				'wpzoom-forms/submit-field',
 				'core/paragraph',
 				'core/heading',
 				'core/list',
@@ -784,12 +784,12 @@ class ZOOM_Forms {
 		if ( null !== $block_editor_context->post && 'wpzf-form' == $block_editor_context->post->post_type ) {
 			$category_slugs = wp_list_pluck( $categories, 'slug' );
 
-			if ( ! in_array( 'zoom-forms', $category_slugs, true ) ) {
+			if ( ! in_array( 'wpzoom-forms', $category_slugs, true ) ) {
 				array_unshift(
 					$categories,
 					array(
-						'slug' => 'zoom-forms',
-						'title' => __( 'Input', 'zoom-forms' ),
+						'slug' => 'wpzoom-forms',
+						'title' => __( 'wpzoom Forms', 'wpzoom-forms' ),
 						'icon' => 'wordpress'
 					)
 				);
@@ -803,7 +803,7 @@ class ZOOM_Forms {
 					array(
 						array(
 							'slug' => 'wpzoom-blocks',
-							'title' => __( 'WPZOOM Blocks', 'zoom-forms' ),
+							'title' => __( 'WPZOOM Blocks', 'wpzoom-forms' ),
 							'icon' => 'wordpress'
 						)
 					)
@@ -826,7 +826,7 @@ class ZOOM_Forms {
 			wp_dequeue_script( 'autosave' );
 
 			wp_enqueue_style(
-				'zoom-forms-css-backend-submissions',
+				'wpzoom-forms-css-backend-submissions',
 				trailingslashit( $this->main_dir_url ) . 'submissions/backend/style.css',
 				array(),
 				$this::VERSION
@@ -844,7 +844,7 @@ class ZOOM_Forms {
 	public function register_backend_assets() {
 		if ( 'wpzf-form' == get_post_type() ) {
 			wp_register_script(
-				'zoom-forms-js-backend-main',
+				'wpzoom-forms-js-backend-main',
 				trailingslashit( $this->main_dir_url ) . 'main/backend/script.js',
 				array( 'wp-blocks', 'wp-components', 'wp-core-data', 'wp-data', 'wp-element', 'wp-i18n', 'wp-polyfill' ),
 				$this::VERSION,
@@ -852,7 +852,7 @@ class ZOOM_Forms {
 			);
 
 			wp_localize_script(
-				'zoom-forms-js-backend-main',
+				'wpzoom-forms-js-backend-main',
 				'wpzf_formblock',
 				array(
 					'admin_url'   => trailingslashit( admin_url() ),
@@ -861,14 +861,14 @@ class ZOOM_Forms {
 			);
 
 			wp_register_style(
-				'zoom-forms-css-backend-main',
+				'wpzoom-forms-css-backend-main',
 				trailingslashit( $this->main_dir_url ) . 'main/backend/style.css',
 				array(),
 				$this::VERSION
 			);
 		} else {
 			wp_register_script(
-				'zoom-forms-js-backend-formblock',
+				'wpzoom-forms-js-backend-formblock',
 				trailingslashit( $this->main_dir_url ) . 'form-block/backend/script.js',
 				array( 'wp-blocks', 'wp-components', 'wp-core-data', 'wp-data', 'wp-element', 'wp-i18n', 'wp-polyfill' ),
 				$this::VERSION,
@@ -876,7 +876,7 @@ class ZOOM_Forms {
 			);
 
 			wp_localize_script(
-				'zoom-forms-js-backend-formblock',
+				'wpzoom-forms-js-backend-formblock',
 				'wpzf_formblock',
 				array(
 					'admin_url'   => trailingslashit( admin_url() ),
@@ -885,7 +885,7 @@ class ZOOM_Forms {
 			);
 
 			wp_register_style(
-				'zoom-forms-css-backend-formblock',
+				'wpzoom-forms-css-backend-formblock',
 				trailingslashit( $this->main_dir_url ) . 'form-block/backend/style.css',
 				array(),
 				$this::VERSION
@@ -902,7 +902,7 @@ class ZOOM_Forms {
 	 */
 	public function register_frontend_assets() {
 		wp_register_script(
-			'zoom-forms-js-frontend-formblock',
+			'wpzoom-forms-js-frontend-formblock',
 			trailingslashit( $this->main_dir_url ) . 'form-block/frontend/script.js',
 			array( 'wp-blocks', 'wp-components', 'wp-core-data', 'wp-data', 'wp-element', 'wp-i18n', 'wp-polyfill' ),
 			$this::VERSION,
@@ -910,7 +910,7 @@ class ZOOM_Forms {
 		);
 
 		wp_register_style(
-			'zoom-forms-css-frontend-formblock',
+			'wpzoom-forms-css-frontend-formblock',
 			trailingslashit( $this->main_dir_url ) . 'form-block/frontend/style.css',
 			array(),
 			$this::VERSION
@@ -929,7 +929,7 @@ class ZOOM_Forms {
 	public function modify_row_actions( $actions, $post ) {
 		if ( 'wpzf-form' == $post->post_type || 'wpzf-submission' == $post->post_type ) {
 			if ( 'wpzf-submission' == $post->post_type && isset( $actions['edit'] ) ) {
-				$actions['edit'] = preg_replace( '/\<a([^>]+)\>(.+)\<\/a\>/i', '<a$1>' . __( 'View', 'zoom-forms' ) . '</a>', $actions['edit'] );
+				$actions['edit'] = preg_replace( '/\<a([^>]+)\>(.+)\<\/a\>/i', '<a$1>' . __( 'View', 'wpzoom-forms' ) . '</a>', $actions['edit'] );
 			}
 
 			if ( isset( $actions['inline hide-if-no-js'] ) ) {
@@ -967,8 +967,8 @@ class ZOOM_Forms {
 	public function post_list_columns_form( $columns ) {
 		return array(
 			'cb'        => $columns['cb'],
-			'title'     => __( 'Title', 'zoom-forms' ),
-			'shortcode' => __( 'Shortcode', 'zoom-forms' ),
+			'title'     => __( 'Title', 'wpzoom-forms' ),
+			'shortcode' => __( 'Shortcode', 'wpzoom-forms' ),
 			'date'      => $columns['date']
 		);
 	}
@@ -984,8 +984,8 @@ class ZOOM_Forms {
 	public function post_list_columns_submit( $columns ) {
 		return array(
 			'cb'   => $columns['cb'],
-			'desc' => __( 'Submission', 'zoom-forms' ),
-			'form' => __( 'Form', 'zoom-forms' ),
+			'desc' => __( 'Submission', 'wpzoom-forms' ),
+			'form' => __( 'Form', 'wpzoom-forms' ),
 			'date' => $columns['date']
 		);
 	}
@@ -1032,7 +1032,7 @@ class ZOOM_Forms {
 	public function post_list_custom_columns_submit( $column, $post_id ) {
 		if ( 'desc' == $column ) {
 			$data = get_post_meta( $post_id, '_wpzf_fields', true );
-			$title = __( '[Unknown]', 'zoom-forms' );
+			$title = __( '[Unknown]', 'wpzoom-forms' );
 
 			if ( ! is_null( $data ) && false !== $data && is_array( $data ) && ! empty( $data ) ) {
 				$title = '';
@@ -1046,7 +1046,7 @@ class ZOOM_Forms {
 			printf( '<a href="%s" class="row-title">%s</a>', esc_url( get_edit_post_link( $post_id ) ), $title );
 		} elseif ( 'form' == $column ) {
 			$form_id = intval( get_post_meta( $post_id, '_wpzf_form_id', true ) );
-			$form_name = __( '[Unknown]', 'zoom-forms' );
+			$form_name = __( '[Unknown]', 'wpzoom-forms' );
 
 			if ( $form_id > 0 ) {
 				$form_name = $form_id;
@@ -1174,7 +1174,7 @@ class ZOOM_Forms {
 	public function add_meta_boxes() {
 		add_meta_box(
 			'wpzf-submission-mb',
-			__( 'Submission', 'zoom-forms' ),
+			__( 'Submission', 'wpzoom-forms' ),
 			array( $this, 'submission_meta_box' ),
 			'wpzf-submission',
 			'normal',
@@ -1196,7 +1196,7 @@ class ZOOM_Forms {
 			echo '<ul class="wpzf-submission-view">';
 
 			$form_id = intval( get_post_meta( get_the_ID(), '_wpzf_form_id', true ) );
-			$form_name = __( '[Unknown]', 'zoom-forms' );
+			$form_name = __( '[Unknown]', 'wpzoom-forms' );
 
 			if ( $form_id > 0 ) {
 				$form_name = $form_id;
@@ -1206,7 +1206,7 @@ class ZOOM_Forms {
 				}
 			}
 
-			echo '<li class="top"><h3>' . sprintf( __( 'Form: %s', 'zoom-forms' ), $form_name ) . '</h3></li>';
+			echo '<li class="top"><h3>' . sprintf( __( 'Form: %s', 'wpzoom-forms' ), $form_name ) . '</h3></li>';
 
 			foreach ( $fields as $name => $value ) {
 				echo '<li><h3>' . esc_html( $name ) . '</h3><div>' . make_clickable( apply_filters( 'the_content', esc_html( $value ) ) ) . '</div></li>';
@@ -1217,7 +1217,7 @@ class ZOOM_Forms {
 			return;
 		}
 
-		printf( '<p class="empty">%s</p>', __( 'Submission is empty&hellip;', 'zoom-forms' ) );
+		printf( '<p class="empty">%s</p>', __( 'Submission is empty&hellip;', 'wpzoom-forms' ) );
 	}
 
 	/**
@@ -1277,7 +1277,7 @@ class ZOOM_Forms {
 
 		$content = sprintf(
 			'<!-- ZOOM Forms Start -->
-			<form id="wpzf-%2$s" method="post" action="%1$s" class="zoom-forms_form">
+			<form id="wpzf-%2$s" method="post" action="%1$s" class="wpzoom-forms_form">
 			<input type="hidden" name="action" value="wpzf_submit" />
 			<input type="hidden" name="form_id" value="%2$s" />
 			%3$s
@@ -1290,7 +1290,7 @@ class ZOOM_Forms {
 			wp_nonce_field( 'wpzf_submit', '_wpnonce', true, false ),
 			( isset( $_GET['success'] )
 				? '<div class="notice ' . ( '1' == $_GET['success'] ? 'success' : 'error' ) . '"><p>' .
-				  ( '1' == $_GET['success'] ? __( 'Submitted successfully!', 'zoom-forms' ) : __( 'Submission failed!', 'zoom-forms' ) ) .
+				  ( '1' == $_GET['success'] ? __( 'Submitted successfully!', 'wpzoom-forms' ) : __( 'Submission failed!', 'wpzoom-forms' ) ) .
 				  '</p></div>'
 				: ''
 			),
@@ -1436,7 +1436,7 @@ class ZOOM_Forms {
 					foreach ( $_REQUEST as $key => $value ) {
 						if ( strpos( $key, 'wpzf_' ) === 0 ) {
 							$id = substr( $key, 5 );
-							$name = isset( $input_blocks[ $id ] ) ? $input_blocks[ $id ] : __( 'Unnamed Input', 'zoom-forms' );
+							$name = isset( $input_blocks[ $id ] ) ? $input_blocks[ $id ] : __( 'Unnamed Input', 'wpzoom-forms' );
 
                             if ( 'wpzf_replyto' == $key ) {
 								$replyto = $value;
@@ -1451,8 +1451,8 @@ class ZOOM_Forms {
 					}
 
 					$fromaddr     = ! empty( $replyto ) && isset( $_REQUEST[ $replyto ] ) ? $_REQUEST[ $replyto ] : $sendto;
-					$subjectline  = ! empty( $sbj ) && isset( $_REQUEST[ $sbj ] ) ? esc_html( $_REQUEST[ $sbj ] ) : esc_html__( 'New Form Submission!', 'zoom-forms' );
-					$subjectline .= sprintf( __( ' -- %s', 'zoom-forms' ), esc_html( get_bloginfo( 'name' ) ) );
+					$subjectline  = ! empty( $sbj ) && isset( $_REQUEST[ $sbj ] ) ? esc_html( $_REQUEST[ $sbj ] ) : esc_html__( 'New Form Submission!', 'wpzoom-forms' );
+					$subjectline .= sprintf( __( ' -- %s', 'wpzoom-forms' ), esc_html( get_bloginfo( 'name' ) ) );
 
 					$email_body   = '<html style="background-color:#dddddd;"><body style="background-color:#dddddd;padding:2em;"><div style="background-color:#ffffff;width:70%;padding:2em;border-radius:10px;box-shadow:0px 5px 5px #aaaaaa;">' . preg_replace( '/<br\/><br\/><hr\/><br\/>$/is', '', $email_body ) . '</div></body></html>';
 
@@ -1472,7 +1472,7 @@ class ZOOM_Forms {
 								<table width="100%" cellpadding="0" cellspacing="0" style="font-family:&quot;Helvetica Neue&quot;,&quot;Helvetica&quot;,Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
 									<tbody><tr style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
 									<td style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5;vertical-align:top;width:100%;clear:both;color:#777;border-top-width:1px;border-top-color:#d0d0d0;border-top-style:solid;padding:25px" valign="top">
-										<p>Sent from <a href="' . get_bloginfo( 'url' ) . '">' . get_bloginfo( 'name' ) . '</a> using the <strong>ZOOM Forms</strong> plugin.</p>
+										<p>Sent from <a href="' . get_bloginfo( 'url' ) . '">' . get_bloginfo( 'name' ) . '</a> using the <strong>WPZOOM Forms</strong> plugin.</p>
 										<br style="font-family:&quot;Helvetica Neue&quot;,&quot;Helvetica&quot;,Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
 									</td>
 									</tr>
@@ -1491,7 +1491,7 @@ class ZOOM_Forms {
 					foreach ( $_REQUEST as $key => $value ) {
 						if ( strpos( $key, 'wpzf_' ) === 0 ) {
 							$id   = substr( $key, 5 );
-							$name = isset( $input_blocks[ $id ] ) ? $input_blocks[ $id ] : __( 'Unnamed Input', 'zoom-forms' );
+							$name = isset( $input_blocks[ $id ] ) ? $input_blocks[ $id ] : __( 'Unnamed Input', 'wpzoom-forms' );
 
 							$content['_wpzf_fields'][ $name ] = $value;
 						}
@@ -1502,10 +1502,10 @@ class ZOOM_Forms {
 						'post_status'    => 'publish',
 						'comment_status' => 'closed',
 						'ping_status'    => 'closed',
-						'post_title'     => __( 'Submission', 'zoom-forms' ),
+						'post_title'     => __( 'Submission', 'wpzoom-forms' ),
 						'post_author'    => 1,
 						'post_category'  => array( 1 ),
-						'post_content'   => __( 'Submission', 'zoom-forms' ),
+						'post_content'   => __( 'Submission', 'wpzoom-forms' ),
 						'meta_input'     => $content
 					) );
 				}
@@ -1536,7 +1536,7 @@ class ZOOM_Forms {
 				$block = $blocks[ $i ];
 
 				if ( isset( $block['blockName'] ) &&
-				     preg_match( '/^zoom\-forms\//i', $block['blockName'] ) &&
+				     preg_match( '/^wpzoom\-forms\//i', $block['blockName'] ) &&
 				     ! preg_match( '/(label|submit)\-field$/i', $block['blockName'] ) &&
 				     isset( $block['attrs'] ) ) {
 					$attrs = $block['attrs'];
@@ -1570,8 +1570,8 @@ class ZOOM_Forms {
 		$output = '';
 
 		if ( $id > 0 ) {
-			wp_enqueue_script( 'zoom-forms-js-frontend-formblock' );
-			wp_enqueue_style( 'zoom-forms-css-frontend-formblock' );
+			wp_enqueue_script( 'wpzoom-forms-js-frontend-formblock' );
+			wp_enqueue_style( 'wpzoom-forms-css-frontend-formblock' );
 
 			$output = $this->form_block_render( array( 'formId' => $id ) );
 		}

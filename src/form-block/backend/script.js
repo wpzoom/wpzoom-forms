@@ -8,7 +8,7 @@ import ServerSideRender from '@wordpress/server-side-render';
 
 import SearchableSelectControl from './searchable-select';
 
-const zoomFormsIcon = (
+const wpzoomFormsIcon = (
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 60 60">
 	<path d="M56.854,21.7383,55.2056,20.09a4.5061,4.5061,0,0,0-6.3638,0L44.9077,24.024V13.55a6.5075,6.5075,0,0,0-6.5-6.5h-14.87c-.03,
 	         0-.0572.0143-.0869.0161a1.4825,1.4825,0,0,0-.349.0645,1.466,1.466,0,0,0-.14.0432,1.4907,1.4907,0,0,0-.4249.259l-16.21,
@@ -48,10 +48,10 @@ updateCategory( 'wpzoom-blocks', {
 	)
 } );
 
-registerBlockType( 'zoom-forms/form-block', {
-	title:       __( 'ZOOM Form', 'wpzoom-blocks' ),
+registerBlockType( 'wpzoom-forms/form-block', {
+	title:       __( 'WPZOOM Form', 'wpzoom-blocks' ),
 	description: __( 'A custom form for accepting input from users.', 'wpzoom-blocks' ),
-	icon:        zoomFormsIcon,
+	icon:        wpzoomFormsIcon,
 	category:    'wpzoom-blocks',
 	supports:    { align: true, html: false },
 	attributes:  {
@@ -71,10 +71,10 @@ registerBlockType( 'zoom-forms/form-block', {
 
 		const formSelect = (
 			<SearchableSelectControl
-				label={ __( 'Form', 'zoom-forms' ) }
-				selectPlaceholder={ forms.length < 1 ? __( 'No forms exist...', 'zoom-forms' ) : __( 'Select a form...', 'zoom-forms' ) }
-				searchPlaceholder={ __( 'Search...', 'zoom-forms' ) }
-				noResultsLabel={ __( 'Nothing found...', 'zoom-forms' ) }
+				label={ __( 'Form', 'wpzoom-forms' ) }
+				selectPlaceholder={ forms.length < 1 ? __( 'No forms exist...', 'wpzoom-forms' ) : __( 'Select a form...', 'wpzoom-forms' ) }
+				searchPlaceholder={ __( 'Search...', 'wpzoom-forms' ) }
+				noResultsLabel={ __( 'Nothing found...', 'wpzoom-forms' ) }
 				options={ forms }
 				value={ typeof theForm !== 'undefined' ? theForm : '' }
 				onChange={ ( value ) => setAttributes( { formId: String( value.selectedItem.key ) } ) }
@@ -88,7 +88,7 @@ registerBlockType( 'zoom-forms/form-block', {
 			>
 				<Button
 					variant="link"
-					text={ __( 'Edit form', 'zoom-forms' ) }
+					text={ __( 'Edit form', 'wpzoom-forms' ) }
 					icon={ <svg viewBox="0 0 24 24"><path d="M20.1 5.1L16.9 2 6.2 12.7l-1.3 4.4 4.5-1.3L20.1 5.1zM4 20.8h8v-1.5H4v1.5z"></path></svg> }
 					iconSize={ 20 }
 					href={ wpzf_formblock.admin_url + 'post.php?post=' + _formId + '&action=edit' }
@@ -100,7 +100,7 @@ registerBlockType( 'zoom-forms/form-block', {
 		return (
 			<>
 				<InspectorControls>
-					<PanelBody title={ __( 'Options', 'zoom-forms' ) }>
+					<PanelBody title={ __( 'Options', 'wpzoom-forms' ) }>
 						{ forms.length > 0 ? formSelect : <Disabled>{ formSelect }</Disabled> }
 						{ '-1' !== _formId && formEditLink }
 					</PanelBody>
@@ -109,12 +109,12 @@ registerBlockType( 'zoom-forms/form-block', {
 				<Fragment>
 					{ '-1' != _formId
 						? <ServerSideRender
-							block="zoom-forms/form-block"
+							block="wpzoom-forms/form-block"
 							attributes={ attributes }
 						  />
 						: <Placeholder
-							icon={ zoomFormsIcon }
-							label={ __( 'ZOOM Forms', 'zoom-forms' ) }
+							icon={ wpzoomFormsIcon }
+							label={ __( 'WPZOOM Forms', 'wpzoom-forms' ) }
 						  >
 							{ forms.length > 0 ? formSelect : <Disabled>{ formSelect }</Disabled> }
 						  </Placeholder>

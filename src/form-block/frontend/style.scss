@@ -1,7 +1,7 @@
 @import '~@wordpress/base-styles/colors.native';
 
-.zoom-forms_form,
-.wp-block-zoom-forms-form {
+.wpzoom-forms_form,
+.wp-block-wpzoom-forms-form {
 
     input[type=date],
     input[type=datetime],
@@ -62,7 +62,7 @@
 		}
 	}
 
-	.wp-block-zoom-forms-required {
+	.wp-block-wpzoom-forms-required {
 		color: $alert-red;
 		margin: 0 0 0 0.5em;
 	}
@@ -80,7 +80,7 @@
 		width: 100%;
 	}
 
-    .wp-block-zoom-forms-label-field {
+    .wp-block-wpzoom-forms-label-field {
         font-weight: 600;
     }
 
