@@ -1493,6 +1493,10 @@ class WPZOOM_Forms {
 							$id   = substr( $key, 5 );
 							$name = isset( $input_blocks[ $id ] ) ? $input_blocks[ $id ] : __( 'Unnamed Input', 'wpzoom-forms' );
 
+							if ( 'wpzf_replyto' == $key ||'wpzf_subject' == $key ) {
+								continue;
+							}
+
 							$content['_wpzf_fields'][ $name ] = $value;
 						}
 					}
