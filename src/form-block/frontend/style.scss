@@ -1,7 +1,38 @@
 @import '~@wordpress/base-styles/colors.native';
 
+
 .wpzoom-forms_form,
 .wp-block-wpzoom-forms-form {
+
+
+    /* Box Sizing Reset
+    -----------------------------------------------*/
+
+    /* All of our custom controls should be what we expect them to be */
+    input,
+    textarea
+    {
+        box-sizing:content-box;
+    }
+
+    /* These elements are usually rendered a certain way by the browser */
+    button,
+    input[type=reset],
+    input[type=button],
+    input[type=submit],
+    input[type=checkbox],
+    input[type=radio],
+    select
+    {
+        box-sizing:border-box;
+        opacity: 1;
+    }
+
+    input[type=checkbox],
+    input[type=radio] {
+        margin-right: 10px;
+        vertical-align: middle;
+    }
 
     input[type=date],
     input[type=datetime],
@@ -38,6 +69,7 @@
     button[type=submit] {
         font-size: 1em;
         padding: 10px 25px;
+        margin: 15px 0;
     }
 
     .wp-block-wpzoom-forms-radio-field {
@@ -46,8 +78,15 @@
         padding: 0;
 
         li {
+            margin: 0;
+            padding: 0;
             margin-bottom: 5px;
+            list-style-type: none;
         }
+    }
+
+    .wp-block-wpzoom-forms-checkbox-field {
+        margin-bottom: 5px;
     }
 
 	.wp-block-group,
@@ -64,6 +103,8 @@
 				label {
 					margin: 0;
                     cursor: pointer;
+                    display: inline-block;
+                    vertical-align: middle;
 				}
 
 				input:not([type='submit']):not([type='button']), textarea, select {
