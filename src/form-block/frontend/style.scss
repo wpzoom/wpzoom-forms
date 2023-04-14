@@ -40,6 +40,16 @@
         padding: 10px 25px;
     }
 
+    .wp-block-wpzoom-forms-radio-field {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+
+        li {
+            margin-bottom: 5px;
+        }
+    }
+
 	.wp-block-group,
 	.wp-block-group__inner-container {
 		.wp-block-columns {
@@ -53,11 +63,16 @@
 			.wp-block-column {
 				label {
 					margin: 0;
+                    cursor: pointer;
 				}
 
 				input:not([type='submit']):not([type='button']), textarea, select {
-					width: 100%;
+					// width: 100%;
 				}
+
+                textarea, select {
+                    width: 100%;
+                }
 			}
 		}
 	}

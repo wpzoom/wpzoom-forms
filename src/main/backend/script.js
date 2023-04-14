@@ -1605,6 +1605,16 @@ registerBlockType( 'wpzoom-forms/checkbox-field', {
 			</InspectorControls>
 
 			<Fragment>
+                <input
+                    type="checkbox"
+                    name={ id }
+                    id={ id }
+                    checked={ true == defaultValue }
+                    onChange={ e => {} }
+                    required={ !! required }
+                    { ...blockProps }
+                />
+
 				{ showLabel && <label htmlFor={ id }>
 					<RichText
 						tagName="label"
@@ -1616,15 +1626,7 @@ registerBlockType( 'wpzoom-forms/checkbox-field', {
 					{ required && <sup className="wp-block-wpzoom-forms-required">{ __( '*', 'wpzoom-forms' ) }</sup> }
 				</label> }
 
-				<input
-					type="checkbox"
-					name={ id }
-					id={ id }
-					checked={ true == defaultValue }
-					onChange={ e => {} }
-					required={ !! required }
-					{ ...blockProps }
-				/>
+
 			</Fragment>
 		</>;
 	},
@@ -1633,6 +1635,17 @@ registerBlockType( 'wpzoom-forms/checkbox-field', {
 		const { id, name, defaultValue, label, showLabel, required } = attributes;
 
 		return <>
+
+            <input
+                type="checkbox"
+                name={ id }
+                id={ id }
+                checked={ true == defaultValue }
+                onChange={ e => {} }
+                required={ !! required }
+                { ...blockProps }
+            />
+
 			{ showLabel && <label htmlFor={ id }>
 				<RichText.Content
 					tagName="label"
@@ -1642,15 +1655,7 @@ registerBlockType( 'wpzoom-forms/checkbox-field', {
 				{ required && <sup className="wp-block-wpzoom-forms-required">{ __( '*', 'wpzoom-forms' ) }</sup> }
 			</label> }
 
-			<input
-				type="checkbox"
-				name={ id }
-				id={ id }
-				checked={ true == defaultValue }
-				onChange={ e => {} }
-				required={ !! required }
-				{ ...blockProps }
-			/>
+
 		</>;
 	}
 } );
