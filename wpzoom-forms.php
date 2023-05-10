@@ -1056,7 +1056,7 @@ class WPZOOM_Forms {
 				}
 			}
 
-			echo $form_name;
+			echo wp_kses( $form_name, array( 'a' => array( 'href' => array() ) ) );
 		}
 	}
 
@@ -1206,6 +1206,8 @@ class WPZOOM_Forms {
 				}
 			}
 
+			$form_name = wp_kses( $form_name, array( 'a' => array( 'href' => array() ) ) );
+
 			echo '<li class="top"><h3>' . sprintf( __( 'Form: %s', 'wpzoom-forms' ), $form_name ) . '</h3></li>';
 
 			foreach ( $fields as $name => $value ) {
@@ -1232,8 +1234,8 @@ class WPZOOM_Forms {
 		$typenow = '';
 
 		if ( is_admin() && current_user_can( 'edit_posts' ) ) {
-			if ( isset( $_REQUEST['post_type'] ) && post_type_exists( $_REQUEST['post_type'] ) ) {
-				$typenow = $_REQUEST['post_type'];
+			if ( isset( $_REQUEST['post_type'] ) && post_type_exists( sanitize_key( $_REQUEST['post_type'] ) ) ) {
+				$typenow = sanitize_key( $_REQUEST['post_type'] );
 			} else {
 				$post_id = -1;
 
@@ -1335,7 +1337,7 @@ class WPZOOM_Forms {
 				$form_method    = get_post_meta( $form_id, '_form_method', true ) ?: 'email';
 				$form_email     = get_post_meta( $form_id, '_form_email', true );
 				$fallback_email = trim( get_option( 'admin_email' ) );
-				$sendto         = false !== $form_email && ! empty( $form_email ) && filter_var( $form_email, FILTER_VALIDATE_EMAIL ) ? $form_email : $fallback_email;
+				$sendto         = sanitize_email( false !== $form_email && ! empty( $form_email ) && filter_var( $form_email, FILTER_VALIDATE_EMAIL ) ? $form_email : $fallback_email );
 
 				if ( 'email' == $form_method ) {
 					$email_body = '<html>
@@ -1439,10 +1441,10 @@ class WPZOOM_Forms {
 							$name = isset( $input_blocks[ $id ] ) ? $input_blocks[ $id ] : __( 'Unnamed Input', 'wpzoom-forms' );
 
                             if ( 'wpzf_replyto' == $key ) {
-								$replyto = $value;
+								$replyto = sanitize_email( $value );
 								continue;
 							} elseif ( 'wpzf_subject' == $key ) {
-								$sbj = $value;
+								$sbj = sanitize_text_field( $value );
 								continue;
 							}
 
@@ -1450,8 +1452,8 @@ class WPZOOM_Forms {
 						}
 					}
 
-					$fromaddr     = ! empty( $replyto ) && isset( $_REQUEST[ $replyto ] ) ? $_REQUEST[ $replyto ] : $sendto;
-					$subjectline  = ! empty( $sbj ) && isset( $_REQUEST[ $sbj ] ) ? esc_html( $_REQUEST[ $sbj ] ) : esc_html__( 'New Form Submission!', 'wpzoom-forms' );
+					$fromaddr     = ! empty( $replyto ) && isset( $_REQUEST[ $replyto ] ) ? sanitize_email( $_REQUEST[ $replyto ] ) : $sendto;
+					$subjectline  = ! empty( $sbj ) && isset( $_REQUEST[ $sbj ] ) ? esc_html( sanitize_text_field( $_REQUEST[ $sbj ] ) ) : esc_html__( 'New Form Submission!', 'wpzoom-forms' );
 					$subjectline .= sprintf( __( ' -- %s', 'wpzoom-forms' ), esc_html( get_bloginfo( 'name' ) ) );
 
 					$email_body   = '<html style="background-color:#dddddd;"><body style="background-color:#dddddd;padding:2em;"><div style="background-color:#ffffff;width:70%;padding:2em;border-radius:10px;box-shadow:0px 5px 5px #aaaaaa;">' . preg_replace( '/<br\/><br\/><hr\/><br\/>$/is', '', $email_body ) . '</div></body></html>';
@@ -1472,7 +1474,7 @@ class WPZOOM_Forms {
 								<table width="100%" cellpadding="0" cellspacing="0" style="font-family:&quot;Helvetica Neue&quot;,&quot;Helvetica&quot;,Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
 									<tbody><tr style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
 									<td style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5;vertical-align:top;width:100%;clear:both;color:#777;border-top-width:1px;border-top-color:#d0d0d0;border-top-style:solid;padding:25px" valign="top">
-										<p>Sent from <a href="' . get_bloginfo( 'url' ) . '">' . get_bloginfo( 'name' ) . '</a> using the <strong>WPZOOM Forms</strong> plugin.</p>
+										<p>Sent from <a href="' . esc_attr( get_bloginfo( 'url' ) ) . '">' . get_bloginfo( 'name' ) . '</a> using the <strong>WPZOOM Forms</strong> plugin.</p>
 										<br style="font-family:&quot;Helvetica Neue&quot;,&quot;Helvetica&quot;,Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
 									</td>
 									</tr>
@@ -1497,7 +1499,7 @@ class WPZOOM_Forms {
 								continue;
 							}
 
-							$content['_wpzf_fields'][ $name ] = $value;
+							$content['_wpzf_fields'][ $name ] = sanitize_text_field( $value );
 						}
 					}
 
