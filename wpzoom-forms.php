@@ -1453,16 +1453,17 @@ class WPZOOM_Forms {
 					}
 
 					$fromaddr     = ! empty( $replyto ) && isset( $_REQUEST[ $replyto ] ) ? sanitize_email( $_REQUEST[ $replyto ] ) : $sendto;
-					$subjectline  = ! empty( $sbj ) && isset( $_REQUEST[ $sbj ] ) ? esc_html( sanitize_text_field( $_REQUEST[ $sbj ] ) ) : esc_html__( 'New Form Submission!', 'wpzoom-forms' );
-					$subjectline .= sprintf( __( ' -- %s', 'wpzoom-forms' ), esc_html( get_bloginfo( 'name' ) ) );
+					$cleanname    = sanitize_text_field( get_bloginfo( 'name' ) );
+					$subjectline  = ! empty( $sbj ) && isset( $_REQUEST[ $sbj ] ) ? sanitize_text_field( $_REQUEST[ $sbj ] ) : esc_html__( 'New Form Submission!', 'wpzoom-forms' );
+					$subjectline .= sprintf( __( ' -- %s', 'wpzoom-forms' ), $cleanname );
 
 					$email_body   = '<html style="background-color:#dddddd;"><body style="background-color:#dddddd;padding:2em;"><div style="background-color:#ffffff;width:70%;padding:2em;border-radius:10px;box-shadow:0px 5px 5px #aaaaaa;">' . preg_replace( '/<br\/><br\/><hr\/><br\/>$/is', '', $email_body ) . '</div></body></html>';
 
 					$headers      = sprintf(
 						"Content-Type: text/html; charset=UTF-8\r\nFrom: %s <%s>\r\nReply-To: %s",
-						esc_html( get_bloginfo( 'name' ) ),
-						esc_html( $fromaddr ),
-						esc_html( $fromaddr )
+						$cleanname,
+						$fromaddr,
+						$fromaddr
 					);
 
 					$email_body  .= '</td>
@@ -1474,7 +1475,7 @@ class WPZOOM_Forms {
 								<table width="100%" cellpadding="0" cellspacing="0" style="font-family:&quot;Helvetica Neue&quot;,&quot;Helvetica&quot;,Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
 									<tbody><tr style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
 									<td style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5;vertical-align:top;width:100%;clear:both;color:#777;border-top-width:1px;border-top-color:#d0d0d0;border-top-style:solid;padding:25px" valign="top">
-										<p>Sent from <a href="' . esc_attr( get_bloginfo( 'url' ) ) . '">' . get_bloginfo( 'name' ) . '</a> using the <strong>WPZOOM Forms</strong> plugin.</p>
+										<p>Sent from <a href="' . esc_attr( get_bloginfo( 'url' ) ) . '">' . $cleanname . '</a> using the <strong>WPZOOM Forms</strong> plugin.</p>
 										<br style="font-family:&quot;Helvetica Neue&quot;,&quot;Helvetica&quot;,Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
 									</td>
 									</tr>
