@@ -21,20 +21,23 @@ WPZOOM Forms is a flexible and intuitive contact form plugin for WordPress that 
 = Features =
 
 * Drag-and-drop form builder: Create your forms using the Gutenberg editor with a simple drag-and-drop interface.
-* Pre-built templates: Choose from a variety of pre-designed form templates to get started quickly.
-* Customizable fields: Add text fields, checkboxes, radio buttons, dropdowns, and more to your forms.
 * Responsive design: Your forms will look great on all devices, including desktops, tablets, and smartphones.
 * Spam protection: Built-in reCAPTCHA integration helps protect your forms from spam submissions.
 * Email notifications: Receive email notifications when users submit your forms, and customize the email templates as needed.
 * Form validation: Ensure users submit valid data with customizable form validation rules.
 
+= Coming Soon =
+
+* Pre-built templates: Choose from a variety of pre-designed form templates to get started quickly.
+* Customizable fields: Add text fields, checkboxes, radio buttons, dropdowns, and more to your forms.
+
 
 = Additional Resources =
 
-* [Leave your question](https://wordpress.org/support/plugin/zoom-forms/)
+* [Leave your question](https://wordpress.org/support/plugin/wpzoom-forms/)
 * [Grab a free theme](https://profiles.wordpress.org/wpzoom/#content-themes)
 * [WPZOOM website](https://www.wpzoom.com)
-* [GitHub repository](https://github.com/wpzoom/zoom-forms)
+* [GitHub repository](https://github.com/wpzoom/wpzoom-forms)
 
 
 == Installation ==
@@ -45,11 +48,7 @@ WPZOOM Forms is a flexible and intuitive contact form plugin for WordPress that 
 
 = How do I add a form to my page or post? =
 
-You can add a form to your page or post using the provided shortcode or by using the WPZOOM Forms Gutenberg block. Detailed instructions can be found in the plugin documentation.
-
-= Can I customize the appearance of my forms? =
-
-You can add custom CSS to personalize your forms.
+You can add a form to your page or post using the provided shortcode or by using the WPZOOM Forms block. Detailed instructions can be found in the plugin documentation.
 
 = How do I export form submissions? =
 
