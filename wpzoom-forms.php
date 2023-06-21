@@ -1474,7 +1474,7 @@ class WPZOOM_Forms {
 						</h2>
 
 						<p>
-							<?php esc_html_e( 'By utilising Zoom Forms, you have the ability to construct contact forms, surveys, payment forms, and various other types of forms effortlessly and swiftly.', 'wpzoom-forms' ); ?>
+							<?php esc_html_e( 'With WPZOOM Forms, you have the ability to create contact forms, surveys, and various other types of forms effortlessly and swiftly.', 'wpzoom-forms' ); ?>
 						</p>
 
 						<a href="<?php echo esc_url( admin_url( 'post-new.php?post_type=wpzf-form' ) ); ?>" class="button-primary wpzf-add-form-btn">
