@@ -120,7 +120,7 @@ class WPZOOM_Forms {
 			add_filter( 'screen_options_show_screen',                   array( $this, 'remove_screen_options' ),             10, 2 );
 			add_filter( 'views_edit-wpzf-form',                         array( $this, 'post_list_views' ),                   10 );
 			add_filter( 'list_table_primary_column',                    array( $this, 'post_list_primary_column' ),          10, 2 );
-			add_action( 'admin_menu',                                   array( $this, 'admin_menu' ),                        10 );
+			// add_action( 'admin_menu',                                   array( $this, 'admin_menu' ),                        10 );
 			add_action( 'admin_enqueue_scripts',                        array( $this, 'admin_enqueue_scripts' ),             100 );
 			add_action( 'enqueue_block_editor_assets',                  array( $this, 'register_backend_assets' ),           10 );
 			add_action( 'enqueue_block_assets',                         array( $this, 'register_frontend_assets' ),          10 );
@@ -1435,10 +1435,10 @@ class WPZOOM_Forms {
 									'url'   => admin_url( 'edit.php?post_type=wpzf-submission' ),
 									'altid' => 'wpzf-submission'
 								),
-								'wpzf-form_page_wpzf-settings' => array(
-									'name' => esc_html__( 'Settings', 'wpzoom-forms' ),
-									'url'  => admin_url( 'edit.php?post_type=wpzf-form&page=wpzf-settings' ),
-								),
+								// 'wpzf-form_page_wpzf-settings' => array(
+								// 	'name' => esc_html__( 'Settings', 'wpzoom-forms' ),
+								// 	'url'  => admin_url( 'edit.php?post_type=wpzf-form&page=wpzf-settings' ),
+								// ),
 							)
 						);
 
@@ -1766,7 +1766,7 @@ class WPZOOM_Forms {
 			<footer class="wpzoom-new-admin_settings-footer">
 				<div class="wpzoom-new-admin_settings-footer-wrap">
 					<h3 class="wpzoom-new-admin_settings-footer-logo">
-						<a href="https://wpzoom.com/" target="_blank" title="<?php _e( 'WPZOOM - WordPress themes with modern features and professional support', 'wpzoom-forms' ); ?>">
+						<a href="https://www.wpzoom.com/" target="_blank" title="<?php _e( 'WPZOOM - WordPress themes with modern features and professional support', 'wpzoom-forms' ); ?>">
 							<?php _e( 'WPZOOM', 'wpzoom-forms' ); ?>
 						</a>
 					</h3>
@@ -1774,15 +1774,27 @@ class WPZOOM_Forms {
 					<ul class="wpzoom-new-admin_settings-footer-links">
 						<li class="wpzoom-new-admin_settings-footer-links-themes">
 							<a href="https://www.wpzoom.com/themes/" target="_blank" title="<?php _e( 'Check out our themes', 'wpzoom-forms' ); ?>">
-								<?php _e( 'Themes', 'wpzoom-forms' ); ?>
+								<?php _e( 'Our Themes', 'wpzoom-forms' ); ?>
 							</a>
 						</li>
+
+                        <li class="wpzoom-new-admin_settings-footer-links-themes">
+                            <a href="https://www.wpzoom.com/plugins/" target="_blank" title="<?php _e( 'Check out our plugins', 'wpzoom-forms' ); ?>">
+                                <?php _e( 'Our Plugins', 'wpzoom-forms' ); ?>
+                            </a>
+                        </li>
 
 						<li class="wpzoom-new-admin_settings-footer-links-blog">
 							<a href="https://www.wpzoom.com/blog/" target="_blank" title="<?php _e( 'See the latest updates on our blog', 'wpzoom-forms' ); ?>">
 								<?php _e( 'Blog', 'wpzoom-forms' ); ?>
 							</a>
 						</li>
+
+                        <li class="wpzoom-new-admin_settings-footer-links-themes">
+                            <a href="https://www.wpzoom.com/documentation/wpzoom-forms/" target="_blank" title="<?php _e( 'Documentation', 'wpzoom-forms' ); ?>">
+                                <?php _e( 'Documentation', 'wpzoom-forms' ); ?>
+                            </a>
+                        </li>
 
 						<li class="wpzoom-new-admin_settings-footer-links-support">
 							<a href="https://www.wpzoom.com/support/" target="_blank" title="<?php _e( 'Get support', 'wpzoom-forms' ); ?>">
