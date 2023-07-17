@@ -120,10 +120,12 @@ class WPZOOM_Forms {
 			add_filter( 'screen_options_show_screen',                   array( $this, 'remove_screen_options' ),             10, 2 );
 			add_filter( 'views_edit-wpzf-form',                         array( $this, 'post_list_views' ),                   10 );
 			add_filter( 'list_table_primary_column',                    array( $this, 'post_list_primary_column' ),          10, 2 );
+			add_action( 'admin_init',                                   array( $this, 'admin_init' ),                        10 );
 			add_action( 'admin_menu',                                   array( $this, 'admin_menu' ),                        10 );
 			add_action( 'admin_enqueue_scripts',                        array( $this, 'admin_enqueue_scripts' ),             100 );
 			add_action( 'enqueue_block_editor_assets',                  array( $this, 'register_backend_assets' ),           10 );
 			add_action( 'enqueue_block_assets',                         array( $this, 'register_frontend_assets' ),          10 );
+			add_action( 'wp_enqueue_scripts',                           array( $this, 'enqueue_frontend_scripts' ),          10 );
 			add_action( 'all_admin_notices',                            array( $this, 'admin_page_header' ),                 1 );
 			add_action( 'in_admin_footer',                              array( $this, 'admin_page_footer' ),                 10 );
 			add_filter( 'admin_body_class',                             array( $this, 'admin_body_class_filter' ),           10 );
@@ -837,6 +839,217 @@ class WPZOOM_Forms {
 	}
 
 	/**
+	 * Hook some things on the `admin_init` hook.
+	 *
+	 * @access public
+	 * @return void
+	 * @since  1.0.0
+	 */
+	public function admin_init() {
+		register_setting(
+			'wpzf_all_settings',
+			'wpzf_use_theme_styles',
+			array(
+				'type'              => 'boolean',
+				'sanitize_callback' => 'boolval',
+				'show_in_rest'      => true,
+				'default'           => true
+			)
+		);
+
+		register_setting(
+			'wpzf_all_settings',
+			'wpzf_global_assets_load',
+			array(
+				'type'              => 'boolean',
+				'sanitize_callback' => 'boolval',
+				'show_in_rest'      => true,
+				'default'           => true
+			)
+		);
+
+		register_setting(
+			'wpzf_all_settings',
+			'wpzf_default_sendto',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_email',
+				'show_in_rest'      => true,
+				'default'           => ''
+			)
+		);
+
+		register_setting(
+			'wpzf_all_settings',
+			'wpzf_default_subject',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+				'show_in_rest'      => true,
+				'default'           => ''
+			)
+		);
+
+		register_setting(
+			'wpzf_all_settings',
+			'wpzf_default_from_name',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+				'show_in_rest'      => true,
+				'default'           => ''
+			)
+		);
+
+		register_setting(
+			'wpzf_all_settings',
+			'wpzf_default_from_email',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_email',
+				'show_in_rest'      => true,
+				'default'           => ''
+			)
+		);
+
+		add_settings_section(
+			'wpzf_settings_general_styling',
+			esc_html__( 'Styling', 'wpzoom-forms' ),
+			null,
+			'wpzf_settings_general',
+			array(
+				'before_section' => '<div class="wpzf_settings_section" data-section="general">',
+				'after_section'  => '</div>'
+			)
+		);
+
+		add_settings_section(
+			'wpzf_settings_notifications_global',
+			esc_html__( 'Global Notifications Settings', 'wpzoom-forms' ),
+			null,
+			'wpzf_settings_notifications',
+			array(
+				'before_section' => '<div class="wpzf_settings_section' . ( isset( $_GET['sub'] ) && 'notifications' == $_GET['sub'] ? ' active' : '' ) . '" data-section="notifications">',
+				'after_section'  => '</div>'
+			)
+		);
+
+		add_settings_field(
+			'wpzf_use_theme_styles',
+			'',
+			function ( $args ) {
+				printf(
+					'<label><input type="checkbox" name="%3$s" id="%3$s" %4$s /><h4>%1$s</h4>%2$s</label>',
+					esc_html__( 'Use theme&rsquo;s styling', 'wpzoom-forms' ),
+					isset( $args['description'] ) ? sanitize_text_field( $args['description'] ) : '',
+					esc_attr( $args['label_for'] ),
+					checked( boolval( get_option( $args['label_for'] ) ), true, false )
+				);
+			},
+			'wpzf_settings_general',
+			'wpzf_settings_general_styling',
+			array(
+				'label_for'   => 'wpzf_use_theme_styles',
+				'description' => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Porttitor leo a diam sollicitudin tempor id eu nisl.', 'wpzoom-forms' ),
+				'class'       => 'checkbox-field'
+			)
+		);
+
+		add_settings_field(
+			'wpzf_global_assets_load',
+			'',
+			function ( $args ) {
+				printf(
+					'<label><input type="checkbox" name="%3$s" id="%3$s" %4$s /><h4>%1$s</h4>%2$s</label>',
+					esc_html__( 'Load plugin assets globally', 'wpzoom-forms' ),
+					isset( $args['description'] ) ? sanitize_text_field( $args['description'] ) : '',
+					esc_attr( $args['label_for'] ),
+					checked( boolval( get_option( $args['label_for'] ) ), true, false )
+				);
+			},
+			'wpzf_settings_general',
+			'wpzf_settings_general_styling',
+			array(
+				'label_for'   => 'wpzf_global_assets_load',
+				'description' => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Porttitor leo a diam sollicitudin tempor id eu nisl.', 'wpzoom-forms' ),
+				'class'       => 'checkbox-field'
+			)
+		);
+
+		add_settings_field(
+			'wpzf_default_sendto',
+			esc_html__( 'Send To Email Address', 'wpzoom-forms' ),
+			function ( $args ) {
+				printf(
+					'<input type="text" name="%2$s" id="%2$s" value="%3$s" />%1$s',
+					isset( $args['description'] ) ? sanitize_text_field( $args['description'] ) : '',
+					esc_attr( $args['label_for'] ),
+					sanitize_email( get_option( $args['label_for'] ) )
+				);
+			},
+			'wpzf_settings_notifications',
+			'wpzf_settings_notifications_global',
+			array(
+				'label_for' => 'wpzf_default_sendto'
+			)
+		);
+
+		add_settings_field(
+			'wpzf_default_subject',
+			esc_html__( 'Email Subject Line', 'wpzoom-forms' ),
+			function ( $args ) {
+				printf(
+					'<input type="text" name="%2$s" id="%2$s" value="%3$s" />%1$s',
+					isset( $args['description'] ) ? sanitize_text_field( $args['description'] ) : '',
+					esc_attr( $args['label_for'] ),
+					sanitize_text_field( get_option( $args['label_for'] ) )
+				);
+			},
+			'wpzf_settings_notifications',
+			'wpzf_settings_notifications_global',
+			array(
+				'label_for' => 'wpzf_default_subject'
+			)
+		);
+
+		add_settings_field(
+			'wpzf_default_from_name',
+			esc_html__( 'From Name', 'wpzoom-forms' ),
+			function ( $args ) {
+				printf(
+					'<input type="text" name="%2$s" id="%2$s" value="%3$s" />%1$s',
+					isset( $args['description'] ) ? sanitize_text_field( $args['description'] ) : '',
+					esc_attr( $args['label_for'] ),
+					esc_attr( sanitize_text_field( get_option( $args['label_for'] ) ) )
+				);
+			},
+			'wpzf_settings_notifications',
+			'wpzf_settings_notifications_global',
+			array(
+				'label_for' => 'wpzf_default_from_name'
+			)
+		);
+
+		add_settings_field(
+			'wpzf_default_from_email',
+			esc_html__( 'From Email', 'wpzoom-forms' ),
+			function ( $args ) {
+				printf(
+					'<input type="text" name="%2$s" id="%2$s" value="%3$s" />%1$s',
+					isset( $args['description'] ) ? sanitize_text_field( $args['description'] ) : '',
+					esc_attr( $args['label_for'] ),
+					sanitize_email( get_option( $args['label_for'] ) )
+				);
+			},
+			'wpzf_settings_notifications',
+			'wpzf_settings_notifications_global',
+			array(
+				'label_for' => 'wpzf_default_from_email'
+			)
+		);
+	}
+
+	/**
 	 * Add some extra admin menu items.
 	 *
 	 * @access public
@@ -960,12 +1173,30 @@ class WPZOOM_Forms {
 			true
 		);
 
+		$use_theme_style = boolval( get_option( 'wpzf_use_theme_styles', true ) );
+
 		wp_register_style(
 			'wpzoom-forms-css-frontend-formblock',
-			trailingslashit( $this->main_dir_url ) . 'form-block/frontend/style.css',
+			( $use_theme_style ? trailingslashit( $this->main_dir_url ) . 'form-block/frontend/style.css' : false ),
 			array(),
 			$this::VERSION
 		);
+	}
+
+	/**
+	 * Enqueues needed scripts and styles for use on the frontend.
+	 *
+	 * @access public
+	 * @return void
+	 * @since  1.0.0
+	 */
+	public function enqueue_frontend_scripts() {
+		$global_load_assets = boolval( get_option( 'wpzf_global_assets_load', true ) );
+
+		if ( $global_load_assets ) {
+			wp_enqueue_style( 'wpzoom-forms-css-frontend-formblock' );
+			wp_enqueue_script( 'wpzoom-forms-js-frontend-formblock' );
+		}
 	}
 
 	/**
@@ -1388,7 +1619,36 @@ class WPZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function render_settings_page() {
-		echo 'Hello World!';
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		if ( isset( $_GET[ 'settings-updated' ] ) ) {
+			add_settings_error( 'wpzf_messages', 'wpzf_message', esc_html__( 'Settings Saved', 'wpzoom-forms' ), 'updated' );
+		}
+
+		settings_errors( 'wpzf_messages' );
+
+		echo '<form method="post" action="options.php">';
+
+		settings_fields( 'wpzf_all_settings' );
+
+		$page = 'general';
+		if ( isset( $_GET['sub'] ) ) {
+			switch ( sanitize_key( $_GET['sub'] ) ) {
+				case 'notifications':
+					$page = 'notifications';
+					break;
+			}
+		}
+
+		echo '<div class="wpzf_settings_wrapper wrap">';
+
+		do_settings_sections( sprintf( 'wpzf_settings_%s', $page ) );
+
+		submit_button();
+
+		echo '</div></form>';
 	}
 
 	/**
@@ -1454,6 +1714,44 @@ class WPZOOM_Forms {
 						?>
 					</ul>
 				</nav>
+
+				<?php
+				if ( 'wpzf-form_page_wpzf-settings' == $current_page ) {
+					$sub = isset( $_GET['sub'] ) ? sanitize_key( $_GET['sub'] ) : 'general';
+
+					?>
+					<nav class="wpzoom-new-admin_settings-sub-nav">
+						<ul>
+							<?php
+							$pages = apply_filters(
+								'wpzoom_forms_settings_sub_menu_items',
+								array(
+									'general' => array(
+										'name' => __( 'General', 'wpzoom-forms' ),
+										'url'  => admin_url( 'edit.php?post_type=wpzf-form&page=wpzf-settings&sub=general' ),
+									),
+									'notifications' => array(
+										'name' => __( 'Notifications', 'wpzoom-forms' ),
+										'url'  => admin_url( 'edit.php?post_type=wpzf-form&page=wpzf-settings&sub=notifications' ),
+									),
+								)
+							);
+
+							foreach ( $pages as $id => $atts ) {
+								printf(
+									// translators: %1$s = possible class attribute, %2$s = page url, %3$s = page name.
+									_x( '<li%1$s><a href="%2$s">%3$s</a></li>', 'Sub menu page item', 'wpzoom-forms' ),
+									( $sub === $id ? ' class="active"' : '' ),
+									esc_url( $atts['url'] ),
+									esc_html( $atts['name'] )
+								);
+							}
+							?>
+						</ul>
+					</nav>
+					<?php
+				}
+				?>
 			</header>
 			<?php
 		}
@@ -1828,11 +2126,16 @@ class WPZOOM_Forms {
 			$blocks  = parse_blocks( $form_id > -1 ? get_post_field( 'post_content', $form_id, 'raw' ) : '' );
 
 			if ( count( $blocks ) > 0 ) {
-				$input_blocks   = $this->get_input_blocks( $blocks );
-				$form_method    = get_post_meta( $form_id, '_form_method', true ) ?: 'email';
-				$form_email     = get_post_meta( $form_id, '_form_email', true );
-				$fallback_email = trim( get_option( 'admin_email' ) );
-				$sendto         = sanitize_email( false !== $form_email && ! empty( $form_email ) && filter_var( $form_email, FILTER_VALIDATE_EMAIL ) ? $form_email : $fallback_email );
+				$input_blocks       = $this->get_input_blocks( $blocks );
+				$form_method        = get_post_meta( $form_id, '_form_method', true ) ?: 'email';
+				$form_email         = get_post_meta( $form_id, '_form_email', true );
+				$fallback_email     = trim( get_option( 'admin_email' ) );
+				$default_sendto     = trim( get_option( 'wpzf_default_sendto' ) );
+				$sendto             = sanitize_email( false !== $form_email && ! empty( $form_email ) && filter_var( $form_email, FILTER_VALIDATE_EMAIL ) ? $form_email : ( false !== $default_sendto && ! empty( $default_sendto ) && filter_var( $default_sendto, FILTER_VALIDATE_EMAIL ) ? $default_sendto : $fallback_email ) );
+				$default_from_name  = trim( get_option( 'wpzf_default_from_name' ) );
+				$default_from_email = trim( get_option( 'wpzf_default_from_email' ) );
+				$fallback_subject   = esc_html__( 'New Form Submission!', 'wpzoom-forms' );
+				$default_subject    = trim( get_option( 'wpzf_default_subject' ) );
 
 				if ( 'email' == $form_method ) {
 					$email_body = '<html>
@@ -1949,15 +2252,15 @@ class WPZOOM_Forms {
 
 					$fromaddr     = ! empty( $replyto ) && isset( $_REQUEST[ $replyto ] ) ? sanitize_email( $_REQUEST[ $replyto ] ) : $sendto;
 					$cleanname    = sanitize_text_field( get_bloginfo( 'name' ) );
-					$subjectline  = ! empty( $sbj ) && isset( $_REQUEST[ $sbj ] ) ? sanitize_text_field( $_REQUEST[ $sbj ] ) : esc_html__( 'New Form Submission!', 'wpzoom-forms' );
+					$subjectline  = ! empty( $sbj ) && isset( $_REQUEST[ $sbj ] ) ? sanitize_text_field( $_REQUEST[ $sbj ] ) : ( false !== $default_subject && ! empty( $default_subject ) ? $default_subject : $fallback_subject );
 					$subjectline .= sprintf( __( ' -- %s', 'wpzoom-forms' ), $cleanname );
 
 					$email_body   = '<html style="background-color:#dddddd;"><body style="background-color:#dddddd;padding:2em;"><div style="background-color:#ffffff;width:70%;padding:2em;border-radius:10px;box-shadow:0px 5px 5px #aaaaaa;">' . preg_replace( '/<br\/><br\/><hr\/><br\/>$/is', '', $email_body ) . '</div></body></html>';
 
 					$headers      = sprintf(
 						"Content-Type: text/html; charset=UTF-8\r\nFrom: %s <%s>\r\nReply-To: %s",
-						$cleanname,
-						$fromaddr,
+						( false !== $default_from_name && ! empty( $default_from_name ) ? $default_from_name : $cleanname ),
+						( false !== $default_from_email && ! empty( $default_from_email ) ? $default_from_email : $fromaddr ),
 						$fromaddr
 					);
 
