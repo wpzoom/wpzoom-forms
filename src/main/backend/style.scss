@@ -6,6 +6,7 @@
 	$light-color: #fff;
 	$light-grey-color: #ddd;
 	$lighter-grey-color: #eee;
+	$mid-lighter-grey-color: #cbcbcb;
 	$lighted-grey-color: #f2f4f6;
 	$very-light-grey-color: #fafafa;
 	$blue-grey-color: #81909c;
@@ -434,8 +435,25 @@
 				box-shadow: 1px 1px 2px 0px rgba($dark-color, 0.1);
 
 				.wpzf_settings_section {
-					padding: 0;
-					margin: 0;
+					padding: 40px 0 0;
+					border-top: 1px solid $mid-lighter-grey-color;
+					margin: 40px 0 0;
+
+					&:first-child {
+						padding-top: 0;
+						border-top: none;
+						margin-top: 0;
+					}
+
+					&.with-description {
+						> h2 {
+							margin: 0 0 10px;
+						}
+
+						.wpzf_settings_section_desc {
+							margin: 0 0 30px;
+						}
+					}
 
 					> h2 {
 						font-size: 18px;
@@ -605,6 +623,74 @@
 							margin: 0;
 						}
 					}
+				}
+
+				&[type='radio'] {
+					border-radius: 50%;
+
+					&.captcha_none,
+					&.captcha_recaptcha {
+						height: 200px;
+						width: 150px;
+						border-radius: 10px;
+						margin: 0 30px 0 0;
+
+						&:last-child {
+							margin-right: 0;
+						}
+
+						&:checked {
+							background-color: lighten($primary-color, 37%);
+							border-color: $primary-color;
+
+							&::before {
+								margin: 0;
+							}
+						}
+
+						&::before {
+							display: flex;
+							align-items: flex-end;
+							justify-content: center;
+							content: '';
+							font-size: 14px;
+							font-weight: 600;
+							line-height: 1;
+							background-color: transparent;
+							background-position: center 33px;
+							background-repeat: no-repeat;
+							height: 100%;
+							width: 100%;
+							padding: 30px;
+							box-sizing: border-box;
+						}
+					}
+
+					&.captcha_none {
+						&::before {
+							content: 'None';
+							background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M39.9994 6.66666C33.4067 6.66666 26.962 8.62163 21.4804 12.2843C15.9987 15.9471 11.7263 21.153 9.20338 27.2439C6.68046 33.3348 6.02035 40.037 7.30652 46.503C8.5927 52.969 11.7674 58.9085 16.4291 63.5702C21.0909 68.232 27.0303 71.4067 33.4964 72.6928C39.9624 73.979 46.6646 73.3189 52.7555 70.796C58.8463 68.2731 64.0523 64.0006 67.715 58.519C71.3777 53.0374 73.3327 46.5927 73.3327 40C73.3327 35.6226 72.4705 31.2881 70.7953 27.2439C69.1202 23.1997 66.6649 19.5251 63.5696 16.4298C60.4743 13.3345 56.7997 10.8792 52.7555 9.20401C48.7113 7.52886 44.3768 6.66666 39.9994 6.66666ZM39.9994 66.6667C32.9269 66.6667 26.1442 63.8572 21.1432 58.8562C16.1422 53.8552 13.3327 47.0724 13.3327 40C13.3253 34.0778 15.3094 28.3251 18.966 23.6667L56.3327 61.0333C51.6742 64.6899 45.9215 66.674 39.9994 66.6667ZM61.0327 56.3333L23.666 18.9667C28.3245 15.31 34.0772 13.326 39.9994 13.3333C47.0718 13.3333 53.8546 16.1428 58.8555 21.1438C63.8565 26.1448 66.666 32.9276 66.666 40C66.6734 45.9222 64.6893 51.6748 61.0327 56.3333Z' fill='%23DDDDDD'/%3E%3C/svg%3E");
+						}
+					}
+
+					&.captcha_recaptcha {
+						&::before {
+							content: 'reCaptcha';
+							background-image: url("data:image/svg+xml,%3Csvg width='106' height='80' viewBox='0 0 106 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg id='settings-captcha-recaptcha'%3E%3Cg id='Clip path group'%3E%3Cmask id='mask0_3445_1545' style='mask-type:luminance' maskUnits='userSpaceOnUse' x='12' y='0' width='82' height='80'%3E%3Cg id='a'%3E%3Cpath id='Vector' d='M12.8574 0H93.1444V80H12.8574V0Z' fill='white'/%3E%3C/g%3E%3C/mask%3E%3Cg mask='url(%23mask0_3445_1545)'%3E%3Cg id='Group'%3E%3Cpath id='Vector_2' d='M93.1429 39.952V5.735L84.1589 14.719C76.7989 5.735 65.6159 0 53.0959 0C39.9999 0 28.4359 6.213 21.1719 15.77L35.8919 30.681C37.3249 28.005 39.4279 25.711 41.8169 23.991C44.3969 21.983 48.0299 20.358 53.0959 20.358C53.6689 20.358 54.1469 20.454 54.5289 20.55C57.5297 20.7812 60.4341 21.7148 63.0076 23.2754C65.5811 24.8361 67.7516 26.9799 69.3439 29.534L58.9259 39.952C72.1159 39.857 87.0259 39.857 93.1429 39.952Z' fill='%231C3AA9'/%3E%3Cpath id='Vector_3' d='M52.8095 0H18.5905L27.5755 8.984C18.5905 16.344 12.8555 27.527 12.8555 40.048C12.8555 53.047 19.0685 64.708 28.7225 71.971L43.6325 57.252C40.9565 55.818 38.6625 53.716 36.9425 51.326C34.9345 48.746 33.3105 45.114 33.3105 40.048C33.3105 39.474 33.4055 38.996 33.5005 38.614C33.7322 35.6131 34.6663 32.7087 36.2275 30.1353C37.7886 27.562 39.933 25.3918 42.4875 23.8L52.9055 34.218C52.8105 21.028 52.7155 6.118 52.8105 0.001L52.8095 0Z' fill='%234285F4'/%3E%3Cpath id='Vector_4' d='M12.8574 40.048V74.265L21.8414 65.281C29.2014 74.265 40.3834 80 52.9044 80C65.9044 80 77.5644 73.786 84.8284 64.133L70.1084 49.318C68.6754 51.994 66.5724 54.288 64.1834 56.008C61.6034 58.016 57.9704 59.641 52.9044 59.641C52.4206 59.6372 51.9392 59.5727 51.4714 59.449C48.4706 59.2178 45.5662 58.2842 42.9927 56.7235C40.4192 55.1629 38.2487 53.0191 36.6564 50.465L47.0744 40.047C33.8844 40.142 18.9744 40.143 12.8574 40.048Z' fill='%23ABABAB'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+						}
+					}
+				}
+			}
+
+			.radio-field {
+				margin: 0 30px 0 0;
+
+				&:last-child {
+					margin-right: 0;
+				}
+
+				> input[type='radio'] {
+					margin: 0 10px 0 0;
 				}
 			}
 
@@ -1587,7 +1673,7 @@
 				> * {
 					grid-column: 1;
 					grid-row: 1;
-					align-self: start;
+					align-self: flex-start;
 
 					&:not(.active) {
 						pointer-events: none;
@@ -1677,7 +1763,7 @@
 					.wpzoom-new-admin_sidebar-left-section {
 						grid-column: 1;
 						grid-row: 2;
-						align-self: start;
+						align-self: flex-start;
 						transition: all 0.3s ease;
 						overflow-x: hidden;
 						overflow-y: auto;
@@ -1970,7 +2056,7 @@
 
 				.wpzoom-new-admin_feed-layout {
 					display: flex;
-					align-items: end;
+					align-items: flex-end;
 					gap: 10px;
 					max-height: 999em;
 					margin: 0 0 20px;
@@ -2401,7 +2487,7 @@
 
 				.wpzoom-new-admin_widget-preview-view {
 					display: flex;
-					align-items: start;
+					align-items: flex-start;
 					justify-content: center;
 					padding: 0;
 					margin: 0;
@@ -2859,7 +2945,7 @@
 			.wpzoom-new-admin_modal-dialog_footer {
 				display: flex;
 				align-items: center;
-				justify-content: end;
+				justify-content: flex-end;
 				gap: 10px;
 				padding: 20px 0 0;
 				border-top: 1px solid $light-grey-color;

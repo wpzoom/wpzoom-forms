@@ -1,6 +1,6 @@
 import { useBlockProps, InspectorControls, InnerBlocks, RichText } from '@wordpress/block-editor';
 import { registerBlockType, updateCategory } from '@wordpress/blocks';
-import { Card, CardBody, CardHeader, Disabled, Flex, FlexBlock, FlexItem, IconButton, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl, ClipboardButton, Icon, __experimentalHStack as HStack } from '@wordpress/components';
+import { Card, CardBody, CardHeader, Disabled, Flex, FlexBlock, FlexItem, IconButton, PanelBody, RangeControl, SelectControl, TextControl, TextareaControl, ToggleControl, ClipboardButton, Icon, __experimentalHStack as HStack } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { useSelect } from '@wordpress/data';
 import { Fragment, useEffect, useState } from '@wordpress/element';
@@ -27,6 +27,10 @@ registerPlugin( 'wpzoom-forms-document-settings', {
 		const [ meta, setMeta ] = useEntityProp( 'postType', postType, 'meta' );
 		const formMethod = meta[ '_form_method' ] || 'email';
 		const formEmail = meta[ '_form_email' ] || ( typeof wpzf_formblock !== 'undefined' && 'admin_email' in wpzf_formblock ? wpzf_formblock.admin_email : '' );
+		const formSubject = meta[ '_form_subject' ] || '';
+		const formFrom = meta[ '_form_from' ] || '';
+		const formReplyTo = meta[ '_form_reply_to' ] || '';
+		const formMessage = meta[ '_form_message' ] || '';
 		const [ hasCopiedShortcode, setHasCopiedShortcode ] = useState( false );
 		const copyBtnStyle = { minHeight: '30px', height: 'auto', minWidth: 'fit-content', margin: '0px 0px 8px 0px' };
 
@@ -56,14 +60,6 @@ registerPlugin( 'wpzoom-forms-document-settings', {
 					] }
 					onChange={ value => setMeta( { ...meta, '_form_method': value } ) }
 				/>
-
-				{ formMethod == 'email' && <TextControl
-					type="email"
-					label={ __( 'Send To', 'wpzoom-forms' ) }
-					value={ formEmail }
-					placeholder={ __( 'someone@somedomain.com', 'wpzoom-forms' ) }
-					onChange={ value => setMeta( { ...meta, '_form_email': value } ) }
-				/> }
 			</PluginDocumentSettingPanel>
 
 			<PluginDocumentSettingPanel
@@ -99,6 +95,49 @@ registerPlugin( 'wpzoom-forms-document-settings', {
 					</ClipboardButton>
 				</HStack>
 			</PluginDocumentSettingPanel>
+
+			{ formMethod == 'email' && <PluginDocumentSettingPanel
+				name="wpzoom-forms-document-settings-notification"
+				className="wpzoom-forms-document-settings-notification"
+				title={ __( 'Notification Settings', 'wpzoom-forms' ) }
+				opened={ true }
+			>
+				<TextControl
+					type="email"
+					label={ __( 'Email To', 'wpzoom-forms' ) }
+					value={ formEmail }
+					placeholder={ __( 'someone@somedomain.com', 'wpzoom-forms' ) }
+					onChange={ value => setMeta( { ...meta, '_form_email': value } ) }
+				/>
+
+				<TextControl
+					type="text"
+					label={ __( 'Email Subject', 'wpzoom-forms' ) }
+					value={ formSubject }
+					onChange={ value => setMeta( { ...meta, '_form_subject': value } ) }
+				/>
+
+				<TextControl
+					type="text"
+					label={ __( 'From', 'wpzoom-forms' ) }
+					value={ formFrom }
+					onChange={ value => setMeta( { ...meta, '_form_from': value } ) }
+				/>
+
+				<TextControl
+					type="email"
+					label={ __( 'Reply To', 'wpzoom-forms' ) }
+					value={ formReplyTo }
+					placeholder={ __( 'someone@somedomain.com', 'wpzoom-forms' ) }
+					onChange={ value => setMeta( { ...meta, '_form_reply_to': value } ) }
+				/>
+
+				<TextareaControl
+					label={ __( 'Message Body', 'wpzoom-forms' ) }
+					value={ formMessage }
+					onChange={ value => setMeta( { ...meta, '_form_message': value } ) }
+				/>
+			</PluginDocumentSettingPanel> }
 		</>;
 	}
 } );

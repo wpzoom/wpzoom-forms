@@ -870,6 +870,50 @@ class WPZOOM_Forms {
 
 		register_setting(
 			'wpzf_all_settings',
+			'wpzf_global_captcha_service',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+				'show_in_rest'      => true,
+				'default'           => 'none'
+			)
+		);
+
+		register_setting(
+			'wpzf_all_settings',
+			'wpzf_global_captcha_type',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+				'show_in_rest'      => true,
+				'default'           => 'v3'
+			)
+		);
+
+		register_setting(
+			'wpzf_all_settings',
+			'wpzf_global_captcha_site_key',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+				'show_in_rest'      => true,
+				'default'           => ''
+			)
+		);
+
+		register_setting(
+			'wpzf_all_settings',
+			'wpzf_global_captcha_secret_key',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+				'show_in_rest'      => true,
+				'default'           => ''
+			)
+		);
+
+		register_setting(
+			'wpzf_all_settings',
 			'wpzf_default_sendto',
 			array(
 				'type'              => 'string',
@@ -924,6 +968,22 @@ class WPZOOM_Forms {
 		);
 
 		add_settings_section(
+			'wpzf_settings_general_captcha',
+			esc_html__( 'Captcha', 'wpzoom-forms' ),
+			function ( $args ) {
+				printf(
+					'<p class="wpzf_settings_section_desc">%s</p>',
+					esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Porttitor leo a diam sollicitudin tempor id eu nisl.', 'wpzoom-forms' )
+				);
+			},
+			'wpzf_settings_general',
+			array(
+				'before_section' => '<div class="wpzf_settings_section with-description" data-section="general">',
+				'after_section'  => '</div>'
+			)
+		);
+
+		add_settings_section(
 			'wpzf_settings_notifications_global',
 			esc_html__( 'Global Notifications Settings', 'wpzoom-forms' ),
 			null,
@@ -973,6 +1033,80 @@ class WPZOOM_Forms {
 				'label_for'   => 'wpzf_global_assets_load',
 				'description' => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Porttitor leo a diam sollicitudin tempor id eu nisl.', 'wpzoom-forms' ),
 				'class'       => 'checkbox-field'
+			)
+		);
+
+		add_settings_field(
+			'wpzf_global_captcha_service',
+			'',
+			function ( $args ) {
+				$value = trim( sanitize_text_field( get_option( 'wpzf_global_captcha_service', 'none' ) ) );
+				printf(
+					'<input type="radio" name="%1$s" id="%1$s_none" value="none" class="captcha_none" %2$s /><input type="radio" name="%1$s" id="%1$s_recaptcha" value="recaptcha" class="captcha_recaptcha" %3$s />',
+					'wpzf_global_captcha_service',
+					checked( $value, 'none', false ),
+					checked( $value, 'recaptcha', false )
+				);
+			},
+			'wpzf_settings_general',
+			'wpzf_settings_general_captcha',
+			array(
+				'label_for' => 'wpzf_global_captcha_service'
+			)
+		);
+
+		add_settings_field(
+			'wpzf_global_captcha_type',
+			esc_html__( 'Type', 'wpzoom-forms' ),
+			function ( $args ) {
+				$value = trim( sanitize_text_field( get_option( 'wpzf_global_captcha_type', 'v3' ) ) );
+				printf(
+					'<label class="radio-field"><input type="radio" name="%1$s" id="%1$s_v2" value="v2" %2$s />%4$s</label><label class="radio-field"><input type="radio" name="%1$s" id="%1$s_v3" value="v3" %3$s />%5$s</label>',
+					'wpzf_global_captcha_type',
+					checked( $value, 'v2', false ),
+					checked( $value, 'v3', false ),
+					esc_html__( 'Invisible reCAPTCHA v2', 'wpzoom-forms' ),
+					esc_html__( 'reCAPTCHA v3', 'wpzoom-forms' )
+				);
+			},
+			'wpzf_settings_general',
+			'wpzf_settings_general_captcha',
+			array(
+				'label_for' => 'wpzf_global_captcha_type'
+			)
+		);
+
+		add_settings_field(
+			'wpzf_global_captcha_site_key',
+			esc_html__( 'Site Key', 'wpzoom-forms' ),
+			function ( $args ) {
+				printf(
+					'<input type="text" name="%1$s" id="%1$s" value="%2$s" />',
+					'wpzf_global_captcha_site_key',
+					sanitize_text_field( get_option( 'wpzf_global_captcha_site_key', '' ) )
+				);
+			},
+			'wpzf_settings_general',
+			'wpzf_settings_general_captcha',
+			array(
+				'label_for' => 'wpzf_global_captcha_site_key'
+			)
+		);
+
+		add_settings_field(
+			'wpzf_global_captcha_secret_key',
+			esc_html__( 'Secret Key', 'wpzoom-forms' ),
+			function ( $args ) {
+				printf(
+					'<input type="text" name="%1$s" id="%1$s" value="%2$s" />',
+					'wpzf_global_captcha_secret_key',
+					sanitize_text_field( get_option( 'wpzf_global_captcha_secret_key', '' ) )
+				);
+			},
+			'wpzf_settings_general',
+			'wpzf_settings_general_captcha',
+			array(
+				'label_for' => 'wpzf_global_captcha_secret_key'
 			)
 		);
 
@@ -1165,10 +1299,24 @@ class WPZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function register_frontend_assets() {
+		$depends = array( 'jquery', 'wp-blocks', 'wp-components', 'wp-core-data', 'wp-data', 'wp-element', 'wp-i18n', 'wp-polyfill' );
+
+		if ( 'recaptcha' == get_option( 'wpzf_global_captcha_service', 'none' ) ) {
+			wp_register_script(
+				'google-recaptcha',
+				'https://www.google.com/recaptcha/api.js',
+				array(),
+				$this::VERSION,
+				true
+			);
+
+			$depends[] = 'google-recaptcha';
+		}
+
 		wp_register_script(
 			'wpzoom-forms-js-frontend-formblock',
 			trailingslashit( $this->main_dir_url ) . 'form-block/frontend/script.js',
-			array( 'wp-blocks', 'wp-components', 'wp-core-data', 'wp-data', 'wp-element', 'wp-i18n', 'wp-polyfill' ),
+			$depends,
 			$this::VERSION,
 			true
 		);
@@ -1606,6 +1754,11 @@ class WPZOOM_Forms {
 
 		if ( ! empty( $match2 ) && is_array( $match2 ) && isset( $match2[1] ) ) {
 			$content = preg_replace( '/<\/form>/is', '<input type="hidden" name="wpzf_subject" value="' . $match2[1] . '" /></form>', $content );
+		}
+
+		if ( 'recaptcha' == get_option( 'wpzf_global_captcha_service', 'none' ) ) {
+			$site_key = esc_attr( sanitize_text_field( get_option( 'wpzf_global_captcha_site_key', '' ) ) );
+			$content = preg_replace( '/<input([^>]*)type="submit"([^>]*)class="([^"]+)"/i', '<input $1 type="button" data-sitekey="' . $site_key . '" data-callback="wpzf_submit" data-action="submit" $2 class="$3 g-recaptcha"', $content );
 		}
 
 		return $content;
@@ -2120,15 +2273,55 @@ class WPZOOM_Forms {
 	public function action_form_post() {
 		$success = false;
 		$url     = isset( $_POST['_wp_http_referer'] ) ? sanitize_text_field( wp_unslash( $_POST['_wp_http_referer'] ) ) : home_url();
+		$form_id = -1;
 
 		if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'wpzf_submit' ) ) {
 			$form_id = isset( $_POST['form_id'] ) ? intval( $_POST['form_id'] ) : -1;
 			$blocks  = parse_blocks( $form_id > -1 ? get_post_field( 'post_content', $form_id, 'raw' ) : '' );
+			$captcha_check_passed = false;
 
-			if ( count( $blocks ) > 0 ) {
+			if ( 'recaptcha' == get_option( 'wpzf_global_captcha_service', 'none' ) ) {
+				$captcha = false;
+
+				if ( isset( $_POST['g-recaptcha-response'] ) ) {
+					$captcha = trim( sanitize_text_field( $_POST['g-recaptcha-response'] ) );
+				}
+
+				if ( ! empty( $captcha ) ) {
+					$secret = trim( sanitize_text_field( get_option( 'wpzf_global_captcha_secret_key', '' ) ) );
+
+					if ( ! empty( $secret ) ) {
+						$response = file_get_contents(
+							sprintf(
+								'https://www.google.com/recaptcha/api/siteverify?secret=%1$s&response=%2$s&remoteip=%3$s',
+								$secret,
+								$captcha,
+								$_SERVER['REMOTE_ADDR']
+							)
+						);
+
+						if ( false !== $response && ! empty( $response ) ) {
+							$json = json_decode( $response );
+
+							if ( null !== $json && is_object( $json ) && true === $json->success && $json->score >= 0.5 ) {
+								$captcha_check_passed = true;
+							}
+						}
+					}
+				}
+			} else {
+				$captcha_check_passed = true;
+			}
+
+			if ( $captcha_check_passed && count( $blocks ) > 0 ) {
+				$clean_site_name    = sanitize_text_field( get_bloginfo( 'name' ) );
 				$input_blocks       = $this->get_input_blocks( $blocks );
 				$form_method        = get_post_meta( $form_id, '_form_method', true ) ?: 'email';
 				$form_email         = get_post_meta( $form_id, '_form_email', true );
+				$form_subject       = get_post_meta( $form_id, '_form_subject', true );
+				$form_from          = get_post_meta( $form_id, '_form_from', true );
+				$form_replyto       = get_post_meta( $form_id, '_form_reply_to', true );
+				$form_message       = get_post_meta( $form_id, '_form_message', true );
 				$fallback_email     = trim( get_option( 'admin_email' ) );
 				$default_sendto     = trim( get_option( 'wpzf_default_sendto' ) );
 				$sendto             = sanitize_email( false !== $form_email && ! empty( $form_email ) && filter_var( $form_email, FILTER_VALIDATE_EMAIL ) ? $form_email : ( false !== $default_sendto && ! empty( $default_sendto ) && filter_var( $default_sendto, FILTER_VALIDATE_EMAIL ) ? $default_sendto : $fallback_email ) );
@@ -2136,8 +2329,13 @@ class WPZOOM_Forms {
 				$default_from_email = trim( get_option( 'wpzf_default_from_email' ) );
 				$fallback_subject   = esc_html__( 'New Form Submission!', 'wpzoom-forms' );
 				$default_subject    = trim( get_option( 'wpzf_default_subject' ) );
+				$subject            = false !== $form_subject && ! empty( $form_subject ) ? $form_subject : ( false !== $default_subject && ! empty( $default_subject ) ? $default_subject : $fallback_subject );
+				$from               = false !== $form_from && ! empty( $form_from ) ? $form_from : ( false !== $default_from_name && ! empty( $default_from_name ) ? $default_from_name : $clean_site_name );
+				$replyto            = false !== $form_replyto && ! empty( $form_replyto ) ? $form_replyto : $sendto;
+				$message_body       = false !== $form_message && ! empty( $form_message ) ? trim( $form_message ) : '';
 
 				if ( 'email' == $form_method ) {
+					$fields = '';
 					$email_body = '<html>
 						<head>
 							<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -2230,7 +2428,7 @@ class WPZOOM_Forms {
 								<tbody>
 								<tr style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
 									<td style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5;vertical-align:top;color:#222222;padding:25px" valign="top">';
-					$replyto = '';
+					$_replyto = '';
 					$sbj = '';
 
 					foreach ( $_REQUEST as $key => $value ) {
@@ -2239,29 +2437,30 @@ class WPZOOM_Forms {
 							$name = isset( $input_blocks[ $id ] ) ? $input_blocks[ $id ] : __( 'Unnamed Input', 'wpzoom-forms' );
 
                             if ( 'wpzf_replyto' == $key ) {
-								$replyto = sanitize_email( $value );
+								$_replyto = sanitize_email( $value );
 								continue;
 							} elseif ( 'wpzf_subject' == $key ) {
 								$sbj = sanitize_text_field( $value );
 								continue;
 							}
 
-							$email_body .= '<strong>' . esc_html( wp_unslash( $name ) ) . ':</strong><br/><br/>' . esc_html( wp_unslash( $value ) ) . '<br/><br/><hr/><br/>';
+							$field = '<strong>' . esc_html( wp_unslash( $name ) ) . ':</strong><br/><br/>' . esc_html( wp_unslash( $value ) ) . '<br/><br/><hr/><br/>';
+							$email_body .= $field;
+							$fields .= $field;
 						}
 					}
 
-					$fromaddr     = ! empty( $replyto ) && isset( $_REQUEST[ $replyto ] ) ? sanitize_email( $_REQUEST[ $replyto ] ) : $sendto;
-					$cleanname    = sanitize_text_field( get_bloginfo( 'name' ) );
-					$subjectline  = ! empty( $sbj ) && isset( $_REQUEST[ $sbj ] ) ? sanitize_text_field( $_REQUEST[ $sbj ] ) : ( false !== $default_subject && ! empty( $default_subject ) ? $default_subject : $fallback_subject );
-					$subjectline .= sprintf( __( ' -- %s', 'wpzoom-forms' ), $cleanname );
+					$fromaddr     = ! empty( $_replyto ) && isset( $_REQUEST[ $_replyto ] ) ? sanitize_email( $_REQUEST[ $_replyto ] ) : $from;
+					$subjectline  = ! empty( $sbj ) && isset( $_REQUEST[ $sbj ] ) ? sanitize_text_field( $_REQUEST[ $sbj ] ) : $subject;
+					$subjectline .= sprintf( __( ' -- %s', 'wpzoom-forms' ), $clean_site_name );
 
 					$email_body   = '<html style="background-color:#dddddd;"><body style="background-color:#dddddd;padding:2em;"><div style="background-color:#ffffff;width:70%;padding:2em;border-radius:10px;box-shadow:0px 5px 5px #aaaaaa;">' . preg_replace( '/<br\/><br\/><hr\/><br\/>$/is', '', $email_body ) . '</div></body></html>';
 
 					$headers      = sprintf(
 						"Content-Type: text/html; charset=UTF-8\r\nFrom: %s <%s>\r\nReply-To: %s",
-						( false !== $default_from_name && ! empty( $default_from_name ) ? $default_from_name : $cleanname ),
-						( false !== $default_from_email && ! empty( $default_from_email ) ? $default_from_email : $fromaddr ),
-						$fromaddr
+						$from,
+						$fromaddr,
+						$replyto
 					);
 
 					$email_body  .= '</td>
@@ -2273,7 +2472,7 @@ class WPZOOM_Forms {
 								<table width="100%" cellpadding="0" cellspacing="0" style="font-family:&quot;Helvetica Neue&quot;,&quot;Helvetica&quot;,Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
 									<tbody><tr style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
 									<td style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5;vertical-align:top;width:100%;clear:both;color:#777;border-top-width:1px;border-top-color:#d0d0d0;border-top-style:solid;padding:25px" valign="top">
-										<p>Sent from <a href="' . esc_attr( get_bloginfo( 'url' ) ) . '">' . $cleanname . '</a> using the <strong>WPZOOM Forms</strong> plugin.</p>
+										<p>Sent from <a href="' . esc_attr( get_bloginfo( 'url' ) ) . '">' . $clean_site_name . '</a> using the <strong>WPZOOM Forms</strong> plugin.</p>
 										<br style="font-family:&quot;Helvetica Neue&quot;,&quot;Helvetica&quot;,Helvetica,Arial,sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5">
 									</td>
 									</tr>
@@ -2281,6 +2480,30 @@ class WPZOOM_Forms {
 							</div>
 						</body>
 					</html>';
+
+					if ( ! empty( $message_body ) ) {
+						$email_body = str_ireplace(
+							array(
+								'[fields]',
+								'[email_to]',
+								'[subject]',
+								'[from]',
+								'[reply_to]',
+								'[site_name]',
+								'[admin_email]'
+							),
+							array(
+								$fields,
+								$sendto,
+								$subjectline,
+								$from,
+								$replyto,
+								$clean_site_name,
+								$fallback_email
+							),
+							sanitize_textarea_field( $message_body )
+						);
+					}
 
 					$success = wp_mail( $sendto, $subjectline, $email_body, $headers );
 				} elseif ( 'db' == $form_method ) {
