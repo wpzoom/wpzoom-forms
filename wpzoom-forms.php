@@ -1948,7 +1948,7 @@ class WPZOOM_Forms {
 							$name = isset( $input_blocks[ $id ] ) ? $input_blocks[ $id ] : __( 'Unnamed Input', 'wpzoom-forms' );
 
                             if ( 'wpzf_replyto' == $key ) {
-								$replyto = sanitize_email( $value );
+								$replyto = sanitize_text_field( $value );
 								continue;
 							} elseif ( 'wpzf_subject' == $key ) {
 								$sbj = sanitize_text_field( $value );
