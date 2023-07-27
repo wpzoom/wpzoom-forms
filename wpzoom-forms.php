@@ -2454,6 +2454,14 @@ class WPZOOM_Forms {
 					$subjectline  = ! empty( $sbj ) && isset( $_REQUEST[ $sbj ] ) ? sanitize_text_field( $_REQUEST[ $sbj ] ) : $subject;
 					$subjectline .= sprintf( __( ' -- %s', 'wpzoom-forms' ), $clean_site_name );
 
+					$replace_tags = array( '[fields]', '[email_to]', '[subject]', '[from]', '[reply_to]', '[site_name]', '[admin_email]' );
+					$replace_values = array( $fields, $sendto, $subjectline, $from, $replyto, $clean_site_name, $fallback_email );
+
+					$sendto = str_ireplace( $replace_tags, $replace_values, $sendto );
+					$from = str_ireplace( $replace_tags, $replace_values, $from );
+					$replyto = str_ireplace( $replace_tags, $replace_values, $replyto );
+					$subjectline = str_ireplace( $replace_tags, $replace_values, $subjectline );
+
 					$email_body   = '<html style="background-color:#dddddd;"><body style="background-color:#dddddd;padding:2em;"><div style="background-color:#ffffff;width:70%;padding:2em;border-radius:10px;box-shadow:0px 5px 5px #aaaaaa;">' . preg_replace( '/<br\/><br\/><hr\/><br\/>$/is', '', $email_body ) . '</div></body></html>';
 
 					$headers      = sprintf(
@@ -2482,27 +2490,7 @@ class WPZOOM_Forms {
 					</html>';
 
 					if ( ! empty( $message_body ) ) {
-						$email_body = str_ireplace(
-							array(
-								'[fields]',
-								'[email_to]',
-								'[subject]',
-								'[from]',
-								'[reply_to]',
-								'[site_name]',
-								'[admin_email]'
-							),
-							array(
-								$fields,
-								$sendto,
-								$subjectline,
-								$from,
-								$replyto,
-								$clean_site_name,
-								$fallback_email
-							),
-							sanitize_textarea_field( $message_body )
-						);
+						$email_body = str_ireplace( $replace_tags, $replace_values, sanitize_textarea_field( $message_body ) );
 					}
 
 					$success = wp_mail( $sendto, $subjectline, $email_body, $headers );

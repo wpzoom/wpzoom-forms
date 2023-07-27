@@ -1,6 +1,6 @@
 import { useBlockProps, InspectorControls, InnerBlocks, RichText } from '@wordpress/block-editor';
 import { registerBlockType, updateCategory } from '@wordpress/blocks';
-import { Card, CardBody, CardHeader, Disabled, Flex, FlexBlock, FlexItem, IconButton, PanelBody, RangeControl, SelectControl, TextControl, TextareaControl, ToggleControl, ClipboardButton, Icon, __experimentalHStack as HStack } from '@wordpress/components';
+import { Card, CardBody, CardHeader, ComboboxControl, Disabled, Dropdown, MenuItem, Flex, FlexBlock, FlexItem, IconButton, PanelBody, RangeControl, SelectControl, TextControl, TextareaControl, ToggleControl, ClipboardButton, Icon, __experimentalHStack as HStack } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { useSelect } from '@wordpress/data';
 import { Fragment, useEffect, useState } from '@wordpress/element';
@@ -33,6 +33,36 @@ registerPlugin( 'wpzoom-forms-document-settings', {
 		const formMessage = meta[ '_form_message' ] || '';
 		const [ hasCopiedShortcode, setHasCopiedShortcode ] = useState( false );
 		const copyBtnStyle = { minHeight: '30px', height: 'auto', minWidth: 'fit-content', margin: '0px 0px 8px 0px' };
+		const tags = [
+			{
+				value: '[fields]',
+				label: '[fields]',
+			},
+			{
+				value: '[email_to]',
+				label: '[email_to]',
+			},
+			{
+				value: '[subject]',
+				label: '[subject]',
+			},
+			{
+				value: '[from]',
+				label: '[from]',
+			},
+			{
+				value: '[reply_to]',
+				label: '[reply_to]',
+			},
+			{
+				value: '[site_name]',
+				label: '[site_name]',
+			},
+			{
+				value: '[admin_email]',
+				label: '[admin_email]',
+			}
+		];
 
 		if ( hasCopiedShortcode ) {
 			copyBtnStyle.backgroundColor = 'green';
@@ -102,34 +132,36 @@ registerPlugin( 'wpzoom-forms-document-settings', {
 				title={ __( 'Notification Settings', 'wpzoom-forms' ) }
 				opened={ true }
 			>
-				<TextControl
-					type="email"
+				<ComboboxControl
 					label={ __( 'Email To', 'wpzoom-forms' ) }
 					value={ formEmail }
-					placeholder={ __( 'someone@somedomain.com', 'wpzoom-forms' ) }
 					onChange={ value => setMeta( { ...meta, '_form_email': value } ) }
+					options={ tags }
+					allowReset={ false }
 				/>
 
-				<TextControl
-					type="text"
+				<ComboboxControl
 					label={ __( 'Email Subject', 'wpzoom-forms' ) }
 					value={ formSubject }
 					onChange={ value => setMeta( { ...meta, '_form_subject': value } ) }
+					options={ tags }
+					allowReset={ false }
 				/>
 
-				<TextControl
-					type="text"
+				<ComboboxControl
 					label={ __( 'From', 'wpzoom-forms' ) }
 					value={ formFrom }
 					onChange={ value => setMeta( { ...meta, '_form_from': value } ) }
+					options={ tags }
+					allowReset={ false }
 				/>
 
-				<TextControl
-					type="email"
+				<ComboboxControl
 					label={ __( 'Reply To', 'wpzoom-forms' ) }
 					value={ formReplyTo }
-					placeholder={ __( 'someone@somedomain.com', 'wpzoom-forms' ) }
 					onChange={ value => setMeta( { ...meta, '_form_reply_to': value } ) }
+					options={ tags }
+					allowReset={ false }
 				/>
 
 				<TextareaControl
