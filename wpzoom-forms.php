@@ -4,7 +4,7 @@
  *
  * @package   WPZOOM_Forms
  * @author    WPZOOM
- * @copyright 2022 WPZOOM
+ * @copyright 2023 WPZOOM
  * @license   GPL-2.0-or-later
  *
  * @wordpress-plugin
@@ -13,7 +13,7 @@
  * Description: Simple, user-friendly contact form plugin for WordPress that utilizes Gutenberg blocks for easy form building and customization.
  * Author:      WPZOOM
  * Author URI:  https://www.wpzoom.com
- * Version:     1.0.1
+ * Version:     1.0.2
  * License:     GPL2+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
@@ -45,7 +45,7 @@ class WPZOOM_Forms {
 	 * @access public
 	 * @since  1.0.0
 	 */
-	public const VERSION = '1.0.1';
+	public const VERSION = '1.0.2';
 
 	/**
 	 * Whether the plugin has been initialized.

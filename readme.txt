@@ -5,7 +5,7 @@ Author URI:        https://www.wpzoom.com/
 Requires at least: 6.0
 Requires PHP:      7.4
 Tested up to:      6.2
-Stable tag:        1.0.1
+Stable tag:        1.0.2
 License:           GNU General Public License v2
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 Tags:              contact, form, contact form, submission, email, block, gutenberg, form builder
@@ -64,6 +64,9 @@ To export form submissions, navigate to the Tools > Export page in Dashboard and
 
 
 == Changelog ==
+
+= 1.0.2 =
+* Bug fix with incorrect "Reply to" address
 
 = 1.0.1 =
 * Minor improvements
