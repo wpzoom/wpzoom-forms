@@ -135,6 +135,7 @@ class WPZOOM_Forms {
 			add_action( 'in_admin_header',                              array( $this, 'remove_meta_boxes' ),                 100 );
 			add_action( 'add_meta_boxes_wpzf-submission',               array( $this, 'add_meta_boxes' ),                    10 );
 			add_action( 'admin_post_wpzf_submit',                       array( $this, 'action_form_post' ),                  10 );
+			add_action( 'admin_post_nopriv_wpzf_submit',                array( $this, 'action_form_post' ),                  10 );
 
 			register_post_type(
 				'wpzf-form',
