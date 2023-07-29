@@ -13,7 +13,7 @@
  * Description: Simple, user-friendly contact form plugin for WordPress that utilizes Gutenberg blocks for easy form building and customization.
  * Author:      WPZOOM
  * Author URI:  https://www.wpzoom.com
- * Version:     1.0.2
+ * Version:     1.0.3
  * License:     GPL2+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
@@ -45,7 +45,7 @@ class WPZOOM_Forms {
 	 * @access public
 	 * @since  1.0.0
 	 */
-	public const VERSION = '1.0.2';
+	public const VERSION = '1.0.3';
 
 	/**
 	 * Whether the plugin has been initialized.
@@ -133,6 +133,7 @@ class WPZOOM_Forms {
 			add_action( 'in_admin_header',                              array( $this, 'remove_meta_boxes' ),                 100 );
 			add_action( 'add_meta_boxes_wpzf-submission',               array( $this, 'add_meta_boxes' ),                    10 );
 			add_action( 'admin_post_wpzf_submit',                       array( $this, 'action_form_post' ),                  10 );
+            add_action( 'admin_post_nopriv_wpzf_submit',                array( $this, 'action_form_post' ),                  10 );
 
 			register_post_type(
 				'wpzf-form',
