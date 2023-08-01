@@ -1826,6 +1826,73 @@ class WPZOOM_Forms {
 	}
 
 	/**
+	 * Returns whether the given input is considered spam by checking it with Akismet.
+	 *
+	 * @since  1.0.4
+	 * @access public
+	 * @param  array  $input The input to check for spam.
+	 * @return bool          Whether it is spam.
+	 */
+	public function not_spam( $input ) {
+		if ( function_exists( 'akismet_http_post' ) ) {
+			global $akismet_api_host, $akismet_api_port;
+
+			$query_string = http_build_query(
+				array(
+					'comment_type'         => 'contact-form',
+					'comment_author_email' => $input['from'],
+					'comment_content'      => $input['message'],
+					'user_ip'              => $this->get_remote_address(),
+					'user_agent'           => ( isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '' ),
+					'referrer'             => wp_get_referer(),
+					'blog'                 => site_url(),
+					'blog_lang'            => get_locale(),
+					'blog_charset'         => get_bloginfo( 'charset' ),
+					'permalink'            => get_permalink(),
+					'is_test'              => false,
+				)
+			);
+			$response = akismet_http_post( $query_string, $akismet_api_host, '/1.1/comment-check', $akismet_api_port );
+			$result = ( is_array( $response ) && isset( $response[1] ) ) ? $response[1] : false;
+
+			return false !== boolval( $result );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Returns the remote address of the connected peer.
+	 *
+	 * @since  1.0.4
+	 * @access public
+	 * @return string The remote address, or empty string on failure.
+	 */
+	public function get_remote_address() {
+		$server_variable_keys = array(
+			'HTTP_CLIENT_IP',
+			'HTTP_X_FORWARDED_FOR',
+			'HTTP_X_FORWARDED',
+			'HTTP_X_CLUSTER_CLIENT_IP',
+			'HTTP_FORWARDED_FOR',
+			'HTTP_FORWARDED',
+			'REMOTE_ADDR'
+		);
+
+		foreach ( $server_variable_keys as $key ) {
+			if ( array_key_exists( $key, $_SERVER ) === true ) {
+				foreach ( array_map( 'trim', explode( ',', $_SERVER[ $key ] ) ) as $ip ) {
+					if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) !== false ) {
+						return $ip;
+					}
+				}
+			}
+		}
+
+		return '';
+	}
+
+	/**
 	 * Callback that is triggered when a form is submitted on the frontend.
 	 *
 	 * @access public
@@ -1992,7 +2059,14 @@ class WPZOOM_Forms {
 						</body>
 					</html>';
 
-					$success = wp_mail( $sendto, $subjectline, $email_body, $headers );
+					$details = array(
+						'from'    => $fromaddr,
+						'message' => $email_body
+					);
+
+					if ( $this->not_spam( $details ) ) {
+						$success = wp_mail( $sendto, $subjectline, $email_body, $headers );
+					}
 				} elseif ( 'db' == $form_method ) {
 					$content = array(
 						'_wpzf_form_id' => $form_id,
@@ -2012,17 +2086,23 @@ class WPZOOM_Forms {
 						}
 					}
 
-					$success = false !== $content && 0 < wp_insert_post( array(
-						'post_type'      => 'wpzf-submission',
-						'post_status'    => 'publish',
-						'comment_status' => 'closed',
-						'ping_status'    => 'closed',
-						'post_title'     => __( 'Submission', 'wpzoom-forms' ),
-						'post_author'    => 1,
-						'post_category'  => array( 1 ),
-						'post_content'   => __( 'Submission', 'wpzoom-forms' ),
-						'meta_input'     => $content
-					) );
+					$details = array(
+						'message' => $content
+					);
+
+					if ( $this->not_spam( $details ) ) {
+						$success = false !== $content && 0 < wp_insert_post( array(
+							'post_type'      => 'wpzf-submission',
+							'post_status'    => 'publish',
+							'comment_status' => 'closed',
+							'ping_status'    => 'closed',
+							'post_title'     => __( 'Submission', 'wpzoom-forms' ),
+							'post_author'    => 1,
+							'post_category'  => array( 1 ),
+							'post_content'   => __( 'Submission', 'wpzoom-forms' ),
+							'meta_input'     => $content
+						) );
+					}
 				}
 			}
 		}
