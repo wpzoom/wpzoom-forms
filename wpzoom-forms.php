@@ -120,7 +120,7 @@ class WPZOOM_Forms {
 			add_filter( 'screen_options_show_screen',                   array( $this, 'remove_screen_options' ),             10, 2 );
 			add_filter( 'views_edit-wpzf-form',                         array( $this, 'post_list_views' ),                   10 );
 			add_filter( 'list_table_primary_column',                    array( $this, 'post_list_primary_column' ),          10, 2 );
-			// add_action( 'admin_menu',                                   array( $this, 'admin_menu' ),                        10 );
+			add_action( 'admin_menu',                                   array( $this, 'admin_menu' ),                        10 );
 			add_action( 'admin_enqueue_scripts',                        array( $this, 'admin_enqueue_scripts' ),             100 );
 			add_action( 'enqueue_block_editor_assets',                  array( $this, 'register_backend_assets' ),           10 );
 			add_action( 'enqueue_block_assets',                         array( $this, 'register_frontend_assets' ),          10 );
@@ -230,6 +230,15 @@ class WPZOOM_Forms {
 						'delete_posts'  => 'delete_posts'
 					),
 					'map_meta_cap'        => true
+				)
+			);
+
+			register_post_status(
+				'spam',
+				array(
+					'label'       => esc_html_x( 'Spam', 'post', 'wpzoom-forms' ),
+					'label_count' => _n_noop( 'Spam <span class="count">(%s)</span>', 'Spam <span class="count">(%s)</span>', 'wpzoom-forms' ),
+					'public'      => false
 				)
 			);
 
@@ -845,13 +854,27 @@ class WPZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function admin_menu() {
-		add_submenu_page(
+		global $submenu;
+
+		/*add_submenu_page(
 			'edit.php?post_type=wpzf-form',
 			esc_html__( 'Settings', 'wpzoom-forms' ),
 			esc_html__( 'Settings', 'wpzoom-forms' ),
 			'manage_options',
 			'wpzf-settings',
 			array( $this, 'render_settings_page' )
+		);*/
+
+		$amount = 0;
+		foreach ( wp_count_posts( 'wpzf-submission', 'readable' ) as $key => $value ) {
+			$amount += intval( $value );
+		}
+
+		$submenu['edit.php?post_type=wpzf-form'][11][0] = sprintf(
+			'%1$s <span class="awaiting-mod count-%2$s"><span class="pending-count" aria-hidden="true">%2$s</span><span class="comments-in-moderation-text screen-reader-text">%3$s</span></span>',
+			esc_html__( 'Submissions', 'wpzoom-forms' ),
+			$amount,
+			sprintf( _n( '%s Submission', '%s Submissions', $amount, 'wpzoom-forms' ), number_format_i18n( $amount ) )
 		);
 	}
 
@@ -2073,12 +2096,21 @@ class WPZOOM_Forms {
 						'_wpzf_fields'  => array()
 					);
 
+					$replyto = '';
+					$sbj = '';
+
 					foreach ( $_REQUEST as $key => $value ) {
 						if ( strpos( $key, 'wpzf_' ) === 0 ) {
 							$id   = substr( $key, 5 );
 							$name = isset( $input_blocks[ $id ] ) ? $input_blocks[ $id ] : __( 'Unnamed Input', 'wpzoom-forms' );
 
 							if ( 'wpzf_replyto' == $key || 'wpzf_subject' == $key ) {
+								if ( 'wpzf_replyto' == $key ) {
+									$replyto = sanitize_text_field( $value );
+								} elseif ( 'wpzf_subject' == $key ) {
+									$sbj = sanitize_text_field( $value );
+								}
+
 								continue;
 							}
 
@@ -2087,22 +2119,26 @@ class WPZOOM_Forms {
 					}
 
 					$details = array(
+						'from'    => '',
 						'message' => $content
 					);
 
-					if ( $this->not_spam( $details ) ) {
-						$success = false !== $content && 0 < wp_insert_post( array(
-							'post_type'      => 'wpzf-submission',
-							'post_status'    => 'publish',
-							'comment_status' => 'closed',
-							'ping_status'    => 'closed',
-							'post_title'     => __( 'Submission', 'wpzoom-forms' ),
-							'post_author'    => 1,
-							'post_category'  => array( 1 ),
-							'post_content'   => __( 'Submission', 'wpzoom-forms' ),
-							'meta_input'     => $content
-						) );
+					if ( ! empty( $replyto ) ) {
+						$fromaddr = isset( $_REQUEST[ $replyto ] ) ? sanitize_email( $_REQUEST[ $replyto ] ) : $sendto;
+						$details['from'] = $fromaddr;
 					}
+
+					$success = false !== $content && 0 < wp_insert_post( array(
+						'post_type'      => 'wpzf-submission',
+						'post_status'    => $this->not_spam( $details ) ? 'publish' : 'spam',
+						'comment_status' => 'closed',
+						'ping_status'    => 'closed',
+						'post_title'     => __( 'Submission', 'wpzoom-forms' ),
+						'post_author'    => 1,
+						'post_category'  => array( 1 ),
+						'post_content'   => __( 'Submission', 'wpzoom-forms' ),
+						'meta_input'     => $content
+					) );
 				}
 			}
 		}
