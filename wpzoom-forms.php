@@ -2128,17 +2128,19 @@ class WPZOOM_Forms {
 						$details['from'] = $fromaddr;
 					}
 
-					$success = false !== $content && 0 < wp_insert_post( array(
-						'post_type'      => 'wpzf-submission',
-						'post_status'    => $this->not_spam( $details ) ? 'publish' : 'spam',
-						'comment_status' => 'closed',
-						'ping_status'    => 'closed',
-						'post_title'     => __( 'Submission', 'wpzoom-forms' ),
-						'post_author'    => 1,
-						'post_category'  => array( 1 ),
-						'post_content'   => __( 'Submission', 'wpzoom-forms' ),
-						'meta_input'     => $content
-					) );
+					if ( $this->not_spam( $details ) ) {
+						$success = false !== $content && 0 < wp_insert_post( array(
+							'post_type'      => 'wpzf-submission',
+							'post_status'    => 'publish',
+							'comment_status' => 'closed',
+							'ping_status'    => 'closed',
+							'post_title'     => __( 'Submission', 'wpzoom-forms' ),
+							'post_author'    => 1,
+							'post_category'  => array( 1 ),
+							'post_content'   => __( 'Submission', 'wpzoom-forms' ),
+							'meta_input'     => $content
+						) );
+					}
 				}
 			}
 		}
