@@ -4,16 +4,16 @@
  *
  * @package   WPZOOM_Forms
  * @author    WPZOOM
- * @copyright 2022 WPZOOM
+ * @copyright 2023 WPZOOM
  * @license   GPL-2.0-or-later
  *
  * @wordpress-plugin
  * Plugin Name: WPZOOM Forms
  * Plugin URI:  https://wpzoom.com/plugins/forms/
- * Description: Powerful, user-friendly contact form plugin for WordPress that utilizes Gutenberg blocks for easy form building and customization.
+ * Description: Simple, user-friendly contact form plugin for WordPress that utilizes Gutenberg blocks for easy form building and customization.
  * Author:      WPZOOM
  * Author URI:  https://www.wpzoom.com
- * Version:     1.0.0
+ * Version:     1.0.4
  * License:     GPL2+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
@@ -45,7 +45,7 @@ class WPZOOM_Forms {
 	 * @access public
 	 * @since  1.0.0
 	 */
-	public const VERSION = '1.0.0';
+	public const VERSION = '1.0.4';
 
 	/**
 	 * Whether the plugin has been initialized.
@@ -1192,6 +1192,8 @@ class WPZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function admin_menu() {
+		global $submenu;
+
 		add_submenu_page(
 			'edit.php?post_type=wpzf-form',
 			esc_html__( 'Settings', 'wpzoom-forms' ),
@@ -1199,6 +1201,18 @@ class WPZOOM_Forms {
 			'manage_options',
 			'wpzf-settings',
 			array( $this, 'render_settings_page' )
+		);
+
+		$amount = 0;
+		foreach ( wp_count_posts( 'wpzf-submission', 'readable' ) as $key => $value ) {
+			$amount += intval( $value );
+		}
+
+		$submenu['edit.php?post_type=wpzf-form'][11][0] = sprintf(
+			'%1$s <span class="awaiting-mod count-%2$s"><span class="pending-count" aria-hidden="true">%2$s</span><span class="comments-in-moderation-text screen-reader-text">%3$s</span></span>',
+			esc_html__( 'Submissions', 'wpzoom-forms' ),
+			$amount,
+			sprintf( _n( '%s Submission', '%s Submissions', $amount, 'wpzoom-forms' ), number_format_i18n( $amount ) )
 		);
 	}
 
@@ -2218,7 +2232,7 @@ class WPZOOM_Forms {
 			<footer class="wpzoom-new-admin_settings-footer">
 				<div class="wpzoom-new-admin_settings-footer-wrap">
 					<h3 class="wpzoom-new-admin_settings-footer-logo">
-						<a href="https://wpzoom.com/" target="_blank" title="<?php _e( 'WPZOOM - WordPress themes with modern features and professional support', 'wpzoom-forms' ); ?>">
+						<a href="https://www.wpzoom.com/" target="_blank" title="<?php _e( 'WPZOOM - WordPress themes with modern features and professional support', 'wpzoom-forms' ); ?>">
 							<?php _e( 'WPZOOM', 'wpzoom-forms' ); ?>
 						</a>
 					</h3>
@@ -2226,13 +2240,25 @@ class WPZOOM_Forms {
 					<ul class="wpzoom-new-admin_settings-footer-links">
 						<li class="wpzoom-new-admin_settings-footer-links-themes">
 							<a href="https://www.wpzoom.com/themes/" target="_blank" title="<?php _e( 'Check out our themes', 'wpzoom-forms' ); ?>">
-								<?php _e( 'Themes', 'wpzoom-forms' ); ?>
+								<?php _e( 'Our Themes', 'wpzoom-forms' ); ?>
+							</a>
+						</li>
+
+						<li class="wpzoom-new-admin_settings-footer-links-themes">
+							<a href="https://www.wpzoom.com/plugins/" target="_blank" title="<?php _e( 'Check out our plugins', 'wpzoom-forms' ); ?>">
+								<?php _e( 'Our Plugins', 'wpzoom-forms' ); ?>
 							</a>
 						</li>
 
 						<li class="wpzoom-new-admin_settings-footer-links-blog">
 							<a href="https://www.wpzoom.com/blog/" target="_blank" title="<?php _e( 'See the latest updates on our blog', 'wpzoom-forms' ); ?>">
 								<?php _e( 'Blog', 'wpzoom-forms' ); ?>
+							</a>
+						</li>
+
+						<li class="wpzoom-new-admin_settings-footer-links-themes">
+							<a href="https://www.wpzoom.com/documentation/wpzoom-forms/" target="_blank" title="<?php _e( 'Documentation', 'wpzoom-forms' ); ?>">
+								<?php _e( 'Documentation', 'wpzoom-forms' ); ?>
 							</a>
 						</li>
 
@@ -2262,6 +2288,73 @@ class WPZOOM_Forms {
 		}
 
 		return $classes;
+	}
+
+	/**
+	 * Returns whether the given input is considered spam by checking it with Akismet.
+	 *
+	 * @since  1.0.4
+	 * @access public
+	 * @param  array  $input The input to check for spam.
+	 * @return bool          Whether it is spam.
+	 */
+	public function not_spam( $input ) {
+		if ( function_exists( 'akismet_http_post' ) ) {
+			global $akismet_api_host, $akismet_api_port;
+
+			$query_string = http_build_query(
+				array(
+					'comment_type'         => 'contact-form',
+					'comment_author_email' => $input['from'],
+					'comment_content'      => $input['message'],
+					'user_ip'              => $this->get_remote_address(),
+					'user_agent'           => ( isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '' ),
+					'referrer'             => wp_get_referer(),
+					'blog'                 => site_url(),
+					'blog_lang'            => get_locale(),
+					'blog_charset'         => get_bloginfo( 'charset' ),
+					'permalink'            => get_permalink(),
+					'is_test'              => false,
+				)
+			);
+			$response = akismet_http_post( $query_string, $akismet_api_host, '/1.1/comment-check', $akismet_api_port );
+			$result = ( is_array( $response ) && isset( $response[1] ) ) ? $response[1] : false;
+
+			return false !== boolval( $result );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Returns the remote address of the connected peer.
+	 *
+	 * @since  1.0.4
+	 * @access public
+	 * @return string The remote address, or empty string on failure.
+	 */
+	public function get_remote_address() {
+		$server_variable_keys = array(
+			'HTTP_CLIENT_IP',
+			'HTTP_X_FORWARDED_FOR',
+			'HTTP_X_FORWARDED',
+			'HTTP_X_CLUSTER_CLIENT_IP',
+			'HTTP_FORWARDED_FOR',
+			'HTTP_FORWARDED',
+			'REMOTE_ADDR'
+		);
+
+		foreach ( $server_variable_keys as $key ) {
+			if ( array_key_exists( $key, $_SERVER ) === true ) {
+				foreach ( array_map( 'trim', explode( ',', $_SERVER[ $key ] ) ) as $ip ) {
+					if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) !== false ) {
+						return $ip;
+					}
+				}
+			}
+		}
+
+		return '';
 	}
 
 	/**
@@ -2494,7 +2587,14 @@ class WPZOOM_Forms {
 						$email_body = str_ireplace( $replace_tags, $replace_values, sanitize_textarea_field( $message_body ) );
 					}
 
-					$success = wp_mail( $sendto, $subjectline, $email_body, $headers );
+					$details = array(
+						'from'    => $fromaddr,
+						'message' => $email_body
+					);
+
+					if ( $this->not_spam( $details ) ) {
+						$success = wp_mail( $sendto, $subjectline, $email_body, $headers );
+					}
 				} elseif ( 'db' == $form_method ) {
 					$content = array(
 						'_wpzf_form_id' => $form_id,
@@ -2514,17 +2614,29 @@ class WPZOOM_Forms {
 						}
 					}
 
-					$success = false !== $content && 0 < wp_insert_post( array(
-						'post_type'      => 'wpzf-submission',
-						'post_status'    => 'publish',
-						'comment_status' => 'closed',
-						'ping_status'    => 'closed',
-						'post_title'     => __( 'Submission', 'wpzoom-forms' ),
-						'post_author'    => 1,
-						'post_category'  => array( 1 ),
-						'post_content'   => __( 'Submission', 'wpzoom-forms' ),
-						'meta_input'     => $content
-					) );
+					$details = array(
+						'from'    => '',
+						'message' => $content
+					);
+
+					if ( ! empty( $replyto ) ) {
+						$fromaddr = isset( $_REQUEST[ $replyto ] ) ? sanitize_email( $_REQUEST[ $replyto ] ) : $sendto;
+						$details['from'] = $fromaddr;
+					}
+
+					if ( $this->not_spam( $details ) ) {
+						$success = false !== $content && 0 < wp_insert_post( array(
+							'post_type'      => 'wpzf-submission',
+							'post_status'    => 'publish',
+							'comment_status' => 'closed',
+							'ping_status'    => 'closed',
+							'post_title'     => __( 'Submission', 'wpzoom-forms' ),
+							'post_author'    => 1,
+							'post_category'  => array( 1 ),
+							'post_content'   => __( 'Submission', 'wpzoom-forms' ),
+							'meta_input'     => $content
+						) );
+					}
 				}
 			}
 		}
