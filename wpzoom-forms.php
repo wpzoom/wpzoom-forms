@@ -2103,6 +2103,7 @@ class WPZOOM_Forms {
 				$form_from          = get_post_meta( $form_id, '_form_from', true );
 				$form_replyto       = get_post_meta( $form_id, '_form_reply_to', true );
 				$form_message       = get_post_meta( $form_id, '_form_message', true );
+				$form_confirm_msg   = get_post_meta( $form_id, '_form_confirm_message', true );
 				$fallback_email     = trim( get_option( 'admin_email' ) );
 				$default_sendto     = trim( get_option( 'wpzf_default_sendto' ) );
 				$sendto             = sanitize_email( false !== $form_email && ! empty( $form_email ) && filter_var( $form_email, FILTER_VALIDATE_EMAIL ) ? $form_email : ( false !== $default_sendto && ! empty( $default_sendto ) && filter_var( $default_sendto, FILTER_VALIDATE_EMAIL ) ? $default_sendto : $fallback_email ) );
@@ -2114,6 +2115,9 @@ class WPZOOM_Forms {
 				$from               = false !== $form_from && ! empty( $form_from ) ? $form_from : ( false !== $default_from_name && ! empty( $default_from_name ) ? $default_from_name : $clean_site_name );
 				$replyto            = false !== $form_replyto && ! empty( $form_replyto ) ? $form_replyto : $sendto;
 				$message_body       = false !== $form_message && ! empty( $form_message ) ? trim( $form_message ) : '';
+				$confirm_body       = false !== $form_confirm_msg && ! empty( $form_confirm_msg ) ? trim( $form_confirm_msg ) : '';
+				$replace_tags       = array( '[fields]', '[email_to]', '[subject]', '[from]', '[reply_to]', '[site_name]', '[admin_email]' );
+				$replace_values     = array();
 
 				if ( 'email' == $form_method ) {
 					$fields = '';
@@ -2235,7 +2239,6 @@ class WPZOOM_Forms {
 					$subjectline  = ! empty( $sbj ) && isset( $_REQUEST[ $sbj ] ) ? sanitize_text_field( $_REQUEST[ $sbj ] ) : $subject;
 					$subjectline .= sprintf( __( ' -- %s', 'wpzoom-forms' ), $clean_site_name );
 
-					$replace_tags = array( '[fields]', '[email_to]', '[subject]', '[from]', '[reply_to]', '[site_name]', '[admin_email]' );
 					$replace_values = array( $fields, $sendto, $subjectline, $from, $replyto, $clean_site_name, $fallback_email );
 
 					$sendto = str_ireplace( $replace_tags, $replace_values, $sendto );
@@ -2288,6 +2291,8 @@ class WPZOOM_Forms {
 						'_wpzf_fields'  => array()
 					);
 
+					$fields = '';
+
 					foreach ( $_REQUEST as $key => $value ) {
 						if ( strpos( $key, 'wpzf_' ) === 0 ) {
 							$id   = substr( $key, 5 );
@@ -2298,8 +2303,11 @@ class WPZOOM_Forms {
 							}
 
 							$content['_wpzf_fields'][ $name ] = sanitize_text_field( $value );
+							$fields .= '<strong>' . esc_html( wp_unslash( $name ) ) . ':</strong><br/><br/>' . esc_html( wp_unslash( $value ) ) . '<br/><br/><hr/><br/>';
 						}
 					}
+
+					$replace_values = array( $fields, $sendto, '', $from, $replyto, $clean_site_name, $fallback_email );
 
 					$details = array(
 						'from'    => '',
@@ -2324,6 +2332,20 @@ class WPZOOM_Forms {
 							'meta_input'     => $content
 						) );
 					}
+				}
+
+				if ( $success && ! empty( $confirm_body ) ) {
+					wp_mail(
+						$replyto,
+						esc_html__( 'We&rsquo;ve received your message!', 'wpzoom-forms' ),
+						str_ireplace( $replace_tags, $replace_values, sanitize_textarea_field( $confirm_body ) ),
+						sprintf(
+							"Content-Type: text/html; charset=UTF-8\r\nFrom: %s <%s>\r\nReply-To: %s",
+							$clean_site_name,
+							$sendto,
+							$sendto
+						)
+					);
 				}
 			}
 		}

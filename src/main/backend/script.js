@@ -27,6 +27,7 @@ registerPlugin( 'wpzoom-forms-document-settings', {
 		const formFrom = meta[ '_form_from' ] || '';
 		const formReplyTo = meta[ '_form_reply_to' ] || '';
 		const formMessage = meta[ '_form_message' ] || '';
+		const formConfirmMessage = meta[ '_form_confirm_message' ] || '';
 		const [ hasCopiedShortcode, setHasCopiedShortcode ] = useState( false );
 		const copyBtnStyle = { minHeight: '30px', height: 'auto', minWidth: 'fit-content', margin: '0px 0px 8px 0px' };
 		const tags = [
@@ -166,6 +167,19 @@ registerPlugin( 'wpzoom-forms-document-settings', {
 					onChange={ value => setMeta( { ...meta, '_form_message': value } ) }
 				/>
 			</PluginDocumentSettingPanel> }
+
+			<PluginDocumentSettingPanel
+				name="wpzoom-forms-document-settings-confirmation"
+				className="wpzoom-forms-document-settings-confirmation"
+				title={ __( 'Confirmation Settings', 'wpzoom-forms' ) }
+				opened={ true }
+			>
+				<TextareaControl
+					label={ __( 'Confirmation Email', 'wpzoom-forms' ) }
+					value={ formConfirmMessage }
+					onChange={ value => setMeta( { ...meta, '_form_confirm_message': value } ) }
+				/>
+			</PluginDocumentSettingPanel>
 		</>;
 	}
 } );
