@@ -7,6 +7,7 @@ import { useState } from '@wordpress/element';
 import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import { __, setLocaleData } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
+import { default as WelcomeGuide } from './welcome';
 
 updateCategory( 'wpzoom-forms', {
 	icon: ( <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -66,6 +67,8 @@ registerPlugin( 'wpzoom-forms-document-settings', {
 		}
 
 		return <>
+			<WelcomeGuide/>
+
 			<PluginDocumentSettingPanel
 				name="wpzoom-forms-document-settings"
 				className="wpzoom-forms-document-settings"
@@ -189,10 +192,7 @@ setLocaleData( { 'Publish': [ __( 'Save', 'wpzoom-forms' ) ] } );
 registerBlockType( 'wpzoom-forms/form', {
 	title:       __( 'Contact Form', 'wpzoom-blocks' ),
 	description: __( 'Add a simple contact form', 'wpzoom-blocks' ),
-	icon:        ( <svg width="40" height="40" viewBox="0 0 250 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M250 0H50V50H0V300H250V0Z" fill="#083EA7"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M100 50H200V100H100V50ZM100 150V100H50V250H100V200H150V150H100Z" fill="#1FDE91"/>
-</svg> ),
+	icon:        ( <svg width="40" height="40" viewBox="0 0 250 300" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M250 0H50V50H0V300H250V0Z" fill="#083EA7"/><path fillRule="evenodd" clipRule="evenodd" d="M100 50H200V100H100V50ZM100 150V100H50V250H100V200H150V150H100Z" fill="#1FDE91"/></svg> ),
 	category:    'wpzoom-forms',
 	supports:    { align: true, html: false },
 	example:     {},
