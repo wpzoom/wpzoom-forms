@@ -439,6 +439,10 @@
 					border-top: 1px solid $mid-lighter-grey-color;
 					margin: 40px 0 0;
 
+                    .notice-warning {
+                        display: none;
+                    }
+
 					&:first-child {
 						padding-top: 0;
 						border-top: none;

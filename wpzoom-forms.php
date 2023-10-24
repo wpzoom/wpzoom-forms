@@ -657,12 +657,14 @@ class WPZOOM_Forms {
 
 		add_settings_section(
 			'wpzf_settings_general_captcha',
-			esc_html__( 'Captcha', 'wpzoom-forms' ),
+			esc_html__( 'CAPTCHA', 'wpzoom-forms' ),
 			function ( $args ) {
 				printf(
-					'<p class="wpzf_settings_section_desc">%s</p>',
-					esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Porttitor leo a diam sollicitudin tempor id eu nisl.', 'wpzoom-forms' )
+					'<p class="wpzf_settings_section_desc">%1$s <a href="%2$s">Click here</a> to generate your reCAPTCHA keys and enter them below</p>',
+					esc_html__( 'reCAPTCHA is a popular tool used to prevent spam and automated bots from accessing websites.', 'wpzoom-forms' ),
+                    esc_url( 'https://www.google.com/recaptcha/admin/create' )
 				);
+
 			},
 			'wpzf_settings_general',
 			array(
@@ -688,7 +690,7 @@ class WPZOOM_Forms {
 			function ( $args ) {
 				printf(
 					'<label><input type="checkbox" name="%3$s" id="%3$s" %4$s /><h4>%1$s</h4>%2$s</label>',
-					esc_html__( 'Use theme&rsquo;s styling', 'wpzoom-forms' ),
+					esc_html__( 'Load default styling for forms', 'wpzoom-forms' ),
 					isset( $args['description'] ) ? sanitize_text_field( $args['description'] ) : '',
 					esc_attr( $args['label_for'] ),
 					checked( boolval( get_option( $args['label_for'] ) ), true, false )
@@ -698,7 +700,7 @@ class WPZOOM_Forms {
 			'wpzf_settings_general_styling',
 			array(
 				'label_for'   => 'wpzf_use_theme_styles',
-				'description' => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Porttitor leo a diam sollicitudin tempor id eu nisl.', 'wpzoom-forms' ),
+				'description' => esc_html__( 'Uncheck this option if you want your current theme to handle the styling for forms.', 'wpzoom-forms' ),
 				'class'       => 'checkbox-field'
 			)
 		);
@@ -719,7 +721,7 @@ class WPZOOM_Forms {
 			'wpzf_settings_general_styling',
 			array(
 				'label_for'   => 'wpzf_global_assets_load',
-				'description' => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Porttitor leo a diam sollicitudin tempor id eu nisl.', 'wpzoom-forms' ),
+				'description' => esc_html__( 'If you want to embed a form using shortcodes in a page builder, enable this option to ensure all the needed assets are loaded.', 'wpzoom-forms' ),
 				'class'       => 'checkbox-field'
 			)
 		);
@@ -769,7 +771,7 @@ class WPZOOM_Forms {
 			esc_html__( 'Site Key', 'wpzoom-forms' ),
 			function ( $args ) {
 				printf(
-					'<input type="text" name="%1$s" id="%1$s" value="%2$s" />',
+					'<input type="text" size="50" name="%1$s" id="%1$s" value="%2$s" />',
 					'wpzf_global_captcha_site_key',
 					sanitize_text_field( get_option( 'wpzf_global_captcha_site_key', '' ) )
 				);
@@ -786,7 +788,7 @@ class WPZOOM_Forms {
 			esc_html__( 'Secret Key', 'wpzoom-forms' ),
 			function ( $args ) {
 				printf(
-					'<input type="text" name="%1$s" id="%1$s" value="%2$s" />',
+					'<input type="text" size="50" name="%1$s" id="%1$s" value="%2$s" />',
 					'wpzf_global_captcha_secret_key',
 					sanitize_text_field( get_option( 'wpzf_global_captcha_secret_key', '' ) )
 				);
