@@ -1857,28 +1857,35 @@ class WPZOOM_Forms {
 	 * @return bool          Whether it is spam.
 	 */
 	public function not_spam( $input ) {
-		if ( function_exists( 'akismet_http_post' ) ) {
-			global $akismet_api_host, $akismet_api_port;
 
-			$query_string = http_build_query(
-				array(
-					'comment_type'         => 'contact-form',
-					'comment_author_email' => $input['from'],
-					'comment_content'      => $input['message'],
-					'user_ip'              => $this->get_remote_address(),
-					'user_agent'           => ( isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '' ),
-					'referrer'             => wp_get_referer(),
-					'blog'                 => site_url(),
-					'blog_lang'            => get_locale(),
-					'blog_charset'         => get_bloginfo( 'charset' ),
-					'permalink'            => get_permalink(),
-					'is_test'              => false,
-				)
+		if( is_callable( array( 'Akismet', 'get_api_key' ) ) && is_callable( array( 'Akismet', 'http_post' ) ) ) {
+
+			$request    = array(
+				'comment_type'         => 'contact-form',
+				'comment_author'       => isset( $input['name'] ) ? $input['name'] : '',
+				'comment_author_email' => isset( $input['from'] ) ? $input['from'] : '',
+				'comment_author_url'   => isset( $input['url'] ) ? $input['url'] : '',
+				'comment_content'      => isset( $input['message'] ) ? $input['message'] : '',
+				'blog'                 => get_option( 'home' ),
+				'user_ip'              => $this->get_remote_address(),
+				// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+				'user_agent'           => isset( $_SERVER['HTTP_USER_AGENT'] ) ? wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) : null,
+				'referrer'             => wp_get_referer() ? wp_get_referer() : null,
+				// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+				'permalink'            => get_permalink(),
+				'blog_lang'            => get_locale(),
+				'blog_charset'         => get_bloginfo( 'charset' ),
+				'user_role'            => Akismet::get_user_roles( get_current_user_id() ),
+				'is_test'              => false,
+			
 			);
-			$response = akismet_http_post( $query_string, $akismet_api_host, '/1.1/comment-check', $akismet_api_port );
-			$result = ( is_array( $response ) && isset( $response[1] ) ) ? $response[1] : false;
 
-			return false !== boolval( $result );
+			$response = Akismet::http_post( build_query( $request ), 'comment-check' );
+
+			if( ! empty( $response ) && isset( $response[1] ) && 'true' === trim( $response[1] ) ) {
+				return false;
+			}
+
 		}
 
 		return true;
