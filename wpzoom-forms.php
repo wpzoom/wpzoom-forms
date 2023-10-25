@@ -2039,6 +2039,9 @@ class WPZOOM_Forms {
 									<td style="font-family:-apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;box-sizing:border-box;font-size:14px;line-height:1.5;vertical-align:top;color:#222222;padding:25px" valign="top">';
 					$replyto = '';
 					$sbj = '';
+					$raw_content = array(
+						'_wpzf_fields'  => array()
+					);
 
 					foreach ( $_REQUEST as $key => $value ) {
 						if ( strpos( $key, 'wpzf_' ) === 0 ) {
@@ -2054,6 +2057,7 @@ class WPZOOM_Forms {
 							}
 
 							$email_body .= '<strong>' . esc_html( wp_unslash( $name ) ) . ':</strong><br/><br/>' . esc_html( wp_unslash( $value ) ) . '<br/><br/><hr/><br/>';
+							$raw_content['_wpzf_fields'][ $name ] = sanitize_text_field( $value );
 						}
 					}
 
@@ -2091,7 +2095,7 @@ class WPZOOM_Forms {
 
 					$details = array(
 						'from'    => $fromaddr,
-						'message' => $email_body
+						'message' => $raw_content
 					);
 
 					if ( $this->not_spam( $details ) ) {
