@@ -9,7 +9,7 @@
  *
  * @wordpress-plugin
  * Plugin Name: WPZOOM Forms
- * Plugin URI:  https://wpzoom.com/plugins/forms/
+ * Plugin URI:  https://www.wpzoom.com/plugins/wpzoom-forms
  * Description: Simple, user-friendly contact form plugin for WordPress that utilizes Gutenberg blocks for easy form building and customization.
  * Author:      WPZOOM
  * Author URI:  https://www.wpzoom.com
