@@ -71,7 +71,7 @@ To export form submissions, navigate to the Tools > Export page in Dashboard and
 == Changelog ==
 
 = 1.0.4 =
-* Added Akismet Anti-Spam protection
+* Added Akismet Anti-Spam integration
 
 = 1.0.3 =
 * Fix for non-authenticated users not being able to submit the form
