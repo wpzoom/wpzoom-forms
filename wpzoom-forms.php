@@ -21,6 +21,20 @@
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
+// settings page url attribute
+define( 'WPZOOM_FORMS_SETTINGS_PAGE', 'wpzf-settings' );
+
+if ( ! defined( 'WPZOOM_FORMS_VERSION' ) ) {
+	define( 'WPZOOM_FORMS_VERSION', get_file_data( __FILE__, [ 'Version' ] )[0] ); // phpcs:ignore
+}
+
+define( 'WPZOOM_FORMS__FILE__', __FILE__ );
+define( 'WPZOOM_FORMS_PLUGIN_BASE', plugin_basename( WPZOOM_FORMS__FILE__ ) );
+define( 'WPZOOM_FORMS_PLUGIN_DIR', dirname( WPZOOM_FORMS_PLUGIN_BASE ) );
+
+define( 'WPZOOM_FORMS_PATH', plugin_dir_path( WPZOOM_FORMS__FILE__ ) );
+define( 'WPZOOM_FORMS_URL', plugin_dir_url( WPZOOM_FORMS__FILE__ ) );
+
 // Instance the plugin
 $wpzoom_forms = new WPZOOM_Forms();
 
@@ -29,6 +43,8 @@ register_activation_hook( __FILE__, array( $wpzoom_forms, 'activate' ) );
 
 // Hook the plugin into WordPress
 add_action( 'init', array( $wpzoom_forms, 'init' ), 9 );
+
+
 
 /**
  * Class WPZOOM_Forms
@@ -854,16 +870,19 @@ class WPZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function admin_menu() {
+		
 		global $submenu;
 
-		/*add_submenu_page(
+		$page_title = esc_html__( 'WPZOOM Forms Settings Page', 'wpzoom-forms' );
+
+		add_submenu_page(
 			'edit.php?post_type=wpzf-form',
-			esc_html__( 'Settings', 'wpzoom-forms' ),
+			$page_title,
 			esc_html__( 'Settings', 'wpzoom-forms' ),
 			'manage_options',
 			'wpzf-settings',
 			array( $this, 'render_settings_page' )
-		);*/
+		);
 
 		$amount = 0;
 		foreach ( wp_count_posts( 'wpzf-submission', 'readable' ) as $key => $value ) {
@@ -1412,7 +1431,7 @@ class WPZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function render_settings_page() {
-		echo 'Hello World!';
+		do_action( 'wpzoom_forms_admin_page' );
 	}
 
 	/**
@@ -1423,9 +1442,10 @@ class WPZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function admin_page_header() {
+
 		$current_page = get_current_screen()->id;
 
-		if ( 'edit-wpzf-form' == $current_page || 'wpzf-form' == $current_page || 'edit-wpzf-submission' == $current_page || 'wpzf-submission' == $current_page || 'wpzf-form_page_wpzf-settings' == $current_page ) {
+		if ( 'edit-wpzf-form' == $current_page || 'edit-wpzf-submission' == $current_page || 'wpzf-submission' == $current_page || 'wpzf-form_page_wpzf-settings' == $current_page ) {
 			?>
 			<header class="wpzoom-new-admin-wrap wpzoom-new-admin_settings-header">
 				<h1 class="wpzoom-new-admin_settings-main-title wp-heading">
@@ -1459,10 +1479,10 @@ class WPZOOM_Forms {
 									'url'   => admin_url( 'edit.php?post_type=wpzf-submission' ),
 									'altid' => 'wpzf-submission'
 								),
-								// 'wpzf-form_page_wpzf-settings' => array(
-								// 	'name' => esc_html__( 'Settings', 'wpzoom-forms' ),
-								// 	'url'  => admin_url( 'edit.php?post_type=wpzf-form&page=wpzf-settings' ),
-								// ),
+								'wpzf-form_page_wpzf-settings' => array(
+									'name' => esc_html__( 'Settings', 'wpzoom-forms' ),
+									'url'  => admin_url( 'edit.php?post_type=wpzf-form&page=wpzf-settings' ),
+								),
 							)
 						);
 
@@ -1790,7 +1810,7 @@ class WPZOOM_Forms {
 			<footer class="wpzoom-new-admin_settings-footer">
 				<div class="wpzoom-new-admin_settings-footer-wrap">
 					<h3 class="wpzoom-new-admin_settings-footer-logo">
-						<a href="https://www.wpzoom.com/" target="_blank" title="<?php _e( 'WPZOOM - WordPress themes with modern features and professional support', 'wpzoom-forms' ); ?>">
+						<a href="https://www.wpzoom.com/" target="_blank" title="<?php esc_html_e( 'WPZOOM - WordPress themes with modern features and professional support', 'wpzoom-forms' ); ?>">
 							<?php _e( 'WPZOOM', 'wpzoom-forms' ); ?>
 						</a>
 					</h3>
@@ -2223,3 +2243,12 @@ class WPZOOM_Forms {
 		return $output;
 	}
 }
+
+function load_files() {
+
+	//Load Settings Panel
+	require_once 'classes/class-wpzoom-forms-settings-fields.php';
+	require_once 'classes/class-wpzoom-forms-settings-page.php';
+
+}
+add_action( 'plugin_loaded', 'load_files' );
