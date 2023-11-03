@@ -289,7 +289,7 @@ class WPZOOM_Forms_Settings {
 								'type'  => 'radio',
 								'args'  => array(
 									'label_for'   => 'wpzf_global_captcha_type',
-									'class'       => 'wpzoom-forms-field',
+									'class'       => 'wpzoom-forms-field required-recaptcha',
 									'description' => '',
 									'default'     => 'v2',
 									'options'     => array(
@@ -304,7 +304,7 @@ class WPZOOM_Forms_Settings {
 								'type'  => 'input',
 								'args'  => array(
 									'label_for'   => 'wpzf_global_captcha_site_key',
-									'class'       => 'wpzoom-forms-field',
+									'class'       => 'wpzoom-forms-field required-recaptcha',
 									'default'     => '',
 									'type'        => 'text',
 								),
@@ -314,8 +314,8 @@ class WPZOOM_Forms_Settings {
 								'title' => __( 'Secret Key', 'wpzoom-forms' ),
 								'type'  => 'input',
 								'args'  => array(
-									'label_for'   => 'wwpzf_global_captcha_secret_key',
-									'class'       => 'wpzoom-forms-field',
+									'label_for'   => 'wpzf_global_captcha_secret_key',
+									'class'       => 'wpzoom-forms-field required-recaptcha',
 									'default'     => '',
 									'type'        => 'text',
 								),

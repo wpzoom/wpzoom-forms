@@ -105,5 +105,19 @@ jQuery(document).ready(function(){
             }
         });
 
+		function showRecaptchaOptions() {
+			if ( $( 'input[name="wpzf-settings[wpzf_global_captcha_service]"]:checked' ).val() === 'none' ) {
+				$( 'tr.required-recaptcha' ).hide();
+			} else {
+				$( 'tr.required-recaptcha' ).show();
+			}
+		}
+
+		showRecaptchaOptions();
+
+		//Show reCaptcha options only when it is selected
+		$('input[name="wpzf-settings[wpzf_global_captcha_service]"]').on('change', showRecaptchaOptions );
+
+
 	})(jQuery, WPZOOM_Settings);
 });
