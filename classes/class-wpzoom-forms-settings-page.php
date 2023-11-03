@@ -306,6 +306,7 @@ class WPZOOM_Forms_Settings {
 									'label_for'   => 'wpzf_global_captcha_site_key',
 									'class'       => 'wpzoom-forms-field required-recaptcha',
 									'default'     => '',
+									'description' => '',
 									'type'        => 'text',
 								),
 							),
@@ -317,6 +318,7 @@ class WPZOOM_Forms_Settings {
 									'label_for'   => 'wpzf_global_captcha_secret_key',
 									'class'       => 'wpzoom-forms-field required-recaptcha',
 									'default'     => '',
+									'description' => '',
 									'type'        => 'text',
 								),
 							),
@@ -545,7 +547,7 @@ class WPZOOM_Forms_Settings {
 	}
 	public function section_recaptcha_cb( $args ) {
 		?>
-		 <p id="<?php echo esc_attr( $args['id'] ); ?>"><?php  wp_kses_post( _e( 'reCAPTCHA is a popular tool used to prevent spam and automated bots from accessing websites. <a target="_blank" href="https://www.google.com/recaptcha/admin/create">Click here</a> to generate your reCAPTCHA keys and enter them below', 'wpzoom-forms' ) ); ?></p>
+		 <p id="<?php echo esc_attr( $args['id'] ); ?>"><?php echo wp_kses_post( __( 'reCAPTCHA is a popular tool used to prevent spam and automated bots from accessing websites. <a target="_blank" href="https://www.google.com/recaptcha/admin/create">Click here</a> to generate your reCAPTCHA keys and enter them below', 'wpzoom-forms' ) ); ?></p>
 		<?php
 	}
 }
