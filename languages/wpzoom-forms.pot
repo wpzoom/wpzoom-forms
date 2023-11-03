@@ -1,0 +1,498 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: WPZOOM Forms\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-11-03 09:49+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.6.6; wp-6.3.2\n"
+"X-Domain: wpzoom-forms"
+
+#: wpzoom-forms.php:2067
+#, php-format
+msgid " -- %s"
+msgstr ""
+
+#: wpzoom-forms.php:358
+#, php-format
+msgid "%1$s at %2$s"
+msgstr ""
+
+#: wpzoom-forms.php:877
+#, php-format
+msgid "%s Submission"
+msgid_plural "%s Submissions"
+msgstr[0] ""
+msgstr[1] ""
+
+#: wpzoom-forms.php:1110 wpzoom-forms.php:1124 wpzoom-forms.php:1286
+msgid "[Unknown]"
+msgstr ""
+
+#: wpzoom-forms.php:146
+msgid "Add New Form"
+msgstr ""
+
+#: wpzoom-forms.php:1245 wpzoom-forms.php:1505
+msgid "Add new form"
+msgstr ""
+
+#: wpzoom-forms.php:190
+msgid "Add New Submission"
+msgstr ""
+
+#: wpzoom-forms.php:154
+msgid "All Forms"
+msgstr ""
+
+#: wpzoom-forms.php:1813
+msgid "Blog"
+msgstr ""
+
+#: wpzoom-forms.php:1806
+msgid "Check out our plugins"
+msgstr ""
+
+#: wpzoom-forms.php:1800
+msgid "Check out our themes"
+msgstr ""
+
+#: wpzoom-forms.php:1818 wpzoom-forms.php:1819
+msgid "Documentation"
+msgstr ""
+
+#: wpzoom-forms.php:147
+msgid "Edit Form"
+msgstr ""
+
+#: wpzoom-forms.php:310
+msgid "Example Form"
+msgstr ""
+
+#: wpzoom-forms.php:207
+msgid "Filter form submission list"
+msgstr ""
+
+#: wpzoom-forms.php:163
+msgid "Filter forms list"
+msgstr ""
+
+#: wpzoom-forms.php:1063
+msgid "Form"
+msgstr ""
+
+#: wpzoom-forms.php:155
+msgid "Form Archives"
+msgstr ""
+
+#: wpzoom-forms.php:156
+msgid "Form Attributes"
+msgstr ""
+
+#: wpzoom-forms.php:168
+msgid "Form reverted to draft."
+msgstr ""
+
+#: wpzoom-forms.php:167
+msgid "Form saved privately."
+msgstr ""
+
+#: wpzoom-forms.php:166
+msgid "Form saved."
+msgstr ""
+
+#: wpzoom-forms.php:169
+msgid "Form scheduled."
+msgstr ""
+
+#: wpzoom-forms.php:212
+msgid "Form Submission reverted to draft."
+msgstr ""
+
+#: wpzoom-forms.php:211
+msgid "Form Submission saved privately."
+msgstr ""
+
+#: wpzoom-forms.php:210
+msgid "Form Submission saved."
+msgstr ""
+
+#: wpzoom-forms.php:213
+msgid "Form Submission scheduled."
+msgstr ""
+
+#: wpzoom-forms.php:214
+msgid "Form Submission updated."
+msgstr ""
+
+#: wpzoom-forms.php:209
+msgid "Form Submissions list"
+msgstr ""
+
+#: wpzoom-forms.php:208
+msgid "Form Submissions list navigation"
+msgstr ""
+
+#: wpzoom-forms.php:170
+msgid "Form updated."
+msgstr ""
+
+#: wpzoom-forms.php:1298
+#, php-format
+msgid "Form: %s"
+msgstr ""
+
+#: wpzoom-forms.php:1454
+msgid "Forms"
+msgstr ""
+
+#: wpzoom-forms.php:165
+msgid "Forms list"
+msgstr ""
+
+#: wpzoom-forms.php:164
+msgid "Forms list navigation"
+msgstr ""
+
+#: wpzoom-forms.php:360
+msgid "g:i a"
+msgstr ""
+
+#: wpzoom-forms.php:1824
+msgid "Get support"
+msgstr ""
+
+#: wpzoom-forms.php:1493
+msgid "Hi there!"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://www.wpzoom.com"
+msgstr ""
+
+#. URI of the plugin
+msgid "https://www.wpzoom.com/plugins/wpzoom-forms"
+msgstr ""
+
+#: wpzoom-forms.php:157
+msgid "Insert into form"
+msgstr ""
+
+#: wpzoom-forms.php:201
+msgid "Insert into submission"
+msgstr ""
+
+#: wpzoom-forms.php:1497
+msgid "It appears that you haven&rsquo;t made any forms yet."
+msgstr ""
+
+#: wpzoom-forms.php:590 wpzoom-forms.php:594 wpzoom-forms.php:653
+#: wpzoom-forms.php:665
+msgid "Item #1"
+msgstr ""
+
+#: wpzoom-forms.php:355
+msgid "Last Modified"
+msgstr ""
+
+#. %1$s = possible class attribute, %2$s = page url, %3$s = page name.
+#: wpzoom-forms.php:1472
+#, php-format
+msgctxt "Main menu page item"
+msgid "<li%1$s><a href=\"%2$s\">%3$s</a></li>"
+msgstr ""
+
+#: wpzoom-forms.php:624
+msgid "My Checkbox Field"
+msgstr ""
+
+#: wpzoom-forms.php:475
+msgid "My Email Field"
+msgstr ""
+
+#: wpzoom-forms.php:449
+msgid "My Name Field"
+msgstr ""
+
+#: wpzoom-forms.php:531
+msgid "My Phone Field"
+msgstr ""
+
+#: wpzoom-forms.php:657
+msgid "My Radio Field"
+msgstr ""
+
+#: wpzoom-forms.php:598
+msgid "My Select Field"
+msgstr ""
+
+#: wpzoom-forms.php:419
+msgid "My Text Field"
+msgstr ""
+
+#: wpzoom-forms.php:565
+msgid "My Textarea Field"
+msgstr ""
+
+#: wpzoom-forms.php:505
+msgid "My Website Field"
+msgstr ""
+
+#: wpzoom-forms.php:148
+msgid "New Form"
+msgstr ""
+
+#: wpzoom-forms.php:2066
+msgid "New Form Submission!"
+msgstr ""
+
+#: wpzoom-forms.php:192
+msgid "New Submission"
+msgstr ""
+
+#: wpzoom-forms.php:153
+msgid "No forms found in Trash."
+msgstr ""
+
+#: wpzoom-forms.php:152
+msgid "No forms found."
+msgstr ""
+
+#: wpzoom-forms.php:197
+msgid "No submissions found in Trash."
+msgstr ""
+
+#: wpzoom-forms.php:196
+msgid "No submissions found."
+msgstr ""
+
+#: wpzoom-forms.php:1807
+msgid "Our Plugins"
+msgstr ""
+
+#: wpzoom-forms.php:1801
+msgid "Our Themes"
+msgstr ""
+
+#: wpzoom-forms.php:145 wpzoom-forms.php:189
+msgctxt "post"
+msgid "Add New"
+msgstr ""
+
+#: wpzoom-forms.php:159 wpzoom-forms.php:203
+msgctxt "post"
+msgid "Featured image"
+msgstr ""
+
+#: wpzoom-forms.php:161 wpzoom-forms.php:205
+msgctxt "post"
+msgid "Remove featured image"
+msgstr ""
+
+#: wpzoom-forms.php:160 wpzoom-forms.php:204
+msgctxt "post"
+msgid "Set featured image"
+msgstr ""
+
+#: wpzoom-forms.php:239
+msgctxt "post"
+msgid "Spam"
+msgstr ""
+
+#: wpzoom-forms.php:162 wpzoom-forms.php:206
+msgctxt "post"
+msgid "Use as featured image"
+msgstr ""
+
+#: wpzoom-forms.php:187
+msgctxt "post type general name"
+msgid "WPZOOM Form Submissions"
+msgstr ""
+
+#: wpzoom-forms.php:143
+msgctxt "post type general name"
+msgid "WPZOOM Forms"
+msgstr ""
+
+#: wpzoom-forms.php:144
+msgctxt "post type singular name"
+msgid "Form"
+msgstr ""
+
+#: wpzoom-forms.php:188
+msgctxt "post type singular name"
+msgid "WPZOOM Form Submission"
+msgstr ""
+
+#: wpzoom-forms.php:334
+msgid "Saved"
+msgstr ""
+
+#: wpzoom-forms.php:335 wpzoom-forms.php:336 wpzoom-forms.php:337
+#: wpzoom-forms.php:338
+#, php-format
+msgid "Saved <span class=\"count\">(%s)</span>"
+msgstr ""
+
+#: wpzoom-forms.php:151
+msgid "Search Forms"
+msgstr ""
+
+#: wpzoom-forms.php:195
+msgid "Search Submissions"
+msgstr ""
+
+#: wpzoom-forms.php:1812
+msgid "See the latest updates on our blog"
+msgstr ""
+
+#: wpzoom-forms.php:1046
+msgid "Shortcode"
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"Simple, user-friendly contact form plugin for WordPress that utilizes "
+"Gutenberg blocks for easy form building and customization."
+msgstr ""
+
+#: wpzoom-forms.php:240
+#, php-format
+msgid "Spam <span class=\"count\">(%s)</span>"
+msgid_plural "Spam <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: wpzoom-forms.php:1062 wpzoom-forms.php:1264 wpzoom-forms.php:2148
+#: wpzoom-forms.php:2151
+msgid "Submission"
+msgstr ""
+
+#: wpzoom-forms.php:199
+msgid "Submission Archives"
+msgstr ""
+
+#: wpzoom-forms.php:200
+msgid "Submission Attributes"
+msgstr ""
+
+#: wpzoom-forms.php:1382
+msgid "Submission failed!"
+msgstr ""
+
+#: wpzoom-forms.php:1309
+msgid "Submission is empty&hellip;"
+msgstr ""
+
+#: wpzoom-forms.php:198 wpzoom-forms.php:875 wpzoom-forms.php:1458
+msgid "Submissions"
+msgstr ""
+
+#: wpzoom-forms.php:697
+msgid "Submit"
+msgstr ""
+
+#: wpzoom-forms.php:388
+msgid "Submitted"
+msgstr ""
+
+#: wpzoom-forms.php:1382
+msgid "Submitted successfully!"
+msgstr ""
+
+#: wpzoom-forms.php:1825
+msgid "Support"
+msgstr ""
+
+#: wpzoom-forms.php:1045
+msgid "Title"
+msgstr ""
+
+#: wpzoom-forms.php:2049 wpzoom-forms.php:2116
+msgid "Unnamed Input"
+msgstr ""
+
+#: wpzoom-forms.php:158
+msgid "Uploaded to this form"
+msgstr ""
+
+#: wpzoom-forms.php:202
+msgid "Uploaded to this submission"
+msgstr ""
+
+#: wpzoom-forms.php:1443
+#, php-format
+msgid "V. %s"
+msgstr ""
+
+#: wpzoom-forms.php:1007
+msgid "View"
+msgstr ""
+
+#: wpzoom-forms.php:149
+msgid "View Form"
+msgstr ""
+
+#: wpzoom-forms.php:150
+msgid "View Forms"
+msgstr ""
+
+#: wpzoom-forms.php:193
+msgid "View Submission"
+msgstr ""
+
+#: wpzoom-forms.php:194
+msgid "View Submissions"
+msgstr ""
+
+#: wpzoom-forms.php:1501
+msgid ""
+"With WPZOOM Forms, you have the ability to create contact forms, surveys, "
+"and various other types of forms effortlessly and swiftly."
+msgstr ""
+
+#. Author of the plugin
+#: wpzoom-forms.php:1794
+msgid "WPZOOM"
+msgstr ""
+
+#: wpzoom-forms.php:1793
+msgid "WPZOOM - WordPress themes with modern features and professional support"
+msgstr ""
+
+#: wpzoom-forms.php:838
+msgid "WPZOOM Blocks"
+msgstr ""
+
+#: wpzoom-forms.php:191
+msgid "WPZOOM Form Submission"
+msgstr ""
+
+#: wpzoom-forms.php:185
+msgid "WPZOOM Form Submissions"
+msgstr ""
+
+#. Name of the plugin
+#: wpzoom-forms.php:141 wpzoom-forms.php:824
+msgid "WPZOOM Forms"
+msgstr ""
+
+#: wpzoom-forms.php:1436
+#, php-format
+msgid ""
+"WPZOOM Forms <small>by <a href=\"%s\" target=\"_blank\" title=\"WPZOOM - "
+"WordPress themes with modern features and professional support\">WPZOOM</a>"
+"</small>"
+msgstr ""
+
+#: wpzoom-forms.php:359
+msgid "Y/m/d"
+msgstr ""
