@@ -4,8 +4,8 @@ Donate link:       http://paypal.me/wpzm/10usd
 Author URI:        https://www.wpzoom.com/
 Requires at least: 6.0
 Requires PHP:      7.4
-Tested up to:      6.3
-Stable tag:        1.0.4
+Tested up to:      6.4
+Stable tag:        1.1.0
 License:           GNU General Public License v2
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 Tags:              contact, form, contact form, submission, email, block, gutenberg, form builder
@@ -25,11 +25,11 @@ WPZOOM Forms is a flexible and intuitive contact form plugin for WordPress that 
 * Email notifications: Receive email notifications when users submit your forms, and customize the email templates as needed.
 * Form validation: Ensure users submit valid data with customizable form validation rules.
 * Anti-Spam Protection with Akismet integration
+* Spam protection: Built-in reCAPTCHA integration helps protect your forms from spam submissions.
 
 = Coming Soon =
 
-* Spam protection: Built-in reCAPTCHA integration helps protect your forms from spam submissions.
-* Pre-built templates: Choose from a variety of pre-designed form templates to get started quickly.
+ * Pre-built templates: Choose from a variety of pre-designed form templates to get started quickly.
 
 
 = Additional Resources =
@@ -69,6 +69,11 @@ To export form submissions, navigate to the Tools > Export page in Dashboard and
 
 
 == Changelog ==
+
+= 1.1.0 =
+* Added reCAPTCHA integration
+* Added Settings page
+* Minor bug fixes
 
 = 1.0.4 =
 * Added Akismet Anti-Spam integration

@@ -13,13 +13,27 @@
  * Description: Simple, user-friendly contact form plugin for WordPress that utilizes Gutenberg blocks for easy form building and customization.
  * Author:      WPZOOM
  * Author URI:  https://www.wpzoom.com
- * Version:     1.0.4
+ * Version:     1.1.0
  * License:     GPL2+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
 
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
+
+// settings page url attribute
+define( 'WPZOOM_FORMS_SETTINGS_PAGE', 'wpzf-settings' );
+
+if ( ! defined( 'WPZOOM_FORMS_VERSION' ) ) {
+	define( 'WPZOOM_FORMS_VERSION', get_file_data( __FILE__, [ 'Version' ] )[0] ); // phpcs:ignore
+}
+
+define( 'WPZOOM_FORMS__FILE__', __FILE__ );
+define( 'WPZOOM_FORMS_PLUGIN_BASE', plugin_basename( WPZOOM_FORMS__FILE__ ) );
+define( 'WPZOOM_FORMS_PLUGIN_DIR', dirname( WPZOOM_FORMS_PLUGIN_BASE ) );
+
+define( 'WPZOOM_FORMS_PATH', plugin_dir_path( WPZOOM_FORMS__FILE__ ) );
+define( 'WPZOOM_FORMS_URL', plugin_dir_url( WPZOOM_FORMS__FILE__ ) );
 
 // Instance the plugin
 $wpzoom_forms = new WPZOOM_Forms();
@@ -29,6 +43,8 @@ register_activation_hook( __FILE__, array( $wpzoom_forms, 'activate' ) );
 
 // Hook the plugin into WordPress
 add_action( 'init', array( $wpzoom_forms, 'init' ), 9 );
+
+
 
 /**
  * Class WPZOOM_Forms
@@ -45,7 +61,7 @@ class WPZOOM_Forms {
 	 * @access public
 	 * @since  1.0.0
 	 */
-	public const VERSION = '1.0.4';
+	public const VERSION = '1.1.0';
 
 	/**
 	 * Whether the plugin has been initialized.
@@ -93,6 +109,15 @@ class WPZOOM_Forms {
 	public $main_dir_url;
 
 	/**
+	 * The URL to this plugin's "dist" directory.
+	 *
+	 * @var    string
+	 * @access public
+	 * @since  1.0.0
+	 */
+	public $dist_dir_url;
+
+	/**
 	 * Initializes the plugin and sets up needed hooks and features.
 	 *
 	 * @access public
@@ -106,6 +131,7 @@ class WPZOOM_Forms {
 			$this->plugin_dir_url  = plugin_dir_url( __FILE__ );
 			$this->main_dir_path   = trailingslashit( $this->plugin_dir_path . 'build' );
 			$this->main_dir_url    = trailingslashit( $this->plugin_dir_url . 'build' );
+			$this->dist_dir_url    = trailingslashit( $this->plugin_dir_url . 'dist' );
 
 			load_plugin_textdomain( 'wpzoom-forms', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
@@ -124,6 +150,7 @@ class WPZOOM_Forms {
 			add_action( 'admin_enqueue_scripts',                        array( $this, 'admin_enqueue_scripts' ),             100 );
 			add_action( 'enqueue_block_editor_assets',                  array( $this, 'register_backend_assets' ),           10 );
 			add_action( 'enqueue_block_assets',                         array( $this, 'register_frontend_assets' ),          10 );
+			add_action( 'wp_enqueue_scripts',                           array( $this, 'enqueue_frontend_scripts' ),          10 );
 			add_action( 'all_admin_notices',                            array( $this, 'admin_page_header' ),                 1 );
 			add_action( 'in_admin_footer',                              array( $this, 'admin_page_footer' ),                 10 );
 			add_filter( 'admin_body_class',                             array( $this, 'admin_body_class_filter' ),           10 );
@@ -396,309 +423,6 @@ class WPZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function register_blocks() {
-		$input_blocks = array(
-			'text-plain'   => array(
-				'id'          => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'name'        => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'type'        => array( // Text, Number
-					'type'    => 'string',
-					'default' => 'text'
-				),
-				'placeholder' => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'label'       => array(
-					'type'    => 'string',
-					'default' => __( 'My Text Field', 'wpzoom-forms' )
-				),
-				'showLabel'   => array(
-					'type'    => 'boolean',
-					'default' => true
-				),
-				'required'    => array(
-					'type'    => 'boolean',
-					'default' => false
-				),
-				'subject'     => array(
-					'type'    => 'boolean',
-					'default' => false
-				)
-			),
-			'text-name'    => array(
-				'id'          => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'name'        => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'placeholder' => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'label'       => array(
-					'type'    => 'string',
-					'default' => __( 'My Name Field', 'wpzoom-forms' )
-				),
-				'showLabel'   => array(
-					'type'    => 'boolean',
-					'default' => true
-				),
-				'required'    => array(
-					'type'    => 'boolean',
-					'default' => false
-				)
-			),
-			'text-email'   => array(
-				'id'          => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'name'        => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'placeholder' => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'label'       => array(
-					'type'    => 'string',
-					'default' => __( 'My Email Field', 'wpzoom-forms' )
-				),
-				'showLabel'   => array(
-					'type'    => 'boolean',
-					'default' => true
-				),
-				'required'    => array(
-					'type'    => 'boolean',
-					'default' => false
-				),
-				'replyto'     => array(
-					'type'    => 'boolean',
-					'default' => false
-				)
-			),
-			'text-website' => array(
-				'id'          => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'name'        => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'placeholder' => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'label'       => array(
-					'type'    => 'string',
-					'default' => __( 'My Website Field', 'wpzoom-forms' )
-				),
-				'showLabel'   => array(
-					'type'    => 'boolean',
-					'default' => true
-				),
-				'required'    => array(
-					'type'    => 'boolean',
-					'default' => false
-				)
-			),
-			'text-phone'   => array(
-				'id'          => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'name'        => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'placeholder' => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'label'       => array(
-					'type'    => 'string',
-					'default' => __( 'My Phone Field', 'wpzoom-forms' )
-				),
-				'showLabel'   => array(
-					'type'    => 'boolean',
-					'default' => true
-				),
-				'required'    => array(
-					'type'    => 'boolean',
-					'default' => false
-				)
-			),
-			'textarea'     => array(
-				'id'          => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'name'        => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'cols'        => array(
-					'type'    => 'string',
-					'default' => '20'
-				),
-				'rows'        => array(
-					'type'    => 'string',
-					'default' => '4'
-				),
-				'placeholder' => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'label'       => array(
-					'type'    => 'string',
-					'default' => __( 'My Textarea Field', 'wpzoom-forms' )
-				),
-				'showLabel'   => array(
-					'type'    => 'boolean',
-					'default' => true
-				),
-				'required'    => array(
-					'type'    => 'boolean',
-					'default' => false
-				)
-			),
-			'select'       => array(
-				'id'           => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'name'         => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'options'      => array(
-					'type'    => 'array',
-					'items'   => array(
-						'type' => 'string'
-					),
-					'default' => array( __( 'Item #1', 'wpzoom-forms' ) )
-				),
-				'defaultValue' => array(
-					'type'    => 'string',
-					'default' => __( 'Item #1', 'wpzoom-forms' )
-				),
-				'label'       => array(
-					'type'    => 'string',
-					'default' => __( 'My Select Field', 'wpzoom-forms' )
-				),
-				'showLabel'   => array(
-					'type'    => 'boolean',
-					'default' => true
-				),
-				'multiple'     => array(
-					'type'    => 'boolean',
-					'default' => false
-				),
-				'required'     => array(
-					'type'    => 'boolean',
-					'default' => false
-				)
-			),
-			'checkbox'     => array(
-				'id'           => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'name'         => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'label'       => array(
-					'type'    => 'string',
-					'default' => __( 'My Checkbox Field', 'wpzoom-forms' )
-				),
-				'showLabel'   => array(
-					'type'    => 'boolean',
-					'default' => true
-				),
-				'defaultValue' => array(
-					'type'    => 'boolean',
-					'default' => false
-				),
-				'required'     => array(
-					'type'    => 'boolean',
-					'default' => false
-				)
-			),
-			'radio'        => array(
-				'id'           => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'name'         => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'options'      => array(
-					'type'    => 'array',
-					'items'   => array(
-						'type' => 'string'
-					),
-					'default' => array( __( 'Item #1', 'wpzoom-forms' ) )
-				),
-				'label'       => array(
-					'type'    => 'string',
-					'default' => __( 'My Radio Field', 'wpzoom-forms' )
-				),
-				'showLabel'   => array(
-					'type'    => 'boolean',
-					'default' => true
-				),
-				'defaultValue' => array(
-					'type'    => 'string',
-					'default' => __( 'Item #1', 'wpzoom-forms' )
-				),
-				'required'     => array(
-					'type'    => 'boolean',
-					'default' => false
-				)
-			),
-			'label'        => array(
-				'id'           => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'name'         => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'forInput'     => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'required'     => array(
-					'type'    => 'boolean',
-					'default' => false
-				)
-			),
-			'submit'       => array(
-				'id'          => array(
-					'type'    => 'string',
-					'default' => ''
-				),
-				'name'        => array(
-					'type'    => 'string',
-					'default' => __( 'Submit', 'wpzoom-forms' )
-				)
-			)
-		);
-
 		register_block_type(
 			'wpzoom-forms/form',
 			array(
@@ -709,18 +433,8 @@ class WPZOOM_Forms {
 			)
 		);
 
-		foreach ( $input_blocks as $block => $attributes ) {
-			register_block_type(
-				"wpzoom-forms/$block-field",
-				array(
-					'ancestor'      => array( 'wpzoom-forms/form' ),
-					'attributes'    => $attributes,
-					'script'        => 'wpzoom-forms-js-frontend-formblock',
-					'style'         => 'wpzoom-forms-css-frontend-formblock',
-					'editor_script' => 'wpzoom-forms-js-backend-main',
-					'editor_style'  => 'wpzoom-forms-css-backend-main'
-				)
-			);
+		foreach ( array( 'checkbox', 'email', 'label', 'name', 'phone', 'plain', 'radio', 'select', 'submit', 'textarea', 'website' ) as $block ) {
+			register_block_type( $this->main_dir_path . 'fields/' . $block . '/block.json' );
 		}
 	}
 
@@ -854,16 +568,19 @@ class WPZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function admin_menu() {
+		
 		global $submenu;
 
-		/*add_submenu_page(
+		$page_title = esc_html__( 'WPZOOM Forms Settings Page', 'wpzoom-forms' );
+
+		add_submenu_page(
 			'edit.php?post_type=wpzf-form',
-			esc_html__( 'Settings', 'wpzoom-forms' ),
+			$page_title,
 			esc_html__( 'Settings', 'wpzoom-forms' ),
 			'manage_options',
 			'wpzf-settings',
 			array( $this, 'render_settings_page' )
-		);*/
+		);
 
 		$amount = 0;
 		foreach ( wp_count_posts( 'wpzf-submission', 'readable' ) as $key => $value ) {
@@ -976,20 +693,70 @@ class WPZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function register_frontend_assets() {
+
+		$depends         = array( 'jquery', 'wp-blocks', 'wp-components', 'wp-core-data', 'wp-data', 'wp-element', 'wp-i18n', 'wp-polyfill' );
+		$enableRecaptcha = WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' );
+		$recaptchaType    = ! empty( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) ) ? WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) : 'v2';
+		$site_key        = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key' ) ) );
+
+		if ( 'recaptcha' == $enableRecaptcha ) {
+
+			if( 'v2' == $recaptchaType ) {
+				wp_register_script(
+					'google-recaptcha',
+					'https://www.google.com/recaptcha/api.js',
+					array(),
+					$this::VERSION,
+					true
+				);
+			}
+			elseif( 'v3' == $recaptchaType ) {
+				wp_register_script(
+					'google-recaptcha',
+					"https://www.google.com/recaptcha/api.js?render={$site_key}",
+					array(),
+					$this::VERSION,
+					true
+				);
+			}
+
+			$depends[] = 'google-recaptcha';
+		}
+		
 		wp_register_script(
 			'wpzoom-forms-js-frontend-formblock',
-			trailingslashit( $this->main_dir_url ) . 'form-block/frontend/script.js',
-			array( 'wp-blocks', 'wp-components', 'wp-core-data', 'wp-data', 'wp-element', 'wp-i18n', 'wp-polyfill' ),
+			trailingslashit( $this->dist_dir_url ) . 'assets/frontend/js/script.js',
+			$depends,
 			$this::VERSION,
 			true
 		);
 
+		$use_theme_style = boolval( WPZOOM_Forms_Settings::get( 'wpzf_use_theme_styles' ) );
+
 		wp_register_style(
 			'wpzoom-forms-css-frontend-formblock',
-			trailingslashit( $this->main_dir_url ) . 'form-block/frontend/style.css',
+			( $use_theme_style ? trailingslashit( $this->main_dir_url ) . 'form-block/frontend/style.css' : false ),
 			array(),
 			$this::VERSION
 		);
+
+	}
+
+	/**
+	 * Enqueues needed scripts and styles for use on the frontend.
+	 *
+	 * @access public
+	 * @return void
+	 * @since  1.0.0
+	 */
+	public function enqueue_frontend_scripts() {
+
+		$global_load_assets = boolval( WPZOOM_Forms_Settings::get( 'wpzf_global_assets_load' ) );
+
+		if ( $global_load_assets ) {
+			wp_enqueue_style( 'wpzoom-forms-css-frontend-formblock' );
+			wp_enqueue_script( 'wpzoom-forms-js-frontend-formblock' );
+		}
 	}
 
 	/**
@@ -1401,6 +1168,14 @@ class WPZOOM_Forms {
 			$content = preg_replace( '/<\/form>/is', '<input type="hidden" name="wpzf_subject" value="' . $match2[1] . '" /></form>', $content );
 		}
 
+		$enableRecaptcha  = WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' );
+		$recaptchaType    = ! empty( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) ) ? WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) : 'v2';
+		$site_key         = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key' ) ) );
+
+		if( 'recaptcha' == $enableRecaptcha ) {
+			$content = preg_replace( '/<input([^>]*)type="submit"([^>]*)class="([^"]+)"/i', '<input $1 type="button" data-sitekey="' . $site_key . '" data-callback="wpzf_submit" data-action="submit" $2 class="$3 g-recaptcha"', $content );
+		}
+
 		return $content;
 	}
 
@@ -1412,7 +1187,7 @@ class WPZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function render_settings_page() {
-		echo 'Hello World!';
+		do_action( 'wpzoom_forms_admin_page' );
 	}
 
 	/**
@@ -1423,9 +1198,10 @@ class WPZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function admin_page_header() {
+
 		$current_page = get_current_screen()->id;
 
-		if ( 'edit-wpzf-form' == $current_page || 'wpzf-form' == $current_page || 'edit-wpzf-submission' == $current_page || 'wpzf-submission' == $current_page || 'wpzf-form_page_wpzf-settings' == $current_page ) {
+		if ( 'edit-wpzf-form' == $current_page || 'edit-wpzf-submission' == $current_page || 'wpzf-submission' == $current_page || 'wpzf-form_page_wpzf-settings' == $current_page ) {
 			?>
 			<header class="wpzoom-new-admin-wrap wpzoom-new-admin_settings-header">
 				<h1 class="wpzoom-new-admin_settings-main-title wp-heading">
@@ -1459,10 +1235,10 @@ class WPZOOM_Forms {
 									'url'   => admin_url( 'edit.php?post_type=wpzf-submission' ),
 									'altid' => 'wpzf-submission'
 								),
-								// 'wpzf-form_page_wpzf-settings' => array(
-								// 	'name' => esc_html__( 'Settings', 'wpzoom-forms' ),
-								// 	'url'  => admin_url( 'edit.php?post_type=wpzf-form&page=wpzf-settings' ),
-								// ),
+								'wpzf-form_page_wpzf-settings' => array(
+									'name' => esc_html__( 'Settings', 'wpzoom-forms' ),
+									'url'  => admin_url( 'edit.php?post_type=wpzf-form&page=wpzf-settings' ),
+								),
 							)
 						);
 
@@ -1790,7 +1566,7 @@ class WPZOOM_Forms {
 			<footer class="wpzoom-new-admin_settings-footer">
 				<div class="wpzoom-new-admin_settings-footer-wrap">
 					<h3 class="wpzoom-new-admin_settings-footer-logo">
-						<a href="https://www.wpzoom.com/" target="_blank" title="<?php _e( 'WPZOOM - WordPress themes with modern features and professional support', 'wpzoom-forms' ); ?>">
+						<a href="https://www.wpzoom.com/" target="_blank" title="<?php esc_html_e( 'WPZOOM - WordPress themes with modern features and professional support', 'wpzoom-forms' ); ?>">
 							<?php _e( 'WPZOOM', 'wpzoom-forms' ); ?>
 						</a>
 					</h3>
@@ -1932,12 +1708,61 @@ class WPZOOM_Forms {
 	public function action_form_post() {
 		$success = false;
 		$url     = isset( $_POST['_wp_http_referer'] ) ? sanitize_text_field( wp_unslash( $_POST['_wp_http_referer'] ) ) : home_url();
+		$form_id = -1;
 
 		if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'wpzf_submit' ) ) {
 			$form_id = isset( $_POST['form_id'] ) ? intval( $_POST['form_id'] ) : -1;
 			$blocks  = parse_blocks( $form_id > -1 ? get_post_field( 'post_content', $form_id, 'raw' ) : '' );
 
-			if ( count( $blocks ) > 0 ) {
+			//Check if recaptcha is enabled and the form passes it's check
+			if ( 'recaptcha' == WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' ) ) {
+				$captcha = false;
+
+				if ( isset( $_POST['g-recaptcha-response'] ) ) {
+					$captcha = trim( sanitize_text_field( $_POST['g-recaptcha-response'] ) );
+				}
+
+				if( 'v3' ==  WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) && isset( $_POST['recaptcha_token'] ) ) {
+					$captcha = trim( sanitize_text_field( $_POST['recaptcha_token'] ) );
+				}
+				
+
+				if ( ! empty( $captcha ) ) {
+					$secret = trim( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_secret_key' ) ) );
+
+					if ( ! empty( $secret ) ) {
+						$response = file_get_contents(
+							sprintf(
+								'https://www.google.com/recaptcha/api/siteverify?secret=%1$s&response=%2$s&remoteip=%3$s',
+								$secret,
+								$captcha,
+								$_SERVER['REMOTE_ADDR']
+							)
+						);
+
+						if ( false !== $response && ! empty( $response ) ) {
+							$json = json_decode( $response );
+
+							if( 'v3' ==  WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) ) { 
+								if ( null !== $json && is_object( $json ) && true === $json->success && $json->score >= 0.5 ) {
+									$captcha_check_passed = true;
+								}
+							}
+							else {
+								if ( null !== $json && is_object( $json ) && true === $json->success ) {
+									$captcha_check_passed = true;
+								}
+							}
+
+						}
+					}
+				}
+			} else {
+				$captcha_check_passed = true;
+			}
+
+			if ( $captcha_check_passed && count( $blocks ) > 0 ) {
+				$clean_site_name    = sanitize_text_field( get_bloginfo( 'name' ) );
 				$input_blocks   = $this->get_input_blocks( $blocks );
 				$form_method    = get_post_meta( $form_id, '_form_method', true ) ?: 'email';
 				$form_email     = get_post_meta( $form_id, '_form_email', true );
@@ -2223,3 +2048,15 @@ class WPZOOM_Forms {
 		return $output;
 	}
 }
+
+if( ! function_exists ( 'wpzoom_forms_load_files' ) ) {
+	function wpzoom_forms_load_files() {
+
+		//Load Settings Panel
+		require_once 'classes/class-wpzoom-forms-settings-fields.php';
+		require_once 'classes/class-wpzoom-forms-settings-page.php';
+	
+	}
+	add_action( 'plugin_loaded', 'wpzoom_forms_load_files' );
+}
+

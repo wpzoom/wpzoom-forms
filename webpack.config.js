@@ -15,7 +15,18 @@ module.exports = {
 		'form-block/backend/script':  path.resolve( __dirname, 'src', 'form-block', 'backend', 'script.js' ),
 		'form-block/backend/style':   path.resolve( __dirname, 'src', 'form-block', 'backend', 'style.scss' ),
 		'form-block/frontend/script': path.resolve( __dirname, 'src', 'form-block', 'frontend', 'script.js' ),
-		'form-block/frontend/style':  path.resolve( __dirname, 'src', 'form-block', 'frontend', 'style.scss' )
+		'form-block/frontend/style':  path.resolve( __dirname, 'src', 'form-block', 'frontend', 'style.scss' ),
+		'fields/checkbox/index':      path.resolve( __dirname, 'src', 'fields', 'checkbox', 'index.js' ),
+		'fields/email/index':         path.resolve( __dirname, 'src', 'fields', 'email', 'index.js' ),
+		'fields/label/index':         path.resolve( __dirname, 'src', 'fields', 'label', 'index.js' ),
+		'fields/name/index':          path.resolve( __dirname, 'src', 'fields', 'name', 'index.js' ),
+		'fields/phone/index':         path.resolve( __dirname, 'src', 'fields', 'phone', 'index.js' ),
+		'fields/plain/index':         path.resolve( __dirname, 'src', 'fields', 'plain', 'index.js' ),
+		'fields/radio/index':         path.resolve( __dirname, 'src', 'fields', 'radio', 'index.js' ),
+		'fields/select/index':        path.resolve( __dirname, 'src', 'fields', 'select', 'index.js' ),
+		'fields/submit/index':        path.resolve( __dirname, 'src', 'fields', 'submit', 'index.js' ),
+		'fields/textarea/index':      path.resolve( __dirname, 'src', 'fields', 'textarea', 'index.js' ),
+		'fields/website/index':       path.resolve( __dirname, 'src', 'fields', 'website', 'index.js' )
 	},
 	optimization: {
 		...defaultConfig.optimization,
