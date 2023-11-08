@@ -2049,11 +2049,14 @@ class WPZOOM_Forms {
 	}
 }
 
-function load_files() {
+if( ! function_exists ( 'wpzoom_forms_load_files' ) ) {
+	function wpzoom_forms_load_files() {
 
-	//Load Settings Panel
-	require_once 'classes/class-wpzoom-forms-settings-fields.php';
-	require_once 'classes/class-wpzoom-forms-settings-page.php';
-
+		//Load Settings Panel
+		require_once 'classes/class-wpzoom-forms-settings-fields.php';
+		require_once 'classes/class-wpzoom-forms-settings-page.php';
+	
+	}
+	add_action( 'plugin_loaded', 'wpzoom_forms_load_files' );
 }
-add_action( 'plugin_loaded', 'load_files' );
+
