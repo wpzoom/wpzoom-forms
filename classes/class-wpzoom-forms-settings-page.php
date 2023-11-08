@@ -270,7 +270,7 @@ class WPZOOM_Forms_Settings {
 						'fields'   => array(
 							array(
 								'id'    => 'wpzf_global_captcha_service',
-								'title' => esc_html__( 'reCaptcha', 'wpzoom-forms' ),
+								'title' => esc_html__( 'reCAPTCHA', 'wpzoom-forms' ),
 								'type'  => 'radio',
 								'args'  => array(
 									'label_for'   => 'wpzf_global_captcha_service',
@@ -279,7 +279,7 @@ class WPZOOM_Forms_Settings {
 									'default'     => 'none',
 									'options'     => array(
 										'none'      => esc_html__( 'None', 'wpzoom-forms' ),
-										'recaptcha' => esc_html__( 'reCaptcha', 'wpzoom-forms' )
+										'recaptcha' => esc_html__( 'reCAPTCHA', 'wpzoom-forms' )
 									)
 								),
 							),
@@ -542,7 +542,7 @@ class WPZOOM_Forms_Settings {
 	// the values are defined at the add_settings_section() function.
 	public function section_general_cb( $args ) {
 		?>
-		 <p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'General configurations for WPZOOM Forms plugin', 'wpzoom-forms' ); ?></p>
+		 <p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'General configuration for WPZOOM Forms', 'wpzoom-forms' ); ?></p>
 		<?php
 	}
 	public function section_recaptcha_cb( $args ) {
