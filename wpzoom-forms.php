@@ -61,7 +61,7 @@ class WPZOOM_Forms {
 	 * @access public
 	 * @since  1.0.0
 	 */
-	public const VERSION = '1.1.0';
+	public const VERSION = '1.1.1';
 
 	/**
 	 * Whether the plugin has been initialized.
