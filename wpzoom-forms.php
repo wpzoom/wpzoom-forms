@@ -2060,3 +2060,10 @@ if( ! function_exists ( 'wpzoom_forms_load_files' ) ) {
 	add_action( 'plugin_loaded', 'wpzoom_forms_load_files' );
 }
 
+
+/**
+ * Check if the Elementor Page Builder is enabled load the widget
+ */
+if ( defined( 'ELEMENTOR_VERSION' ) && is_callable( 'Elementor\Plugin::instance' ) ) {
+	require_once 'elementor/wpzoom-forms-elementor.php';
+}
