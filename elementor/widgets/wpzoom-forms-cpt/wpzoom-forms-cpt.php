@@ -64,7 +64,7 @@ class Wpzoom_Forms_Cpt extends Widget_Base {
 	 * @return string Widget title.
 	 */
 	public function get_title() {
-		return esc_html__( 'Insert WPZOOM Form', 'wpzoom-forms' );
+		return esc_html__( 'Contact Form by WPZOOM', 'wpzoom-forms' );
 	}
 
 	/**
@@ -79,6 +79,26 @@ class Wpzoom_Forms_Cpt extends Widget_Base {
 	public function get_icon() {
 		return 'eicon-form-horizontal';
 	}
+
+    /**
+     * Get widget keywords.
+     *
+     * Retrieve the list of keywords the widget belongs to.
+     *
+     * @since 1.1.0
+     *
+     * @return array Widget keywords.
+     */
+    public function get_keywords() {
+
+        return [
+            'form',
+            'forms',
+            'wpzoom',
+            'contact form',
+            'contact',
+        ];
+    }
 
 	/**
 	 * Get widget categories.
@@ -149,33 +169,6 @@ class Wpzoom_Forms_Cpt extends Widget_Base {
 				'tab'   => Controls_Manager::TAB_CONTENT,
 			)
 		);
-
-		$inline_style = 'style="
-		color:#856404;
-		font-size:12px;
-		line-height:22px;
-		margin-top:10px;
-		font-weight:300 !important; 
-		display:block; 
-		background:#fff3cd;
-		border:1px solid;
-		border-color:#ffeeba;
-		border-radius:5px;
-		padding:10px 15px;
-	"';
-
-	$rec_note = sprintf(
-		'<span %s>Use only one instance of this widget per page/post</span>',
-		$inline_style
-	);
-
-	$this->add_control(
-		'recomendation_note',
-		array(
-			'label'       => 'IMPORTANT!' . $rec_note,
-			'type'        => Controls_Manager::HEADING,
-		)
-	);
 
 		$this->add_control(
 			'forms_post_id',
