@@ -234,7 +234,20 @@ class Wpzoom_Forms_Cpt extends Widget_Base {
 			return;
 		}
 
-		echo do_shortcode( '[wpzf_form id="' . $post_id . '"]' );
+		$form = get_post( intval( $post_id ) );
+
+		if ( has_blocks( $form->post_content ) ) {
+			$blocks = parse_blocks( $form->post_content );
+		}
+
+		if ( \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
+			printf( 
+				'<div class="wpzoom-forms-post wpzoom-rcb-post-shortcode">%1$s</div>',
+				do_blocks( $form->post_content )
+			);
+	   } else {
+			echo do_shortcode( '[wpzf_form id="' . $post_id . '"]' );
+	   }
 
 	}
 
