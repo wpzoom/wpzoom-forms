@@ -5,10 +5,10 @@ Author URI:        https://www.wpzoom.com/
 Requires at least: 6.0
 Requires PHP:      7.4
 Tested up to:      6.4
-Stable tag:        1.1.2
+Stable tag:        1.1.3
 License:           GNU General Public License v2
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
-Tags:              contact, form, contact form, submission, email, block, gutenberg, form builder
+Tags:              contact, form, contact form, submission, email, block, gutenberg, form builder, elementor
 
 **WPZOOM Forms** is a simple, user-friendly contact form plugin for WordPress that utilizes Gutenberg blocks for easy form building and customization.
 
@@ -26,10 +26,14 @@ WPZOOM Forms is a flexible and intuitive contact form plugin for WordPress that 
 * Form validation: Ensure users submit valid data with customizable form validation rules.
 * Anti-Spam Protection with Akismet integration
 * Spam protection: Built-in reCAPTCHA integration helps protect your forms from spam submissions.
+* Works with Elementor
+* Display your form anywhere using built-in contact form shortcodes
 
 = Coming Soon =
 
- * Pre-built templates: Choose from a variety of pre-designed form templates to get started quickly.
+* Pre-built templates: Choose from a variety of pre-designed form templates to get started quickly.
+* Conditional logic
+* Files upload
 
 
 = Additional Resources =
@@ -63,12 +67,17 @@ To export form submissions, navigate to the Tools > Export page in Dashboard and
 == Screenshots ==
 
 1. Form builder block
-1. Add a form in a page
-1. Add fields to forms
-1. Form submissions
+2. Add a form in a page
+3. Add fields to forms
+4. Form submissions
+5. Elementor widget
+6. Settings page
 
 
 == Changelog ==
+
+= 1.1.3 =
+* Added Elementor widget
 
 = 1.1.2 =
 * Fixed an issue when the Checkbox field is required
