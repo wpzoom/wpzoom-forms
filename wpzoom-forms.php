@@ -299,8 +299,8 @@ class WPZOOM_Forms {
 
 			add_shortcode( 'wpzf_form', array( $this, 'shortcode_output' ) );
 
-			$form_pto           = get_post_type_object( 'wpzf-form' );
-			$form_pto->template = array( array( 'wpzoom-forms/form' ) );
+			//$form_pto           = get_post_type_object( 'wpzf-form' );
+			//$form_pto->template = array( array( 'wpzoom-forms/form' ) );
 
 			if ( $this->is_post_type( 'wpzf-form' ) ) {
 				$this->forms_display();
@@ -2055,6 +2055,7 @@ if( ! function_exists ( 'wpzoom_forms_load_files' ) ) {
 		//Load Settings Panel
 		require_once 'classes/class-wpzoom-forms-settings-fields.php';
 		require_once 'classes/class-wpzoom-forms-settings-page.php';
+		require_once 'classes/class-wpzoom-forms-template-manager.php';
 	
 	}
 	add_action( 'plugin_loaded', 'wpzoom_forms_load_files' );
