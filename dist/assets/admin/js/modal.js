@@ -36,6 +36,19 @@ jQuery(document).ready(function(){
 			$('#wpzoom-forms-modal').hide();
 		});
 
+		$(document).keydown(function(evt) {
+			evt = evt || window.event;
+			var isEscape = false;
+			if ("key" in evt) {
+				isEscape = (evt.key === "Escape" || evt.key === "Esc");
+			} else {
+				isEscape = (evt.keyCode === 27);
+			}
+			if (isEscape) {
+				$('#wpzoom-forms-modal').hide();
+			}
+		});
+
 		// Get current URL
 		var proceedButton = $('#wpzoom_proceed_template');
 		var currentUrl = proceedButton.attr('href');
