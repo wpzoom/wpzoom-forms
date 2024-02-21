@@ -131,7 +131,11 @@ if ( ! class_exists( 'WPZOOM_Forms_Template_Manager' ) ) {
 				<div id="wpzoom-forms-modal" class="wpzoom-forms-modal">
 					<div class="wpzoom-forms-modal-content">
 						<div class="wpzoom-forms-modal-header">
-							<h2><?php esc_html_e( 'Select a Template', 'wpzoom-forms' ); ?></h2>
+							<h2>
+								<span class="wpzoom-forms-modal-icon">
+									<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M26.0003 0.666656H2.00033C1.6467 0.666656 1.30756 0.807132 1.05752 1.05718C0.807468 1.30723 0.666992 1.64637 0.666992 1.99999V26C0.666992 26.3536 0.807468 26.6928 1.05752 26.9428C1.30756 27.1929 1.6467 27.3333 2.00033 27.3333H26.0003C26.3539 27.3333 26.6931 27.1929 26.9431 26.9428C27.1932 26.6928 27.3337 26.3536 27.3337 26V1.99999C27.3337 1.64637 27.1932 1.30723 26.9431 1.05718C26.6931 0.807132 26.3539 0.666656 26.0003 0.666656ZM12.667 24.6667H3.33366V19.3333H12.667V24.6667ZM12.667 16.6667H3.33366V11.3333H12.667V16.6667ZM24.667 24.6667H15.3337V19.3333H24.667V24.6667ZM24.667 16.6667H15.3337V11.3333H24.667V16.6667ZM24.667 8.66666H3.33366V3.33332H24.667V8.66666Z" fill="#242628"/></svg></span>
+								<?php esc_html_e( 'Select a Template', 'wpzoom-forms' ); ?>
+							</h2>
 							<span class="wpzoom-forms-modal-close">&times;</span>
 						</div>
 						<ul class="wpzoom-forms-templates-list">
@@ -142,8 +146,13 @@ if ( ! class_exists( 'WPZOOM_Forms_Template_Manager' ) ) {
 									?>
 									<li <?php echo $classActive; ?>>
 										<a href="#" data-template-id="<?php echo esc_attr( $template_data['id'] ) ?>">
-											<?php echo $template_data['name'] ?>
-											<span><?php echo $template_data['desc'] ?></span>
+											<div class="wpzoom-forms-template-list-wrapper">
+												<span class="wpzoom-forms-icon-holder"><?php echo $template_data['icon'] ?></span>
+												<div class="wpzoom-forms-template-list-content">
+													<?php echo $template_data['name'] ?>
+													<span><?php echo $template_data['desc'] ?></span>
+												</div>
+											</div>
 										</a>
 									</li>
 									<?php

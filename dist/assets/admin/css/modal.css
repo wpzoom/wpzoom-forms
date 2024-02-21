@@ -14,7 +14,8 @@
 	margin: 15% auto;
 	padding: 20px;
 	border: 1px solid #888;
-	width: 50%;
+	width:100%;
+	max-width: 850px;
 }
 .wpzoom-forms-templates-list {
 	display: grid;
@@ -23,14 +24,15 @@
 	grid-gap: 20px;
 }
 .wpzoom-forms-templates-list li {
-	border: 2px solid #f3f3f3;
-	border-radius: 6px;
+	font-family: 'Inter', sans-serif;
+	border: 1px solid #ddd;
+	border-radius: 10px;
 	outline: none;
 }
 .wpzoom-forms-templates-list li:hover,
 .wpzoom-forms-templates-list li:focus,
 .wpzoom-forms-templates-list li.active {
-	border-color: #3496ff;
+	border-color: #3496FF;
 }
 .wpzoom-forms-templates-list li a {
 	display: block;
@@ -38,36 +40,63 @@
 	outline: none !important;
 	box-shadow: none;
 	text-decoration: none;
-	color:#1d2327;
-	font-size: 13px;
-	font-weight: 500;
+	color:#242628;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 26px;
 }
 .wpzoom-forms-templates-list li a:hover,
 .wpzoom-forms-templates-list li.active a {
-	color: #3496ff;
+	color: #3496FF;
 }
+.wpzoom-forms-icon-holder svg {
+	fill: #242628;
+}
+.wpzoom-forms-templates-list li a:hover .wpzoom-forms-icon-holder svg,
+.wpzoom-forms-templates-list li.active a .wpzoom-forms-icon-holder svg {
+	fill: #3496FF;
+}
+
 .wpzoom-forms-templates-list li a span,
 .wpzoom-forms-templates-list li a:hover span {
 	display:block;
-	font-size: 12px;
-	color: #999;
+	font-size: 14px;
+	line-height: 22px;
+	color:#242628;
 	font-weight: 400;
+	opacity: 0.8;
 }
 
 .wpzoom-forms-modal-header {
 	display: flex;
 	justify-content: space-between;
-	border-bottom: 2px solid #f3f3f3;
+	border-bottom: 1px solid #ddd;
 	padding-bottom: 20px;
 	margin-bottom: 30px;
 }
 .wpzoom-forms-modal-header h2 {
+	display: flex;
+	font-size: 20px;
+	line-height: 26px;
 	margin: 0;
 }
+.wpzoom-forms-modal-header h2 span {
+	margin-right: 15px;
+}
+.wpzoom-forms-templates-list li a .wpzoom-forms-icon-holder {
+	display: flex;
+	padding-right: 10px;
+	position: relative;
+	top:6px;
+}
+.wpzoom-forms-template-list-wrapper {
+	display: flex;
+}
+
 .wpzoom-forms-modal-footer {
 	display: flex;
 	justify-content: flex-end;
-	border-top: 2px solid #f3f3f3;
+	border-top: 1px solid #ddd;
 	padding-top: 20px;
 	margin-top:30px;
 }
@@ -81,7 +110,6 @@
 	margin-right: 15px;
 	color: #3496ff;
 	border-color: #3496ff;
-	border-width: 2px;
 }
 
 .wpzoom-forms-modal-close {
