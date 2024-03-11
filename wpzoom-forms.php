@@ -453,6 +453,10 @@ class WPZOOM_Forms {
 					'formId' => array(
 						'type'    => 'string',
 						'default' => '-1'
+					),
+					'align' => array(
+						'type'    => 'string',
+						'default' => 'none'
 					)
 				),
 				'script'          => 'wpzoom-forms-js-frontend-formblock',
@@ -1131,9 +1135,11 @@ class WPZOOM_Forms {
 
 		if ( is_admin() || ( ! is_null( $current_screen ) && $current_screen->is_block_editor() ) ) return '';
 
+		$align = isset( $attributes['align'] ) && ! empty( $attributes['align'] ) ? $attributes['align'] : 'none';
+
 		$content = sprintf(
 			'<!-- ZOOM Forms Start -->
-			<form id="wpzf-%2$s" method="post" action="%1$s" class="wpzoom-forms_form">
+			<form id="wpzf-%2$s" method="post" action="%1$s" class="wpzoom-forms_form%6$s">
 			<input type="hidden" name="action" value="wpzf_submit" />
 			<input type="hidden" name="form_id" value="%2$s" />
 			%3$s
@@ -1154,7 +1160,8 @@ class WPZOOM_Forms {
 				array( '/<!--(.*)-->/Uis', '/<(input|textarea|select)(.*)name="([^"]+)"/Uis' ),
 				array( '', '<$1$2name="wpzf_$3"' ),
 				get_post_field( 'post_content', intval( $attributes['formId'] ), 'display' )
-			)
+			),
+			( 'none' !== $align ? ' align' . $align : '' )
 		);
 
 		preg_match( '/<input(?:.*)name="([^"]+)"(?:.*)data-replyto="true"/is', $content, $match1 );
