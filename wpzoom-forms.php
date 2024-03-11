@@ -586,17 +586,6 @@ class WPZOOM_Forms {
 			array( $this, 'render_settings_page' )
 		);
 
-		$amount = 0;
-		foreach ( wp_count_posts( 'wpzf-submission', 'readable' ) as $key => $value ) {
-			$amount += intval( $value );
-		}
-
-		$submenu['edit.php?post_type=wpzf-form'][11][0] = sprintf(
-			'%1$s <span class="awaiting-mod count-%2$s"><span class="pending-count" aria-hidden="true">%2$s</span><span class="comments-in-moderation-text screen-reader-text">%3$s</span></span>',
-			esc_html__( 'Submissions', 'wpzoom-forms' ),
-			$amount,
-			sprintf( _n( '%s Submission', '%s Submissions', $amount, 'wpzoom-forms' ), number_format_i18n( $amount ) )
-		);
 	}
 
 	/**
