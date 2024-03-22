@@ -5,7 +5,7 @@ Author URI:        https://www.wpzoom.com/
 Requires at least: 6.0
 Requires PHP:      7.4
 Tested up to:      6.5
-Stable tag:        1.1.4
+Stable tag:        1.1.5
 License:           GNU General Public License v2
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 Tags:              contact, form, contact form, submission, email, block, gutenberg, form builder, elementor
@@ -75,6 +75,10 @@ To export form submissions, navigate to the Tools > Export page in Dashboard and
 
 
 == Changelog ==
+
+= 1.1.5 =
+* Fixed an issue with line breaks in the email template.
+* Removed the Submission counter in the admin menu
 
 = 1.1.4 =
 * Fixed an issue with the block alignment
