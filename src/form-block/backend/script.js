@@ -35,12 +35,16 @@ registerBlockType( 'wpzoom-forms/form-block', {
 		formId: {
 			type:    'string',
 			default: '-1'
+		},
+		align: {
+			type: 'string',
+			default: 'none',
 		}
 	},
 	example:     {},
 	edit:        props => {
 		const { attributes, setAttributes } = props;
-		const { formId } = attributes;
+		const { formId, align } = attributes;
 		const _formId = formId && String( formId ).trim() != '' ? String( formId ) : '-1';
 		const posts = useSelect( select => select( 'core' ).getEntityRecords( 'postType', 'wpzf-form', { order: 'asc', orderby: 'title', per_page: -1 } ), [] );
 		const forms = posts && posts.length > 0 ? posts.map( x => { return { key: String( x.id ), name: x.title.raw } } ) : [];

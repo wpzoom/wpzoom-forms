@@ -13,7 +13,7 @@
  * Description: Simple, user-friendly contact form plugin for WordPress that utilizes Gutenberg blocks for easy form building and customization.
  * Author:      WPZOOM
  * Author URI:  https://www.wpzoom.com
- * Version:     1.1.3
+ * Version:     1.1.5
  * License:     GPL2+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
@@ -453,6 +453,10 @@ class WPZOOM_Forms {
 					'formId' => array(
 						'type'    => 'string',
 						'default' => '-1'
+					),
+					'align' => array(
+						'type'    => 'string',
+						'default' => 'none'
 					)
 				),
 				'script'          => 'wpzoom-forms-js-frontend-formblock',
@@ -582,17 +586,6 @@ class WPZOOM_Forms {
 			array( $this, 'render_settings_page' )
 		);
 
-		$amount = 0;
-		foreach ( wp_count_posts( 'wpzf-submission', 'readable' ) as $key => $value ) {
-			$amount += intval( $value );
-		}
-
-		$submenu['edit.php?post_type=wpzf-form'][11][0] = sprintf(
-			'%1$s <span class="awaiting-mod count-%2$s"><span class="pending-count" aria-hidden="true">%2$s</span><span class="comments-in-moderation-text screen-reader-text">%3$s</span></span>',
-			esc_html__( 'Submissions', 'wpzoom-forms' ),
-			$amount,
-			sprintf( _n( '%s Submission', '%s Submissions', $amount, 'wpzoom-forms' ), number_format_i18n( $amount ) )
-		);
 	}
 
 	/**
@@ -1131,9 +1124,11 @@ class WPZOOM_Forms {
 
 		if ( is_admin() || ( ! is_null( $current_screen ) && $current_screen->is_block_editor() ) ) return '';
 
+		$align = isset( $attributes['align'] ) && ! empty( $attributes['align'] ) ? $attributes['align'] : 'none';
+
 		$content = sprintf(
 			'<!-- ZOOM Forms Start -->
-			<form id="wpzf-%2$s" method="post" action="%1$s" class="wpzoom-forms_form">
+			<form id="wpzf-%2$s" method="post" action="%1$s" class="wpzoom-forms_form%6$s">
 			<input type="hidden" name="action" value="wpzf_submit" />
 			<input type="hidden" name="form_id" value="%2$s" />
 			%3$s
@@ -1154,7 +1149,8 @@ class WPZOOM_Forms {
 				array( '/<!--(.*)-->/Uis', '/<(input|textarea|select)(.*)name="([^"]+)"/Uis' ),
 				array( '', '<$1$2name="wpzf_$3"' ),
 				get_post_field( 'post_content', intval( $attributes['formId'] ), 'display' )
-			)
+			),
+			( 'none' !== $align ? ' align' . $align : '' )
 		);
 
 		preg_match( '/<input(?:.*)name="([^"]+)"(?:.*)data-replyto="true"/is', $content, $match1 );
@@ -1881,14 +1877,14 @@ class WPZOOM_Forms {
 								continue;
 							}
 
-							$email_body .= '<strong>' . esc_html( wp_unslash( $name ) ) . ':</strong><br/><br/>' . esc_html( wp_unslash( $value ) ) . '<br/><br/><hr/><br/>';
+							$email_body .= '<strong>' . wp_kses_post( wp_unslash( $name ) ) . ':</strong><br/><br/>' . nl2br( wp_kses_post( wp_unslash( $value ) ) ) . '<br/><br/><hr/><br/>';
 							$raw_content['_wpzf_fields'][ $name ] = sanitize_text_field( $value );
 						}
 					}
 
 					$fromaddr     = ! empty( $replyto ) && isset( $_REQUEST[ $replyto ] ) ? sanitize_email( $_REQUEST[ $replyto ] ) : $sendto;
 					$cleanname    = sanitize_text_field( get_bloginfo( 'name' ) );
-					$subjectline  = ! empty( $sbj ) && isset( $_REQUEST[ $sbj ] ) ? sanitize_text_field( $_REQUEST[ $sbj ] ) : esc_html__( 'New Form Submission!', 'wpzoom-forms' );
+					$subjectline  = ! empty( $sbj ) && isset( $_REQUEST[ $sbj ] ) ? sanitize_text_field( wp_unslash( $_REQUEST[ $sbj ] ) ) : esc_html__( 'New Form Submission!', 'wpzoom-forms' );
 					$subjectline .= sprintf( __( ' -- %s', 'wpzoom-forms' ), $cleanname );
 
 					$email_body   = '<html style="background-color:#dddddd;"><body style="background-color:#dddddd;padding:2em;"><div style="background-color:#ffffff;width:70%;padding:2em;border-radius:10px;box-shadow:0px 5px 5px #aaaaaa;">' . preg_replace( '/<br\/><br\/><hr\/><br\/>$/is', '', $email_body ) . '</div></body></html>';
