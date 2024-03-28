@@ -26,25 +26,121 @@ $templates = array(
 	),
 	array(
 		'id'      => 'registration-form',
-		'name'    => 'Registration Form',
+		'name'    => 'Wedding Invitation RSVP',
 		
 		'icon'    => '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path d="M14.58 11.3C15.0345 10.7319 15.2846 10.0275 15.29 9.3C15.29 8.42744 14.9434 7.59061 14.3264 6.97362C13.7094 6.35662 12.8726 6.01 12 6.01C11.1274 6.01 10.2906 6.35662 9.67362 6.97362C9.05662 7.59061 8.71 8.42744 8.71 9.3C8.71542 10.0275 8.96551 10.7319 9.42 11.3C8.52863 11.8424 7.8293 12.6502 7.42 13.61C7.36271 13.7318 7.3306 13.8639 7.32558 13.9984C7.32056 14.1329 7.34274 14.267 7.39079 14.3927C7.43884 14.5184 7.51177 14.6331 7.60521 14.73C7.69865 14.8268 7.81068 14.9038 7.93459 14.9563C8.0585 15.0089 8.19174 15.0358 8.32632 15.0357C8.4609 15.0355 8.59406 15.0081 8.71782 14.9552C8.84157 14.9023 8.95338 14.825 9.04655 14.7279C9.13971 14.6308 9.21231 14.5159 9.26 14.39C9.48983 13.8527 9.87157 13.3943 10.3583 13.071C10.8451 12.7477 11.4157 12.5735 12 12.57C12.586 12.5716 13.1588 12.7448 13.6475 13.0683C14.1362 13.3917 14.5195 13.8512 14.75 14.39C14.8266 14.5707 14.9546 14.725 15.1182 14.8334C15.2818 14.9419 15.4737 14.9998 15.67 15C15.8038 14.9975 15.936 14.9704 16.06 14.92C16.3039 14.8164 16.4966 14.6203 16.596 14.3747C16.6954 14.129 16.6932 13.854 16.59 13.61C16.1781 12.6487 15.4751 11.8408 14.58 11.3ZM12 10.57C11.7444 10.57 11.4946 10.4941 11.2823 10.3519C11.0699 10.2097 10.9046 10.0076 10.8073 9.77132C10.7099 9.53502 10.685 9.27514 10.7356 9.02463C10.7862 8.77413 10.91 8.5443 11.0914 8.36429C11.2728 8.18429 11.5036 8.06222 11.7545 8.01358C12.0054 7.96494 12.2651 7.99192 12.5006 8.09109C12.7362 8.19026 12.9369 8.35716 13.0775 8.57061C13.218 8.78406 13.292 9.03445 13.29 9.29C13.2874 9.63039 13.1503 9.95595 12.9087 10.1957C12.667 10.4355 12.3404 10.57 12 10.57ZM18 2H6C5.20435 2 4.44129 2.31607 3.87868 2.87868C3.31607 3.44129 3 4.20435 3 5V16C3 16.7956 3.31607 17.5587 3.87868 18.1213C4.44129 18.6839 5.20435 19 6 19H8.59L11.29 21.71C11.3834 21.8027 11.4943 21.876 11.6161 21.9258C11.7379 21.9755 11.8684 22.0008 12 22C12.2383 22 12.4689 21.9149 12.65 21.76L15.87 19H18C18.7956 19 19.5587 18.6839 20.1213 18.1213C20.6839 17.5587 21 16.7956 21 16V5C21 4.20435 20.6839 3.44129 20.1213 2.87868C19.5587 2.31607 18.7956 2 18 2ZM19 16C19 16.2652 18.8946 16.5196 18.7071 16.7071C18.5196 16.8946 18.2652 17 18 17H15.5C15.2617 17 15.0311 17.0851 14.85 17.24L12.05 19.64L9.71 17.29C9.61656 17.1973 9.50574 17.124 9.38391 17.0742C9.26207 17.0245 9.13161 16.9992 9 17H6C5.73478 17 5.48043 16.8946 5.29289 16.7071C5.10536 16.5196 5 16.2652 5 16V5C5 4.73478 5.10536 4.48043 5.29289 4.29289C5.48043 4.10536 5.73478 4 6 4H18C18.2652 4 18.5196 4.10536 18.7071 4.29289C18.8946 4.48043 19 4.73478 19 5V16Z" />
 		</svg>',
 
-		'desc'    => 'A simple contact form with fields for name, email, subject, and message.',
-		'content' => 'Registration Form'
+		'desc'    => 'A simple form that can be used to invite people to a party or a wedding.',
+		'content' => '<!-- wp:wpzoom-forms/form -->
+<div class="wp-block-wpzoom-forms-form"><!-- wp:group -->
+<div class="wp-block-group"><!-- wp:columns -->
+<div class="wp-block-columns"><!-- wp:column {"width":"100%"} -->
+<div class="wp-block-column" style="flex-basis:100%"><!-- wp:wpzoom-forms/text-name-field {"id":"input_name","name":"Your Name","label":"Your Name","className":"fullwidth"} -->
+<label for="input_name"><label for="input_name">Your Name</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_name" id="input_name" placeholder="" required class="wp-block-wpzoom-forms-text-name-field fullwidth"/>
+<!-- /wp:wpzoom-forms/text-name-field -->
+
+<!-- wp:wpzoom-forms/text-email-field {"id":"input_email","name":"Email","label":"Email","replyto":true,"className":"fullwidth"} -->
+<label for="input_email"><label for="input_email">Email</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="email" name="input_email" id="input_email" placeholder="" required data-replyto="true" class="wp-block-wpzoom-forms-text-email-field fullwidth"/>
+<!-- /wp:wpzoom-forms/text-email-field -->
+
+<!-- wp:wpzoom-forms/radio-field {"id":"input_3cac9a4a","name":"Will you be attending?","options":["Yes","No"],"label":"Will you be attending?"} -->
+<label for="input_3cac9a4a"><label for="input_3cac9a4a">Will you be attending?</label></label><ul class="wp-block-wpzoom-forms-radio-field"><li><label><input type="radio" name="input_3cac9a4a" id="input_3cac9a4a" value="Yes"/>Yes</label></li><li><label><input type="radio" name="input_3cac9a4a" id="input_3cac9a4a" value="No"/>No</label></li></ul>
+<!-- /wp:wpzoom-forms/radio-field -->
+
+<!-- wp:wpzoom-forms/select-field {"id":"input_15145568","name":"Your meal preference","options":["Omnivore","Vegetarian","Gluten Free","Kosher","Vegan","Halal"],"label":"Your meal preference"} -->
+<label for="input_15145568"><label for="input_15145568">Your meal preference</label></label><select name="input_15145568" id="input_15145568" defaultvalue="Item #1" class="wp-block-wpzoom-forms-select-field"><option value="Omnivore">Omnivore</option><option value="Vegetarian">Vegetarian</option><option value="Gluten Free">Gluten Free</option><option value="Kosher">Kosher</option><option value="Vegan">Vegan</option><option value="Halal">Halal</option></select>
+<!-- /wp:wpzoom-forms/select-field -->
+
+<!-- wp:wpzoom-forms/radio-field {"id":"input_7a40e84d","name":"Are you bringing a +1?","options":["Yes","No"],"label":"Are you bringing a +1?"} -->
+<label for="input_7a40e84d"><label for="input_7a40e84d">Are you bringing a +1?</label></label><ul class="wp-block-wpzoom-forms-radio-field"><li><label><input type="radio" name="input_7a40e84d" id="input_7a40e84d" value="Yes"/>Yes</label></li><li><label><input type="radio" name="input_7a40e84d" id="input_7a40e84d" value="No"/>No</label></li></ul>
+<!-- /wp:wpzoom-forms/radio-field -->
+
+<!-- wp:wpzoom-forms/text-plain-field {"id":"input_0bbcc55a","name":"Your guest\'s name","label":"Your guest\'s name"} -->
+<label for="input_0bbcc55a"><label for="input_0bbcc55a">Your guest\'s name</label></label><input type="text" name="input_0bbcc55a" id="input_0bbcc55a" placeholder="" data-subject="false" class="wp-block-wpzoom-forms-text-plain-field"/>
+<!-- /wp:wpzoom-forms/text-plain-field -->
+
+<!-- wp:wpzoom-forms/select-field {"id":"input_15145568","name":"Your guest\'s meal preference","options":["Omnivore","Vegetarian","Gluten Free","Kosher","Vegan","Halal"],"label":"Your guest\'s meal preference"} -->
+<label for="input_15145568"><label for="input_15145568">Your guest\'s meal preference</label></label><select name="input_15145568" id="input_15145568" defaultvalue="Item #1" class="wp-block-wpzoom-forms-select-field"><option value="Omnivore">Omnivore</option><option value="Vegetarian">Vegetarian</option><option value="Gluten Free">Gluten Free</option><option value="Kosher">Kosher</option><option value="Vegan">Vegan</option><option value="Halal">Halal</option></select>
+<!-- /wp:wpzoom-forms/select-field -->
+
+<!-- wp:wpzoom-forms/textarea-field {"id":"input_message","name":"Any comments or questions?","label":"Any comments or questions?","className":"fullwidth"} -->
+<label for="input_message"><label for="input_message">Any comments or questions?</label></label><textarea name="input_message" id="input_message" cols="55" rows="10" placeholder="" class="wp-block-wpzoom-forms-textarea-field fullwidth"></textarea>
+<!-- /wp:wpzoom-forms/textarea-field --></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns -->
+
+<!-- wp:columns -->
+<div class="wp-block-columns"><!-- wp:column {"width":"30%"} -->
+<div class="wp-block-column" style="flex-basis:30%"><!-- wp:wpzoom-forms/submit-field {"id":"input_submit"} -->
+<input type="submit" id="input_submit" value="Submit" class="wp-block-wpzoom-forms-submit-field"/>
+<!-- /wp:wpzoom-forms/submit-field --></div>
+<!-- /wp:column -->
+
+<!-- wp:column {"width":"70%"} -->
+<div class="wp-block-column" style="flex-basis:70%"><!-- wp:paragraph {"align":"right","style":{"typography":{"fontSize":16}}} -->
+<p class="has-text-align-right" style="font-size:16px">Fields marked with <strong class="has-accent-color has-text-color">*</strong> are required.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns --></div>
+<!-- /wp:group --></div>
+<!-- /wp:wpzoom-forms/form -->'
 	),
 	array(
 		'id'      => 'order-form',
-		'name'    => 'Order Form',
+		'name'    => 'Request a Quote',
 		
 		'icon'    => '<svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path d="M15 5H12V4C12 2.93913 11.5786 1.92172 10.8284 1.17157C10.0783 0.421427 9.06087 0 8 0C6.93913 0 5.92172 0.421427 5.17157 1.17157C4.42143 1.92172 4 2.93913 4 4V5H1C0.734784 5 0.48043 5.10536 0.292893 5.29289C0.105357 5.48043 0 5.73478 0 6V17C0 17.7956 0.316071 18.5587 0.87868 19.1213C1.44129 19.6839 2.20435 20 3 20H13C13.7956 20 14.5587 19.6839 15.1213 19.1213C15.6839 18.5587 16 17.7956 16 17V6C16 5.73478 15.8946 5.48043 15.7071 5.29289C15.5196 5.10536 15.2652 5 15 5ZM6 4C6 3.46957 6.21071 2.96086 6.58579 2.58579C6.96086 2.21071 7.46957 2 8 2C8.53043 2 9.03914 2.21071 9.41421 2.58579C9.78929 2.96086 10 3.46957 10 4V5H6V4ZM14 17C14 17.2652 13.8946 17.5196 13.7071 17.7071C13.5196 17.8946 13.2652 18 13 18H3C2.73478 18 2.48043 17.8946 2.29289 17.7071C2.10536 17.5196 2 17.2652 2 17V7H4V8C4 8.26522 4.10536 8.51957 4.29289 8.70711C4.48043 8.89464 4.73478 9 5 9C5.26522 9 5.51957 8.89464 5.70711 8.70711C5.89464 8.51957 6 8.26522 6 8V7H10V8C10 8.26522 10.1054 8.51957 10.2929 8.70711C10.4804 8.89464 10.7348 9 11 9C11.2652 9 11.5196 8.89464 11.7071 8.70711C11.8946 8.51957 12 8.26522 12 8V7H14V17Z" />
 		</svg>',
 
 		'desc'    => 'A simple contact form with fields for name, email, subject, and message.',
-		'content' => 'Order Form'
+		'content' => '<!-- wp:wpzoom-forms/form -->
+<div class="wp-block-wpzoom-forms-form"><!-- wp:group -->
+<div class="wp-block-group"><!-- wp:columns -->
+<div class="wp-block-columns"><!-- wp:column {"width":"100%"} -->
+<div class="wp-block-column" style="flex-basis:100%"><!-- wp:wpzoom-forms/text-name-field {"id":"input_name","name":"Your Name","label":"Your Name","className":"fullwidth"} -->
+<label for="input_name"><label for="input_name">Your Name</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_name" id="input_name" placeholder="" required class="wp-block-wpzoom-forms-text-name-field fullwidth"/>
+<!-- /wp:wpzoom-forms/text-name-field -->
+
+<!-- wp:wpzoom-forms/text-email-field {"id":"input_email","name":"Your Email","label":"Your Email","replyto":true,"className":"fullwidth"} -->
+<label for="input_email"><label for="input_email">Your Email</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="email" name="input_email" id="input_email" placeholder="" required data-replyto="true" class="wp-block-wpzoom-forms-text-email-field fullwidth"/>
+<!-- /wp:wpzoom-forms/text-email-field -->
+
+<!-- wp:wpzoom-forms/text-phone-field {"id":"input_9ff254c3","name":"Phone Number","label":"Phone Number"} -->
+<label for="input_9ff254c3"><label for="input_9ff254c3">Phone Number</label></label><input type="tel" name="input_9ff254c3" id="input_9ff254c3" placeholder="" class="wp-block-wpzoom-forms-text-phone-field"/>
+<!-- /wp:wpzoom-forms/text-phone-field -->
+
+<!-- wp:wpzoom-forms/text-plain-field {"id":"input_984c7374","name":"Your Address","label":"Your Address"} -->
+<label for="input_984c7374"><label for="input_984c7374">Your Address</label></label><input type="text" name="input_984c7374" id="input_984c7374" placeholder="" data-subject="false" class="wp-block-wpzoom-forms-text-plain-field"/>
+<!-- /wp:wpzoom-forms/text-plain-field -->
+
+<!-- wp:wpzoom-forms/radio-field {"id":"input_4d1cff39","name":"Required service","options":["General maintenance","Repairs","House keeping","Landscape gardening","Other"],"label":"Required service"} -->
+<label for="input_4d1cff39"><label for="input_4d1cff39">Required service</label></label><ul class="wp-block-wpzoom-forms-radio-field"><li><label><input type="radio" name="input_4d1cff39" id="input_4d1cff39" value="General maintenance"/>General maintenance</label></li><li><label><input type="radio" name="input_4d1cff39" id="input_4d1cff39" value="Repairs"/>Repairs</label></li><li><label><input type="radio" name="input_4d1cff39" id="input_4d1cff39" value="House keeping"/>House keeping</label></li><li><label><input type="radio" name="input_4d1cff39" id="input_4d1cff39" value="Landscape gardening"/>Landscape gardening</label></li><li><label><input type="radio" name="input_4d1cff39" id="input_4d1cff39" value="Other"/>Other</label></li></ul>
+<!-- /wp:wpzoom-forms/radio-field -->
+
+<!-- wp:wpzoom-forms/textarea-field {"id":"input_message","name":"How can we help you?","label":"How can we help you?","className":"fullwidth"} -->
+<label for="input_message"><label for="input_message">How can we help you?</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><textarea name="input_message" id="input_message" cols="55" rows="10" placeholder="" required class="wp-block-wpzoom-forms-textarea-field fullwidth"></textarea>
+<!-- /wp:wpzoom-forms/textarea-field --></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns -->
+
+<!-- wp:columns -->
+<div class="wp-block-columns"><!-- wp:column {"width":"30%"} -->
+<div class="wp-block-column" style="flex-basis:30%"><!-- wp:wpzoom-forms/submit-field {"id":"input_submit"} -->
+<input type="submit" id="input_submit" value="Submit" class="wp-block-wpzoom-forms-submit-field"/>
+<!-- /wp:wpzoom-forms/submit-field --></div>
+<!-- /wp:column -->
+
+<!-- wp:column {"width":"70%"} -->
+<div class="wp-block-column" style="flex-basis:70%"><!-- wp:paragraph {"align":"right","style":{"typography":{"fontSize":16}}} -->
+<p class="has-text-align-right" style="font-size:16px">Fields marked with <strong class="has-accent-color has-text-color">*</strong> are required.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns --></div>
+<!-- /wp:group --></div>
+<!-- /wp:wpzoom-forms/form -->'
 	),
 	array(
 		'id'      => 'feedback-form',
@@ -55,7 +151,47 @@ $templates = array(
 		</svg>',
 
 		'desc'    => 'A simple contact form with fields for name, email, subject, and message.',
-		'content' => 'Feedback Form'
+		'content' => '<!-- wp:wpzoom-forms/form -->
+<div class="wp-block-wpzoom-forms-form"><!-- wp:group -->
+<div class="wp-block-group"><!-- wp:columns -->
+<div class="wp-block-columns"><!-- wp:column {"width":"100%"} -->
+<div class="wp-block-column" style="flex-basis:100%"><!-- wp:wpzoom-forms/text-name-field {"id":"input_name","name":"Name","label":"Name","className":"fullwidth"} -->
+<label for="input_name"><label for="input_name">Name</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_name" id="input_name" placeholder="" required class="wp-block-wpzoom-forms-text-name-field fullwidth"/>
+<!-- /wp:wpzoom-forms/text-name-field -->
+
+<!-- wp:wpzoom-forms/text-email-field {"id":"input_email","name":"Email","label":"Email","replyto":true,"className":"fullwidth"} -->
+<label for="input_email"><label for="input_email">Email</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="email" name="input_email" id="input_email" placeholder="" required data-replyto="true" class="wp-block-wpzoom-forms-text-email-field fullwidth"/>
+<!-- /wp:wpzoom-forms/text-email-field -->
+
+<!-- wp:wpzoom-forms/select-field {"id":"input_8e4aa5c6","name":"Department","options":["Sales","Customer Support","Marketing","Development","Other"],"label":"Which department do you have a suggestion for?"} -->
+<label for="input_8e4aa5c6"><label for="input_8e4aa5c6">Which department do you have a suggestion for?</label></label><select name="input_8e4aa5c6" id="input_8e4aa5c6" defaultvalue="Item #1" class="wp-block-wpzoom-forms-select-field"><option value="Sales">Sales</option><option value="Customer Support">Customer Support</option><option value="Marketing">Marketing</option><option value="Development">Development</option><option value="Other">Other</option></select>
+<!-- /wp:wpzoom-forms/select-field -->
+
+<!-- wp:wpzoom-forms/text-plain-field {"id":"input_subject","name":"Subject","label":"Subject","subject":true,"className":"fullwidth"} -->
+<label for="input_subject"><label for="input_subject">Subject</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_subject" id="input_subject" placeholder="" required data-subject="true" class="wp-block-wpzoom-forms-text-plain-field fullwidth"/>
+<!-- /wp:wpzoom-forms/text-plain-field -->
+
+<!-- wp:wpzoom-forms/textarea-field {"id":"input_message","name":"Message","label":"Message","className":"fullwidth"} -->
+<label for="input_message"><label for="input_message">Message</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><textarea name="input_message" id="input_message" cols="55" rows="10" placeholder="" required class="wp-block-wpzoom-forms-textarea-field fullwidth"></textarea>
+<!-- /wp:wpzoom-forms/textarea-field --></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns -->
+
+<!-- wp:columns -->
+<div class="wp-block-columns"><!-- wp:column {"width":"30%"} -->
+<div class="wp-block-column" style="flex-basis:30%"><!-- wp:wpzoom-forms/submit-field {"id":"input_submit"} -->
+<input type="submit" id="input_submit" value="Submit" class="wp-block-wpzoom-forms-submit-field"/>
+<!-- /wp:wpzoom-forms/submit-field --></div>
+<!-- /wp:column -->
+
+<!-- wp:column {"width":"70%"} -->
+<div class="wp-block-column" style="flex-basis:70%"><!-- wp:paragraph {"align":"right","style":{"typography":{"fontSize":16}}} -->
+<p class="has-text-align-right" style="font-size:16px">Fields marked with <strong class="has-accent-color has-text-color">*</strong> are required.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns --></div>
+<!-- /wp:group --></div>
+<!-- /wp:wpzoom-forms/form -->'
 	),
 	array(
 		'id'      => 'appointment-form',
