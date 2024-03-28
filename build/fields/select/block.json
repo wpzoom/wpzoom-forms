@@ -57,7 +57,7 @@
       "type": "boolean",
       "source": "attribute",
       "attribute": "required",
-      "selector": "input",
+      "selector": "select",
       "default": false
     }
   },
