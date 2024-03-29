@@ -73,7 +73,7 @@
         padding: 10px 25px;
         margin: 15px 0;
     }
-
+    .wp-block-wpzoom-forms-multi-checkbox-field,
     .wp-block-wpzoom-forms-radio-field {
         list-style-type: none;
         margin: 0;
@@ -87,7 +87,8 @@
         }
     }
 
-    .wp-block-wpzoom-forms-checkbox-field {
+    .wp-block-wpzoom-forms-checkbox-field,
+    .wp-block-wpzoom-forms-multi-checkbox-field {
         margin-bottom: 5px;
     }
 

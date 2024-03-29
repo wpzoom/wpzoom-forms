@@ -168,6 +168,7 @@ registerBlockType( 'wpzoom-forms/form', {
 					'wpzoom-forms/text-phone-field',
 					'wpzoom-forms/textarea-field',
 					'wpzoom-forms/select-field',
+					'wpzoom-forms/multi-checkbox-field',
 					'wpzoom-forms/checkbox-field',
 					'wpzoom-forms/radio-field',
 					'wpzoom-forms/label-field',
