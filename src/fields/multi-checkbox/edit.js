@@ -1,52 +1,12 @@
 import { useBlockProps, InspectorControls, RichText } from '@wordpress/block-editor';
 import { Fragment, useEffect } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
-import { PanelBody, TextControl, ToggleControl, SelectControl, Card, CardBody, CardHeader, IconButton, Flex, FlexBlock, FlexItem } from '@wordpress/components';
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { arrayMoveImmutable } from 'array-move';
-
-const DragHandle = SortableHandle( () => <IconButton
-	icon="move"
-	label={ __( 'Re-arrange Item', 'wpzoom-forms' ) }
-	className="wpzoom-forms-move-button"
-/> );
-
-const SortableItem = SortableElement( ( { value, optsId, options, changeCallback, removeCallback } ) => <Fragment>
-	<Flex>
-		<FlexBlock>
-			<TextControl
-				value={ value }
-				onChange={ val => changeCallback( val, optsId ) }
-			/>
-		</FlexBlock>
-
-		{ options.length > 1 && <FlexItem>
-			<DragHandle />
-
-			<IconButton
-				icon="no-alt"
-				label={ __( 'Delete Item', 'wpzoom-forms' ) }
-				onClick={ () => removeCallback( optsId ) }
-			/>
-		</FlexItem> }
-	</Flex>
-</Fragment> );
-
-const SortableList = SortableContainer( ( { items, changeCallback, removeCallback } ) => <div>
-	{ items.map( ( value, index ) => <SortableItem
-		index={ index }
-		optsId={ index }
-		value={ value }
-		options={ items }
-		changeCallback={ changeCallback }
-		removeCallback={ removeCallback }
-	/> ) }
-</div> );
+import { __ } from '@wordpress/i18n';
+import { PanelBody, TextControl, SelectControl, ToggleControl, Flex, FlexBlock, FlexItem, Card, CardBody, CardHeader, IconButton } from '@wordpress/components';
 
 const Edit = props => {
-	const blockProps = useBlockProps();
+	const blockProps = useBlockProps( { className: 'unstyled-list' } );
 	const { attributes, setAttributes, clientId } = props;
-	const { id, name, options, defaultValue, label, showLabel, multiple, required } = attributes;
+	const { id, name, options, defaultValue, label, showLabel, required } = attributes;
 
 	const optionAdd = () => {
 		const opts = [ ...options ];
@@ -66,11 +26,6 @@ const Edit = props => {
 		setAttributes( { options: opts } );
 	};
 
-	const optionsSort = ( oldIndex, newIndex ) => {
-		const sorted = arrayMoveImmutable( options, oldIndex, newIndex );
-		setAttributes( { options: sorted } );
-	};
-
 	useEffect( () => {
 		if ( ! id ) {
 			setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
@@ -83,7 +38,7 @@ const Edit = props => {
 				<TextControl
 					label={ __( 'Name', 'wpzoom-forms' ) }
 					value={ name }
-					placeholder={ __( 'e.g. My Dropdown Select Field', 'wpzoom-forms' ) }
+					placeholder={ __( 'e.g. My Checkbox Field', 'wpzoom-forms' ) }
 					onChange={ value => setAttributes( { name: value } ) }
 				/>
 
@@ -98,14 +53,26 @@ const Edit = props => {
 						/>
 					</CardHeader>
 					<CardBody>
-						<SortableList
-							items={ options }
-							changeCallback={ optionChange }
-							removeCallback={ optionRemove }
-							lockAxis="y"
-							useDragHandle={ true }
-							onSortEnd={ ( { oldIndex, newIndex } ) => optionsSort( oldIndex, newIndex ) }
-						/>
+						{ options.map( ( option, index ) => (
+							<Fragment key={ index }>
+								<Flex>
+									<FlexBlock>
+										<TextControl
+											value={ options[ index ] }
+											onChange={ value => optionChange( value, index ) }
+										/>
+									</FlexBlock>
+
+									{ options.length > 1 && <FlexItem>
+										<IconButton
+											icon="no-alt"
+											label={ __( 'Delete Item', 'wpzoom-forms' ) }
+											onClick={ () => optionRemove( index ) }
+										/>
+									</FlexItem> }
+								</Flex>
+							</Fragment>
+						) ) }
 					</CardBody>
 				</Card>
 
@@ -129,12 +96,6 @@ const Edit = props => {
 				/> }
 
 				<ToggleControl
-					label={ __( 'Allow Multiple Selections', 'wpzoom-forms' ) }
-					checked={ !! multiple }
-					onChange={ value => setAttributes( { multiple: !! value } ) }
-				/>
-
-				<ToggleControl
 					label={ __( 'Required', 'wpzoom-forms' ) }
 					checked={ !! required }
 					onChange={ value => setAttributes( { required: !! value } ) }
@@ -154,16 +115,24 @@ const Edit = props => {
 				{ required && <sup className="wp-block-wpzoom-forms-required">{ __( '*', 'wpzoom-forms' ) }</sup> }
 			</label> }
 
-			<select
-				name={ multiple ? `${id}[]` : id }
-				id={ id }
-				required={ !! required }
-				multiple={ !! multiple }
-				defaultValue={ defaultValue }
-				{ ...blockProps }
-			>
-				{ options.map( ( option, index ) => <option key={ index } value={ option }>{ option }</option> ) }
-			</select>
+			<ul { ...blockProps }>
+				{ options.map( ( option, index ) =>
+					<li key={ index }>
+						<label>
+							<input
+								type="checkbox"
+								name={ `${id}[]` }
+								id={ id }
+								value={ option }
+								checked={ option == defaultValue }
+								onChange={ e => {} }
+								required={ !! required }
+							/>
+							{ option }
+						</label>
+					</li>
+				) }
+			</ul>
 		</Fragment>
 	</>;
 };

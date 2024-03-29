@@ -433,7 +433,7 @@ class WPZOOM_Forms {
 			)
 		);
 
-		foreach ( array( 'checkbox', 'email', 'label', 'name', 'phone', 'plain', 'radio', 'select', 'submit', 'textarea', 'website' ) as $block ) {
+		foreach ( array( 'multi-checkbox', 'checkbox', 'email', 'label', 'name', 'phone', 'plain', 'radio', 'select', 'submit', 'textarea', 'website' ) as $block ) {
 			register_block_type( $this->main_dir_path . 'fields/' . $block . '/block.json' );
 		}
 	}
@@ -488,6 +488,7 @@ class WPZOOM_Forms {
 				'wpzoom-forms/text-phone-field',
 				'wpzoom-forms/textarea-field',
 				'wpzoom-forms/select-field',
+				'wpzoom-forms/multi-checkbox-field',
 				'wpzoom-forms/checkbox-field',
 				'wpzoom-forms/radio-field',
 				'wpzoom-forms/label-field',
@@ -1868,6 +1869,7 @@ class WPZOOM_Forms {
 						if ( strpos( $key, 'wpzf_' ) === 0 ) {
 							$id = substr( $key, 5 );
 							$name = isset( $input_blocks[ $id ] ) ? $input_blocks[ $id ] : __( 'Unnamed Input', 'wpzoom-forms' );
+							$value = is_array( $value ) ? implode( ', ', $value ) : $value;
 
                             if ( 'wpzf_replyto' == $key ) {
 								$replyto = sanitize_text_field( $value );
@@ -1935,6 +1937,7 @@ class WPZOOM_Forms {
 						if ( strpos( $key, 'wpzf_' ) === 0 ) {
 							$id   = substr( $key, 5 );
 							$name = isset( $input_blocks[ $id ] ) ? $input_blocks[ $id ] : __( 'Unnamed Input', 'wpzoom-forms' );
+							$value = is_array( $value ) ? implode( ', ', $value ) : $value;
 
 							if ( 'wpzf_replyto' == $key || 'wpzf_subject' == $key ) {
 								if ( 'wpzf_replyto' == $key ) {
