@@ -58,7 +58,7 @@ if ( ! class_exists( 'WPZOOM_Forms_Template_Manager' ) ) {
 	 */
 	public function default_form_content( $content, $post ) {
 
-		$template = isset( $_GET['template'] ) ? $_GET['template'] : '';
+		$template = isset( $_GET['template'] ) ? $_GET['template'] : 'contact-form';
 
 		if ( self::get_current_post_type( 'wpzf-form' ) ) {
 			if( ! empty( $template ) ) {
@@ -169,10 +169,6 @@ if ( ! class_exists( 'WPZOOM_Forms_Template_Manager' ) ) {
 				<?php
 			}
 		}
-
-
-
-	
 	
 	}
 
