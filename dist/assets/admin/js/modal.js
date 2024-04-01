@@ -7,7 +7,7 @@ jQuery(document).ready(function(){
 		}
 
 		// Show modal on click of "Add New" button
-		$('.wpzf_settings-add-new a').on('click', function(e){
+		$('.wpzf_settings-add-new a, #menu-posts-wpzf-form a[href$="post-new.php?post_type=wpzf-form"]').on('click', function(e){
 			e.preventDefault();
 			$('#wpzoom-forms-modal').show();
 		});
