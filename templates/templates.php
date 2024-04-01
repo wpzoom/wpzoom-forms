@@ -46,15 +46,15 @@ $templates = array(
 <!-- /wp:wpzoom-forms/text-email-field -->
 
 <!-- wp:wpzoom-forms/radio-field {"id":"input_3cac9a4a","name":"Will you be attending?","options":["Yes","No"],"label":"Will you be attending?"} -->
-<label for="input_3cac9a4a"><label for="input_3cac9a4a">Will you be attending?</label></label><ul class="wp-block-wpzoom-forms-radio-field"><li><label><input type="radio" name="input_3cac9a4a" id="input_3cac9a4a" value="Yes"/>Yes</label></li><li><label><input type="radio" name="input_3cac9a4a" id="input_3cac9a4a" value="No"/>No</label></li></ul>
+<label for="input_3cac9a4a"><label for="input_3cac9a4a">Will you be attending?</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><ul class="wp-block-wpzoom-forms-radio-field"><li><label><input type="radio" name="input_3cac9a4a" id="input_3cac9a4a" value="Yes" required/>Yes</label></li><li><label><input type="radio" name="input_3cac9a4a" id="input_3cac9a4a" value="No" required/>No</label></li></ul>
 <!-- /wp:wpzoom-forms/radio-field -->
 
 <!-- wp:wpzoom-forms/select-field {"id":"input_15145568","name":"Your meal preference","options":["Omnivore","Vegetarian","Gluten Free","Kosher","Vegan","Halal"],"label":"Your meal preference"} -->
-<label for="input_15145568"><label for="input_15145568">Your meal preference</label></label><select name="input_15145568" id="input_15145568" defaultvalue="Item #1" class="wp-block-wpzoom-forms-select-field"><option value="Omnivore">Omnivore</option><option value="Vegetarian">Vegetarian</option><option value="Gluten Free">Gluten Free</option><option value="Kosher">Kosher</option><option value="Vegan">Vegan</option><option value="Halal">Halal</option></select>
+<label for="input_15145568"><label for="input_15145568">Your meal preference</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><select name="input_15145568" id="input_15145568" required defaultvalue="Item #1" class="wp-block-wpzoom-forms-select-field"><option value="Omnivore">Omnivore</option><option value="Vegetarian">Vegetarian</option><option value="Gluten Free">Gluten Free</option><option value="Kosher">Kosher</option><option value="Vegan">Vegan</option><option value="Halal">Halal</option></select>
 <!-- /wp:wpzoom-forms/select-field -->
 
 <!-- wp:wpzoom-forms/radio-field {"id":"input_7a40e84d","name":"Are you bringing a +1?","options":["Yes","No"],"label":"Are you bringing a +1?"} -->
-<label for="input_7a40e84d"><label for="input_7a40e84d">Are you bringing a +1?</label></label><ul class="wp-block-wpzoom-forms-radio-field"><li><label><input type="radio" name="input_7a40e84d" id="input_7a40e84d" value="Yes"/>Yes</label></li><li><label><input type="radio" name="input_7a40e84d" id="input_7a40e84d" value="No"/>No</label></li></ul>
+<label for="input_7a40e84d"><label for="input_7a40e84d">Are you bringing a +1?</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><ul class="wp-block-wpzoom-forms-radio-field"><li><label><input type="radio" name="input_7a40e84d" id="input_7a40e84d" value="Yes" required/>Yes</label></li><li><label><input type="radio" name="input_7a40e84d" id="input_7a40e84d" value="No" required/>No</label></li></ul>
 <!-- /wp:wpzoom-forms/radio-field -->
 
 <!-- wp:wpzoom-forms/text-plain-field {"id":"input_0bbcc55a","name":"Your guest\'s name","label":"Your guest\'s name"} -->
@@ -95,7 +95,7 @@ $templates = array(
 		<path d="M15 5H12V4C12 2.93913 11.5786 1.92172 10.8284 1.17157C10.0783 0.421427 9.06087 0 8 0C6.93913 0 5.92172 0.421427 5.17157 1.17157C4.42143 1.92172 4 2.93913 4 4V5H1C0.734784 5 0.48043 5.10536 0.292893 5.29289C0.105357 5.48043 0 5.73478 0 6V17C0 17.7956 0.316071 18.5587 0.87868 19.1213C1.44129 19.6839 2.20435 20 3 20H13C13.7956 20 14.5587 19.6839 15.1213 19.1213C15.6839 18.5587 16 17.7956 16 17V6C16 5.73478 15.8946 5.48043 15.7071 5.29289C15.5196 5.10536 15.2652 5 15 5ZM6 4C6 3.46957 6.21071 2.96086 6.58579 2.58579C6.96086 2.21071 7.46957 2 8 2C8.53043 2 9.03914 2.21071 9.41421 2.58579C9.78929 2.96086 10 3.46957 10 4V5H6V4ZM14 17C14 17.2652 13.8946 17.5196 13.7071 17.7071C13.5196 17.8946 13.2652 18 13 18H3C2.73478 18 2.48043 17.8946 2.29289 17.7071C2.10536 17.5196 2 17.2652 2 17V7H4V8C4 8.26522 4.10536 8.51957 4.29289 8.70711C4.48043 8.89464 4.73478 9 5 9C5.26522 9 5.51957 8.89464 5.70711 8.70711C5.89464 8.51957 6 8.26522 6 8V7H10V8C10 8.26522 10.1054 8.51957 10.2929 8.70711C10.4804 8.89464 10.7348 9 11 9C11.2652 9 11.5196 8.89464 11.7071 8.70711C11.8946 8.51957 12 8.26522 12 8V7H14V17Z" />
 		</svg>',
 
-		'desc'    => 'A simple contact form with fields for name, email, subject, and message.',
+		'desc'    => 'A simple form to request a quote for a service.',
 		'content' => '<!-- wp:wpzoom-forms/form -->
 <div class="wp-block-wpzoom-forms-form"><!-- wp:group -->
 <div class="wp-block-group"><!-- wp:columns -->
@@ -116,9 +116,13 @@ $templates = array(
 <label for="input_984c7374"><label for="input_984c7374">Your Address</label></label><input type="text" name="input_984c7374" id="input_984c7374" placeholder="" data-subject="false" class="wp-block-wpzoom-forms-text-plain-field"/>
 <!-- /wp:wpzoom-forms/text-plain-field -->
 
-<!-- wp:wpzoom-forms/radio-field {"id":"input_4d1cff39","name":"Required service","options":["General maintenance","Repairs","House keeping","Landscape gardening","Other"],"label":"Required service"} -->
-<label for="input_4d1cff39"><label for="input_4d1cff39">Required service</label></label><ul class="wp-block-wpzoom-forms-radio-field"><li><label><input type="radio" name="input_4d1cff39" id="input_4d1cff39" value="General maintenance"/>General maintenance</label></li><li><label><input type="radio" name="input_4d1cff39" id="input_4d1cff39" value="Repairs"/>Repairs</label></li><li><label><input type="radio" name="input_4d1cff39" id="input_4d1cff39" value="House keeping"/>House keeping</label></li><li><label><input type="radio" name="input_4d1cff39" id="input_4d1cff39" value="Landscape gardening"/>Landscape gardening</label></li><li><label><input type="radio" name="input_4d1cff39" id="input_4d1cff39" value="Other"/>Other</label></li></ul>
-<!-- /wp:wpzoom-forms/radio-field -->
+<!-- wp:wpzoom-forms/multi-checkbox-field {"id":"input_b627c5c7","name":"Required service(s)","options":["General maintenance","Repairs","House keeping","Landscape gardening","Other"],"label":"Required service(s)"} -->
+<label for="input_b627c5c7"><label for="input_b627c5c7">Required service(s)</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><ul class="wp-block-wpzoom-forms-multi-checkbox-field"><li><label><input type="checkbox" name="input_b627c5c7[]" id="input_b627c5c7" value="General maintenance" required/>General maintenance</label></li><li><label><input type="checkbox" name="input_b627c5c7[]" id="input_b627c5c7" value="Repairs" required/>Repairs</label></li><li><label><input type="checkbox" name="input_b627c5c7[]" id="input_b627c5c7" value="House keeping" required/>House keeping</label></li><li><label><input type="checkbox" name="input_b627c5c7[]" id="input_b627c5c7" value="Landscape gardening" required/>Landscape gardening</label></li><li><label><input type="checkbox" name="input_b627c5c7[]" id="input_b627c5c7" value="Other" required/>Other</label></li></ul>
+<!-- /wp:wpzoom-forms/multi-checkbox-field -->
+
+<!-- wp:spacer {"height":"34px"} -->
+<div style="height:34px" aria-hidden="true" class="wp-block-spacer"></div>
+<!-- /wp:spacer -->
 
 <!-- wp:wpzoom-forms/textarea-field {"id":"input_message","name":"How can we help you?","label":"How can we help you?","className":"fullwidth"} -->
 <label for="input_message"><label for="input_message">How can we help you?</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><textarea name="input_message" id="input_message" cols="55" rows="10" placeholder="" required class="wp-block-wpzoom-forms-textarea-field fullwidth"></textarea>
