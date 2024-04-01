@@ -162,6 +162,9 @@ class WPZOOM_Forms {
 			add_action( 'admin_post_wpzf_submit',                       array( $this, 'action_form_post' ),                  10 );
             add_action( 'admin_post_nopriv_wpzf_submit',                array( $this, 'action_form_post' ),                  10 );
 
+			add_action( 'restrict_manage_posts',                       array( $this, 'custom_filter_by_form' ),           10 );
+			add_action( 'parse_query',                                 array( $this, 'filter_posts_by_form' ),            10 );
+
 			register_post_type(
 				'wpzf-form',
 				array(
@@ -804,6 +807,7 @@ class WPZOOM_Forms {
 		return array(
 			'cb'        => $columns['cb'],
 			'title'     => __( 'Title', 'wpzoom-forms' ),
+			'responses' => __( 'Responses', 'wpzoom-forms' ),
 			'shortcode' => __( 'Shortcode', 'wpzoom-forms' ),
 			'date'      => $columns['date']
 		);
@@ -841,6 +845,65 @@ class WPZOOM_Forms {
 		return $columns;
 	}
 
+	// Add the filter dropdown to the posts list
+	public function custom_filter_by_form() {
+		global $wpdb;
+
+		// Check if we are on the posts list page
+		if ( isset( $_GET['post_type'] ) && $_GET['post_type'] == 'wpzf-submission' ) {
+
+			$form_id_filter_selected = isset( $_GET['form_id_filter'] ) ? $_GET['form_id_filter'] : '';
+
+			// Fetch unique form IDs and their corresponding titles from your database
+			$form_ids_query = $wpdb->get_results("SELECT ID AS form_id, post_title 
+			FROM $wpdb->posts 
+			WHERE post_type = 'wpzf-form' 
+			AND post_status = 'publish'");
+			
+
+			// If we have forms, display the dropdown
+			if ( ! empty( $form_ids_query ) ) {
+				// Initialize an array to store unique form IDs
+				$form_ids = array();
+				?>
+				<select name="form_id_filter" id="form_id_filter">
+					<option value=""><?php echo esc_html__( 'Filter by Form', 'wpzoom-forms' ); ?></option>
+					<?php
+						foreach ( $form_ids_query as $result ) {
+							
+							// Check if the form ID already exists in the array
+							if ( ! in_array( $result->form_id, $form_ids ) ) {
+								
+								// Add form ID to the array to prevent duplication
+								$form_ids[] = $result->form_id;
+								
+								// Output the option with form ID as value and post title as option name
+								echo '<option '. selected( $result->form_id, $form_id_filter_selected, true ) .' value="' . $result->form_id . '">' . $result->post_title . '</option>';
+							}
+						}
+					?>
+				</select>
+				<?php
+			}
+
+
+		}
+	}
+
+	// Modify the query based on the selected form ID
+	public function filter_posts_by_form ( $query ) {
+		
+		global $pagenow;
+
+		// Check if we are on the posts list page and a form ID filter is set
+		if ( is_admin() && $pagenow == 'edit.php' && isset( $_GET['form_id_filter'] ) && $_GET['form_id_filter'] != '' ) {
+			
+			$query->query_vars['meta_key'] = '_wpzf_form_id';
+			$query->query_vars['meta_value'] = $_GET['form_id_filter'];
+		
+		}
+	}
+
 	/**
 	 * Changes the column content displayed in the post list for the form custom post type.
 	 *
@@ -851,8 +914,40 @@ class WPZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function post_list_custom_columns_form( $column, $post_id ) {
+
 		if ( 'shortcode' == $column ) {
 			printf( '<input type="text" value="[wpzf_form id=&quot;%s&quot;]" readonly />', $post_id );
+		}
+
+		if( 'responses' == $column ) {
+
+			$args = array(
+				'post_type' => 'wpzf-submission',
+				'post_status' => 'publish',
+				'posts_per_page' => -1,
+				'meta_query' => array(
+					array(
+						'key' => '_wpzf_form_id',
+						'value' => $post_id,
+						'compare' => '='
+					)
+				)
+			);
+
+			$forms_count = 0;
+
+			$responses = new WP_Query( $args );
+
+			if( $responses && $responses->have_posts() ) {
+				$forms_count = $responses->post_count;
+			}
+
+			if( 0 < $forms_count )  {
+				printf( '<a href="%s">%s</a>', admin_url( 'edit.php?post_type=wpzf-submission&&form_id_filter=' . $post_id ), $forms_count );
+			} else {
+				echo $forms_count;
+			}
+
 		}
 	}
 
