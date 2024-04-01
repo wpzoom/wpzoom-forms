@@ -867,7 +867,7 @@ class WPZOOM_Forms {
 				$form_ids = array();
 				?>
 				<select name="form_id_filter" id="form_id_filter">
-					<option value=""><?php echo esc_html__( 'Filter by Form', 'wpzoom-forms' ); ?></option>
+					<option value=""><?php echo esc_html__( 'All Forms', 'wpzoom-forms' ); ?></option>
 					<?php
 						foreach ( $form_ids_query as $result ) {
 							
