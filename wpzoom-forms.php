@@ -436,7 +436,7 @@ class WPZOOM_Forms {
 			)
 		);
 
-		foreach ( array( 'multi-checkbox', 'checkbox', 'email', 'label', 'name', 'phone', 'plain', 'radio', 'select', 'submit', 'textarea', 'website' ) as $block ) {
+		foreach ( array( 'multi-checkbox', 'checkbox', 'email', 'label', 'name', 'phone', 'plain', 'radio', 'select', 'submit', 'textarea', 'website', 'datepicker' ) as $block ) {
 			register_block_type( $this->main_dir_path . 'fields/' . $block . '/block.json' );
 		}
 	}
@@ -484,6 +484,7 @@ class WPZOOM_Forms {
 		if ( null !== $block_editor_context->post && 'wpzf-form' == $block_editor_context->post->post_type ) {
 			$allowed_block_types = array(
 				'wpzoom-forms/form',
+				'wpzoom-forms/datepicker-field',
 				'wpzoom-forms/text-plain-field',
 				'wpzoom-forms/text-name-field',
 				'wpzoom-forms/text-email-field',
