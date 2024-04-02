@@ -153,7 +153,7 @@ registerBlockType( 'wpzoom-forms/form', {
 <path fill-rule="evenodd" clip-rule="evenodd" d="M100 50H200V100H100V50ZM100 150V100H50V250H100V200H150V150H100Z" fill="#1FDE91"/>
 </svg> ),
 	category:    'wpzoom-forms',
-	supports:    { align: true, html: false },
+	supports:    { align: true, html: false, multiple: false },
 	example:     {},
 	edit:        () => {
 		const blockProps = useBlockProps( { className: 'wpzoom-forms_form' } );
