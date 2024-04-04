@@ -1,11 +1,28 @@
+import isEmpty from 'lodash/isEmpty';
+import { useState, useEffect } from '@wordpress/element';
 import { useBlockProps, InspectorControls, RichText } from '@wordpress/block-editor';
-import { Fragment, useEffect } from '@wordpress/element';
+import { Fragment } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { PanelBody, TextControl, ToggleControl, SelectControl, Card, CardBody, CardHeader, IconButton, Flex, FlexBlock, FlexItem } from '@wordpress/components';
+import { 
+	PanelBody, 
+	TextControl, 
+	TextareaControl,
+	ToggleControl, 
+	SelectControl, 
+	Card, 
+	CardBody, 
+	CardHeader, 
+	Button, 
+	Flex, 
+	FlexBlock, 
+	FlexItem,
+	Modal,
+} from '@wordpress/components';
+
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { arrayMoveImmutable } from 'array-move';
 
-const DragHandle = SortableHandle( () => <IconButton
+const DragHandle = SortableHandle( () => <Button
 	icon="move"
 	label={ __( 'Re-arrange Item', 'wpzoom-forms' ) }
 	className="wpzoom-forms-move-button"
@@ -23,7 +40,7 @@ const SortableItem = SortableElement( ( { value, optsId, options, changeCallback
 		{ options.length > 1 && <FlexItem>
 			<DragHandle />
 
-			<IconButton
+			<Button
 				icon="no-alt"
 				label={ __( 'Delete Item', 'wpzoom-forms' ) }
 				onClick={ () => removeCallback( optsId ) }
@@ -48,124 +65,196 @@ const Edit = props => {
 	const { attributes, setAttributes, clientId } = props;
 	const { id, name, options, defaultValue, label, showLabel, multiple, required } = attributes;
 
+	const [isOpen, setOpen] = useState(false);
+	const [bulkOptions, setBulkOptions] = useState('');
+
+	const openModal = () => setOpen(true);
+	const closeModal = () => setOpen(false);
+
 	const optionAdd = () => {
-		const opts = [ ...options ];
-		opts.push( sprintf( __( 'Item #%s', 'wpzoom-forms' ), options.length + 1 ) );
-		setAttributes( { options: opts } );
+		const opts = [...options];
+		opts.push(sprintf(__('Item #%s', 'wpzoom-forms'), options.length + 1));
+		setAttributes({ options: opts });
 	};
 
-	const optionRemove = ( index ) => {
-		const opts = [ ...options ];
-		opts.splice( index, 1 );
-		setAttributes( { options: opts } );
+	const optionRemove = (index) => {
+		const opts = [...options];
+		opts.splice(index, 1);
+		setAttributes({ options: opts });
 	};
 
-	const optionChange = ( name, index ) => {
-		const opts = [ ...options ];
-		opts[ index ] = name;
-		setAttributes( { options: opts } );
+	const optionChange = (name, index) => {
+		const opts = [...options];
+		opts[index] = name;
+		setAttributes({ options: opts });
 	};
 
-	const optionsSort = ( oldIndex, newIndex ) => {
-		const sorted = arrayMoveImmutable( options, oldIndex, newIndex );
-		setAttributes( { options: sorted } );
+	const optionsSort = (oldIndex, newIndex) => {
+		const sorted = arrayMoveImmutable(options, oldIndex, newIndex);
+		setAttributes({ options: sorted });
 	};
 
-	useEffect( () => {
-		if ( ! id ) {
-			setAttributes( { id: 'input_' + clientId.substr( 0, 8 ) } );
+	useEffect(() => {
+		if (!id) {
+			setAttributes({ id: 'input_' + clientId.substr(0, 8) });
 		}
-	}, [] );
+	}, []);
 
-	return <>
-		<InspectorControls>
-			<PanelBody title={ __( 'Options', 'wpzoom-forms' ) }>
-				<TextControl
-					label={ __( 'Name', 'wpzoom-forms' ) }
-					value={ name }
-					placeholder={ __( 'e.g. My Dropdown Select Field', 'wpzoom-forms' ) }
-					onChange={ value => setAttributes( { name: value } ) }
-				/>
+	useEffect(() => {
+		if (options) {
+			let _items = '';
+			options.forEach((item) => {
+				_items += item + '\n';
+			});
+			setBulkOptions(_items);
+		}
+	}, [options]);
 
-				<Card size="small">
-					<CardHeader>
-						{ __( 'Items', 'wpzoom-forms' ) }
+	const onBulkAddItems = () => {
+		const _options = bulkOptions.split('\n').filter(Boolean);
+		setAttributes({ options: _options });
+		setOpen(false);
+	};
 
-						<IconButton
-							icon="insert"
-							label={ __( 'Add Item', 'wpzoom-forms' ) }
-							onClick={ optionAdd.bind( this ) }
+	return (
+		<>
+			<InspectorControls>
+				<PanelBody title={__('Options', 'wpzoom-forms')}>
+					<TextControl
+						label={__('Name', 'wpzoom-forms')}
+						value={name}
+						placeholder={__('e.g. My Dropdown Select Field', 'wpzoom-forms')}
+						onChange={value => setAttributes({ name: value })}
+					/>
+
+					<Card size="small">
+						<CardHeader>
+							{__('Items', 'wpzoom-forms')}
+							<Button
+								icon="insert"
+								label={__('Add Item', 'wpzoom-forms')}
+								onClick={optionAdd}
+							/>
+						</CardHeader>
+						<CardBody>
+							<SortableList
+								items={options}
+								changeCallback={optionChange}
+								removeCallback={optionRemove}
+								lockAxis="y"
+								useDragHandle={true}
+								onSortEnd={({ oldIndex, newIndex }) => optionsSort(oldIndex, newIndex)}
+							/>
+						</CardBody>
+					</Card>
+
+					<Button
+						icon="admin-settings"
+						label={__('Add Bulk Options', 'wpzoom-forms')}
+						onClick={openModal}
+					>
+						{__('Add Bulk Options', 'wpzoom-forms')}
+					</Button>
+
+					{ isOpen && (
+						<Modal
+							title={__('Add Bulk Options', 'wpzoom-forms')}
+							onRequestClose={closeModal}
+							shouldCloseOnClickOutside={true}
+						>
+						<div className="wpzoom-forms-extra-options" style={{ maxWidth: 720 + 'px', maxHeight: 525 + 'px' } } >
+							<div className="form-group">
+								<div className="wrap-content">
+									<TextareaControl
+										label={__('Bulk Options', 'wpzoom-forms')}
+										help={__('Each line break is a new option.', 'wpzoom-forms')}
+										className="bulk-add-enter-options"
+										rows="5"
+										value={ bulkOptions }
+										onChange={value => setBulkOptions(value)}
+									/>
+								</div>
+							</div>
+							<div className="form-group">
+								<Button isDefault onClick={() => setOpen(false)}>
+									{ __('Cancel', 'recipe-card-blocks-by-wpzoom')}
+								</Button>
+								{ ! isEmpty( bulkOptions ) && (
+									<Button isPrimary onClick={ () => { onBulkAddItems(); } }>
+										{__('Bulk Add', 'recipe-card-blocks-by-wpzoom')}
+									</Button>
+								)}
+							</div>
+						</div>
+						</Modal>
+					)}
+
+					<SelectControl
+						label={__('Default Value', 'wpzoom-forms')}
+						value={defaultValue}
+						options={options.map((option, index) => ({ label: option, value: option }))}
+						onChange={value => setAttributes({ defaultValue: value })}
+					/>
+
+					<ToggleControl
+						label={__('Show Label', 'wpzoom-forms')}
+						checked={!!showLabel}
+						onChange={value => setAttributes({ showLabel: !!value })}
+					/>
+
+					{showLabel && (
+						<TextControl
+							label={__('Label', 'wpzoom-forms')}
+							value={label}
+							onChange={value => setAttributes({ label: value })}
 						/>
-					</CardHeader>
-					<CardBody>
-						<SortableList
-							items={ options }
-							changeCallback={ optionChange }
-							removeCallback={ optionRemove }
-							lockAxis="y"
-							useDragHandle={ true }
-							onSortEnd={ ( { oldIndex, newIndex } ) => optionsSort( oldIndex, newIndex ) }
+					)}
+
+					<ToggleControl
+						label={__('Allow Multiple Selections', 'wpzoom-forms')}
+						checked={!!multiple}
+						onChange={value => setAttributes({ multiple: !!value })}
+					/>
+
+					<ToggleControl
+						label={__('Required', 'wpzoom-forms')}
+						checked={!!required}
+						onChange={value => setAttributes({ required: !!value })}
+					/>
+				</PanelBody>
+			</InspectorControls>
+
+			<Fragment>
+				{showLabel && (
+					<label htmlFor={id}>
+						<RichText
+							tagName="label"
+							placeholder={__('Label', 'wpzoom-forms')}
+							value={label}
+							htmlFor={id}
+							onChange={value => setAttributes({ label: value })}
 						/>
-					</CardBody>
-				</Card>
+						{required && <sup className="wp-block-wpzoom-forms-required">{__('*', 'wpzoom-forms')}</sup>}
+					</label>
+				)}
 
-				<SelectControl
-					label={ __( 'Default Value', 'wpzoom-forms' ) }
-					value={ defaultValue }
-					options={ options.map( ( option, index ) => ( { label: option, value: option } ) ) }
-					onChange={ value => setAttributes( { defaultValue: value } ) }
-				/>
-
-				<ToggleControl
-					label={ __( 'Show Label', 'wpzoom-forms' ) }
-					checked={ !! showLabel }
-					onChange={ value => setAttributes( { showLabel: !! value } ) }
-				/>
-
-				{ showLabel && <TextControl
-					label={ __( 'Label', 'wpzoom-forms' ) }
-					value={ label }
-					onChange={ value => setAttributes( { label: value } ) }
-				/> }
-
-				<ToggleControl
-					label={ __( 'Allow Multiple Selections', 'wpzoom-forms' ) }
-					checked={ !! multiple }
-					onChange={ value => setAttributes( { multiple: !! value } ) }
-				/>
-
-				<ToggleControl
-					label={ __( 'Required', 'wpzoom-forms' ) }
-					checked={ !! required }
-					onChange={ value => setAttributes( { required: !! value } ) }
-				/>
-			</PanelBody>
-		</InspectorControls>
-
-		<Fragment>
-			{ showLabel && <label htmlFor={ id }>
-				<RichText
-					tagName="label"
-					placeholder={ __( 'Label', 'wpzoom-forms' ) }
-					value={ label }
-					htmlFor={ id }
-					onChange={ value => setAttributes( { label: value } ) }
-				/>
-				{ required && <sup className="wp-block-wpzoom-forms-required">{ __( '*', 'wpzoom-forms' ) }</sup> }
-			</label> }
-
-			<select
-				name={ multiple ? `${id}[]` : id }
-				id={ id }
-				required={ !! required }
-				multiple={ !! multiple }
-				defaultValue={ defaultValue }
-				{ ...blockProps }
-			>
-				{ options.map( ( option, index ) => <option key={ index } value={ option }>{ option }</option> ) }
-			</select>
-		</Fragment>
-	</>;
+				<select
+					name={id}
+					id={id}
+					required={!!required}
+					multiple={!!multiple}
+					defaultValue={defaultValue}
+					{...blockProps}
+				>
+					{options.map((option, index) => (
+						<option key={index} value={option}>
+							{option}
+						</option>
+					))}
+				</select>
+			</Fragment>
+		</>
+	);
 };
 
 export default Edit;

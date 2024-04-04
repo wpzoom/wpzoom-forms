@@ -1,12 +1,20 @@
+import isEmpty from 'lodash/isEmpty';
+
 import { useBlockProps, InspectorControls, RichText } from '@wordpress/block-editor';
-import { Fragment, useEffect } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
-import { PanelBody, TextControl, SelectControl, ToggleControl, Flex, FlexBlock, FlexItem, Card, CardBody, CardHeader, IconButton } from '@wordpress/components';
+import { useState, Fragment, useEffect } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
+import { PanelBody, TextControl, TextareaControl, SelectControl, ToggleControl, Flex, FlexBlock, FlexItem, Card, CardBody, CardHeader, Button, Modal } from '@wordpress/components';
 
 const Edit = props => {
 	const blockProps = useBlockProps( { className: 'unstyled-list' } );
 	const { attributes, setAttributes, clientId } = props;
 	const { id, name, options, defaultValue, label, showLabel, required } = attributes;
+
+	const [isOpen, setOpen] = useState(false);
+	const [bulkOptions, setBulkOptions] = useState('');
+
+	const openModal = () => setOpen(true);
+	const closeModal = () => setOpen(false);
 
 	const optionAdd = () => {
 		const opts = [ ...options ];
@@ -32,6 +40,22 @@ const Edit = props => {
 		}
 	}, [] );
 
+	useEffect(() => {
+		if (options) {
+			let _items = '';
+			options.forEach((item) => {
+				_items += item + '\n';
+			});
+			setBulkOptions(_items);
+		}
+	}, [options]);
+
+	const onBulkAddItems = () => {
+		const _options = bulkOptions.split('\n').filter(Boolean);
+		setAttributes({ options: _options });
+		setOpen(false);
+	};
+
 	return <>
 		<InspectorControls>
 			<PanelBody title={ __( 'Options', 'wpzoom-forms' ) }>
@@ -46,7 +70,7 @@ const Edit = props => {
 					<CardHeader>
 						{ __( 'Items', 'wpzoom-forms' ) }
 
-						<IconButton
+						<Button
 							icon="insert"
 							label={ __( 'Add Item', 'wpzoom-forms' ) }
 							onClick={ optionAdd.bind( this ) }
@@ -64,7 +88,7 @@ const Edit = props => {
 									</FlexBlock>
 
 									{ options.length > 1 && <FlexItem>
-										<IconButton
+										<Button
 											icon="no-alt"
 											label={ __( 'Delete Item', 'wpzoom-forms' ) }
 											onClick={ () => optionRemove( index ) }
@@ -75,6 +99,47 @@ const Edit = props => {
 						) ) }
 					</CardBody>
 				</Card>
+
+				<Button
+						icon="admin-settings"
+						label={__('Add Bulk Options', 'wpzoom-forms')}
+						onClick={openModal}
+					>
+						{__('Add Bulk Options', 'wpzoom-forms')}
+					</Button>
+
+					{ isOpen && (
+						<Modal
+							title={__('Add Bulk Options', 'wpzoom-forms')}
+							onRequestClose={closeModal}
+							shouldCloseOnClickOutside={true}
+						>
+						<div className="wpzoom-forms-extra-options" style={{ maxWidth: 720 + 'px', maxHeight: 525 + 'px' } } >
+							<div className="form-group">
+								<div className="wrap-content">
+									<TextareaControl
+										label={__('Bulk Options', 'wpzoom-forms')}
+										help={__('Each line break is a new option.', 'wpzoom-forms')}
+										className="bulk-add-enter-options"
+										rows="5"
+										value={ bulkOptions }
+										onChange={value => setBulkOptions(value)}
+									/>
+								</div>
+							</div>
+							<div className="form-group">
+								<Button isDefault onClick={() => setOpen(false)}>
+									{ __('Cancel', 'recipe-card-blocks-by-wpzoom')}
+								</Button>
+								{ ! isEmpty( bulkOptions ) && (
+									<Button isPrimary onClick={ () => { onBulkAddItems(); } }>
+										{__('Bulk Add', 'recipe-card-blocks-by-wpzoom')}
+									</Button>
+								)}
+							</div>
+						</div>
+						</Modal>
+					)}
 
 				<SelectControl
 					label={ __( 'Default Value', 'wpzoom-forms' ) }

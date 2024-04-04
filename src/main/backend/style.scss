@@ -2758,3 +2758,14 @@
 .wpzoom-forms-move-button {
 	cursor: move;
 }
+
+.wpzoom-forms-extra-options .form-group:last-child {
+    margin-bottom: 0;
+    text-align: right;
+}
+.wpzoom-forms-extra-options .form-group button {
+    margin-right: 10px;
+}
+.wpzoom-forms-extra-options .form-group button:last-child {
+    margin-right: 0;
+}

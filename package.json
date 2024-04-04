@@ -8,7 +8,8 @@
 		"blocks",
 		"WPZOOM",
 		"custom",
-		"advanced"
+		"advanced",
+		"forms"
 	],
 	"scripts": {
 		"start": "wp-scripts start",
