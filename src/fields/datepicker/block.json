@@ -20,23 +20,14 @@
 		},
 		"mode":          {
 			"type":      "string",
-			"source":    "attribute",
-			"attribute": "mode",
-			"selector":  "input",
 			"default":   "single"
 		},
 		"format":   {
 			"type":      "string",
-			"source":    "attribute",
-			"attribute": "format",
-			"selector":  "input",
 			"default":   "Y-m-d"
 		},
 		"customFormat":   {
 			"type":      "string",
-			"source":    "attribute",
-			"attribute": "customFormat",
-			"selector":  "input",
 			"default":   "Y-m-d"
 		},
 		"label":         {
@@ -95,6 +86,6 @@
 	],
 	"editorScript": "file:./index.js",
 	"editorStyle":  "wpzoom-forms-css-backend-main",
-	"script":       "wpzoom-forms-js-frontend-datepicker",
-	"style":        "wpzoom-forms-css-frontend-datepicker"
+	"script":       "wpzoom-forms-js-frontend-formblock",
+	"style":        "wpzoom-forms-css-frontend-formblock"
 }
