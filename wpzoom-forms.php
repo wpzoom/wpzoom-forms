@@ -150,6 +150,7 @@ class WPZOOM_Forms {
 			add_action( 'admin_enqueue_scripts',                        array( $this, 'admin_enqueue_scripts' ),             100 );
 			add_action( 'enqueue_block_editor_assets',                  array( $this, 'register_backend_assets' ),           10 );
 			add_action( 'enqueue_block_assets',                         array( $this, 'register_frontend_assets' ),          10 );
+			add_action( 'enqueue_block_assets',                         array( $this, 'block_frontend_assets' ),             10 );
 			add_action( 'wp_enqueue_scripts',                           array( $this, 'enqueue_frontend_scripts' ),          10 );
 			add_action( 'all_admin_notices',                            array( $this, 'admin_page_header' ),                 1 );
 			add_action( 'in_admin_footer',                              array( $this, 'admin_page_footer' ),                 10 );
@@ -738,6 +739,32 @@ class WPZOOM_Forms {
 			$this::VERSION
 		);
 
+		// Register style for datepicker field
+		wp_register_style(
+			'wpzoom-forms-css-frontend-flatpickr',
+			trailingslashit( $this->dist_dir_url ) . 'assets/frontend/flatpickr/css/flatpickr.min.css',
+			array(),
+			$this::VERSION
+		);
+
+		//Register script for datepicker field
+		wp_register_script(
+			'wpzoom-forms-js-frontend-flatpickr',
+			trailingslashit( $this->dist_dir_url ) . 'assets/frontend/flatpickr/js/flatpickr.js',
+			array( 'jquery' ),
+			$this::VERSION,
+			true
+		);
+
+		wp_register_script(
+			'wpzoom-forms-js-frontend-datepicker',
+			trailingslashit( $this->dist_dir_url ) . 'assets/frontend/js/datepicker.js',
+			array( 'wpzoom-forms-js-frontend-flatpickr' ),
+			$this::VERSION,
+			true
+		);
+
+
 	}
 
 	/**
@@ -755,6 +782,22 @@ class WPZOOM_Forms {
 			wp_enqueue_style( 'wpzoom-forms-css-frontend-formblock' );
 			wp_enqueue_script( 'wpzoom-forms-js-frontend-formblock' );
 		}
+
+	}
+
+	/**
+	 * Enqueues needed scripts and styles for use on the frontend.
+	 *
+	 * @access public
+	 * @return void
+	 * @since  1.0.0
+	 */
+	public function block_frontend_assets() {
+		//if( has_block( 'wpzoom-forms/datepicker-field' ) ) {
+			wp_enqueue_style( 'wpzoom-forms-css-frontend-flatpickr' );
+			wp_enqueue_script( 'wpzoom-forms-js-frontend-flatpickr' );
+			wp_enqueue_script( 'wpzoom-forms-js-frontend-datepicker' );
+		//}
 	}
 
 	/**

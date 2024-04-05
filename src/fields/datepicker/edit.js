@@ -1,6 +1,3 @@
-import 'react-date-picker/dist/DatePicker.css';
-import 'react-calendar/dist/Calendar.css';
-
 import { useBlockProps, InspectorControls, RichText } from '@wordpress/block-editor';
 import { Fragment, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -9,7 +6,7 @@ import { PanelBody, TextControl, ToggleControl, SelectControl } from '@wordpress
 const Edit = props => {
 	const blockProps = useBlockProps();
 	const { attributes, setAttributes, clientId } = props;
-	const { id, name, label, showLabel, required, subject } = attributes;
+	const { id, name, mode, format, customFormat, label, showLabel, required } = attributes;
 
 	useEffect( () => {
 		if ( ! id ) {
@@ -23,9 +20,64 @@ const Edit = props => {
 				<TextControl
 					label={ __( 'Name', 'wpzoom-forms' ) }
 					value={ name }
-					placeholder={ __( 'e.g. My Date Picker Field', 'wpzoom-forms' ) }
+					placeholder={ __( 'e.g. My Text Field', 'wpzoom-forms' ) }
 					onChange={ value => setAttributes( { name: value } ) }
 				/>
+
+				<SelectControl
+					label={ __( 'Mode', 'wpzoom-forms' ) }
+					value={ mode }
+					options={ [
+						{
+							label: __( 'Single', 'wpzoom-forms' ),
+							value: 'single'
+						},
+						{
+							label: __( 'Multiple', 'wpzoom-forms' ),
+							value: 'multiple'
+						},
+						{
+							label: __( 'Range', 'wpzoom-forms' ),
+							value: 'range'
+						},
+					] }
+					onChange={ value => setAttributes( { mode: value } ) }
+				/>
+
+				<SelectControl
+					label={ __( 'Format', 'wpzoom-forms' ) }
+					value={ format }
+					options={ [
+						{
+							label: __( 'Y-m-d', 'wpzoom-forms' ),
+							value: 'Y-m-d'
+						},
+						{
+							label: __( 'F j, Y', 'wpzoom-forms' ),
+							value: 'F j, Y'
+						},
+						{
+							label: __( 'm/d/Y', 'wpzoom-forms' ),
+							value: 'm/d/Y'
+						},
+						{
+							label: __( 'd/m/Y', 'wpzoom-forms' ),
+							value: 'd/m/Y'
+						},
+						{
+							label: __( 'Custom', 'wpzoom-forms' ),
+							value: 'custom_format'
+						},
+					] }
+					onChange={ value => setAttributes( { format: value } ) }
+				/>
+				{ 'custom_format' == format && 
+					<TextControl
+						label={ __( 'Custom Format', 'wpzoom-forms' ) }
+						value={ customFormat }
+						onChange={ value => setAttributes( { customFormat: value } ) }
+					/>
+				}
 
 				<ToggleControl
 					label={ __( 'Show Label', 'wpzoom-forms' ) }
@@ -44,7 +96,6 @@ const Edit = props => {
 					checked={ !! required }
 					onChange={ value => setAttributes( { required: !! value } ) }
 				/>
-
 			</PanelBody>
 		</InspectorControls>
 
@@ -61,11 +112,13 @@ const Edit = props => {
 			</label> }
 
 			<input
-				type="date"
-				aria-label="Date"
-				format="yyyy-MM-dd"
+				data-datepicker="true"
+				data-date-format={ 'custom_format' == format ? customFormat : format }
+				data-mode={ mode }
+				type="text"
 				name={ id }
 				id={ id }
+				placeholder={ 'custom_format' == format ? customFormat : format }
 				required={ !! required }
 				{ ...blockProps }
 			/>

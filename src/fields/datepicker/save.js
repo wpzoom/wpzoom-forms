@@ -1,12 +1,10 @@
-import 'react-date-picker/dist/DatePicker.css';
-import 'react-calendar/dist/Calendar.css';
 
 import { useBlockProps, RichText } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
 const Save = ( { attributes } ) => {
 	const blockProps = useBlockProps.save();
-	const { id, name, label, showLabel, required } = attributes;
+	const { id, name, mode, format, customFormat, label, showLabel, required } = attributes;
 
 	return <>
 		{ showLabel && <label htmlFor={ id }>
@@ -19,11 +17,13 @@ const Save = ( { attributes } ) => {
 		</label> }
 
 		<input
-			type="date"
-			aria-label="Date"
-			format="yyyy-MM-dd"
+			data-datepicker="true"
+			data-date-format={ 'custom_format' == format ? customFormat : format }
+			data-mode={ mode }
+			type="text"
 			name={ id }
 			id={ id }
+			placeholder={ 'custom_format' == format ? customFormat : format }
 			required={ !! required }
 			{ ...blockProps }
 		/>
