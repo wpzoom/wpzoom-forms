@@ -793,11 +793,48 @@ class WPZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function block_frontend_assets() {
-		//if( has_block( 'wpzoom-forms/datepicker-field' ) ) {
+
+		if( self::has_block( 'wpzoom-forms/datepicker-field' ) ) {
 			wp_enqueue_style( 'wpzoom-forms-css-frontend-flatpickr' );
 			wp_enqueue_script( 'wpzoom-forms-js-frontend-flatpickr' );
 			wp_enqueue_script( 'wpzoom-forms-js-frontend-datepicker' );
-		//}
+		}
+
+	}
+
+	// Check if a block exists in the post content
+	static function has_block( $block_name ) {
+
+		if( ! has_block( 'wpzoom-forms/form-block' ) )  {
+			return false;
+		}
+
+		global $post;
+				
+		$gutenberg_matches = array();
+		$gutenberg_patern = '/<!--\s+wp:(wpzoom\-forms\/form\-block)(\s+(\{.*?\}))?\s+(\/)?-->/';
+		preg_match_all( $gutenberg_patern, $post->post_content, $matches );
+		
+		// Check if the block exists in the post content
+		if ( isset( $matches[3] ) ) {
+			foreach ( $matches[3] as $block_attributes_json ) {
+				if ( ! empty( $block_attributes_json ) ) {
+					$atts = json_decode( $block_attributes_json, true );
+				}
+			}
+		}
+
+		$form_ID = isset( $atts['formId'] ) ? $atts['formId'] : '';
+
+		if( $form_ID ) {
+			$form_post = get_post( $form_ID );
+			if( has_block( $block_name, $form_post ) ) {
+				return true;
+			}
+		}
+		
+		return false;
+	
 	}
 
 	/**
