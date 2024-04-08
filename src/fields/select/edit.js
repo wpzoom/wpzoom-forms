@@ -22,6 +22,9 @@ import {
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { arrayMoveImmutable } from 'array-move';
 
+// Import the lists from the lists.js file
+import { countries, states } from './lists';
+
 const DragHandle = SortableHandle( () => <Button
 	icon="move"
 	label={ __( 'Re-arrange Item', 'wpzoom-forms' ) }
@@ -176,6 +179,14 @@ const Edit = props => {
 								</div>
 							</div>
 							<div className="form-group">
+								<div class="predefined-lists">
+									<p>{ __('Predefined Lists', 'wpzoom-forms') }
+										<br />
+										<Button isLink onClick={ () => setBulkOptions( countries.join('\n') ) }>{ __( 'Countries', 'wpzoom-forms' ) }</Button>
+										<Button isLink onClick={ () => setBulkOptions( states.join('\n') ) }>{ __( 'US States', 'wpzoom-forms' ) }</Button>
+									</p>
+								</div>
+								<div class="action-buttons">
 								<Button isDefault onClick={() => setOpen(false)}>
 									{ __('Cancel', 'recipe-card-blocks-by-wpzoom')}
 								</Button>
@@ -184,6 +195,7 @@ const Edit = props => {
 										{__('Bulk Add', 'recipe-card-blocks-by-wpzoom')}
 									</Button>
 								)}
+								</div>
 							</div>
 						</div>
 						</Modal>
