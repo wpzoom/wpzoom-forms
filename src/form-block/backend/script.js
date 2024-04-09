@@ -28,6 +28,11 @@ updateCategory( 'wpzoom-blocks', {
 registerBlockType( 'wpzoom-forms/form-block', {
 	title:       __( 'Contact Form by WPZOOM', 'wpzoom-blocks' ),
 	description: __( 'A contact form block for accepting submissions from users.', 'wpzoom-blocks' ),
+    keywords: [
+        __( 'contact', 'wpzoom-blocks' ),
+        __( 'form', 'wpzoom-blocks' ),
+        __( 'survey', 'wpzoom-blocks' ),
+    ],
 	icon:        wpzoomFormsIcon,
 	category:    'wpzoom-blocks',
 	supports:    { align: true, html: false },

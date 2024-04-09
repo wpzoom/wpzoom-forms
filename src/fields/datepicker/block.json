@@ -2,10 +2,10 @@
 	"$schema":      "https://schemas.wp.org/trunk/block.json",
 	"apiVersion":   3,
 	"name":         "wpzoom-forms/datepicker-field",
-	"title":        "Date Picker Field",
+	"title":        "Date",
 	"category":     "wpzoom-forms",
 	"ancestor":     [ "wpzoom-forms/form" ],
-	"description":  "A text input field for inputting plain text.",
+	"description":  "Allow users to enter a date",
 	"keywords":     [ "wpzoom", "form", "input", "plain", "text", "date", "picker"],
 	"version":      "1.1.0",
 	"textdomain":   "wpzoom-forms",
@@ -32,7 +32,7 @@
 		},
 		"label":         {
 			"type":      "string",
-			"default":   "My Date Picker Field"
+			"default":   "Date"
 		},
 		"showLabel":     {
 			"type":      "boolean",
