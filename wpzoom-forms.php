@@ -2062,7 +2062,7 @@ class WPZOOM_Forms {
 
 					$fromaddr     = ! empty( $replyto ) && isset( $_REQUEST[ $replyto ] ) ? sanitize_email( $_REQUEST[ $replyto ] ) : $sendto;
 					$cleanname    = sanitize_text_field( get_bloginfo( 'name' ) );
-					$subjectline  = ! empty( $sbj ) && isset( $_REQUEST[ $sbj ] ) ? sanitize_text_field( wp_unslash( $_REQUEST[ $sbj ] ) ) : esc_html__( 'New Form Submission!', 'wpzoom-forms' );
+					$subjectline  = ! empty( $sbj ) && isset( $_REQUEST[ $sbj ] ) ? sanitize_text_field( wp_unslash( $_REQUEST[ $sbj ] ) ) : esc_html__( 'New Form Submission', 'wpzoom-forms' );
 					$subjectline .= sprintf( __( ' -- %s', 'wpzoom-forms' ), $cleanname );
 
 					$email_body   = '<html style="background-color:#dddddd;"><body style="background-color:#dddddd;padding:2em;"><div style="background-color:#ffffff;width:70%;padding:2em;border-radius:10px;box-shadow:0px 5px 5px #aaaaaa;">' . preg_replace( '/<br\/><br\/><hr\/><br\/>$/is', '', $email_body ) . '</div></body></html>';
