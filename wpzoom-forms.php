@@ -150,6 +150,7 @@ class WPZOOM_Forms {
 			add_action( 'admin_enqueue_scripts',                        array( $this, 'admin_enqueue_scripts' ),             100 );
 			add_action( 'enqueue_block_editor_assets',                  array( $this, 'register_backend_assets' ),           10 );
 			add_action( 'enqueue_block_assets',                         array( $this, 'register_frontend_assets' ),          10 );
+			add_action( 'enqueue_block_assets',                         array( $this, 'block_frontend_assets' ),             10 );
 			add_action( 'wp_enqueue_scripts',                           array( $this, 'enqueue_frontend_scripts' ),          10 );
 			add_action( 'all_admin_notices',                            array( $this, 'admin_page_header' ),                 1 );
 			add_action( 'in_admin_footer',                              array( $this, 'admin_page_footer' ),                 10 );
@@ -436,7 +437,7 @@ class WPZOOM_Forms {
 			)
 		);
 
-		foreach ( array( 'multi-checkbox', 'checkbox', 'email', 'label', 'name', 'phone', 'plain', 'radio', 'select', 'submit', 'textarea', 'website' ) as $block ) {
+		foreach ( array( 'multi-checkbox', 'checkbox', 'email', 'label', 'name', 'phone', 'plain', 'radio', 'select', 'submit', 'textarea', 'website', 'datepicker' ) as $block ) {
 			register_block_type( $this->main_dir_path . 'fields/' . $block . '/block.json' );
 		}
 	}
@@ -484,6 +485,7 @@ class WPZOOM_Forms {
 		if ( null !== $block_editor_context->post && 'wpzf-form' == $block_editor_context->post->post_type ) {
 			$allowed_block_types = array(
 				'wpzoom-forms/form',
+				'wpzoom-forms/datepicker-field',
 				'wpzoom-forms/text-plain-field',
 				'wpzoom-forms/text-name-field',
 				'wpzoom-forms/text-email-field',
@@ -737,6 +739,32 @@ class WPZOOM_Forms {
 			$this::VERSION
 		);
 
+		// Register style for datepicker field
+		wp_register_style(
+			'wpzoom-forms-css-frontend-flatpickr',
+			trailingslashit( $this->dist_dir_url ) . 'assets/frontend/flatpickr/css/flatpickr.min.css',
+			array(),
+			$this::VERSION
+		);
+
+		//Register script for datepicker field
+		wp_register_script(
+			'wpzoom-forms-js-frontend-flatpickr',
+			trailingslashit( $this->dist_dir_url ) . 'assets/frontend/flatpickr/js/flatpickr.js',
+			array( 'jquery' ),
+			$this::VERSION,
+			true
+		);
+
+		wp_register_script(
+			'wpzoom-forms-js-frontend-datepicker',
+			trailingslashit( $this->dist_dir_url ) . 'assets/frontend/js/datepicker.js',
+			array( 'wpzoom-forms-js-frontend-flatpickr' ),
+			$this::VERSION,
+			true
+		);
+
+
 	}
 
 	/**
@@ -754,6 +782,59 @@ class WPZOOM_Forms {
 			wp_enqueue_style( 'wpzoom-forms-css-frontend-formblock' );
 			wp_enqueue_script( 'wpzoom-forms-js-frontend-formblock' );
 		}
+
+	}
+
+	/**
+	 * Enqueues needed scripts and styles for use on the frontend.
+	 *
+	 * @access public
+	 * @return void
+	 * @since  1.0.0
+	 */
+	public function block_frontend_assets() {
+
+		if( self::has_block( 'wpzoom-forms/datepicker-field' ) ) {
+			wp_enqueue_style( 'wpzoom-forms-css-frontend-flatpickr' );
+			wp_enqueue_script( 'wpzoom-forms-js-frontend-flatpickr' );
+			wp_enqueue_script( 'wpzoom-forms-js-frontend-datepicker' );
+		}
+
+	}
+
+	// Check if a block exists in the post content
+	static function has_block( $block_name ) {
+
+		if( ! has_block( 'wpzoom-forms/form-block' ) )  {
+			return false;
+		}
+
+		global $post;
+				
+		$gutenberg_matches = array();
+		$gutenberg_patern = '/<!--\s+wp:(wpzoom\-forms\/form\-block)(\s+(\{.*?\}))?\s+(\/)?-->/';
+		preg_match_all( $gutenberg_patern, $post->post_content, $matches );
+		
+		// Check if the block exists in the post content
+		if ( isset( $matches[3] ) ) {
+			foreach ( $matches[3] as $block_attributes_json ) {
+				if ( ! empty( $block_attributes_json ) ) {
+					$atts = json_decode( $block_attributes_json, true );
+				}
+			}
+		}
+
+		$form_ID = isset( $atts['formId'] ) ? $atts['formId'] : '';
+
+		if( $form_ID ) {
+			$form_post = get_post( $form_ID );
+			if( has_block( $block_name, $form_post ) ) {
+				return true;
+			}
+		}
+		
+		return false;
+	
 	}
 
 	/**

@@ -27,7 +27,8 @@ module.exports = {
 		'fields/select/index':         path.resolve( __dirname, 'src', 'fields', 'select', 'index.js' ),
 		'fields/submit/index':         path.resolve( __dirname, 'src', 'fields', 'submit', 'index.js' ),
 		'fields/textarea/index':       path.resolve( __dirname, 'src', 'fields', 'textarea', 'index.js' ),
-		'fields/website/index':        path.resolve( __dirname, 'src', 'fields', 'website', 'index.js' )
+		'fields/website/index':        path.resolve( __dirname, 'src', 'fields', 'website', 'index.js' ),
+		'fields/datepicker/index':     path.resolve( __dirname, 'src', 'fields', 'datepicker', 'index.js' )
 	},
 	optimization: {
 		...defaultConfig.optimization,
