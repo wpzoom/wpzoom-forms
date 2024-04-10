@@ -36,6 +36,35 @@ registerPlugin( 'wpzoom-forms-document-settings', {
 			copyBtnStyle.backgroundColor = 'green';
 		}
 
+		// Function to check if 'wpzoom-forms/text-plain-field' block with subject attribute is present
+		const isTextPlainFieldWithSubject = useSelect(select => {
+			const blocks = select('core/block-editor').getBlocks();
+
+			// Helper function to check if any inner block has the desired attributes
+			const hasDesiredInnerBlock = (innerBlocks) => {
+				return innerBlocks.some(innerBlock => {
+					if (innerBlock.name === 'wpzoom-forms/text-plain-field' && innerBlock.attributes.subject === true) {
+						return true;
+					}
+					if (innerBlock.innerBlocks && innerBlock.innerBlocks.length > 0) {
+						return hasDesiredInnerBlock(innerBlock.innerBlocks);
+					}
+					return false;
+				});
+			};
+
+			// Iterate through all blocks and their inner blocks
+			return blocks.some(block => {
+				if (block.name === 'wpzoom-forms/text-plain-field' && block.attributes.subject === true) {
+					return true;
+				}
+				if (block.innerBlocks && block.innerBlocks.length > 0) {
+					return hasDesiredInnerBlock(block.innerBlocks);
+				}
+				return false;
+			});
+		}, []);		
+
 		return <>
 			<WelcomeGuide/>
 			<PluginDocumentSettingPanel
@@ -74,7 +103,11 @@ registerPlugin( 'wpzoom-forms-document-settings', {
 					value={ formSubject }
 					placeholder={ __( 'New Form Submission', 'wpzoom-forms' ) }
 					onChange={ value => setMeta( { ...meta, '_form_subject': value } ) }
+					disabled={ isTextPlainFieldWithSubject } // Disable the field if the conditions are met
 				/>
+				{ isTextPlainFieldWithSubject && (
+					<note><i>{ __( 'Your form already includes a subject field', 'wpzoom-forms' ) }</i></note>
+				) }
 			</PluginDocumentSettingPanel>
 
 			<PluginDocumentSettingPanel
