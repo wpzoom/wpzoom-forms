@@ -26,8 +26,9 @@ registerPlugin( 'wpzoom-forms-document-settings', {
 		const postID = useSelect( select => select( 'core/editor' ).getCurrentPostId(), [] );
 		const postType = useSelect( select => select( 'core/editor' ).getCurrentPostType(), [] );
 		const [ meta, setMeta ] = useEntityProp( 'postType', postType, 'meta' );
-		const formMethod = meta[ '_form_method' ] || 'email';
-		const formEmail = meta[ '_form_email' ] || ( typeof wpzf_formblock !== 'undefined' && 'admin_email' in wpzf_formblock ? wpzf_formblock.admin_email : '' );
+		const formMethod  = meta[ '_form_method' ] || 'email';
+		const formEmail   = meta[ '_form_email' ] || ( typeof wpzf_formblock !== 'undefined' && 'admin_email' in wpzf_formblock ? wpzf_formblock.admin_email : '' );
+		const formSubject = meta[ '_form_subject' ] || '';
 		const [ hasCopiedShortcode, setHasCopiedShortcode ] = useState( false );
 		const copyBtnStyle = { minHeight: '30px', height: 'auto', minWidth: 'fit-content', margin: '0px 0px 8px 0px' };
 
@@ -66,6 +67,14 @@ registerPlugin( 'wpzoom-forms-document-settings', {
 					placeholder={ __( 'someone@somedomain.com', 'wpzoom-forms' ) }
 					onChange={ value => setMeta( { ...meta, '_form_email': value } ) }
 				/> }
+
+				<TextControl
+					type="text"
+					label={ __( 'Form Subject', 'wpzoom-forms' ) }
+					value={ formSubject }
+					placeholder={ __( 'New Form Submission', 'wpzoom-forms' ) }
+					onChange={ value => setMeta( { ...meta, '_form_subject': value } ) }
+				/>
 			</PluginDocumentSettingPanel>
 
 			<PluginDocumentSettingPanel
