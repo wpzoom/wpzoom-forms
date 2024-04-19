@@ -106,7 +106,7 @@ registerPlugin( 'wpzoom-forms-document-settings', {
 					disabled={ isTextPlainFieldWithSubject } // Disable the field if the conditions are met
 				/>
 				{ isTextPlainFieldWithSubject && (
-					<note><i>{ __( 'Your form already includes a field that is marked as the Subject.', 'wpzoom-forms' ) }</i></note>
+					<note><i>{ __( 'Your form already includes a field that is marked as the Subject. Uncheck its "Is Subject" option if you want to set a custom subject here.', 'wpzoom-forms' ) }</i></note>
 				) }
 			</PluginDocumentSettingPanel>
 
