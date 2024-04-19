@@ -99,14 +99,14 @@ registerPlugin( 'wpzoom-forms-document-settings', {
 
 				<TextControl
 					type="text"
-					label={ __( 'Form Subject', 'wpzoom-forms' ) }
+					label={ __( 'Email Subject', 'wpzoom-forms' ) }
 					value={ formSubject }
 					placeholder={ __( 'New Form Submission', 'wpzoom-forms' ) }
 					onChange={ value => setMeta( { ...meta, '_form_subject': value } ) }
 					disabled={ isTextPlainFieldWithSubject } // Disable the field if the conditions are met
 				/>
 				{ isTextPlainFieldWithSubject && (
-					<note><i>{ __( 'Your form already includes a subject field', 'wpzoom-forms' ) }</i></note>
+					<note><i>{ __( 'Your form already includes a field that is marked as the Subject.', 'wpzoom-forms' ) }</i></note>
 				) }
 			</PluginDocumentSettingPanel>
 
