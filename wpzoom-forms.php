@@ -639,6 +639,17 @@ class WPZOOM_Forms {
 				$this::VERSION
 			);
 		}
+
+		if ( 'edit-wpzf-form' == $current_page || 'wpzf-form' == $current_page ) {
+			wp_enqueue_script( 
+				'wpzoom-forms-cpt',
+				WPZOOM_FORMS_URL . 'dist/assets/admin/js/forms-cpt.js',
+				array(),
+				WPZOOM_FORMS_VERSION,
+				true
+			);
+		}
+
 	}
 
 	/**
