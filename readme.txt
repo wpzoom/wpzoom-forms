@@ -8,7 +8,7 @@ Tested up to:      6.5
 Stable tag:        1.2.0
 License:           GNU General Public License v2
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
-Tags:              contact, form, contact form, form builder
+Tags:              contact, form, contact form, form builder, custom form
 
 **WPZOOM Forms** is a simple, user-friendly contact form plugin for WordPress that utilizes Gutenberg blocks for easy form building and customization.
 
