@@ -5,10 +5,10 @@ Author URI:        https://www.wpzoom.com/
 Requires at least: 6.0
 Requires PHP:      7.4
 Tested up to:      6.5
-Stable tag:        1.1.5
+Stable tag:        1.2.0
 License:           GNU General Public License v2
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
-Tags:              contact, form, contact form, submission, email, block, gutenberg, form builder, elementor
+Tags:              contact, form, contact form, form builder
 
 **WPZOOM Forms** is a simple, user-friendly contact form plugin for WordPress that utilizes Gutenberg blocks for easy form building and customization.
 
@@ -75,6 +75,15 @@ To export form submissions, navigate to the Tools > Export page in Dashboard and
 
 
 == Changelog ==
+
+= 1.2.0 =
+* Added new form templates: Advanced Form with Full Address, Wedding Invitation, Quote Form, Feedback Form, Appointment Form
+* Added a new "Date" field
+* Added a new "Multi checkboxes" option
+* Added forms filter in the Submissions section
+* Added bulk editor to Select and Multi checkboxes fields
+* Added predefined lists with all countries and US states to the Selected field
+* Multiple fixes and improvements
 
 = 1.1.5 =
 * Fixed an issue with line breaks in the email template.
