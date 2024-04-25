@@ -40,6 +40,13 @@ const Edit = props => {
 		}
 	}, [] );
 
+	const [ uniqueId ] = useState( id );
+
+	const handleNameChange = newValue => {
+		const newId = newValue.replace(/\s/g, '_').toLowerCase();
+		setAttributes( { name: newValue, id: 'input_' + clientId.substr( 0, 8 ) } );		
+	};
+
 	useEffect(() => {
 		if (options) {
 			let _items = '';
@@ -63,7 +70,7 @@ const Edit = props => {
 					label={ __( 'Name', 'wpzoom-forms' ) }
 					value={ name }
 					placeholder={ __( 'e.g. My Checkbox Field', 'wpzoom-forms' ) }
-					onChange={ value => setAttributes( { name: value } ) }
+					onChange={ handleNameChange }
 				/>
 
 				<Card size="small">
@@ -169,12 +176,12 @@ const Edit = props => {
 		</InspectorControls>
 
 		<Fragment>
-			{ showLabel && <label htmlFor={ id }>
+			{ showLabel && <label htmlFor={ uniqueId }>
 				<RichText
 					tagName="label"
 					placeholder={ __( 'Label', 'wpzoom-forms' ) }
 					value={ label }
-					htmlFor={ id }
+					htmlFor={ uniqueId }
 					onChange={ value => setAttributes( { label: value } ) }
 				/>
 				{ required && <sup className="wp-block-wpzoom-forms-required">{ __( '*', 'wpzoom-forms' ) }</sup> }
@@ -186,8 +193,8 @@ const Edit = props => {
 						<label>
 							<input
 								type="checkbox"
-								name={ `${id}[]` }
-								id={ id }
+								name={ `${uniqueId}[]` }
+								id={ uniqueId }
 								value={ option }
 								checked={ option == defaultValue }
 								onChange={ e => {} }

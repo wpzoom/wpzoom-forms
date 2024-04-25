@@ -119,6 +119,13 @@ const Edit = props => {
 		setOpen(false);
 	};
 
+	const [ uniqueId ] = useState( id );
+
+	const handleNameChange = newValue => {
+		const newId = newValue.replace(/\s/g, '_').toLowerCase();
+		setAttributes( { name: newValue, id: 'input_' + clientId.substr( 0, 8 ) } );		
+	};
+
 	return (
 		<>
 			<InspectorControls>
@@ -127,7 +134,7 @@ const Edit = props => {
 						label={__('Name', 'wpzoom-forms')}
 						value={name}
 						placeholder={__('e.g. My Dropdown Select Field', 'wpzoom-forms')}
-						onChange={value => setAttributes({ name: value })}
+						onChange={ handleNameChange }
 					/>
 
 					<Card size="small">
@@ -238,12 +245,12 @@ const Edit = props => {
 
 			<Fragment>
 				{showLabel && (
-					<label htmlFor={id}>
+					<label htmlFor={ uniqueId }>
 						<RichText
 							tagName="label"
 							placeholder={__('Label', 'wpzoom-forms')}
 							value={label}
-							htmlFor={id}
+							htmlFor={ uniqueId }
 							onChange={value => setAttributes({ label: value })}
 						/>
 						{required && <sup className="wp-block-wpzoom-forms-required">{__('*', 'wpzoom-forms')}</sup>}
@@ -251,8 +258,8 @@ const Edit = props => {
 				)}
 
 				<select
-					name={id}
-					id={id}
+					name={ uniqueId }
+					id={ uniqueId }
 					required={!!required}
 					multiple={!!multiple}
 					defaultValue={defaultValue}

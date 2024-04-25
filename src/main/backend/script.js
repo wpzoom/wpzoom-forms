@@ -84,12 +84,17 @@ registerPlugin( 'wpzoom-forms-document-settings', {
 						{
 							label: __( 'Email', 'wpzoom-forms' ),
 							value: 'email'
+						},
+						{
+							label: __( 'Save to Database & Email', 'wpzoom-forms' ),
+							value: 'combined'
 						}
+
 					] }
 					onChange={ value => setMeta( { ...meta, '_form_method': value } ) }
 				/>
 
-				{ formMethod == 'email' && <TextControl
+				{ ( formMethod == 'email' || formMethod == 'combined' ) && <TextControl
 					type="email"
 					label={ __( 'Send To', 'wpzoom-forms' ) }
 					value={ formEmail }

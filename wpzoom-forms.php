@@ -1970,7 +1970,7 @@ class WPZOOM_Forms {
 				$fallback_email = trim( get_option( 'admin_email' ) );
 				$sendto         = sanitize_email( false !== $form_email && ! empty( $form_email ) && filter_var( $form_email, FILTER_VALIDATE_EMAIL ) ? $form_email : $fallback_email );
 
-				if ( 'email' == $form_method ) {
+				if ( 'email' == $form_method || 'combined' == $form_method ) {
 					$email_body = '<html>
 						<head>
 							<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -2128,7 +2128,8 @@ class WPZOOM_Forms {
 					if ( $this->not_spam( $details ) ) {
 						$success = wp_mail( $sendto, $subjectline, $email_body, $headers );
 					}
-				} elseif ( 'db' == $form_method ) {
+				} 
+				if ( 'db' == $form_method || 'combined' == $form_method ) {
 					$content = array(
 						'_wpzf_form_id' => $form_id,
 						'_wpzf_fields'  => array()

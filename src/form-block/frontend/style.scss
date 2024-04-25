@@ -35,6 +35,18 @@
         vertical-align: middle;
     }
 
+    input[type=checkbox] {
+        display: block;
+        float: left;
+        position: relative;
+        top: 10px;
+    }
+
+    input[type=checkbox] + label {
+        display: block !important;
+        clear: right !important; 
+    }
+
     input[type=date],
     input[type=datetime],
     input[type=datetime-local],

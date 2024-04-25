@@ -106,7 +106,6 @@
 	}
 
 	#wpfooter {
-		//position: relative;
 		bottom: -60px;
 	}
 
@@ -2780,4 +2779,9 @@
 }
 .predefined-lists p {
 	margin: 0;
+}
+
+.post-php.post-type-wpzf-submission.wpzoom-new-admin #wpfooter {
+	position: relative !important;
+	bottom: 0 !important;
 }
