@@ -20,18 +20,19 @@ WPZOOM Forms is a flexible and intuitive contact form plugin for WordPress that 
 
 = Features =
 
-* Drag-and-drop form builder: Create your forms using the Gutenberg editor with a simple drag-and-drop interface.
-* Responsive design: Your forms will look great on all devices, including desktops, tablets, and smartphones.
-* Email notifications: Receive email notifications when users submit your forms, and customize the email templates as needed.
-* Form validation: Ensure users submit valid data with customizable form validation rules.
-* Anti-Spam Protection with Akismet integration
-* Spam protection: Built-in reCAPTCHA integration helps protect your forms from spam submissions.
-* Works with Elementor
-* Display your form anywhere using built-in contact form shortcodes
+* **Drag-and-drop form builder**: Create your forms using the Gutenberg editor with a simple drag-and-drop interface.
+* **Email notifications**: Receive email notifications when users submit your forms, and customize the email templates as needed.
+* **Akismet integration** for Anti-Spam Protection
+* **Spam protection**: Built-in reCAPTCHA integration helps protect your forms from spam submissions.
+* Works with **Elementor**
+* Display your form anywhere using built-in contact form **shortcodes** or **contact form block**
+* **Pre-built templates**: Choose from a variety of pre-designed form templates to get started quickly.
+* **Date Picker** field to create advanced forms like **booking** or **reservations**
+* **Save Submissions to the Database**: you can collect submissions using your forms and have them all saved in the Dashboard of yoru website. This helps to find quickly all messages left by your users.
+
 
 = Coming Soon =
 
-* Pre-built templates: Choose from a variety of pre-designed form templates to get started quickly.
 * Conditional logic
 * Files upload
 
