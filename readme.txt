@@ -5,7 +5,7 @@ Author URI:        https://www.wpzoom.com/
 Requires at least: 6.0
 Requires PHP:      7.4
 Tested up to:      6.5
-Stable tag:        1.2.0
+Stable tag:        1.2.1
 License:           GNU General Public License v2
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 Tags:              contact, form, contact form, form builder, custom form
@@ -76,6 +76,9 @@ To export form submissions, navigate to the Tools > Export page in Dashboard and
 
 
 == Changelog ==
+
+= 1.2.1 =
+* Fixed a bug with the date field in Elementor
 
 = 1.2.0 =
 * Added new form templates: Advanced Form with Full Address, Wedding Invitation, Quote Form, Feedback Form, Appointment Form
