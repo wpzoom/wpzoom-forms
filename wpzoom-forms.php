@@ -821,7 +821,7 @@ class WPZOOM_Forms {
 	 */
 	public function block_frontend_assets() {
 
-		if( self::has_block( 'wpzoom-forms/datepicker-field' ) || self::has_elementor_widget() ) {
+		if( self::has_block( 'wpzoom-forms/datepicker-field' ) || self::has_elementor_widget() || self::has_cpt_form_shortcode() ) {
 			wp_enqueue_style( 'wpzoom-forms-css-frontend-flatpickr' );
 			wp_enqueue_script( 'wpzoom-forms-js-frontend-flatpickr' );
 			wp_enqueue_script( 'wpzoom-forms-js-frontend-datepicker' );
@@ -878,12 +878,18 @@ class WPZOOM_Forms {
 		if ( isset( $elementor_data[0] ) && is_string( $elementor_data[0] ) ) {
 
 			$regExp = '/"widgetType":"([^"]*)/i';
-			$regExpAttrs = '/"forms_post_id":"([^"]*)/i';
-			
 			$outputArray = array();
+
+			// Define the pattern to match the shortcode
+			$scPattern = '/\[wpzf_form([^\]]*)\]/';
+			preg_match_all( $scPattern, $elementor_data[0], $matches );
+
+			// Check if any matches are found
+			if ( ! empty( $matches[0] ) ) {
+				return true;
+			}
 	
 			if ( preg_match_all( $regExp, $elementor_data[0], $outputArray, PREG_SET_ORDER) ) {}
-			if ( preg_match_all( $regExpAttrs, $elementor_data[0], $outputArray2, PREG_SET_ORDER) ) {}
 
 			foreach( $outputArray as $found ) {
 				if( in_array( 'wpzoom-forms-widget-cpt', $found ) ) {
@@ -893,6 +899,30 @@ class WPZOOM_Forms {
 
 		}
 
+		return false;
+	}
+
+	/**
+	 * Check the post content has cpt form shortcode
+	 *
+	 * @since  1.2.0
+	 * @param  int         $post_id The post ID.
+	 * @param  boolean|int $content The post content.
+	 * @return boolean     Return true if post content has cpt form shortcode, else return false.
+	 */
+	public static function has_cpt_form_shortcode( $post_id = 0, $content = '' ) {
+		
+		$post_id = $post_id > 0 ? $post_id : get_the_ID();
+		
+		if ( empty( $content ) ) {
+			$content = get_post_field( 'post_content', $post_id );
+		}
+
+		if ( $content ) {			
+			if ( has_shortcode( $content, 'wpzf_form' ) ) {
+				return true;
+			}
+		}
 		return false;
 	}
 
