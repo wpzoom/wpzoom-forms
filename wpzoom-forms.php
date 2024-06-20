@@ -821,7 +821,7 @@ class WPZOOM_Forms {
 	 */
 	public function block_frontend_assets() {
 
-		if( self::has_block( 'wpzoom-forms/datepicker-field' ) ) {
+		if( self::has_block( 'wpzoom-forms/datepicker-field' ) || self::has_elementor_widget() ) {
 			wp_enqueue_style( 'wpzoom-forms-css-frontend-flatpickr' );
 			wp_enqueue_script( 'wpzoom-forms-js-frontend-flatpickr' );
 			wp_enqueue_script( 'wpzoom-forms-js-frontend-datepicker' );
@@ -862,6 +862,38 @@ class WPZOOM_Forms {
 		
 		return false;
 	
+	}
+
+	// Check the form exists in the elementor posts content
+	public static function has_elementor_widget( $post_id = 0 ) {
+
+		if ( ! defined( 'ELEMENTOR_VERSION' ) && ! is_callable( 'Elementor\Plugin::instance' ) ) {
+			return false;
+		}
+
+		$post_id = $post_id > 0 ? $post_id : get_the_ID();
+
+		$elementor_data = get_post_meta( $post_id, '_elementor_data' );
+
+		if ( isset( $elementor_data[0] ) && is_string( $elementor_data[0] ) ) {
+
+			$regExp = '/"widgetType":"([^"]*)/i';
+			$regExpAttrs = '/"forms_post_id":"([^"]*)/i';
+			
+			$outputArray = array();
+	
+			if ( preg_match_all( $regExp, $elementor_data[0], $outputArray, PREG_SET_ORDER) ) {}
+			if ( preg_match_all( $regExpAttrs, $elementor_data[0], $outputArray2, PREG_SET_ORDER) ) {}
+
+			foreach( $outputArray as $found ) {
+				if( in_array( 'wpzoom-forms-widget-cpt', $found ) ) {
+					return true;
+				}
+			}
+
+		}
+
+		return false;
 	}
 
 	/**
