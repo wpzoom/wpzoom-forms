@@ -453,7 +453,7 @@ class WPZOOM_Forms {
 			)
 		);
 
-		foreach ( array( 'multi-checkbox', 'checkbox', 'email', 'label', 'name', 'phone', 'plain', 'radio', 'select', 'submit', 'textarea', 'website', 'datepicker' ) as $block ) {
+		foreach ( array( 'multi-checkbox', 'checkbox', 'email', 'label', 'name', 'password', 'phone', 'plain', 'radio', 'select', 'submit', 'textarea', 'website', 'datepicker' ) as $block ) {
 			register_block_type( $this->main_dir_path . 'fields/' . $block . '/block.json' );
 		}
 	}
@@ -505,6 +505,7 @@ class WPZOOM_Forms {
 				'wpzoom-forms/text-plain-field',
 				'wpzoom-forms/text-name-field',
 				'wpzoom-forms/text-email-field',
+				'wpzoom-forms/text-password-field',
 				'wpzoom-forms/text-website-field',
 				'wpzoom-forms/text-phone-field',
 				'wpzoom-forms/textarea-field',
@@ -720,10 +721,11 @@ class WPZOOM_Forms {
 	 */
 	public function register_frontend_assets() {
 
-		$depends         = array( 'jquery', 'wp-blocks', 'wp-components', 'wp-core-data', 'wp-data', 'wp-element', 'wp-i18n', 'wp-polyfill' );
-		$enableRecaptcha = WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' );
-		$recaptchaType    = ! empty( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) ) ? WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) : 'v2';
-		$site_key        = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key' ) ) );
+		$depends         	= array( 'jquery', 'wp-blocks', 'wp-components', 'wp-core-data', 'wp-data', 'wp-element', 'wp-i18n', 'wp-polyfill' );
+		$enableRecaptcha	= WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' );
+		$recaptchaType		= WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) ?? 'v2';
+		$recaptcha_site_key = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key' ) ) );
+		$turnstile_site_key	= esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_turnstile_site_key' ) ) );
 
 		if ( 'recaptcha' == $enableRecaptcha ) {
 
@@ -747,6 +749,16 @@ class WPZOOM_Forms {
 			}
 
 			$depends[] = 'google-recaptcha';
+		} elseif ( 'turnstile' == $enableRecaptcha ) {
+			wp_register_script(
+				'turnstile-recaptcha',
+				'https://challenges.cloudflare.com/turnstile/v0/api.js',
+				array(),
+				null,
+				true
+			);
+
+			$depends[] = 'turnstile-recaptcha';
 		}
 		
 		wp_register_script(
@@ -1430,12 +1442,16 @@ class WPZOOM_Forms {
 			$content = preg_replace( '/<\/form>/is', '<input type="hidden" name="wpzf_subject" value="' . $match2[1] . '" /></form>', $content );
 		}
 
-		$enableRecaptcha  = WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' );
-		$recaptchaType    = ! empty( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) ) ? WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) : 'v2';
-		$site_key         = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key' ) ) );
+		$captchaMethod		= WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' );
+		$recaptchaType		= WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) ?? 'v2';
+		$recaptcha_site_key	= esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key' ) ) );
+		$turnstile_site_key	= esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_turnstile_site_key' ) ) );
 
-		if( 'recaptcha' == $enableRecaptcha ) {
-			$content = preg_replace( '/<input([^>]*)type="submit"([^>]*)class="([^"]+)"/i', '<input $1 type="submit" data-sitekey="' . $site_key . '" data-callback="wpzf_submit" data-action="submit" $2 class="$3 g-recaptcha"', $content );
+		if( 'recaptcha' == $captchaMethod ) {
+			$content = preg_replace( '/<input([^>]*)type="submit"([^>]*)class="([^"]+)"/i', '<input $1 type="submit" data-sitekey="' . $recaptcha_site_key . '" data-callback="wpzf_submit" data-action="submit" $2 class="$3 g-recaptcha"', $content );
+		} elseif ( 'turnstile' == $captchaMethod ) {
+			$turnstile_widget = '<div class="cf-turnstile" data-sitekey="' . $turnstile_site_key . '"></div>';
+			$content = preg_replace( '/<input([^>]*)type="submit"([^>]*)class="([^"]+)"/i', $turnstile_widget . '<input $1 type="submit" data-callback="wpzf_submit" data-action="submit" $2 class="$3 cf-captcha"', $content );
 		}
 
 		return $content;
@@ -2017,6 +2033,37 @@ class WPZOOM_Forms {
 							}
 
 						}
+					}
+				}
+			} elseif ('turnstile' == WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' ) ) {
+				$captcha_check_passed = false;
+				
+				$captcha = $_POST['cf-turnstile-response'];
+				if(!empty($captcha)){
+					$secret = trim( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_turnstile_secret_key' ) ) );
+					$ip = $_SERVER['REMOTE_ADDR'];
+
+					$url_path = 'https://challanges.cloudflare.com/turnstile/v0/siteverify';
+					$data = array(
+						'secret' => $secret,
+						'response' => $captcha,
+						'remoteip' => $ip
+					);
+
+					$options = array(
+						'http' => array(
+							'method' => 'POST',
+							'content' => http_build_query($data)
+						)
+					);
+					$stream = stream_context_create($options);
+					$result = file_get_contents($url_path, false, $stream);
+					$result = json_decode($result, true);
+
+					if(intval($result['success']) !== 1){
+						$captcha_check_passed = false;
+					} else {
+						$captcha_check_passed = true;
 					}
 				}
 			} else {

@@ -279,7 +279,8 @@ class WPZOOM_Forms_Settings {
 									'default'     => 'none',
 									'options'     => array(
 										'none'      => esc_html__( 'None', 'wpzoom-forms' ),
-										'recaptcha' => esc_html__( 'reCAPTCHA', 'wpzoom-forms' )
+										'recaptcha' => esc_html__( 'reCAPTCHA', 'wpzoom-forms' ),
+                                        'turnstile' => esc_html__( 'Cloudflare Turnstile', 'wpzoom-forms')
 									)
 								),
 							),
@@ -317,6 +318,30 @@ class WPZOOM_Forms_Settings {
 								'args'  => array(
 									'label_for'   => 'wpzf_global_captcha_secret_key',
 									'class'       => 'wpzoom-forms-field required-recaptcha',
+									'default'     => '',
+									'description' => '',
+									'type'        => 'text',
+								),
+							),
+							array(
+								'id'	=> 'wpzf_global_turnstile_site_key',
+								'title' => __( 'Site Key', 'wpzoom-forms' ),
+								'type'  => 'input',
+								'args'  => array(
+									'label_for'   => 'wpzf_global_turnstile_site_key',
+									'class'       => 'wpzoom-forms-field required-turnstile',
+									'default'     => '',
+									'description' => '',
+									'type'        => 'text',
+								),
+							),
+							array(
+								'id'	=> 'wpzf_global_turnstile_secret_key',
+								'title' => __( 'Secret Key', 'wpzoom-forms' ),
+								'type'  => 'input',
+								'args'  => array(
+									'label_for'   => 'wpzf_global_turnstile_secret_key',
+									'class'       => 'wpzoom-forms-field required-turnstile',
 									'default'     => '',
 									'description' => '',
 									'type'        => 'text',
@@ -547,8 +572,8 @@ class WPZOOM_Forms_Settings {
 	}
 	public function section_recaptcha_cb( $args ) {
 		?>
-		 <p id="<?php echo esc_attr( $args['id'] ); ?>"><?php echo wp_kses_post( __( 'reCAPTCHA is a popular tool used to prevent spam and automated bots from accessing websites. <a target="_blank" href="https://www.google.com/recaptcha/admin/create">Click here</a> to generate your reCAPTCHA keys and enter them below', 'wpzoom-forms' ) ); ?></p>
-		<?php
+        <p id="<?php echo esc_attr( $args['id'] ); ?>"><?php echo wp_kses_post( __( 'reCAPTCHA is a popular tool used to prevent spam and automated bots from accessing websites. <a target="_blank" href="https://www.google.com/recaptcha/admin/create">Click here</a> to generate your reCAPTCHA keys and enter them below. For Cloudflare Turnstile, <a target="_blank" href="https://dash.cloudflare.com/sign-up/turnstile">click here</a> to sign up and get your keys.', 'wpzoom-forms' ) ); ?></p>
+        <?php
 	}
 }
 

@@ -211,6 +211,7 @@ registerBlockType( 'wpzoom-forms/form', {
 					'wpzoom-forms/text-plain-field',
 					'wpzoom-forms/text-name-field',
 					'wpzoom-forms/text-email-field',
+					'wpzoom-forms/text-password-field',
 					'wpzoom-forms/text-website-field',
 					'wpzoom-forms/text-phone-field',
 					'wpzoom-forms/textarea-field',
@@ -266,6 +267,18 @@ registerBlockType( 'wpzoom-forms/form', {
 													'className': 'fullwidth'
 												}
 											],
+											[
+												'wpzoom-forms/text-password-field',
+												{
+													'id':        'input_password',
+													'name':      __( 'Password', 'wpzoom-blocks' ),
+													'type':      'password',
+													'showLabel': true,
+													'label':     __( 'Password', 'wpzoom-blocks' ),
+													'required':  true,
+													'className': 'fullwidth'
+												}
+											]
 											[
 												'wpzoom-forms/text-plain-field',
 												{
