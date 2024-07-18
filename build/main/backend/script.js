@@ -2981,6 +2981,17 @@ module.exports = window["ReactDOM"];
 
 /***/ }),
 
+/***/ "lodash":
+/*!*************************!*\
+  !*** external "lodash" ***!
+  \*************************/
+/***/ (function(module) {
+
+"use strict";
+module.exports = window["lodash"];
+
+/***/ }),
+
 /***/ "@wordpress/block-editor":
 /*!*************************************!*\
   !*** external ["wp","blockEditor"] ***!
@@ -3811,11 +3822,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _welcome__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./welcome */ "./src/main/backend/welcome.js");
 /* harmony import */ var react_sortable_hoc__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! react-sortable-hoc */ "./node_modules/react-sortable-hoc/dist/react-sortable-hoc.esm.js");
 /* harmony import */ var array_move__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! array-move */ "./node_modules/array-move/index.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! lodash */ "lodash");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_15__);
 
 
 
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+
 
 
 
@@ -3857,6 +3871,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       meta = _useEntityProp2[0],
       setMeta = _useEntityProp2[1];
     var formMethod = meta['_form_method'] || 'email';
+    var formType = meta['_form_type'] || 'contact';
     var formEmail = meta['_form_email'] || (typeof wpzf_formblock !== 'undefined' && 'admin_email' in wpzf_formblock ? wpzf_formblock.admin_email : '');
     var formSubject = meta['_form_subject'] || '';
     var _useState = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_8__.useState)(false),
@@ -3873,40 +3888,67 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       copyBtnStyle.backgroundColor = 'green';
     }
 
-    // Function to check if 'wpzoom-forms/text-plain-field' block with subject attribute is present
-    var isTextPlainFieldWithSubject = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_7__.useSelect)(function (select) {
-      var blocks = select('core/block-editor').getBlocks();
-
-      // Helper function to check if any inner block has the desired attributes
-      var hasDesiredInnerBlock = function hasDesiredInnerBlock(innerBlocks) {
-        return innerBlocks.some(function (innerBlock) {
-          if (innerBlock.name === 'wpzoom-forms/text-plain-field' && innerBlock.attributes.subject === true) {
-            return true;
-          }
-          if (innerBlock.innerBlocks && innerBlock.innerBlocks.length > 0) {
-            return hasDesiredInnerBlock(innerBlock.innerBlocks);
-          }
-          return false;
-        });
-      };
-
-      // Iterate through all blocks and their inner blocks
-      return blocks.some(function (block) {
-        if (block.name === 'wpzoom-forms/text-plain-field' && block.attributes.subject === true) {
+    // Helper function to check if any inner block has the desired attributes
+    var hasDesiredInnerBlock = function hasDesiredInnerBlock(innerBlocks, blockName, attributeName, attributeValue) {
+      return innerBlocks.some(function (innerBlock) {
+        if (innerBlock.name === blockName && innerBlock.attributes[attributeName] === attributeValue) {
           return true;
         }
-        if (block.innerBlocks && block.innerBlocks.length > 0) {
-          return hasDesiredInnerBlock(block.innerBlocks);
+        if (innerBlock.innerBlocks && innerBlock.innerBlocks.length > 0) {
+          return hasDesiredInnerBlock(innerBlock.innerBlocks, blockName, attributeName, attributeValue);
         }
         return false;
       });
+    };
+
+    // Function to check if 'wpzoom-forms/text-plain-field' block with subject attribute is present
+    var isTextPlainFieldWithSubject = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_7__.useSelect)(function (select) {
+      var blocks = select('core/block-editor').getBlocks();
+      return hasDesiredInnerBlock(blocks, 'wpzoom-forms/text-plain-field', 'subject', true);
     }, []);
+
+    // Function to check if 'wpzoom-forms/text-email-field' and 'wpzoom-forms/text-password-field' blocks are present
+    var canBeRegisterOrLogin = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_7__.useSelect)(function (select) {
+      var blocks = select('core/block-editor').getBlocks();
+      var hasEmailField = hasDesiredInnerBlock(blocks, 'wpzoom-forms/text-email-field', 'required', true);
+      var hasPasswordField = hasDesiredInnerBlock(blocks, 'wpzoom-forms/text-password-field', 'required', true);
+      return hasEmailField && hasPasswordField;
+    }, []);
+
+    // Reset form type to 'contact' if conditions are not met
+    (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_8__.useEffect)(function () {
+      if (!canBeRegisterOrLogin && formType !== 'contact') {
+        setMeta(_objectSpread(_objectSpread({}, meta), {}, {
+          '_form_type': 'contact'
+        }));
+      }
+    }, [canBeRegisterOrLogin]);
     return (0,react__WEBPACK_IMPORTED_MODULE_2__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_8__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_2__.createElement)(_welcome__WEBPACK_IMPORTED_MODULE_12__["default"], null), (0,react__WEBPACK_IMPORTED_MODULE_2__.createElement)(_wordpress_edit_post__WEBPACK_IMPORTED_MODULE_9__.PluginDocumentSettingPanel, {
       name: "wpzoom-forms-document-settings",
       className: "wpzoom-forms-document-settings",
       title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Form Settings', 'wpzoom-forms'),
       opened: true
     }, (0,react__WEBPACK_IMPORTED_MODULE_2__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.SelectControl, {
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Form Type', 'wpzoom-forms'),
+      value: canBeRegisterOrLogin ? formType : 'contact',
+      options: [{
+        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Contact Form', 'wpzoom-forms'),
+        value: 'contact'
+      }, {
+        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Register Form', 'wpzoom-forms'),
+        value: 'register'
+      }, {
+        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Login Form', 'wpzoom-forms'),
+        value: 'login'
+      }],
+      disabled: !canBeRegisterOrLogin // Disable the field if the conditions are met
+      ,
+      onChange: function onChange(value) {
+        return setMeta(_objectSpread(_objectSpread({}, meta), {}, {
+          '_form_type': value
+        }));
+      }
+    }), !canBeRegisterOrLogin && (0,react__WEBPACK_IMPORTED_MODULE_2__.createElement)("note", null, (0,react__WEBPACK_IMPORTED_MODULE_2__.createElement)("i", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('To use Register or Login form type, you need to add Email and Password as required fields to the form.', 'wpzoom-forms')), (0,react__WEBPACK_IMPORTED_MODULE_2__.createElement)("br", null)), (0,react__WEBPACK_IMPORTED_MODULE_2__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.SelectControl, {
       label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Form Method', 'wpzoom-forms'),
       value: formMethod,
       options: [{

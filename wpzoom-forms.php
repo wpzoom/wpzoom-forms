@@ -289,6 +289,20 @@ class WPZOOM_Forms {
 
 			register_meta(
 				'post',
+				'_form_type',
+				array(
+					'object_subtype'    => 'wpzf-form',
+					'show_in_rest'      => true,
+					'single'            => true,
+					'type'              => 'string',
+					'default'           => 'contact',
+					'sanitize_callback' => 'sanitize_text_field',
+					'auth_callback'     => function() { return current_user_can( 'edit_posts' ); }
+				)
+			);
+
+			register_meta(
+				'post',
 				'_form_email',
 				array(
 					'object_subtype'    => 'wpzf-form',
