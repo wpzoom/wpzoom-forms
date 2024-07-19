@@ -2087,13 +2087,30 @@ class WPZOOM_Forms {
 			if ( $captcha_check_passed && count( $blocks ) > 0 ) {
 				$clean_site_name    = sanitize_text_field( get_bloginfo( 'name' ) );
 				$input_blocks   = $this->get_input_blocks( $blocks );
+				$form_type 		= get_post_meta( $form_id, '_form_type', true ) ?: 'contact';
 				$form_method    = get_post_meta( $form_id, '_form_method', true ) ?: 'email';
 				$form_email     = get_post_meta( $form_id, '_form_email', true );
 				$form_subject   = get_post_meta( $form_id, '_form_subject', true );
 				$fallback_email = trim( get_option( 'admin_email' ) );
 				$sendto         = sanitize_email( false !== $form_email && ! empty( $form_email ) && filter_var( $form_email, FILTER_VALIDATE_EMAIL ) ? $form_email : $fallback_email );
 
-				if ( 'email' == $form_method || 'combined' == $form_method ) {
+				if ('login' == $form_type){
+					$credentials = array(
+						'user_login' => sanitize_user($_REQUEST['wpzf_input_email']) ?? '',
+						'user_password' => esc_attr($_REQUEST['wpzf_input_password']) ?? '',
+					);
+
+					$user = wp_signon($credentials);
+					if(!is_wp_error($user)){
+						wp_safe_redirect( home_url() );
+						exit;
+					} else {
+						$success = false;
+						echo $user->get_error_message();
+					}
+				}
+
+				if ( 'login' !== $form_type && ( 'email' == $form_method || 'combined' == $form_method )) {
 					$email_body = '<html>
 						<head>
 							<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -2204,6 +2221,8 @@ class WPZOOM_Forms {
 							} elseif ( 'wpzf_subject' == $key ) {
 								$sbj = sanitize_text_field( $value );
 								continue;
+							} elseif ( 'wpzf_input_password' == $key ) {
+								continue;
 							}
 
 							$email_body .= '<strong>' . wp_kses_post( wp_unslash( $name ) ) . ':</strong><br/><br/>' . nl2br( wp_kses_post( wp_unslash( $value ) ) ) . '<br/><br/><hr/><br/>';
@@ -2252,7 +2271,7 @@ class WPZOOM_Forms {
 						$success = wp_mail( $sendto, $subjectline, $email_body, $headers );
 					}
 				} 
-				if ( 'db' == $form_method || 'combined' == $form_method ) {
+				if ( 'contact' == $form_type && ( 'db' == $form_method || 'combined' == $form_method )) {
 					$content = array(
 						'_wpzf_form_id' => $form_id,
 						'_wpzf_fields'  => array()
