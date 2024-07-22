@@ -3872,12 +3872,15 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       setMeta = _useEntityProp2[1];
     var formMethod = meta['_form_method'] || 'email';
     var formType = meta['_form_type'] || 'contact';
+    var _useState = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_8__.useState)(formType),
+      _useState2 = (0,_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1__["default"])(_useState, 1),
+      initialFormType = _useState2[0];
     var formEmail = meta['_form_email'] || (typeof wpzf_formblock !== 'undefined' && 'admin_email' in wpzf_formblock ? wpzf_formblock.admin_email : '');
     var formSubject = meta['_form_subject'] || '';
-    var _useState = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_8__.useState)(false),
-      _useState2 = (0,_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1__["default"])(_useState, 2),
-      hasCopiedShortcode = _useState2[0],
-      setHasCopiedShortcode = _useState2[1];
+    var _useState3 = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_8__.useState)(false),
+      _useState4 = (0,_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1__["default"])(_useState3, 2),
+      hasCopiedShortcode = _useState4[0],
+      setHasCopiedShortcode = _useState4[1];
     var copyBtnStyle = {
       minHeight: '30px',
       height: 'auto',
@@ -3915,11 +3918,15 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       return hasEmailField && hasPasswordField;
     }, []);
 
-    // Reset form type to 'contact' if conditions are not met
+    // Reset form type to 'contact' or initial value
     (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_8__.useEffect)(function () {
       if (!canBeRegisterOrLogin && formType !== 'contact') {
         setMeta(_objectSpread(_objectSpread({}, meta), {}, {
           '_form_type': 'contact'
+        }));
+      } else if (canBeRegisterOrLogin && formType !== initialFormType) {
+        setMeta(_objectSpread(_objectSpread({}, meta), {}, {
+          '_form_type': initialFormType
         }));
       }
     }, [canBeRegisterOrLogin]);
@@ -3930,7 +3937,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
       opened: true
     }, (0,react__WEBPACK_IMPORTED_MODULE_2__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.SelectControl, {
       label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Form Type', 'wpzoom-forms'),
-      value: canBeRegisterOrLogin ? formType : 'contact',
+      value: formType,
       options: [{
         label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Contact Form', 'wpzoom-forms'),
         value: 'contact'

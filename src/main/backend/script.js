@@ -29,6 +29,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 		const [meta, setMeta] = useEntityProp('postType', postType, 'meta');
 		const formMethod = meta['_form_method'] || 'email';
 		const formType = meta['_form_type'] || 'contact';
+		const [initialFormType] = useState(formType);
 		const formEmail = meta['_form_email'] || (typeof wpzf_formblock !== 'undefined' && 'admin_email' in wpzf_formblock ? wpzf_formblock.admin_email : '');
 		const formSubject = meta['_form_subject'] || '';
 		const [hasCopiedShortcode, setHasCopiedShortcode] = useState(false);
@@ -68,10 +69,12 @@ registerPlugin('wpzoom-forms-document-settings', {
 			return hasEmailField && hasPasswordField;
 		}, []);
 
-		// Reset form type to 'contact' if conditions are not met
+		// Reset form type to 'contact' or initial value
 		useEffect(() => {
 			if (!canBeRegisterOrLogin && formType !== 'contact') {
 				setMeta({ ...meta, '_form_type': 'contact' });
+			} else if (canBeRegisterOrLogin && formType !== initialFormType) {
+				setMeta({ ...meta, '_form_type': initialFormType });
 			}
 		}, [canBeRegisterOrLogin]);
 
@@ -85,7 +88,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 			>
 				<SelectControl
 					label={__('Form Type', 'wpzoom-forms')}
-					value={canBeRegisterOrLogin ? formType : 'contact'}
+					value={formType}
 					options={[
 						{
 							label: __('Contact Form', 'wpzoom-forms'),
