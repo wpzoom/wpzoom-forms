@@ -3875,6 +3875,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
     var _useState = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_8__.useState)(formType),
       _useState2 = (0,_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_1__["default"])(_useState, 1),
       initialFormType = _useState2[0];
+    var formRedirect = meta['_form_redirect'] || '';
     var formEmail = meta['_form_email'] || (typeof wpzf_formblock !== 'undefined' && 'admin_email' in wpzf_formblock ? wpzf_formblock.admin_email : '');
     var formSubject = meta['_form_subject'] || '';
     var _useState3 = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_8__.useState)(false),
@@ -3994,7 +3995,17 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
         }));
       },
       disabled: isTextPlainFieldWithSubject // Disable the field if the conditions are met
-    }), isTextPlainFieldWithSubject && (0,react__WEBPACK_IMPORTED_MODULE_2__.createElement)("note", null, (0,react__WEBPACK_IMPORTED_MODULE_2__.createElement)("i", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Your form already includes a field that is marked as the Subject. Uncheck its "Is Subject" option if you want to set a custom subject here.', 'wpzoom-forms')))), (0,react__WEBPACK_IMPORTED_MODULE_2__.createElement)(_wordpress_edit_post__WEBPACK_IMPORTED_MODULE_9__.PluginDocumentSettingPanel, {
+    }), isTextPlainFieldWithSubject && (0,react__WEBPACK_IMPORTED_MODULE_2__.createElement)("note", null, (0,react__WEBPACK_IMPORTED_MODULE_2__.createElement)("i", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Your form already includes a field that is marked as the Subject. Uncheck its "Is Subject" option if you want to set a custom subject here.', 'wpzoom-forms'))), (0,react__WEBPACK_IMPORTED_MODULE_2__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.TextControl, {
+      type: "text",
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Redirect URL', 'wpzoom-forms'),
+      value: formRedirect,
+      placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('https://example.com/thank-you', 'wpzoom-forms'),
+      onChange: function onChange(value) {
+        return setMeta(_objectSpread(_objectSpread({}, meta), {}, {
+          '_form_redirect': value
+        }));
+      }
+    })), (0,react__WEBPACK_IMPORTED_MODULE_2__.createElement)(_wordpress_edit_post__WEBPACK_IMPORTED_MODULE_9__.PluginDocumentSettingPanel, {
       name: "wpzoom-forms-document-settings-details",
       className: "wpzoom-forms-document-settings-details",
       title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Form Details', 'wpzoom-forms'),

@@ -30,6 +30,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 		const formMethod = meta['_form_method'] || 'email';
 		const formType = meta['_form_type'] || 'contact';
 		const [initialFormType] = useState(formType);
+		const formRedirect = meta['_form_redirect'] || '';
 		const formEmail = meta['_form_email'] || (typeof wpzf_formblock !== 'undefined' && 'admin_email' in wpzf_formblock ? wpzf_formblock.admin_email : '');
 		const formSubject = meta['_form_subject'] || '';
 		const [hasCopiedShortcode, setHasCopiedShortcode] = useState(false);
@@ -149,6 +150,13 @@ registerPlugin('wpzoom-forms-document-settings', {
 				{isTextPlainFieldWithSubject && (
 					<note><i>{__('Your form already includes a field that is marked as the Subject. Uncheck its "Is Subject" option if you want to set a custom subject here.', 'wpzoom-forms')}</i></note>
 				)}
+				<TextControl
+					type="text"
+					label={__('Redirect URL', 'wpzoom-forms')}
+					value={formRedirect}
+					placeholder={__('https://example.com/thank-you', 'wpzoom-forms')}
+					onChange={value => setMeta({ ...meta, '_form_redirect': value })}
+				/>
 			</PluginDocumentSettingPanel>
 
 			<PluginDocumentSettingPanel

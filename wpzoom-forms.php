@@ -329,6 +329,20 @@ class WPZOOM_Forms {
 				)
 			);
 
+			register_meta(
+				'post',
+				'_form_redirect',
+				array(
+					'object_subtype'    => 'wpzf-form',
+					'show_in_rest'      => true,
+					'single'            => true,
+					'type'              => 'string',
+					'default'           => '',
+					'sanitize_callback' => 'esc_url_raw',
+					'auth_callback'     => function() { return current_user_can( 'edit_posts' ); }
+				)
+				);
+
 			add_shortcode( 'wpzf_form', array( $this, 'shortcode_output' ) );
 
 			//$form_pto           = get_post_type_object( 'wpzf-form' );
@@ -1998,9 +2012,11 @@ class WPZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function action_form_post() {
-		$success = false;
-		$url     = isset( $_POST['_wp_http_referer'] ) ? sanitize_text_field( wp_unslash( $_POST['_wp_http_referer'] ) ) : home_url();
-		$form_id = -1;
+		$mail_success 	= false; 
+		$db_success 	= false; 
+		$action_success = false; 
+		$url     		= isset( $_POST['_wp_http_referer'] ) ? sanitize_text_field( wp_unslash( $_POST['_wp_http_referer'] ) ) : home_url();
+		$form_id 		= -1;
 
 		if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'wpzf_submit' ) ) {
 			$form_id = isset( $_POST['form_id'] ) ? intval( $_POST['form_id'] ) : -1;
@@ -2089,6 +2105,7 @@ class WPZOOM_Forms {
 				$input_blocks   = $this->get_input_blocks( $blocks );
 				$form_type 		= get_post_meta( $form_id, '_form_type', true ) ?: 'contact';
 				$form_method    = get_post_meta( $form_id, '_form_method', true ) ?: 'email';
+				$form_redirect	= get_post_meta( $form_id, '_form_redirect', true ) ?: '';
 				$form_email     = get_post_meta( $form_id, '_form_email', true );
 				$form_subject   = get_post_meta( $form_id, '_form_subject', true );
 				$fallback_email = trim( get_option( 'admin_email' ) );
@@ -2102,10 +2119,9 @@ class WPZOOM_Forms {
 
 					$user = wp_signon($credentials);
 					if(!is_wp_error($user)){
-						wp_safe_redirect( home_url() );
-						exit;
+						$action_success = true;
 					} else {
-						$success = false;
+						$action_success = false;
 						echo $user->get_error_message();
 					}
 				}
@@ -2123,10 +2139,9 @@ class WPZOOM_Forms {
 
 					$user_id = wp_insert_user($userdata);
 					if(!is_wp_error($user_id)){
-						wp_safe_redirect( home_url() );
-						exit;
+						$action_success = true;
 					} else {
-						$success = false;
+						$action_success = false;
 						error_log(print_r($user_id->get_error_message(), true));
 					}
 				}
@@ -2289,9 +2304,12 @@ class WPZOOM_Forms {
 					);
 
 					if ( $this->not_spam( $details ) ) {
-						$success = wp_mail( $sendto, $subjectline, $email_body, $headers );
+						$mail_success = wp_mail( $sendto, $subjectline, $email_body, $headers );
 					}
-				} 
+				} else {
+					$mail_success = true;
+				}
+
 				if ( 'contact' == $form_type && ( 'db' == $form_method || 'combined' == $form_method )) {
 					$content = array(
 						'_wpzf_form_id' => $form_id,
@@ -2332,7 +2350,7 @@ class WPZOOM_Forms {
 					}
 
 					if ( $this->not_spam( $details ) ) {
-						$success = false !== $content && 0 < wp_insert_post( array(
+						$db_success = false !== $content && 0 < wp_insert_post( array(
 							'post_type'      => 'wpzf-submission',
 							'post_status'    => 'publish',
 							'comment_status' => 'closed',
@@ -2344,15 +2362,21 @@ class WPZOOM_Forms {
 							'meta_input'     => $content
 						) );
 					}
+				} else {
+					$db_success = true;
 				}
 			}
 		}
 
-		wp_safe_redirect(
-			urldecode( add_query_arg( 'success', ( $success ? '1' : '0' ), $url ) ) .
-			( $form_id > -1 ? '#wpzf-' . $form_id : '' )
-		);
+		$success = ($form_type !== 'contact' ? $action_success : true) // If the form type is login|register then action is required
+					&& ($form_method !== 'db' ? $mail_success : true) // If the form method is email|combined then email is required 
+					&& ($form_method !== 'email' ? $db_success : true); // If the form method is db|combined then db is required
 
+		$redirect_url = (empty( $form_redirect ) || !$success) // Ignore redirect if form redirect is empty or form submission failed
+			? urldecode( add_query_arg( 'success', ( $success ? '1' : '0' ), $url ) ) . ( $form_id > -1 ? '#wpzf-' . $form_id : '' )
+			: $form_redirect;
+
+		wp_safe_redirect($redirect_url);
 		exit;
 	}
 
