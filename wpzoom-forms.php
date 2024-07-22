@@ -2096,7 +2096,7 @@ class WPZOOM_Forms {
 
 				if ('login' == $form_type){
 					$credentials = array(
-						'user_login' => sanitize_user($_REQUEST['wpzf_input_email']) ?? '',
+						'user_login' => sanitize_email($_REQUEST['wpzf_input_email']) ?? '',
 						'user_password' => esc_attr($_REQUEST['wpzf_input_password']) ?? '',
 					);
 
@@ -2107,6 +2107,27 @@ class WPZOOM_Forms {
 					} else {
 						$success = false;
 						echo $user->get_error_message();
+					}
+				}
+
+				if ('register' == $form_type){
+					// TODO: Dynamically get all fields and set meta for each field
+					$userdata = array(
+						'user_login' => sanitize_user($_REQUEST['wpzf_input_username']) ?? '',
+						'user_email' => sanitize_email($_REQUEST['wpzf_input_email']) ?? '',
+						'user_pass' => esc_attr($_REQUEST['wpzf_input_password']) ?? '',
+						'first_name' => sanitize_text_field($_REQUEST['wpzf_input_first_name']) ?? '',
+						'last_name' => sanitize_text_field($_REQUEST['wpzf_input_last_name']) ?? '',
+					);
+					$userdata = array_filter($userdata); // Remove empty values
+
+					$user_id = wp_insert_user($userdata);
+					if(!is_wp_error($user_id)){
+						wp_safe_redirect( home_url() );
+						exit;
+					} else {
+						$success = false;
+						error_log(print_r($user_id->get_error_message(), true));
 					}
 				}
 

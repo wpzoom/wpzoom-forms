@@ -395,6 +395,11 @@ $templates = array(
 	<input type="text" name="input_last_name" id="input_last_name" placeholder="" data-subject="false" class="wp-block-wpzoom-forms-text-plain-field"/>
 	<!-- /wp:wpzoom-forms/text-plain-field -->
 
+	<!-- wp:wpzoom-forms/text-plain-field {"id":"input_username","name":"Username","label":"Username","required":true,"className":"fullwidth"} -->
+	<label for="input_username"><label for="input_username">Username</label><sup class="wp-block-wpzoom-forms-required">*</sup></label>
+	<input type="text" name="input_username" id="input_username" placeholder="" required data-subject="false" class="wp-block-wpzoom-forms-text-plain-field fullwidth"/>
+	<!-- /wp:wpzoom-forms/text-plain-field -->
+
 	<!-- wp:wpzoom-forms/text-email-field {"id":"input_email","name":"Email","label":"Your Email","replyto":true,"className":"fullwidth"} -->
 	<label for="input_email"><label for="input_email">Your Email</label><sup class="wp-block-wpzoom-forms-required">*</sup></label>
 	<input type="email" name="input_email" id="input_email" placeholder="" required data-replyto="true" class="wp-block-wpzoom-forms-text-email-field fullwidth"/>
