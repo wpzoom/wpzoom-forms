@@ -80,6 +80,9 @@ var Edit = function Edit(props) {
       label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)('Email', 'wpzoom-forms'),
       value: 'email'
     }, {
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)('Password', 'wpzoom-forms'),
+      value: 'password'
+    }, {
       label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)('Button', 'wpzoom-forms'),
       value: 'button'
     }, {
