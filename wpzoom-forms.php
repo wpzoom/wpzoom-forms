@@ -754,7 +754,7 @@ class WPZOOM_Forms {
 				'https://challenges.cloudflare.com/turnstile/v0/api.js',
 				array(),
 				null,
-				true
+				array( 'strategy' => 'defer' ),
 			);
 
 			$depends[] = 'turnstile-recaptcha';
@@ -2048,8 +2048,6 @@ class WPZOOM_Forms {
 						'response' => $captcha,
 						'remoteip' => $ip
 					);
-
-					error_log(print_r($data, true));
 
 					$options = array(
 						'http' => array(
