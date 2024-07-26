@@ -1987,8 +1987,6 @@ class WPZOOM_Forms {
 		$url     = isset( $_POST['_wp_http_referer'] ) ? sanitize_text_field( wp_unslash( $_POST['_wp_http_referer'] ) ) : home_url();
 		$form_id = -1;
 
-		error_log(print_r($_POST, true));
-
 		if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'wpzf_submit' ) ) {
 			$form_id = isset( $_POST['form_id'] ) ? intval( $_POST['form_id'] ) : -1;
 			$blocks  = parse_blocks( $form_id > -1 ? get_post_field( 'post_content', $form_id, 'raw' ) : '' );
@@ -2044,7 +2042,7 @@ class WPZOOM_Forms {
 					$secret = trim( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_turnstile_secret_key' ) ) );
 					$ip = $_SERVER['REMOTE_ADDR'];
 
-					$url_path = 'https://challanges.cloudflare.com/turnstile/v0/siteverify';
+					$url_path = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 					$data = array(
 						'secret' => $secret,
 						'response' => $captcha,
