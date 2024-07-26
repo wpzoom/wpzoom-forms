@@ -19,7 +19,6 @@ module.exports = {
 		'fields/multi-checkbox/index': path.resolve( __dirname, 'src', 'fields', 'multi-checkbox', 'index.js' ),
 		'fields/checkbox/index':       path.resolve( __dirname, 'src', 'fields', 'checkbox', 'index.js' ),
 		'fields/email/index':          path.resolve( __dirname, 'src', 'fields', 'email', 'index.js' ),
-		'fields/password/index':       path.resolve( __dirname, 'src', 'fields', 'password', 'index.js' ),
 		'fields/label/index':          path.resolve( __dirname, 'src', 'fields', 'label', 'index.js' ),
 		'fields/name/index':           path.resolve( __dirname, 'src', 'fields', 'name', 'index.js' ),
 		'fields/phone/index':          path.resolve( __dirname, 'src', 'fields', 'phone', 'index.js' ),

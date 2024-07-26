@@ -453,7 +453,7 @@ class WPZOOM_Forms {
 			)
 		);
 
-		foreach ( array( 'multi-checkbox', 'checkbox', 'email', 'label', 'name', 'password', 'phone', 'plain', 'radio', 'select', 'submit', 'textarea', 'website', 'datepicker' ) as $block ) {
+		foreach ( array( 'multi-checkbox', 'checkbox', 'email', 'label', 'name', 'phone', 'plain', 'radio', 'select', 'submit', 'textarea', 'website', 'datepicker' ) as $block ) {
 			register_block_type( $this->main_dir_path . 'fields/' . $block . '/block.json' );
 		}
 	}
@@ -505,7 +505,6 @@ class WPZOOM_Forms {
 				'wpzoom-forms/text-plain-field',
 				'wpzoom-forms/text-name-field',
 				'wpzoom-forms/text-email-field',
-				'wpzoom-forms/text-password-field',
 				'wpzoom-forms/text-website-field',
 				'wpzoom-forms/text-phone-field',
 				'wpzoom-forms/textarea-field',
@@ -1451,7 +1450,7 @@ class WPZOOM_Forms {
 			$content = preg_replace( '/<input([^>]*)type="submit"([^>]*)class="([^"]+)"/i', '<input $1 type="submit" data-sitekey="' . $recaptcha_site_key . '" data-callback="wpzf_submit" data-action="submit" $2 class="$3 g-recaptcha"', $content );
 		} elseif ( 'turnstile' == $captchaMethod ) {
 			$turnstile_widget = '<div class="cf-turnstile" data-sitekey="' . $turnstile_site_key . '"></div>';
-			$content = preg_replace( '/<input([^>]*)type="submit"([^>]*)class="([^"]+)"/i', $turnstile_widget . '<input $1 type="submit" data-callback="wpzf_submit" data-action="submit" $2 class="$3 cf-captcha"', $content );
+			$content = preg_replace( '/<input([^>]*)type="submit"([^>]*)class="([^"]+)".*>/i', '<input $1 type="submit" data-callback="wpzf_submit" data-action="submit" $2 class="$3 cf-captcha">' . $turnstile_widget, $content );
 		}
 
 		return $content;
@@ -1988,6 +1987,8 @@ class WPZOOM_Forms {
 		$url     = isset( $_POST['_wp_http_referer'] ) ? sanitize_text_field( wp_unslash( $_POST['_wp_http_referer'] ) ) : home_url();
 		$form_id = -1;
 
+		error_log(print_r($_POST, true));
+
 		if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'wpzf_submit' ) ) {
 			$form_id = isset( $_POST['form_id'] ) ? intval( $_POST['form_id'] ) : -1;
 			$blocks  = parse_blocks( $form_id > -1 ? get_post_field( 'post_content', $form_id, 'raw' ) : '' );
@@ -2049,6 +2050,8 @@ class WPZOOM_Forms {
 						'response' => $captcha,
 						'remoteip' => $ip
 					);
+
+					error_log(print_r($data, true));
 
 					$options = array(
 						'http' => array(
