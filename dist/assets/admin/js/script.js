@@ -106,8 +106,14 @@ jQuery(document).ready(function () {
 
 		function showCaptchaOptions() {
 			const selectedCaptcha = $('input[name="wpzf-settings[wpzf_global_captcha_service]"]:checked').val();
+			const selectedRecaptchaVersion = $('input[name="wpzf-settings[wpzf_global_captcha_type]"]:checked').val();
 			if (selectedCaptcha === 'recaptcha') {
 				$('tr.required-recaptcha').show();
+				if (selectedRecaptchaVersion === 'v2') {
+					$('tr.required-recaptcha-v3').hide();
+				} else {
+					$('tr.required-recaptcha-v2').hide();
+				}
 				$('tr.required-turnstile').hide();
 			} else if (selectedCaptcha === 'turnstile') {
 				$('tr.required-recaptcha').hide();
@@ -122,7 +128,7 @@ jQuery(document).ready(function () {
 
 		//Show reCaptcha options only when it is selected
 		$('input[name="wpzf-settings[wpzf_global_captcha_service]"]').on('change', showCaptchaOptions);
-
+		$('input[name="wpzf-settings[wpzf_global_captcha_type]"]').on('change', showCaptchaOptions);
 
 	})(jQuery, WPZOOM_Settings);
 });
