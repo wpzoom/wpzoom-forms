@@ -13,7 +13,7 @@
  * Description: Simple, user-friendly contact form plugin for WordPress that utilizes Gutenberg blocks for easy form building and customization.
  * Author:      WPZOOM
  * Author URI:  https://www.wpzoom.com
- * Version:     1.2.1
+ * Version:     1.2.2
  * License:     GPL2+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
@@ -747,6 +747,16 @@ class WPZOOM_Forms {
 			}
 
 			$depends[] = 'google-recaptcha';
+		} elseif ( 'turnstile' == $recaptchaService ) {
+			wp_register_script(
+				'turnstile-recaptcha',
+				'https://challenges.cloudflare.com/turnstile/v0/api.js',
+				array(),
+				null,
+				array( 'strategy' => 'defer' ),
+			);
+
+			$depends[] = 'turnstile-recaptcha';
 		}
 		
 		wp_register_script(
@@ -790,8 +800,6 @@ class WPZOOM_Forms {
 			$this::VERSION,
 			true
 		);
-
-
 	}
 
 	/**
@@ -1430,12 +1438,18 @@ class WPZOOM_Forms {
 			$content = preg_replace( '/<\/form>/is', '<input type="hidden" name="wpzf_subject" value="' . $match2[1] . '" /></form>', $content );
 		}
 
-		$enableRecaptcha  = WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' );
-		$recaptchaType    = ! empty( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) ) ? WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) : 'v2';
-		$site_key         = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key' ) ) );
+		$captchaMethod			= WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' );
+		$recaptchaType			= WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) ?? 'v2';
+		$recaptcha_v2_site_key	= esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key' ) ) );
+		$recaptcha_v3_site_key	= esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key_v3' ) ) );
+		$turnstile_site_key		= esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_turnstile_site_key' ) ) );
 
-		if( 'recaptcha' == $enableRecaptcha ) {
-			$content = preg_replace( '/<input([^>]*)type="submit"([^>]*)class="([^"]+)"/i', '<input $1 type="submit" data-sitekey="' . $site_key . '" data-callback="wpzf_submit" data-action="submit" $2 class="$3 g-recaptcha"', $content );
+		if( 'recaptcha' == $captchaMethod ) {
+			$recaptcha_site_key = ( 'v3' == $recaptchaType && !empty($recaptcha_v3_site_key) ) ? $recaptcha_v3_site_key : $recaptcha_v2_site_key;
+			$content = preg_replace( '/<input([^>]*)type="submit"([^>]*)class="([^"]+)"/i', '<input $1 type="submit" data-sitekey="' . $recaptcha_site_key . '" data-callback="wpzf_submit" data-action="submit" $2 class="$3 g-recaptcha"', $content );
+		} elseif ( 'turnstile' == $captchaMethod ) {
+			$turnstile_widget = '<div class="cf-turnstile" data-sitekey="' . $turnstile_site_key . '"></div>';
+			$content = preg_replace( '/<input([^>]*)type="submit"([^>]*)class="([^"]+)".*>/i', '<input $1 type="submit" data-callback="wpzf_submit" data-action="submit" $2 class="$3 cf-captcha">' . $turnstile_widget, $content );
 		}
 
 		return $content;
@@ -1979,18 +1993,26 @@ class WPZOOM_Forms {
 			//Check if recaptcha is enabled and the form passes it's check
 			if ( 'recaptcha' == WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' ) ) {
 				$captcha = false;
+				$recaptchaType = WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' );
 
 				if ( isset( $_POST['g-recaptcha-response'] ) ) {
 					$captcha = trim( sanitize_text_field( $_POST['g-recaptcha-response'] ) );
 				}
 
-				if( 'v3' ==  WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) && isset( $_POST['recaptcha_token'] ) ) {
+				if( 'v3' == $recaptchaType && isset( $_POST['recaptcha_token'] ) ) {
 					$captcha = trim( sanitize_text_field( $_POST['recaptcha_token'] ) );
 				}
 				
 
 				if ( ! empty( $captcha ) ) {
-					$secret = trim( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_secret_key' ) ) );
+					$recaptcha_v2_secret_key = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_secret_key' ) ) );
+					$recaptcha_v3_secret_key = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_secret_key_v3' ) ) );
+					$secret = false;
+					if( 'v3' == $recaptchaType && ! empty( $recaptcha_v3_secret_key ) ) {
+						$secret = trim($recaptcha_v3_secret_key);
+					} else {
+						$secret = trim($recaptcha_v2_secret_key);
+					}
 
 					if ( ! empty( $secret ) ) {
 						$response = file_get_contents(
@@ -2005,7 +2027,7 @@ class WPZOOM_Forms {
 						if ( false !== $response && ! empty( $response ) ) {
 							$json = json_decode( $response );
 
-							if( 'v3' ==  WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) ) { 
+							if( 'v3' == $recaptchaType ) { 
 								if ( null !== $json && is_object( $json ) && true === $json->success && $json->score >= 0.5 ) {
 									$captcha_check_passed = true;
 								}
@@ -2017,6 +2039,37 @@ class WPZOOM_Forms {
 							}
 
 						}
+					}
+				}
+			} elseif ('turnstile' == WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' ) ) {
+				$captcha_check_passed = false;
+				
+				$captcha = $_POST['cf-turnstile-response'];
+				if(!empty($captcha)){
+					$secret = trim( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_turnstile_secret_key' ) ) );
+					$ip = $_SERVER['REMOTE_ADDR'];
+
+					$url_path = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+					$data = array(
+						'secret' => $secret,
+						'response' => $captcha,
+						'remoteip' => $ip
+					);
+
+					$options = array(
+						'http' => array(
+							'method' => 'POST',
+							'content' => http_build_query($data)
+						)
+					);
+					$stream = stream_context_create($options);
+					$result = file_get_contents($url_path, false, $stream);
+					$result = json_decode($result, true);
+
+					if(intval($result['success']) !== 1){
+						$captcha_check_passed = false;
+					} else {
+						$captcha_check_passed = true;
 					}
 				}
 			} else {

@@ -356,5 +356,3 @@ $templates = array(
 );
 
 return $templates;
-
-
