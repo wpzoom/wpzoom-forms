@@ -747,7 +747,7 @@ class WPZOOM_Forms {
 			}
 
 			$depends[] = 'google-recaptcha';
-		} elseif ( 'turnstile' == $recaptchaService ) {
+		} elseif ( 'turnstile' == $enableRecaptcha ) {
 			wp_register_script(
 				'turnstile-recaptcha',
 				'https://challenges.cloudflare.com/turnstile/v0/api.js',
