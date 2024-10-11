@@ -117,3 +117,9 @@
 	font-weight: bold;
 	cursor: pointer;
 }
+
+[data-type="wpzoom-forms/form"] {
+	background: #eee;
+    border-radius: 10px;
+    padding: 40px 20px;
+}

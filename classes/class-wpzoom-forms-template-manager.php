@@ -102,14 +102,23 @@ if ( ! class_exists( 'WPZOOM_Forms_Template_Manager' ) ) {
 		 * Include admin scripts & styles
 		 */
 		public function scripts() {
+				
+			// Enqueue modal scripts
+			wp_enqueue_script( 
+				'wpzoom-forms-modal', 
+				WPZOOM_FORMS_URL . 'dist/assets/admin/js/modal.js', 
+				array( 'jquery' ),
+				WPZOOM_FORMS_VERSION, 
+				true 
+			);
+			
+			wp_enqueue_style( 
+				'wpzoom-forms-modal', 
+				WPZOOM_FORMS_URL . 'dist/assets/admin/css/modal.css',
+				array(), 
+				WPZOOM_FORMS_VERSION
+			);
 
-			global $pagenow;
-
-			if( 'post-new.php' !== $pagenow && isset( $_GET['post_type'] ) && $_GET['post_type'] == 'wpzf-form' ) {
-				// Enqueue modal scripts
-				wp_enqueue_script( 'wpzoom-forms-modal', WPZOOM_FORMS_URL . 'dist/assets/admin/js/modal.js', array( 'jquery' ), WPZOOM_FORMS_VERSION, true );
-				wp_enqueue_style( 'wpzoom-forms-modal', WPZOOM_FORMS_URL . 'dist/assets/admin/css/modal.css', array(), WPZOOM_FORMS_VERSION );
-			}
 		}
 
 		/**
@@ -117,9 +126,6 @@ if ( ! class_exists( 'WPZOOM_Forms_Template_Manager' ) ) {
 		 */
 		public function modal_window() {
 
-			global $pagenow;
-
-			if( 'post-new.php' !== $pagenow && isset( $_GET['post_type'] ) && $_GET['post_type'] == 'wpzf-form' ) {
 
 				$new_post_link = admin_url( 'post-new.php?post_type=wpzf-form' );
 
@@ -167,7 +173,6 @@ if ( ! class_exists( 'WPZOOM_Forms_Template_Manager' ) ) {
 					
 				</div>
 				<?php
-			}
 		}
 	
 	}
