@@ -118,7 +118,7 @@
 	cursor: pointer;
 }
 
-[data-type="wpzoom-forms/form"] {
+.wpzoom-forms_form {
 	background: #eee;
     border-radius: 10px;
     padding: 40px 20px;
