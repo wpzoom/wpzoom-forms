@@ -2,7 +2,7 @@ jQuery(document).ready(function(){
 	( function($) {
 
 		// If there are no forms, show the modal
-		if ( $('#the-list').find('.no-items').length > 0 ) {
+		if ( $('.post-type-wpzf-form #the-list').find('.no-items').length > 0 ) {
 			$('#wpzoom-forms-modal').show();
 		}
 
