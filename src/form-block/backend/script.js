@@ -1,6 +1,23 @@
-import { InspectorControls } from '@wordpress/block-editor';
-import { registerBlockType, updateCategory } from '@wordpress/blocks';
-import { Disabled, PanelBody, Placeholder, Button, __experimentalHStack as HStack } from '@wordpress/components';
+import { 
+	InspectorControls,
+	PanelColorSettings 
+} from '@wordpress/block-editor';
+
+import { 
+	registerBlockType, 
+	updateCategory 
+} from '@wordpress/blocks';
+
+import { 
+	Disabled, 
+	PanelBody, 
+	Placeholder, 
+	Button, 
+	SelectControl, 
+	RangeControl, 
+	__experimentalHStack as HStack 
+} from '@wordpress/components';
+
 import { useSelect } from '@wordpress/data';
 import { Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -36,20 +53,10 @@ registerBlockType( 'wpzoom-forms/form-block', {
 	icon:        wpzoomFormsIcon,
 	category:    'wpzoom-blocks',
 	supports:    { align: true, html: false },
-	attributes:  {
-		formId: {
-			type:    'string',
-			default: '-1'
-		},
-		align: {
-			type: 'string',
-			default: 'none',
-		}
-	},
 	example:     {},
 	edit:        props => {
 		const { attributes, setAttributes } = props;
-		const { formId, align } = attributes;
+		const { formId, align, formBgColor, formBrdWidth, formBrdStyle, formBrdRadius, formBrdColor, fieldBgColor, fieldBrdStyle, fieldBrdWidth, fieldBrdRadius, fieldBrdColor, fieldTextColor, labelTextColor, btnBrdRadius, btnBrdStyle, btnTextColor, btnBrdWidth, btnBrdColor, btnBgColor  } = attributes;
 		const _formId = formId && String( formId ).trim() != '' ? String( formId ) : '-1';
 		const posts = useSelect( select => select( 'core' ).getEntityRecords( 'postType', 'wpzf-form', { order: 'asc', orderby: 'title', per_page: -1 } ), [] );
 		const forms = posts && posts.length > 0 ? posts.map( x => { return { key: String( x.id ), name: x.title.raw } } ) : [];
@@ -85,12 +92,124 @@ registerBlockType( 'wpzoom-forms/form-block', {
 
 		return (
 			<>
-				<InspectorControls>
+				<InspectorControls group="settings">
 					<PanelBody title={ __( 'Options', 'wpzoom-forms' ) }>
 						{ forms.length > 0 ? formSelect : <Disabled>{ formSelect }</Disabled> }
 						{ '-1' !== _formId && formEditLink }
 					</PanelBody>
 				</InspectorControls>
+				<InspectorControls group="styles">
+					<PanelBody title={ __( 'Fields', 'wpzoom-forms' ) }>
+						<SelectControl
+							label={ __( 'Border Style', 'wpzoom-forms' ) }
+							value={ fieldBrdStyle }
+							options={ [
+								{ label: __( 'Solid', 'wpzoom-forms' ), value: 'solid' },
+								{ label: __( 'Dashed', 'wpzoom-forms' ), value: 'dashed' },
+								{ label: __( 'Dotted', 'wpzoom-forms' ), value: 'dotted' },
+								{ label: __( 'None', 'wpzoom-forms' ), value: 'none' },
+							] }
+							onChange={ ( value ) => setAttributes( { fieldBrdStyle: value } )}
+						/>
+						<RangeControl
+							label={__('Border Width', 'wpzoom-forms')}
+							value={ fieldBrdWidth }
+							onChange={ (value) => setAttributes( { fieldBrdWidth: value } ) }
+							min={0}
+							max={20}
+						/>
+						<RangeControl
+							label={ __( 'Border Radius', 'wpzoom-forms' ) }
+							value={ fieldBrdRadius }
+							onChange={ ( value ) => setAttributes( { fieldBrdRadius: value } ) }
+							min={0}
+							max={50}
+						/>
+						<PanelColorSettings
+							title={ __( 'Color Settings', 'wpzoom-formsn' ) }
+							initialOpen={ false }
+							colorSettings={ [
+								{
+									value: fieldTextColor,
+									onChange: ( value ) => setAttributes( { fieldTextColor: value } ),
+									label: __( 'Text Color', 'wpzoom-forms' ),
+								},
+								{
+									value: fieldBrdColor,
+									onChange: ( value ) => setAttributes( { fieldBrdColor: value } ),
+									label: __( 'Border Color', 'wpzoom-forms' ),
+								},
+								{
+									value: fieldBgColor,
+									onChange: (value) => setAttributes( { fieldBgColor: value } ),
+									label: __( 'Background Color', 'wpzoom-forms' ),
+								},
+							] }
+						/>
+					</PanelBody>
+					<PanelBody title={ __( 'Labels', 'wpzoom-forms' ) }>
+						<PanelColorSettings
+							title={ __( 'Color Settings', 'wpzoom-formsn' ) }
+							initialOpen={ false }
+							colorSettings={ [
+								{
+									value: labelTextColor,
+									onChange: ( value ) => setAttributes( { labelTextColor: value } ),
+									label: __( 'Color', 'wpzoom-forms' ),
+								},
+							] }
+							/>
+					</PanelBody>
+					<PanelBody title={ __( 'Button', 'wpzoom-forms' ) }>
+						<SelectControl
+							label={ __( 'Border Style', 'wpzoom-forms' ) }
+							value={ btnBrdStyle }
+							options={ [
+								{ label: __( 'Solid', 'wpzoom-forms' ), value: 'solid' },
+								{ label: __( 'Dashed', 'wpzoom-forms' ), value: 'dashed' },
+								{ label: __( 'Dotted', 'wpzoom-forms' ), value: 'dotted' },
+								{ label: __( 'None', 'wpzoom-forms' ), value: 'none' },
+							] }
+							onChange={ ( value ) => setAttributes( { btnBrdStyle: value } )}
+						/>
+						<RangeControl
+							label={ __( 'Border Width', 'wpzoom-forms' ) }
+							value={ btnBrdWidth }
+							onChange={ (value) => setAttributes( { btnBrdWidth: value } ) }
+							min={0}
+							max={20}
+						/>
+						<RangeControl
+							label={ __( 'Border Radius', 'wpzoom-forms' ) }
+							value={ btnBrdRadius }
+							onChange={ ( value ) => setAttributes( { btnBrdRadius: value } ) }
+							min={0}
+							max={50}
+						/>
+						<PanelColorSettings
+							title={ __( 'Color Settings', 'wpzoom-formsn' ) }
+							initialOpen={ false }
+							colorSettings={ [
+								{
+									value: btnTextColor,
+									onChange: ( value ) => setAttributes( { btnTextColor: value } ),
+									label: __( 'Text Color', 'wpzoom-forms' ),
+								},
+								{
+									value: btnBrdColor,
+									onChange: ( value ) => setAttributes( { btnBrdColor: value } ),
+									label: __( 'Border Color', 'wpzoom-forms' ),
+								},
+								{
+									value: btnBgColor,
+									onChange: (value) => setAttributes( { btnBgColor: value } ),
+									label: __( 'Background Color', 'wpzoom-forms' ),
+								},
+							] }
+						/>
+					</PanelBody>
+				</InspectorControls>
+
 
 				<Fragment>
 					{ '-1' != _formId

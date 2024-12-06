@@ -477,7 +477,82 @@ class WPZOOM_Forms {
 					'align' => array(
 						'type'    => 'string',
 						'default' => 'none'
-					)
+					),
+					'formBgColor' => array(
+						'type'    => 'string',
+						'default' => ''
+					),
+					'formBrd' => array(
+						'type'    => 'string',
+						'default' => ''
+					),
+					
+					'fieldBrdStyle' => array(
+						'type'    => 'string',
+						'default' => 'solid'
+					),
+					'fieldBrdWidth' => array(
+						'type'    => 'number',
+						'default' => 1
+					),
+					'fieldBrdRadius' => array(
+						'type'    => 'number',
+						'default' => 2
+					),
+
+					'fieldBrdColor' => array(
+						'type'    => 'string',
+						'default' => '#ccc'
+					),
+					'fieldTextColor' => array(
+						'type'    => 'string',
+						'default' => '#333'
+					),
+					'fieldBgColor' => array(
+						'type'    => 'string',
+						'default' => '#fff'
+					),
+					'labelTextColor' => array(
+						'type'    => 'string',
+						'default' => ''
+					),
+					'btnBgColor' => array(
+						'type'    => 'string',
+						'default' => ''
+					),
+					'btnTextColor' => array(
+						'type'    => 'string',
+						'default' => ''
+					),
+					'btnBrdWidth' => array(
+						'type'    => 'number',
+						'default' => 0
+					),
+					'btnBrdStyle' => array(
+						'type'    => 'string',
+						'default' => 'none'
+					),
+					'btnBrdRadius' => array(
+						'type'    => 'number',
+						'default' => 3
+					),
+					'btnBrdColor' => array(
+						'type'    => 'string',
+						'default' => ''
+					),
+					'btnHoverBgColor' => array(
+						'type'    => 'string',
+						'default' => ''
+					),
+					'btnHoverTextColor' => array(
+						'type'    => 'string',
+						'default' => ''
+					),
+					'btnHoverBrdColor' => array(
+						'type'    => 'string',
+						'default' => ''
+					),
+
 				),
 				'script'          => 'wpzoom-forms-js-frontend-formblock',
 				'style'           => 'wpzoom-forms-css-frontend-formblock',
@@ -1400,6 +1475,24 @@ class WPZOOM_Forms {
 
 		$align = isset( $attributes['align'] ) && ! empty( $attributes['align'] ) ? $attributes['align'] : 'none';
 
+		//Get styles from the block
+
+		$fieldBgColor   = isset( $attributes['fieldBgColor'] ) ? $attributes['fieldBgColor'] : '';
+		$fieldBrdStyle  = isset( $attributes['fieldBrdStyle'] ) ? $attributes['fieldBrdStyle'] : '';
+		$fieldBrdWidth  = isset( $attributes['fieldBrdWidth'] ) ? $attributes['fieldBrdWidth'] . 'px' : '';
+		$fieldBrdRadius = isset( $attributes['fieldBrdRadius'] ) ? $attributes['fieldBrdRadius'] . 'px' : '';
+		$fieldBrdColor  = isset( $attributes['fieldBrdColor'] ) ? $attributes['fieldBrdColor'] : '';
+		$fieldTextColor = isset( $attributes['fieldTextColor'] ) ? $attributes['fieldTextColor'] : '';
+		$labelTextColor = isset( $attributes['labelTextColor'] ) ? $attributes['labelTextColor'] : '';
+		$btnBrdRadius   = isset( $attributes['btnBrdRadius'] ) ? $attributes['btnBrdRadius'] . 'px' : '';
+		$btnBrdStyle    = isset( $attributes['btnBrdStyle'] ) ? $attributes['btnBrdStyle'] : '';
+		$btnTextColor   = isset( $attributes['btnTextColor'] ) ? $attributes['btnTextColor'] : '';
+		$btnBrdWidth    = isset( $attributes['btnBrdWidth'] ) ? $attributes['btnBrdWidth']. 'px' : '';
+		$btnBrdColor    = isset( $attributes['btnBrdColor'] ) ? $attributes['btnBrdColor'] : '';
+		$btnBgColor     = isset( $attributes['btnBgColor'] ) ? $attributes['btnBgColor'] : '';
+
+		$form_ID = 'wpzf-' . intval( $attributes['formId'] );
+
 		$content = sprintf(
 			'<!-- ZOOM Forms Start -->
 			<form id="wpzf-%2$s" method="post" action="%1$s" class="wpzoom-forms_form%6$s">
@@ -1451,6 +1544,59 @@ class WPZOOM_Forms {
 			$turnstile_widget = '<div class="cf-turnstile" data-sitekey="' . $turnstile_site_key . '"></div>';
 			$content = preg_replace( '/<input([^>]*)type="submit"([^>]*)class="([^"]+)".*>/i', '<input $1 type="submit" data-callback="wpzf_submit" data-action="submit" $2 class="$3 cf-captcha">' . $turnstile_widget, $content );
 		}
+
+		$style = $styleOutput = '';
+
+		// Add custom styles to the form
+		if( ! empty( $fieldBgColor ) ) {
+			$styleOutput .= sprintf( '#' . $form_ID . ' input:not([type="submit"]), #' . $form_ID . ' textarea { background-color: %s; }', $fieldBgColor );
+		}
+		if( ! empty( $fieldBrdStyle ) ) {
+			$styleOutput .= sprintf( '#' . $form_ID . ' input:not([type="submit"]), #' . $form_ID . ' textarea { border-style: %s; }', $fieldBrdStyle );
+		}
+		if( ! empty( $fieldBrdWidth ) ) {
+			$styleOutput .= sprintf( '#' . $form_ID . ' input:not([type="submit"]), #' . $form_ID . ' textarea { border-width: %s; }', $fieldBrdWidth );
+		}
+		if( ! empty( $fieldBrdRadius ) ) {
+			$styleOutput .= sprintf( '#' . $form_ID . ' input:not([type="submit"]), #' . $form_ID . ' textarea { border-radius: %s; }', $fieldBrdRadius );
+		}
+		if( ! empty( $fieldBrdColor ) ) {
+			$styleOutput .= sprintf( '#' . $form_ID . ' input:not([type="submit"]), #' . $form_ID . ' textarea { border-color: %s; }', $fieldBrdColor );
+		}
+		if( ! empty( $fieldTextColor ) ) {
+			$styleOutput .= sprintf( '#' . $form_ID . ' input:not([type="submit"]), #' . $form_ID . ' textarea { color: %s; }', $fieldTextColor );
+		}
+		
+		//Label styles
+		if( ! empty( $labelTextColor ) ) {
+			$styleOutput .= sprintf( '#' . $form_ID . ' label { color: %s; }', $labelTextColor );
+		}
+		
+		//Button styles
+		if( ! empty( $btnBrdRadius ) ) {
+			$styleOutput .= sprintf( '#' . $form_ID . ' input[type="submit"] { border-radius: %s; }', $btnBrdRadius );
+		}
+		if( ! empty( $btnBrdStyle ) ) {
+			$styleOutput .= sprintf( '#' . $form_ID . ' input[type="submit"] { border-style: %s; }', $btnBrdStyle );
+		}
+		if( ! empty( $btnTextColor ) ) {
+			$styleOutput .= sprintf( '#' . $form_ID . ' input[type="submit"] { color: %s; }', $btnTextColor );
+		}
+		if( ! empty( $btnBrdWidth ) ) {
+			$styleOutput .= sprintf( '#' . $form_ID . ' input[type="submit"] { border-width: %s; }', $btnBrdWidth );
+		}
+		if( ! empty( $btnBrdColor ) ) {
+			$styleOutput .= sprintf( '#' . $form_ID . ' input[type="submit"] { border-color: %s; }', $btnBrdColor );
+		}
+		if( ! empty( $btnBgColor ) ) {
+			$styleOutput .= sprintf( '#' . $form_ID . ' input[type="submit"] { background-color: %s; }', $btnBgColor );
+		}
+
+		$style = sprintf( '<style>%s</style>',
+			$styleOutput
+		);
+
+		$content = $style . $content;
 
 		return $content;
 	}

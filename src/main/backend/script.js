@@ -4,7 +4,7 @@ import { Card, CardBody, CardHeader, Disabled, Flex, FlexBlock, FlexItem, IconBu
 import { useEntityProp } from '@wordpress/core-data';
 import { useSelect } from '@wordpress/data';
 import { Fragment, useEffect, useState } from '@wordpress/element';
-import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
+import { PluginDocumentSettingPanel } from '@wordpress/editor';
 import { __, setLocaleData, sprintf } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import { default as WelcomeGuide } from './welcome';
