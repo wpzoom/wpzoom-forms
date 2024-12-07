@@ -489,28 +489,28 @@ class WPZOOM_Forms {
 					
 					'fieldBrdStyle' => array(
 						'type'    => 'string',
-						'default' => 'solid'
+						'default' => 'default'
 					),
 					'fieldBrdWidth' => array(
 						'type'    => 'number',
-						'default' => 1
+						'default' => 0
 					),
 					'fieldBrdRadius' => array(
 						'type'    => 'number',
-						'default' => 2
+						'default' => 0
 					),
 
 					'fieldBrdColor' => array(
 						'type'    => 'string',
-						'default' => '#ccc'
+						'default' => ''
 					),
 					'fieldTextColor' => array(
 						'type'    => 'string',
-						'default' => '#333'
+						'default' => ''
 					),
 					'fieldBgColor' => array(
 						'type'    => 'string',
-						'default' => '#fff'
+						'default' => ''
 					),
 					'labelTextColor' => array(
 						'type'    => 'string',
@@ -530,11 +530,11 @@ class WPZOOM_Forms {
 					),
 					'btnBrdStyle' => array(
 						'type'    => 'string',
-						'default' => 'none'
+						'default' => 'default'
 					),
 					'btnBrdRadius' => array(
 						'type'    => 'number',
-						'default' => 3
+						'default' => 0
 					),
 					'btnBrdColor' => array(
 						'type'    => 'string',
@@ -1551,15 +1551,16 @@ class WPZOOM_Forms {
 		if( ! empty( $fieldBgColor ) ) {
 			$styleOutput .= sprintf( '#' . $form_ID . ' input:not([type="submit"]), #' . $form_ID . ' textarea { background-color: %s; }', $fieldBgColor );
 		}
-		if( ! empty( $fieldBrdStyle ) ) {
+		if( ! empty( $fieldBrdStyle ) && 'default' !== $fieldBrdStyle ) {
 			$styleOutput .= sprintf( '#' . $form_ID . ' input:not([type="submit"]), #' . $form_ID . ' textarea { border-style: %s; }', $fieldBrdStyle );
+			if( ! empty( $fieldBrdWidth ) ) {
+				$styleOutput .= sprintf( '#' . $form_ID . ' input:not([type="submit"]), #' . $form_ID . ' textarea { border-width: %s; }', $fieldBrdWidth );
+			}
+			if( ! empty( $fieldBrdRadius ) ) {
+				$styleOutput .= sprintf( '#' . $form_ID . ' input:not([type="submit"]), #' . $form_ID . ' textarea { border-radius: %s; }', $fieldBrdRadius );
+			}
 		}
-		if( ! empty( $fieldBrdWidth ) ) {
-			$styleOutput .= sprintf( '#' . $form_ID . ' input:not([type="submit"]), #' . $form_ID . ' textarea { border-width: %s; }', $fieldBrdWidth );
-		}
-		if( ! empty( $fieldBrdRadius ) ) {
-			$styleOutput .= sprintf( '#' . $form_ID . ' input:not([type="submit"]), #' . $form_ID . ' textarea { border-radius: %s; }', $fieldBrdRadius );
-		}
+
 		if( ! empty( $fieldBrdColor ) ) {
 			$styleOutput .= sprintf( '#' . $form_ID . ' input:not([type="submit"]), #' . $form_ID . ' textarea { border-color: %s; }', $fieldBrdColor );
 		}
@@ -1573,17 +1574,17 @@ class WPZOOM_Forms {
 		}
 		
 		//Button styles
-		if( ! empty( $btnBrdRadius ) ) {
-			$styleOutput .= sprintf( '#' . $form_ID . ' input[type="submit"] { border-radius: %s; }', $btnBrdRadius );
-		}
-		if( ! empty( $btnBrdStyle ) ) {
+		if( ! empty( $btnBrdStyle ) && 'default' !== $btnBrdStyle ) {
 			$styleOutput .= sprintf( '#' . $form_ID . ' input[type="submit"] { border-style: %s; }', $btnBrdStyle );
+			if( ! empty( $btnBrdWidth ) ) {
+				$styleOutput .= sprintf( '#' . $form_ID . ' input[type="submit"] { border-width: %s; }', $btnBrdWidth );
+			}
+			if( ! empty( $btnBrdRadius ) ) {
+				$styleOutput .= sprintf( '#' . $form_ID . ' input[type="submit"] { border-radius: %s; }', $btnBrdRadius );
+			}
 		}
 		if( ! empty( $btnTextColor ) ) {
 			$styleOutput .= sprintf( '#' . $form_ID . ' input[type="submit"] { color: %s; }', $btnTextColor );
-		}
-		if( ! empty( $btnBrdWidth ) ) {
-			$styleOutput .= sprintf( '#' . $form_ID . ' input[type="submit"] { border-width: %s; }', $btnBrdWidth );
 		}
 		if( ! empty( $btnBrdColor ) ) {
 			$styleOutput .= sprintf( '#' . $form_ID . ' input[type="submit"] { border-color: %s; }', $btnBrdColor );

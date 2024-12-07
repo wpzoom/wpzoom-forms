@@ -104,6 +104,7 @@ registerBlockType( 'wpzoom-forms/form-block', {
 							label={ __( 'Border Style', 'wpzoom-forms' ) }
 							value={ fieldBrdStyle }
 							options={ [
+								{ label: __( 'Default', 'wpzoom-forms' ), value: 'default' },
 								{ label: __( 'Solid', 'wpzoom-forms' ), value: 'solid' },
 								{ label: __( 'Dashed', 'wpzoom-forms' ), value: 'dashed' },
 								{ label: __( 'Dotted', 'wpzoom-forms' ), value: 'dotted' },
@@ -112,6 +113,7 @@ registerBlockType( 'wpzoom-forms/form-block', {
 							onChange={ ( value ) => setAttributes( { fieldBrdStyle: value } )}
 						/>
 						<RangeControl
+							disabled={ fieldBrdStyle == 'default' }
 							label={__('Border Width', 'wpzoom-forms')}
 							value={ fieldBrdWidth }
 							onChange={ (value) => setAttributes( { fieldBrdWidth: value } ) }
@@ -119,6 +121,7 @@ registerBlockType( 'wpzoom-forms/form-block', {
 							max={20}
 						/>
 						<RangeControl
+							disabled={ fieldBrdStyle == 'default' }
 							label={ __( 'Border Radius', 'wpzoom-forms' ) }
 							value={ fieldBrdRadius }
 							onChange={ ( value ) => setAttributes( { fieldBrdRadius: value } ) }
@@ -165,6 +168,7 @@ registerBlockType( 'wpzoom-forms/form-block', {
 							label={ __( 'Border Style', 'wpzoom-forms' ) }
 							value={ btnBrdStyle }
 							options={ [
+								{ label: __( 'Default', 'wpzoom-forms' ), value: 'default' },
 								{ label: __( 'Solid', 'wpzoom-forms' ), value: 'solid' },
 								{ label: __( 'Dashed', 'wpzoom-forms' ), value: 'dashed' },
 								{ label: __( 'Dotted', 'wpzoom-forms' ), value: 'dotted' },
@@ -173,6 +177,7 @@ registerBlockType( 'wpzoom-forms/form-block', {
 							onChange={ ( value ) => setAttributes( { btnBrdStyle: value } )}
 						/>
 						<RangeControl
+							disabled={ btnBrdStyle == 'default' }
 							label={ __( 'Border Width', 'wpzoom-forms' ) }
 							value={ btnBrdWidth }
 							onChange={ (value) => setAttributes( { btnBrdWidth: value } ) }
@@ -180,6 +185,7 @@ registerBlockType( 'wpzoom-forms/form-block', {
 							max={20}
 						/>
 						<RangeControl
+							disabled={ btnBrdStyle == 'default' }
 							label={ __( 'Border Radius', 'wpzoom-forms' ) }
 							value={ btnBrdRadius }
 							onChange={ ( value ) => setAttributes( { btnBrdRadius: value } ) }

@@ -151,6 +151,7 @@ class Wpzoom_Forms_Cpt extends Widget_Base {
 	 */
 	protected function register_controls() {
 		$this->register_content_controls();
+		$this->register_style_controls();
 	}
 
 	/**
@@ -182,6 +183,158 @@ class Wpzoom_Forms_Cpt extends Widget_Base {
 
 		$this->end_controls_section();
 	}
+
+	/**
+	 * Register Styling Controls.
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 * @return void
+	 */
+	protected function register_style_controls() {
+
+		// Fields.
+		$this->start_controls_section(
+			'section_fields_style',
+			[
+				'label' => esc_html__( 'Fields', 'wpzoom-forms' ),
+				'tab'   => Controls_Manager::TAB_STYLE
+			]
+		);
+
+		$this->add_group_control(
+			\Elementor\Group_Control_Border::get_type(),
+			[
+				'name' => 'fields_border',
+				'selector' => '{{WRAPPER}} input:not([type="submit"]), {{WRAPPER}} textarea',
+			]
+		);
+
+		$this->add_responsive_control(
+			'fields_border_radius',
+			[
+				'label' => esc_html__( 'Border Radius', 'wpzoom-forms' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} input:not([type="submit"]), {{WRAPPER}} textarea' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'fields_color',
+			[
+				'type'      => Controls_Manager::COLOR,
+				'label'     => esc_html__( 'Color', 'wpzoom-forms' ),
+				'separator' => '',
+				'default'   => '',
+				'selectors' => [
+					'{{WRAPPER}} input:not([type="submit"]), {{WRAPPER}} textarea' => 'color: {{VALUE}};'
+				]
+			]
+		);
+
+		$this->add_control(
+			'fields_bg',
+			[
+				'type'      => Controls_Manager::COLOR,
+				'label'     => esc_html__( 'Background Color', 'wpzoom-forms' ),
+				'separator' => '',
+				'default'   => '',
+				'selectors' => [
+					'{{WRAPPER}} input:not([type="submit"]), {{WRAPPER}} textarea' => 'background-color: {{VALUE}};'
+				]
+			]
+		);
+
+		$this->end_controls_section();
+
+		// Labels.
+		$this->start_controls_section(
+			'section_labels_style',
+			[
+				'label' => esc_html__( 'Labels', 'wpzoom-forms' ),
+				'tab'   => Controls_Manager::TAB_STYLE
+			]
+		);
+
+		$this->add_control(
+			'labels_color',
+			[
+				'type'      => Controls_Manager::COLOR,
+				'label'     => esc_html__( 'Color', 'wpzoom-forms' ),
+				'separator' => '',
+				'default'   => '',
+				'selectors' => [
+					'{{WRAPPER}} label' => 'color: {{VALUE}};'
+				]
+			]
+		);
+
+		$this->end_controls_section();
+
+		// Button.
+		$this->start_controls_section(
+			'section_button_style',
+			[
+				'label' => esc_html__( 'Button', 'wpzoom-forms' ),
+				'tab'   => Controls_Manager::TAB_STYLE
+			]
+		);
+
+		$this->add_group_control(
+			\Elementor\Group_Control_Border::get_type(),
+			[
+				'name' => 'button_border',
+				'selector' => '{{WRAPPER}} input[type="submit"]',
+			]
+		);
+
+		$this->add_responsive_control(
+			'button_border_radius',
+			[
+				'label' => esc_html__( 'Border Radius', 'wpzoom-forms' ),
+				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} input[type="submit"]' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'button_color',
+			[
+				'type'      => Controls_Manager::COLOR,
+				'label'     => esc_html__( 'Color', 'wpzoom-forms' ),
+				'separator' => '',
+				'default'   => '',
+				'selectors' => [
+					'{{WRAPPER}} input[type="submit"]' => 'color: {{VALUE}};'
+				]
+			]
+		);
+
+		$this->add_control(
+			'button_bg',
+			[
+				'type'      => Controls_Manager::COLOR,
+				'label'     => esc_html__( 'Background Color', 'wpzoom-forms' ),
+				'separator' => '',
+				'default'   => '',
+				'selectors' => [
+					'{{WRAPPER}} input[type="submit"]' => 'background-color: {{VALUE}};'
+				]
+			]
+		);
+
+		$this->end_controls_section();
+
+
+	}
+
+
 
 	/**
 	 * Get rcb posts.
