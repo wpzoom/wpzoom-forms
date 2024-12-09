@@ -193,6 +193,52 @@ class Wpzoom_Forms_Cpt extends Widget_Base {
 	 */
 	protected function register_style_controls() {
 
+		// Form.
+		$this->start_controls_section(
+			'section_form_style',
+			[
+				'label' => esc_html__( 'Form', 'wpzoom-forms' ),
+				'tab'   => Controls_Manager::TAB_STYLE
+			]
+		);
+
+		$this->add_group_control(
+			\Elementor\Group_Control_Background::get_type(),
+			[
+				'name' => 'form_bg',
+				'types' => [ 'classic', 'gradient' ],
+				'selector' => '{{WRAPPER}} .wp-block-wpzoom-forms-form',
+			]
+		);
+
+		$this->add_control(
+			'form_text',
+			[
+				'type'      => Controls_Manager::COLOR,
+				'label'     => esc_html__( 'Text Color', 'wpzoom-forms' ),
+				'separator' => '',
+				'default'   => '',
+				'selectors' => [
+					'{{WRAPPER}} .wp-block-wpzoom-forms-form p' => 'color: {{VALUE}};'
+				]
+			]
+		);
+
+		$this->add_control(
+			'form_padding',
+			[
+				'label' => esc_html__( 'Padding', 'wpzoom-forms' ),
+				'type' => \Elementor\Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .wp-block-wpzoom-forms-form' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+
+
 		// Fields.
 		$this->start_controls_section(
 			'section_fields_style',
