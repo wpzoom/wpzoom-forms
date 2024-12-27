@@ -280,7 +280,7 @@ class WPZOOM_Forms_Settings {
 									'options'     => array(
 										'none'      => esc_html__( 'None', 'wpzoom-forms' ),
 										'recaptcha' => esc_html__( 'reCAPTCHA', 'wpzoom-forms' ),
-                                        'turnstile' => esc_html__( 'Cloudflare Turnstile', 'wpzoom-forms')
+										'turnstile' => esc_html__( 'Cloudflare Turnstile', 'wpzoom-forms')
 									)
 								),
 							),
@@ -369,6 +369,22 @@ class WPZOOM_Forms_Settings {
 									'default'     => '',
 									'description' => '',
 									'type'        => 'text',
+								),
+							),
+							array(
+								'id'    => 'wpzf_global_turnstile_widget_theme',
+								'title' => esc_html__( 'Widget Theme', 'wpzoom-forms' ),
+								'type'  => 'select',
+								'args'  => array(
+									'label_for'   => 'wpzf_global_turnstile_widget_theme',
+									'class'       => 'wpzoom-forms-field required-turnstile',
+									'description' => '',
+									'default'     => 'auto',
+									'options'     => array(
+										'auto'  => esc_html__( 'Auto', 'wpzoom-forms' ),
+										'light' => esc_html__( 'Light', 'wpzoom-forms' ),
+										'dark'  => esc_html__( 'Dark', 'wpzoom-forms')
+									)
 								),
 							),
 						),
