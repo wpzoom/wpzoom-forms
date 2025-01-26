@@ -795,7 +795,7 @@ class WPZOOM_Forms {
 	 */
 	public function register_frontend_assets() {
 
-		$depends         = array( 'jquery', 'wp-blocks', 'wp-components', 'wp-core-data', 'wp-data', 'wp-element', 'wp-i18n', 'wp-polyfill' );
+		$depends         = array( 'jquery' );
 		$enableRecaptcha = WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' );
 		$recaptchaType   = ! empty( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) ) ? WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) : 'v2';
 		$site_key        = ! empty( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key' ) ) ? esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key' ) ) ) : '';
