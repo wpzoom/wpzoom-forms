@@ -5,34 +5,30 @@
 	"title":        "Label",
 	"category":     "wpzoom-forms",
 	"ancestor":     [ "wpzoom-forms/form" ],
-	"description":  "A label which is linked to an input field.",
-	"keywords":     [ "wpzoom", "form", "input", "label" ],
+	"description":  "A label field for form organization.",
+	"keywords":     [ "wpzoom", "form", "label" ],
 	"version":      "1.1.0",
 	"textdomain":   "wpzoom-forms",
 	"attributes":   {
-		"id":            {
-			"type":      "string",
-			"default":   ""
-		},
-		"name":          {
+		"content": {
 			"type":      "string",
 			"source":    "html",
 			"selector":  "label",
-			"default":   "[No Name]"
-		},
-		"forInput":      {
-			"type":      "string",
-			"source":    "attribute",
-			"attribute": "for",
-			"selector":  "label",
 			"default":   ""
 		},
-		"required":      {
+		"required": {
 			"type":      "boolean",
 			"source":    "attribute",
 			"attribute": "data-required",
 			"selector":  "label",
 			"default":   false
+		},
+		"htmlFor": {
+			"type":      "string",
+			"source":    "attribute",
+			"attribute": "for",
+			"selector":  "label",
+			"default":   ""
 		}
 	},
 	"supports":     {
