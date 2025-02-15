@@ -719,7 +719,7 @@ class WPZOOM_Forms {
 			wp_enqueue_script( 
 				'wpzoom-forms-cpt',
 				WPZOOM_FORMS_URL . 'dist/assets/admin/js/forms-cpt.js',
-				array(),
+				array( 'wp-data' ),
 				WPZOOM_FORMS_VERSION,
 				true
 			);
