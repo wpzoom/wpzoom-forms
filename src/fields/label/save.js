@@ -1,27 +1,23 @@
 import { useBlockProps, RichText } from '@wordpress/block-editor';
-import { Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
-const Save = props => {
+const Save = ( { attributes } ) => {
 	const blockProps = useBlockProps.save();
-	const { attributes } = props;
-	const { content, required, htmlFor } = attributes;
+	const { id, name, forInput, required } = attributes;
 
-	return (
-		<Fragment>
-			<RichText.Content
-				tagName="label"
-				value={ content }
-				{ ...blockProps }
-				data-required={ required }
-				htmlFor={ htmlFor }
-			/>
+	return <>
+		<RichText.Content
+			tagName="label"
+			value={ name }
+			htmlFor={ forInput }
+			data-required={ !! required }
+			{ ...blockProps }
+		/>
 
-			{ required && (
-				<sup className="wp-block-wpzoom-forms-required">{ __( '*', 'wpzoom-forms' ) }</sup>
-			) }
-		</Fragment>
-	);
+		{ required && (
+			<sup className="wp-block-wpzoom-forms-required">{ __( '*', 'wpzoom-forms' ) }</sup>
+		) }
+	</>;
 };
 
 export default Save;
