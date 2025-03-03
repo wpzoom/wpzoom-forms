@@ -12,6 +12,80 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { arrayMoveImmutable } from 'array-move';
 import FormIcons from './icons';
 
+const insertFormField = (blockName, defaultAttributes, isDisabled) => {
+	console.log('insertFormField called with:', blockName, defaultAttributes, isDisabled);
+	
+	if (isDisabled) {
+		console.log('Field is disabled, showing notice');
+		wp.data.dispatch('core/notices').createNotice(
+			'info',
+			__('This field can only be used once per form', 'wpzoom-forms'),
+			{
+				type: 'snackbar',
+				isDismissible: true,
+			}
+		);
+		return;
+	}
+	
+	const { createBlock } = wp.blocks;
+	const { insertBlock, getBlocksByClientId } = wp.data.dispatch('core/block-editor');
+	const { getSelectedBlock, getBlockSelectionStart, getBlocks } = wp.data.select('core/block-editor');
+	
+	console.log('Creating block:', `wpzoom-forms/${blockName}`);
+	const newBlock = createBlock(`wpzoom-forms/${blockName}`, defaultAttributes);
+	const selectedBlock = getSelectedBlock();
+	const focusedBlockClientId = getBlockSelectionStart();
+	
+	console.log('Selected block:', selectedBlock);
+	console.log('Focused block client ID:', focusedBlockClientId);
+	
+	// Get all blocks to find the form block
+	const allBlocks = getBlocks();
+	console.log('All blocks:', allBlocks);
+	
+	// Find the form block
+	const formBlock = allBlocks.find(block => block.name === 'wpzoom-forms/form');
+	console.log('Form block:', formBlock);
+	
+	if (selectedBlock) {
+		console.log('Inserting after selected block');
+		// Insert after the selected block
+		insertBlock(newBlock, undefined, selectedBlock.clientId, false);
+	} else if (focusedBlockClientId) {
+		console.log('Inserting after focused block');
+		// Insert after the focused block
+		insertBlock(newBlock, undefined, focusedBlockClientId, false);
+	} else if (formBlock) {
+		console.log('Inserting at the end of the form block');
+		// Find the innermost column block to insert into
+		let targetBlock = formBlock;
+		
+		// Navigate through the inner blocks to find the column block
+		if (formBlock.innerBlocks && formBlock.innerBlocks.length > 0) {
+			// Find the group block
+			const groupBlock = formBlock.innerBlocks.find(block => block.name === 'core/group');
+			if (groupBlock && groupBlock.innerBlocks && groupBlock.innerBlocks.length > 0) {
+				// Find the columns block
+				const columnsBlock = groupBlock.innerBlocks.find(block => block.name === 'core/columns');
+				if (columnsBlock && columnsBlock.innerBlocks && columnsBlock.innerBlocks.length > 0) {
+					// Find the column block
+					const columnBlock = columnsBlock.innerBlocks.find(block => block.name === 'core/column');
+					if (columnBlock) {
+						targetBlock = columnBlock;
+					}
+				}
+			}
+		}
+		
+		console.log('Target block for insertion:', targetBlock);
+		insertBlock(newBlock, undefined, targetBlock.clientId, false);
+	} else {
+		console.log('No form block found, inserting at root');
+		insertBlock(newBlock);
+	}
+};
+
 updateCategory('wpzoom-forms', {
 	icon: (
 		<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -541,38 +615,11 @@ registerPlugin('wpzoom-forms-document-settings', {
 											attributes: block.defaultAttributes
 										}));
 									}}
-									onClick={() => {
-										if (isDisabled) {
-											wp.data.dispatch('core/notices').createNotice(
-												'info',
-												__('This field can only be used once per form', 'wpzoom-forms'),
-												{
-													type: 'snackbar',
-													isDismissible: true,
-												}
-											);
-											return;
-										}
-										const { createBlock } = wp.blocks;
-										const { insertBlock } = wp.data.dispatch('core/block-editor');
-										const { getSelectedBlock } = wp.data.select('core/block-editor');
-										
-										const newBlock = createBlock(`wpzoom-forms/${block.name}`, block.defaultAttributes);
-										const selectedBlock = getSelectedBlock();
-										
-										if (selectedBlock) {
-											// Insert after the selected block
-											insertBlock(newBlock, undefined, undefined, false);
-										} else {
-											// Insert at the end of the form
-											const formBlock = document.querySelector('.wpzoom-forms_form');
-											if (formBlock) {
-												const formClientId = formBlock.closest('[data-block]').getAttribute('data-block');
-												insertBlock(newBlock, undefined, formClientId, false);
-											} else {
-												insertBlock(newBlock);
-											}
-										}
+									onClick={(event) => {
+										console.log('Quick form field clicked:', block.name);
+										event.preventDefault();
+										event.stopPropagation();
+										insertFormField(block.name, block.defaultAttributes, isDisabled);
 									}}
 									title={isDisabled ? __('This field can only be used once per form', 'wpzoom-forms') : ''}
 								>
@@ -593,18 +640,24 @@ registerPlugin('wpzoom-forms-document-settings', {
 				className="wpzoom-forms-document-settings-details"
 				title={__('Form Details', 'wpzoom-forms')}
 			>
-				<HStack alignment="flex-end">
+				<HStack className="wpzf-shortcode-container" style={{ alignItems: 'center', justifyContent: 'flex-start' }}>
 					<TextControl
-						type="text"
-						label={__('Shortcode', 'wpzoom-forms')}
-						value={'[wpzf_form id="' + postID + '"]'}
+						value={`[wpzf_form id="${postID}"]`}
 						readOnly={true}
+						style={{ margin: 0 }}
 					/>
-
 					<ClipboardButton
+						className="wpzf-copy-button"
 						variant="primary"
-						style={copyBtnStyle}
-						text={'[wpzf_form id="' + postID + '"]'}
+						style={{
+							height: '30px',
+							minWidth: '30px',
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'center',
+							padding: '2px 8px'
+						}}
+						text={`[wpzf_form id="${postID}"]`}
 						label={__('Copy shortcode', 'wpzoom-forms')}
 						showTooltip={true}
 						onCopy={() => setHasCopiedShortcode(true)}
@@ -1070,38 +1123,11 @@ registerBlockType('wpzoom-forms/form', {
 												attributes: block.defaultAttributes
 											}));
 										}}
-										onClick={() => {
-											if (isDisabled) {
-												wp.data.dispatch('core/notices').createNotice(
-													'info',
-													__('This field can only be used once per form', 'wpzoom-forms'),
-													{
-														type: 'snackbar',
-														isDismissible: true,
-													}
-												);
-												return;
-											}
-											const { createBlock } = wp.blocks;
-											const { insertBlock } = wp.data.dispatch('core/block-editor');
-											const { getSelectedBlock } = wp.data.select('core/block-editor');
-											
-											const newBlock = createBlock(`wpzoom-forms/${block.name}`, block.defaultAttributes);
-											const selectedBlock = getSelectedBlock();
-											
-											if (selectedBlock) {
-												// Insert after the selected block
-												insertBlock(newBlock, undefined, undefined, false);
-											} else {
-												// Insert at the end of the form
-												const formBlock = document.querySelector('.wpzoom-forms_form');
-												if (formBlock) {
-													const formClientId = formBlock.closest('[data-block]').getAttribute('data-block');
-													insertBlock(newBlock, undefined, formClientId, false);
-												} else {
-													insertBlock(newBlock);
-												}
-											}
+										onClick={(event) => {
+											console.log('Quick form field clicked:', block.name);
+											event.preventDefault();
+											event.stopPropagation();
+											insertFormField(block.name, block.defaultAttributes, isDisabled);
 										}}
 										title={isDisabled ? __('This field can only be used once per form', 'wpzoom-forms') : ''}
 									>
