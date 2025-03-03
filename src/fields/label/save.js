@@ -1,23 +1,31 @@
-import { useBlockProps, RichText } from '@wordpress/block-editor';
+import { useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
-const Save = ( { attributes } ) => {
+const Save = ({ attributes }) => {
 	const blockProps = useBlockProps.save();
-	const { id, name, forInput, required } = attributes;
+	const { name, forInput, required } = attributes;
 
-	return <>
-		<RichText.Content
-			tagName="label"
-			value={ name }
-			htmlFor={ forInput }
-			data-required={ !! required }
-			{ ...blockProps }
-		/>
+	// Create label props object
+	const labelProps = {
+		...blockProps,
+		htmlFor: forInput || ''
+	};
 
-		{ required && (
-			<sup className="wp-block-wpzoom-forms-required">{ __( '*', 'wpzoom-forms' ) }</sup>
-		) }
-	</>;
+	// Only add data-required attribute if required is true
+	if (required === true) {
+		labelProps['data-required'] = true;
+	}
+
+	return (
+		<>
+			<label {...labelProps}>
+				{name}
+			</label>
+			{required && (
+				<sup className="wp-block-wpzoom-forms-required">*</sup>
+			)}
+		</>
+	);
 };
 
 export default Save;
