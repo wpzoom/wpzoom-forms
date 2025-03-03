@@ -205,7 +205,7 @@ class WPZOOM_Forms {
 					'publicly_queryable'  => false,
 					'show_in_rest'        => true,
 					'menu_position'       => 30,
-					'menu_icon'           => 'dashicons-email-alt2',
+					'menu_icon'           => 'data:image/svg+xml;base64,' . base64_encode('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M7.33333 2H20.6667V22H4V5.33333H7.33333V2ZM17.3333 5.33333H10.6667V8.66667H7.33333V18.6667H10.6667V15.3333H14V12H10.6667V8.66667H17.3333V5.33333Z" fill="currentColor"/></svg>'),
 					'supports'            => array( 'title', 'editor', 'custom-fields' )
 				)
 			);

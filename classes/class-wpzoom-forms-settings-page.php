@@ -1,6 +1,6 @@
 <?php
 /**
- * Class Portfolio Settings Page
+ * Class WPZOOM Forms Settings Page
  *
  * @since   1.0.5
  * @package WPZOOM_Forms
