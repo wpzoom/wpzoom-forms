@@ -2,7 +2,7 @@ import { useBlockProps, InspectorControls, InnerBlocks, RichText } from '@wordpr
 import { registerBlockType, updateCategory } from '@wordpress/blocks';
 import { Card, CardBody, CardHeader, Disabled, Flex, FlexBlock, FlexItem, IconButton, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl, ClipboardButton, Icon, __experimentalHStack as HStack } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { Fragment, useEffect, useState } from '@wordpress/element';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
 import { __, setLocaleData, sprintf } from '@wordpress/i18n';
@@ -30,6 +30,37 @@ registerPlugin('wpzoom-forms-document-settings', {
 		const formMethod = meta['_form_method'] || 'email';
 		const formEmail = meta['_form_email'] || (typeof wpzf_formblock !== 'undefined' && 'admin_email' in wpzf_formblock ? wpzf_formblock.admin_email : '');
 		const formSubject = meta['_form_subject'] || '';
+		const formEmailSubject = meta['_form_email_subject'] || '';
+		const formEmailMessage = meta['_form_email_message'] || '';
+		const formRedirect = meta['_form_redirect'] || '';
+		const formCustomAction = meta['_form_custom_action'] || '';
+		const formCustomMethod = meta['_form_custom_method'] || 'POST';
+		const formCustomEnctype = meta['_form_custom_enctype'] || 'application/x-www-form-urlencoded';
+		const formCustomTarget = meta['_form_custom_target'] || '_self';
+		const formCustomHideOnSuccess = meta['_form_custom_hide_on_success'] || false;
+		const formCustomSuccessMessage = meta['_form_custom_success_message'] || '';
+		const formCustomErrorMessage = meta['_form_custom_error_message'] || '';
+		const formCustomSuccessRedirect = meta['_form_custom_success_redirect'] || '';
+		const formCustomSuccessRedirectTimeout = meta['_form_custom_success_redirect_timeout'] || 5;
+		const formCustomSuccessRedirectTimeoutMessage = meta['_form_custom_success_redirect_timeout_message'] || '';
+		const formCustomSuccessRedirectTimeoutMessageShow = meta['_form_custom_success_redirect_timeout_message_show'] || false;
+		const formCustomSuccessRedirectTimeoutMessageShowTime = meta['_form_custom_success_redirect_timeout_message_show_time'] || 0;
+		const formCustomSuccessRedirectTimeoutMessageHideTime = meta['_form_custom_success_redirect_timeout_message_hide_time'] || 0;
+		const formCustomSuccessRedirectTimeoutMessageHideEffect = meta['_form_custom_success_redirect_timeout_message_hide_effect'] || 'fade';
+		const formCustomSuccessRedirectTimeoutMessageShowEffect = meta['_form_custom_success_redirect_timeout_message_show_effect'] || 'fade';
+		
+		// Use dispatch to open panels by default
+		const { toggleEditorPanelOpened } = useDispatch('core/edit-post');
+		
+		useEffect(() => {
+			// Open the Form Settings panel by default
+			toggleEditorPanelOpened('wpzoom-forms-document-settings/form-settings', true);
+			// Open the Add Form Fields panel by default
+			toggleEditorPanelOpened('wpzoom-forms-document-settings/add-form-fields', true);
+			// Open the Form Details panel by default
+			toggleEditorPanelOpened('wpzoom-forms-document-settings/form-details', true);
+		}, []);
+
 		const [hasCopiedShortcode, setHasCopiedShortcode] = useState(false);
 		const copyBtnStyle = { minHeight: '30px', height: 'auto', minWidth: 'fit-content', margin: '0px 0px 8px 0px' };
 		const blockPatternsStyle = {};
@@ -323,8 +354,6 @@ registerPlugin('wpzoom-forms-document-settings', {
 				name="wpzoom-forms-document-settings"
 				className="wpzoom-forms-document-settings"
 				title={__('Form Settings', 'wpzoom-forms')}
-				initialOpen={true}
-				opened={true}
 			>
 				<SelectControl
 					label={__('Form Method', 'wpzoom-forms')}
@@ -372,8 +401,6 @@ registerPlugin('wpzoom-forms-document-settings', {
 				name="wpzoom-forms-document-settings-fields"
 				className="wpzoom-forms-document-settings-fields"
 				title={__('Add Form Fields', 'wpzoom-forms')}
-				initialOpen={true}
-				opened={true}
 			>
 				<div className="wpzoom-forms-block-patterns">
 					<div className="wpzoom-forms-block-patterns-list">
@@ -565,7 +592,6 @@ registerPlugin('wpzoom-forms-document-settings', {
 				name="wpzoom-forms-document-settings-details"
 				className="wpzoom-forms-document-settings-details"
 				title={__('Form Details', 'wpzoom-forms')}
-				opened={true}
 			>
 				<HStack alignment="flex-end">
 					<TextControl
@@ -1104,7 +1130,9 @@ registerBlockType('wpzoom-forms/form', {
 					'wpzoom-forms/checkbox-field',
 					'wpzoom-forms/radio-field',
 					'wpzoom-forms/label-field',
-					'wpzoom-forms/submit-field'
+					'wpzoom-forms/submit-field',
+					'wpzoom-forms/datepicker-field'
+
 				]}
 				template={[
 					[
