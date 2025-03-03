@@ -287,6 +287,35 @@ registerPlugin('wpzoom-forms-document-settings', {
 			});
 		}, []);
 
+		// Add check for unique fields
+		const uniqueFieldsExist = useSelect(select => {
+			const blocks = select('core/block-editor').getBlocks();
+			
+			// Helper function to check blocks recursively
+			const findBlockType = (blocks, type) => {
+				return blocks.some(block => {
+					if (block.name === type) {
+						return true;
+					}
+					if (block.innerBlocks && block.innerBlocks.length > 0) {
+						return findBlockType(block.innerBlocks, type);
+					}
+					return false;
+				});
+			};
+
+			// Check for each unique field type
+			const hasEmailField = findBlockType(blocks, 'wpzoom-forms/text-email-field');
+			const hasNameField = findBlockType(blocks, 'wpzoom-forms/text-name-field');
+			const hasSubmitField = findBlockType(blocks, 'wpzoom-forms/submit-field');
+
+			return {
+				'text-email-field': hasEmailField,
+				'text-name-field': hasNameField,
+				'submit-field': hasSubmitField
+			};
+		}, []);
+
 		return <>
 			<WelcomeGuide />
 
@@ -294,6 +323,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 				name="wpzoom-forms-document-settings"
 				className="wpzoom-forms-document-settings"
 				title={__('Form Settings', 'wpzoom-forms')}
+				initialOpen={true}
 				opened={true}
 			>
 				<SelectControl
@@ -336,6 +366,199 @@ registerPlugin('wpzoom-forms-document-settings', {
 				{isTextPlainFieldWithSubject && (
 					<note><i>{__('Your form already includes a field that is marked as the Subject. Uncheck its "Is Subject" option if you want to set a custom subject here.', 'wpzoom-forms')}</i></note>
 				)}
+			</PluginDocumentSettingPanel>
+
+			<PluginDocumentSettingPanel
+				name="wpzoom-forms-document-settings-fields"
+				className="wpzoom-forms-document-settings-fields"
+				title={__('Add Form Fields', 'wpzoom-forms')}
+				initialOpen={true}
+				opened={true}
+			>
+				<div className="wpzoom-forms-block-patterns">
+					<div className="wpzoom-forms-block-patterns-list">
+						{[
+							{
+								name: 'multi-checkbox-field',
+								title: __('Multi Checkbox', 'wpzoom-forms'),
+								icon: FormIcons.multiCheckbox,
+								defaultAttributes: {
+									label: __('Multiple Choice', 'wpzoom-forms'),
+									required: false,
+									options: ['Option 1', 'Option 2', 'Option 3']
+								}
+							},
+							{
+								name: 'checkbox-field',
+								title: __('Checkbox', 'wpzoom-forms'),
+								icon: FormIcons.checkbox,
+								defaultAttributes: {
+									label: __('Checkbox', 'wpzoom-forms'),
+									required: false
+								}
+							},
+							{
+								name: 'text-email-field',
+								title: __('Email Input', 'wpzoom-forms'),
+								icon: FormIcons.emailInput,
+								defaultAttributes: {
+									label: __('Email', 'wpzoom-forms'),
+									required: true
+								}
+							},
+							{
+								name: 'label-field',
+								title: __('Label', 'wpzoom-forms'),
+								icon: FormIcons.label,
+								defaultAttributes: {
+									content: __('Label', 'wpzoom-forms')
+								}
+							},
+							{
+								name: 'text-name-field',
+								title: __('Name Input', 'wpzoom-forms'),
+								icon: FormIcons.nameInput,
+								defaultAttributes: {
+									label: __('Name', 'wpzoom-forms'),
+									required: true
+								}
+							},
+							{
+								name: 'text-phone-field',
+								title: __('Phone Input', 'wpzoom-forms'),
+								icon: FormIcons.phoneInput,
+								defaultAttributes: {
+									label: __('Phone', 'wpzoom-forms'),
+									required: false
+								}
+							},
+							{
+								name: 'text-plain-field',
+								title: __('Text Input', 'wpzoom-forms'),
+								icon: FormIcons.textInput,
+								defaultAttributes: {
+									label: __('Text', 'wpzoom-forms'),
+									required: false
+								}
+							},
+							{
+								name: 'radio-field',
+								title: __('Radio', 'wpzoom-forms'),
+								icon: FormIcons.radio,
+								defaultAttributes: {
+									label: __('Radio', 'wpzoom-forms'),
+									required: false,
+									options: ['Option 1', 'Option 2', 'Option 3']
+								}
+							},
+							{
+								name: 'select-field',
+								title: __('Select', 'wpzoom-forms'),
+								icon: FormIcons.select,
+								defaultAttributes: {
+									label: __('Select', 'wpzoom-forms'),
+									required: false,
+									options: ['Option 1', 'Option 2', 'Option 3']
+								}
+							},
+							{
+								name: 'submit-field',
+								title: __('Submit', 'wpzoom-forms'),
+								icon: FormIcons.submit,
+								defaultAttributes: {
+									label: __('Submit', 'wpzoom-forms')
+								}
+							},
+							{
+								name: 'textarea-field',
+								title: __('Textarea', 'wpzoom-forms'),
+								icon: FormIcons.textarea,
+								defaultAttributes: {
+									label: __('Message', 'wpzoom-forms'),
+									required: false,
+									rows: 5
+								}
+							},
+							{
+								name: 'text-website-field',
+								title: __('Website Input', 'wpzoom-forms'),
+								icon: FormIcons.websiteInput,
+								defaultAttributes: {
+									label: __('Website', 'wpzoom-forms'),
+									required: false
+								}
+							},
+							{
+								name: 'datepicker-field',
+								title: __('Date', 'wpzoom-forms'),
+								icon: FormIcons.date,
+								defaultAttributes: {
+									label: __('Date', 'wpzoom-forms'),
+									required: false
+								}
+							}
+						].map((block) => {
+							const isDisabled = uniqueFieldsExist[block.name] || false;
+							return (
+								<div
+									key={block.name}
+									className={`wpzoom-forms-block-pattern-item${isDisabled ? ' disabled' : ''}`}
+									draggable={!isDisabled}
+									onDragStart={(event) => {
+										if (isDisabled) {
+											event.preventDefault();
+											return;
+										}
+										event.dataTransfer.setData('text', JSON.stringify({
+											type: `wpzoom-forms/${block.name}`,
+											attributes: block.defaultAttributes
+										}));
+									}}
+									onClick={() => {
+										if (isDisabled) {
+											wp.data.dispatch('core/notices').createNotice(
+												'info',
+												__('This field can only be used once per form', 'wpzoom-forms'),
+												{
+													type: 'snackbar',
+													isDismissible: true,
+												}
+											);
+											return;
+										}
+										const { createBlock } = wp.blocks;
+										const { insertBlock } = wp.data.dispatch('core/block-editor');
+										const { getSelectedBlock } = wp.data.select('core/block-editor');
+										
+										const newBlock = createBlock(`wpzoom-forms/${block.name}`, block.defaultAttributes);
+										const selectedBlock = getSelectedBlock();
+										
+										if (selectedBlock) {
+											// Insert after the selected block
+											insertBlock(newBlock, undefined, undefined, false);
+										} else {
+											// Insert at the end of the form
+											const formBlock = document.querySelector('.wpzoom-forms_form');
+											if (formBlock) {
+												const formClientId = formBlock.closest('[data-block]').getAttribute('data-block');
+												insertBlock(newBlock, undefined, formClientId, false);
+											} else {
+												insertBlock(newBlock);
+											}
+										}
+									}}
+									title={isDisabled ? __('This field can only be used once per form', 'wpzoom-forms') : ''}
+								>
+									{block.icon}
+									<span>{block.title}</span>
+									{isDisabled && (
+										<span className="dashicons dashicons-info" />
+									)}
+								</div>
+							);
+						})}
+					</div>
+				</div>
 			</PluginDocumentSettingPanel>
 
 			<PluginDocumentSettingPanel
@@ -681,7 +904,7 @@ registerBlockType('wpzoom-forms/form', {
 
 		return <div {...blockProps}>
 			<InspectorControls>
-				<PanelBody title={__('Form Fields', 'wpzoom-forms')} initialOpen={true}>
+				<PanelBody title={__('Add Form Fields', 'wpzoom-forms')} initialOpen={true}>
 					<div className="wpzoom-forms-block-patterns">
 						<div className="wpzoom-forms-block-patterns-list">
 							{[
