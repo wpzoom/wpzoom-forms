@@ -5,7 +5,7 @@ Author URI:        https://www.wpzoom.com/
 Requires at least: 6.0
 Requires PHP:      7.4
 Tested up to:      6.7
-Stable tag:        1.2.6
+Stable tag:        1.2.7
 License:           GNU General Public License v2
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 Tags:              contact, form, contact form, form builder, custom form
@@ -76,6 +76,10 @@ To export form submissions, navigate to the Tools > Export page in Dashboard and
 
 
 == Changelog ==
+
+= 1.2.7 =
+* Added quick access to form fields.
+* Fixed an issue with the label field.
 
 = 1.2.6 =
 * Minor bug fix
