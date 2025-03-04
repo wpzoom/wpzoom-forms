@@ -54,14 +54,6 @@ add_action( 'init', array( $wpzoom_forms, 'init' ), 9 );
  * @since 1.0.0
  */
 class WPZOOM_Forms {
-	/**
-	 * The version of this plugin.
-	 *
-	 * @var    string
-	 * @access public
-	 * @since  1.0.0
-	 */
-	public const VERSION = '1.2.1';
 
 	/**
 	 * Whether the plugin has been initialized.
@@ -700,7 +692,7 @@ class WPZOOM_Forms {
 				'wpzoom-forms-css-backend-submissions',
 				trailingslashit( $this->main_dir_url ) . 'submissions/backend/style.css',
 				array(),
-				$this::VERSION
+				WPZOOM_FORMS_VERSION
 			);
 		}
 
@@ -711,7 +703,7 @@ class WPZOOM_Forms {
 				'wpzoom-forms-css-backend-main',
 				trailingslashit( $this->main_dir_url ) . 'main/backend/style.css',
 				array(),
-				$this::VERSION
+				WPZOOM_FORMS_VERSION
 			);
 		}
 
@@ -740,7 +732,7 @@ class WPZOOM_Forms {
 				'wpzoom-forms-js-backend-main',
 				trailingslashit( $this->main_dir_url ) . 'main/backend/script.js',
 				array( 'wp-blocks', 'wp-components', 'wp-core-data', 'wp-data', 'wp-element', 'wp-i18n', 'wp-polyfill' ),
-				$this::VERSION,
+				WPZOOM_FORMS_VERSION,
 				true
 			);
 
@@ -757,14 +749,14 @@ class WPZOOM_Forms {
 				'wpzoom-forms-css-backend-main',
 				trailingslashit( $this->main_dir_url ) . 'main/backend/style.css',
 				array(),
-				$this::VERSION
+				WPZOOM_FORMS_VERSION
 			);
 		} else {
 			wp_register_script(
 				'wpzoom-forms-js-backend-formblock',
 				trailingslashit( $this->main_dir_url ) . 'form-block/backend/script.js',
 				array( 'wp-blocks', 'wp-components', 'wp-core-data', 'wp-data', 'wp-element', 'wp-i18n', 'wp-polyfill' ),
-				$this::VERSION,
+				WPZOOM_FORMS_VERSION,
 				true
 			);
 
@@ -781,7 +773,7 @@ class WPZOOM_Forms {
 				'wpzoom-forms-css-backend-formblock',
 				trailingslashit( $this->main_dir_url ) . 'form-block/backend/style.css',
 				array(),
-				$this::VERSION
+				WPZOOM_FORMS_VERSION
 			);
 		}
 	}
@@ -807,7 +799,7 @@ class WPZOOM_Forms {
 					'google-recaptcha',
 					'https://www.google.com/recaptcha/api.js',
 					array(),
-					$this::VERSION,
+					WPZOOM_FORMS_VERSION,
 					true
 				);
 			}
@@ -816,7 +808,7 @@ class WPZOOM_Forms {
 					'google-recaptcha',
 					"https://www.google.com/recaptcha/api.js?render={$site_key}",
 					array(),
-					$this::VERSION,
+					WPZOOM_FORMS_VERSION,
 					true
 				);
 			}
@@ -838,7 +830,7 @@ class WPZOOM_Forms {
 			'wpzoom-forms-js-frontend-formblock',
 			trailingslashit( $this->dist_dir_url ) . 'assets/frontend/js/script.js',
 			$depends,
-			$this::VERSION,
+			WPZOOM_FORMS_VERSION,
 			true
 		);
 
@@ -848,7 +840,7 @@ class WPZOOM_Forms {
 			'wpzoom-forms-css-frontend-formblock',
 			( $use_theme_style ? trailingslashit( $this->main_dir_url ) . 'form-block/frontend/style.css' : false ),
 			array(),
-			$this::VERSION
+			WPZOOM_FORMS_VERSION
 		);
 
 		// Register style for datepicker field
@@ -856,7 +848,7 @@ class WPZOOM_Forms {
 			'wpzoom-forms-css-frontend-flatpickr',
 			trailingslashit( $this->dist_dir_url ) . 'assets/frontend/flatpickr/css/flatpickr.min.css',
 			array(),
-			$this::VERSION
+			WPZOOM_FORMS_VERSION
 		);
 
 		//Register script for datepicker field
@@ -864,7 +856,7 @@ class WPZOOM_Forms {
 			'wpzoom-forms-js-frontend-flatpickr',
 			trailingslashit( $this->dist_dir_url ) . 'assets/frontend/flatpickr/js/flatpickr.js',
 			array( 'jquery' ),
-			$this::VERSION,
+			WPZOOM_FORMS_VERSION,
 			true
 		);
 
@@ -872,7 +864,7 @@ class WPZOOM_Forms {
 			'wpzoom-forms-js-frontend-datepicker',
 			trailingslashit( $this->dist_dir_url ) . 'assets/frontend/js/datepicker.js',
 			array( 'wpzoom-forms-js-frontend-flatpickr' ),
-			$this::VERSION,
+			WPZOOM_FORMS_VERSION,
 			true
 		);
 	}
@@ -1640,7 +1632,7 @@ class WPZOOM_Forms {
 					?>
 
 					<span class="wpzoom-new-admin_settings-main-title-version">
-						<?php printf( esc_html__( 'V. %s', 'wpzoom-forms' ), self::VERSION ); ?>
+						<?php printf( esc_html__( 'V. %s', 'wpzoom-forms' ), WPZOOM_FORMS_VERSION ); ?>
 					</span>
 				</h1>
 
