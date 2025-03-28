@@ -78,7 +78,7 @@ To export form submissions, navigate to the Tools > Export page in Dashboard and
 == Changelog ==
 
 = 1.2.9 =
-* Minor bug fix
+* Added an option to set the location of the reCAPTCHA badge
 
 = 1.2.8 =
 * Minor bug fix
