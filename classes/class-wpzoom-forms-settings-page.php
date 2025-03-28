@@ -348,6 +348,22 @@ class WPZOOM_Forms_Settings {
 								),
 							),
 							array(
+								'id'    => 'wpzf_global_recaptcha_badge_location',
+								'title' => esc_html__( 'Badge Location', 'wpzoom-forms' ),
+								'type'  => 'select',
+								'args'  => array(
+									'label_for'   => 'wpzf_global_recaptcha_badge_location',
+									'class'       => 'wpzoom-forms-field required-recaptcha',
+									'description' => '',
+									'default'     => 'bottomright',
+									'options'     => array(
+										'bottomright'  => esc_html__( 'Bottom Right', 'wpzoom-forms' ),
+										'bottomleft' => esc_html__( 'Bottom Left', 'wpzoom-forms' ),
+										'inline'  => esc_html__( 'Inline', 'wpzoom-forms')
+									)
+								),
+							),
+							array(
 								'id'	=> 'wpzf_global_turnstile_site_key',
 								'title' => __( 'Site Key', 'wpzoom-forms' ),
 								'type'  => 'input',
