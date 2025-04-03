@@ -5,7 +5,7 @@ Author URI:        https://www.wpzoom.com/
 Requires at least: 6.0
 Requires PHP:      7.4
 Tested up to:      6.7
-Stable tag:        1.2.9
+Stable tag:        1.2.10
 License:           GNU General Public License v2
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 Tags:              contact, form, contact form, form builder, custom form
@@ -76,6 +76,10 @@ To export form submissions, navigate to the Tools > Export page in Dashboard and
 
 
 == Changelog ==
+
+= 1.2.10 =
+* Added two new options to edit the Success/Confirmation and Failure messages when submitting an entry
+* Moved the confirmation message below the form
 
 = 1.2.9 =
 * Added an option to set the location of the reCAPTCHA badge

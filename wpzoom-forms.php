@@ -13,7 +13,7 @@
  * Description: Simple, user-friendly contact form plugin for WordPress that utilizes Gutenberg blocks for easy form building and customization.
  * Author:      WPZOOM
  * Author URI:  https://www.wpzoom.com
- * Version:     1.2.9
+ * Version:     1.2.10
  * License:     GPL2+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
@@ -307,6 +307,38 @@ class WPZOOM_Forms {
 				)
 			);
 
+			register_meta(
+				'post',
+				'_form_success_message',
+				array(
+					'object_subtype'    => 'wpzf-form',
+					'show_in_rest'      => true,
+					'single'            => true,
+					'type'              => 'string',
+					'default'           => __( 'Thanks! We\'ve received your submission!', 'wpzoom-forms' ),
+					'sanitize_callback' => function( $value ) {
+						return wp_kses( $value, array() );
+					},
+					'auth_callback'     => function() { return current_user_can( 'edit_posts' ); }
+				)
+			);
+
+			register_meta(
+				'post',
+				'_form_failure_message',
+				array(
+					'object_subtype'    => 'wpzf-form',
+					'show_in_rest'      => true,
+					'single'            => true,
+					'type'              => 'string',
+					'default'           => __( 'Submission failed!', 'wpzoom-forms' ),
+					'sanitize_callback' => function( $value ) {
+						return wp_kses( $value, array() );
+					},
+					'auth_callback'     => function() { return current_user_can( 'edit_posts' ); }
+				)
+			);
+
 			add_shortcode( 'wpzf_form', array( $this, 'shortcode_output' ) );
 
 			//$form_pto           = get_post_type_object( 'wpzf-form' );
@@ -350,6 +382,8 @@ class WPZOOM_Forms {
 					'_form_method'   => 'email',
 					'_form_email'    => trim( get_option( 'admin_email' ) ),
 					'_form_subject'  => esc_html__( 'New Form Submission', 'wpzoom-forms' ),
+					'_form_success_message' => __( 'Thanks! We\'ve received your submission!', 'wpzoom-forms' ),
+					'_form_failure_message' => __( 'Submission failed!', 'wpzoom-forms' ),
 					
 				)
 			) );
@@ -1484,6 +1518,16 @@ class WPZOOM_Forms {
 		$btnBgColor     = isset( $attributes['btnBgColor'] ) ? $attributes['btnBgColor'] : '';
 
 		$form_ID = 'wpzf-' . intval( $attributes['formId'] );
+		$form_success_message = get_post_meta( intval( $attributes['formId'] ), '_form_success_message', true );
+		$form_failure_message = get_post_meta( intval( $attributes['formId'] ), '_form_failure_message', true );
+
+		// Use default messages if custom ones are not set
+		if ( empty( $form_success_message ) ) {
+			$form_success_message = __( 'Thanks! We\'ve received your submission!', 'wpzoom-forms' );
+		}
+		if ( empty( $form_failure_message ) ) {
+			$form_failure_message = __( 'Submission failed!', 'wpzoom-forms' );
+		}
 
 		$content = sprintf(
 			'<!-- ZOOM Forms Start -->
@@ -1491,16 +1535,16 @@ class WPZOOM_Forms {
 			<input type="hidden" name="action" value="wpzf_submit" />
 			<input type="hidden" name="form_id" value="%2$s" />
 			%3$s
-			%4$s
 			%5$s
 			</form>
+			%4$s
 			<!-- ZOOM Forms End -->',
 			admin_url( 'admin-post.php' ),
 			intval( $attributes['formId'] ),
 			wp_nonce_field( 'wpzf_submit', '_wpnonce', true, false ),
 			( isset( $_GET['success'] )
 				? '<div class="notice ' . ( '1' == $_GET['success'] ? 'success' : 'error' ) . '"><p>' .
-				  ( '1' == $_GET['success'] ? __( 'Thanks! We\'ve received your submission!', 'wpzoom-forms' ) : __( 'Submission failed!', 'wpzoom-forms' ) ) .
+				  ( '1' == $_GET['success'] ? wp_kses_post($form_success_message) : wp_kses_post($form_failure_message) ) .
 				  '</p></div>'
 				: ''
 			),
@@ -1591,6 +1635,12 @@ class WPZOOM_Forms {
 		if( ! empty( $btnBgColor ) ) {
 			$styleOutput .= sprintf( '#' . $form_ID . ' input[type="submit"] { background-color: %s; }', $btnBgColor );
 		}
+
+		// Add styles for the notice
+		$styleOutput .= sprintf( '#%s + .notice { margin-top: 20px; padding: 15px; border-radius: 4px; }', $form_ID );
+		$styleOutput .= sprintf( '#%s + .notice.success { background-color: #e7f7ed; color: #227045; border-left: 4px solid #46b450; }', $form_ID );
+		$styleOutput .= sprintf( '#%s + .notice.error { background-color: #fde8e8; color: #8a1f11; border-left: 4px solid #cc0000; }', $form_ID );
+		$styleOutput .= sprintf( '#%s + .notice p { margin: 0; }', $form_ID );
 
 		$style = sprintf( '<style>%s</style>',
 			$styleOutput

@@ -104,6 +104,8 @@ registerPlugin('wpzoom-forms-document-settings', {
 		const formMethod = meta['_form_method'] || 'email';
 		const formEmail = meta['_form_email'] || (typeof wpzf_formblock !== 'undefined' && 'admin_email' in wpzf_formblock ? wpzf_formblock.admin_email : '');
 		const formSubject = meta['_form_subject'] || '';
+		const formSuccessMessage = meta['_form_success_message'] || __('Thanks! We\'ve received your submission!', 'wpzoom-forms');
+		const formFailureMessage = meta['_form_failure_message'] || __('Submission failed!', 'wpzoom-forms');
 		const formEmailSubject = meta['_form_email_subject'] || '';
 		const formEmailMessage = meta['_form_email_message'] || '';
 		const formRedirect = meta['_form_redirect'] || '';
@@ -467,8 +469,26 @@ registerPlugin('wpzoom-forms-document-settings', {
 					disabled={isTextPlainFieldWithSubject} // Disable the field if the conditions are met
 				/>
 				{isTextPlainFieldWithSubject && (
-					<note><i>{__('Your form already includes a field that is marked as the Subject. Uncheck its "Is Subject" option if you want to set a custom subject here.', 'wpzoom-forms')}</i></note>
+					<p class="description">{__('Your form already includes a field that is marked as the Subject. Uncheck its "Is Subject" option if you want to set a custom subject here.', 'wpzoom-forms')}</p>
 				)}
+
+				<TextControl
+					type="text"
+					label={__('Success Message', 'wpzoom-forms')}
+					value={formSuccessMessage}
+					placeholder={__('Thanks! We\'ve received your submission!', 'wpzoom-forms')}
+					onChange={value => setMeta({ ...meta, '_form_success_message': value })}
+					help={__('Message shown when form is submitted successfully.', 'wpzoom-forms')}
+				/>
+
+				<TextControl
+					type="text"
+					label={__('Failure Message', 'wpzoom-forms')}
+					value={formFailureMessage}
+					placeholder={__('Submission failed!', 'wpzoom-forms')}
+					onChange={value => setMeta({ ...meta, '_form_failure_message': value })}
+					help={__('Message shown when form submission fails.', 'wpzoom-forms')}
+				/>
 			</PluginDocumentSettingPanel>
 
 			<PluginDocumentSettingPanel
