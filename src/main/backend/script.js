@@ -1,6 +1,6 @@
 import { useBlockProps, InspectorControls, InnerBlocks, RichText } from '@wordpress/block-editor';
 import { registerBlockType, updateCategory } from '@wordpress/blocks';
-import { Card, CardBody, CardHeader, Disabled, Flex, FlexBlock, FlexItem, IconButton, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl, ClipboardButton, Icon, __experimentalHStack as HStack } from '@wordpress/components';
+import { Card, CardBody, CardHeader, Disabled, Flex, FlexBlock, FlexItem, IconButton, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl, ClipboardButton, Button, Icon, __experimentalHStack as HStack } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Fragment, useEffect, useState } from '@wordpress/element';
@@ -12,14 +12,27 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { arrayMoveImmutable } from 'array-move';
 import FormIcons from './icons';
 
-const insertFormField = (blockName, defaultAttributes, isDisabled) => {
-	console.log('insertFormField called with:', blockName, defaultAttributes, isDisabled);
+const insertFormField = (blockName, defaultAttributes, isDisabled, isPro) => {
+	console.log('insertFormField called with:', blockName, defaultAttributes, isDisabled, isPro);
 	
-	if (isDisabled) {
+	if (isDisabled && ! isPro) {
 		console.log('Field is disabled, showing notice');
 		wp.data.dispatch('core/notices').createNotice(
 			'info',
 			__('This field can only be used once per form', 'wpzoom-forms'),
+			{
+				type: 'snackbar',
+				isDismissible: true,
+			}
+		);
+		return;
+	}
+
+	if (isDisabled && isPro) {
+		console.log('Field is pro, showing notice');
+		wp.data.dispatch('core/notices').createNotice(
+			'info',
+			__('This field is available in the PRO version', 'wpzoom-forms'),
 			{
 				type: 'snackbar',
 				isDismissible: true,
@@ -489,6 +502,30 @@ registerPlugin('wpzoom-forms-document-settings', {
 					onChange={value => setMeta({ ...meta, '_form_failure_message': value })}
 					help={__('Message shown when form submission fails.', 'wpzoom-forms')}
 				/>
+				<Button
+					isPrimary
+					disabled={true}
+					icon={
+						<svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+							<path d="M21.3 10.8l-8.8-8.8c-.4-.4-.9-.6-1.4-.6H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.5-.2-1-.7-1.4zM12 19H5V5h5v4h4v1l-4.4 4.4c-.1.1-.2.3-.2.4v3.5H12v-1.5L18.5 10H14V5.5l1.5 1.5H19v7.8L12 21v-2z" />
+						</svg>
+					}
+					className="wpzoom-forms-edit-template-button"
+					style={{
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						gap: '8px',
+						width: '100%',
+						padding: '10px',
+						marginTop: '15px',
+						position: 'relative'
+					}}
+				>
+					{__('Open Email Template Editor', 'wpzoom-forms')}
+					{<small class="pro-only">PRO</small>}
+				</Button>
+
 			</PluginDocumentSettingPanel>
 
 			<PluginDocumentSettingPanel
@@ -617,9 +654,20 @@ registerPlugin('wpzoom-forms-document-settings', {
 									label: __('Date', 'wpzoom-forms'),
 									required: false
 								}
+							},
+							{
+								name: 'upload-field',
+								title: __('File Upload', 'wpzoom-forms'),
+								icon: FormIcons.upload,
+								isPro: true,
+								defaultAttributes: {
+									label: __('File Upload', 'wpzoom-forms'),
+									required: false,
+								}
 							}
 						].map((block) => {
-							const isDisabled = uniqueFieldsExist[block.name] || false;
+							const isDisabled = uniqueFieldsExist[block.name] || false || block.isPro;
+							const isPro = block.isPro;
 							return (
 								<div
 									key={block.name}
@@ -639,15 +687,18 @@ registerPlugin('wpzoom-forms-document-settings', {
 										console.log('Quick form field clicked:', block.name);
 										event.preventDefault();
 										event.stopPropagation();
-										insertFormField(block.name, block.defaultAttributes, isDisabled);
+										insertFormField(block.name, block.defaultAttributes, isDisabled, isPro);
 									}}
-									title={isDisabled ? __('This field can only be used once per form', 'wpzoom-forms') : ''}
+									title={isDisabled && ! block.isPro ? __('This field can only be used once per form', 'wpzoom-forms') : ''}
 								>
 									{block.icon}
 									<span>{block.title}</span>
-									{isDisabled && (
+									{isDisabled && ! block.isPro && (
 										<span className="dashicons dashicons-info" />
 									)}
+										{block.isPro && (
+											<small className="pro-only">{__('PRO', 'wpzoom-forms')}</small>
+										)}
 								</div>
 							);
 						})}
@@ -1125,9 +1176,20 @@ registerBlockType('wpzoom-forms/form', {
 										label: __('Date', 'wpzoom-forms'),
 										required: false
 									}
+								},
+								{
+									name: 'upload-field',
+									title: __('File Upload', 'wpzoom-forms'),
+									icon: FormIcons.upload,
+									isPro: true,
+									defaultAttributes: {
+										label: __('File Upload', 'wpzoom-forms'),
+										required: false,
+									}
 								}
 							].map((block) => {
-								const isDisabled = uniqueFieldsExist[block.name] || false;
+								const isDisabled = uniqueFieldsExist[block.name] || false || block.isPro;
+								const isPro = block.isPro;
 								return (
 									<div
 										key={block.name}
@@ -1147,14 +1209,17 @@ registerBlockType('wpzoom-forms/form', {
 											console.log('Quick form field clicked:', block.name);
 											event.preventDefault();
 											event.stopPropagation();
-											insertFormField(block.name, block.defaultAttributes, isDisabled);
+											insertFormField(block.name, block.defaultAttributes, isDisabled, isPro);
 										}}
-										title={isDisabled ? __('This field can only be used once per form', 'wpzoom-forms') : ''}
+										title={ isDisabled && ! block.isPro ? __('This field can only be used once per form', 'wpzoom-forms') : ''}
 									>
 										{block.icon}
 										<span>{block.title}</span>
-										{isDisabled && (
+										{isDisabled && ! block.isPro && (
 											<span className="dashicons dashicons-info" />
+										)}
+										{block.isPro && (
+											<small className="pro-only">{__('PRO', 'wpzoom-forms')}</small>
 										)}
 									</div>
 								);

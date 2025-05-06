@@ -709,6 +709,14 @@ class WPZOOM_Forms {
 			array( $this, 'render_settings_page' )
 		);
 
+		add_submenu_page(
+			'edit.php?post_type=wpzf-form',
+			esc_html__( 'Upgrade to Pro &rarr;', 'wpzoom-forms' ),
+			'<span style="color:#f57c00">' . esc_html__( 'Upgrade to Pro &rarr;', 'wpzoom-forms' ) . '</span>',
+			'manage_options',
+			esc_url( 'https://www.wpzoom.com/plugins/wpzoom-forms/?utm_campaign=liteplugin&utm_medium=admin-menu&utm_source=WordPress&utm_content=Upgrade+to+Pro' )
+		);
+
 	}
 
 	/**

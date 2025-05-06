@@ -38,6 +38,9 @@ const FormIcons = {
     ),
     date: (
         <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" width="24" height="24" aria-hidden="true" focusable="false"><rect fill="none" height="256" width="256"></rect><rect fill="none" height="176" rx="8" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="12" width="176" x="40" y="40"></rect><line fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="12" x1="176" x2="176" y1="24" y2="56"></line><line fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="12" x1="80" x2="80" y1="24" y2="56"></line><line fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="12" x1="40" x2="216" y1="88" y2="88"></line><path d="M92,128h28l-16,20a16,16,0,1,1-11.3,27.3" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="12"></path><polyline fill="none" points="144 140 160 128 160 180" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="12"></polyline></svg>
+    ),
+	upload: (
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" height="24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.848 8a1 1 0 0 1-.914-.594l-.723-1.63a.5.5 0 0 0-.447-.276H5a.5.5 0 0 0-.5.5v11.5a.5.5 0 0 0 .5.5h14a.5.5 0 0 0 .5-.5v-9A.5.5 0 0 0 19 8h-6.152Zm.612-1.5a.5.5 0 0 1-.462-.31l-.445-1.084A2 2 0 0 0 10.763 4H5a2 2 0 0 0-2 2v11.5a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-5.54Z"></path></svg>
     )
 };
 
