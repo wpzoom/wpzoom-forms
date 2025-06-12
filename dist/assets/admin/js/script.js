@@ -110,7 +110,7 @@ jQuery(document).ready(function () {
 			const urlParams = new URLSearchParams(url);
 			const tab = urlParams.get('tab');
 			if (tab === 'tab-ajax') {
-				$('.wpzoom-forms-settings-ajax-promo-container').show();
+				$('.wpzoom-forms-settings-ajax-promo-container').css('display', 'inline-block');
 			} else {
 				$('.wpzoom-forms-settings-ajax-promo-container').hide();
 			}

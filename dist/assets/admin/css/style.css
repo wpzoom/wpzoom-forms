@@ -345,12 +345,13 @@ div.wp-tab-panel-inactive {
 }
 
 .wpzoom-forms-settings-ajax-promo-container {
-	display:block;
+	display:inline-block;
 	background: rgba(52, 150, 255, 0.05);
 	margin-bottom:30px;
 	padding:35px 30px;
 	border-radius: 3px;
 	border:1px solid #3496FF;
+	width: calc(100% - 440px);
 }
 
 .wpzoom-forms-settings-ajax-promo-container-inner > a {
@@ -417,6 +418,9 @@ div.wp-tab-panel-inactive {
 	align-items: center;
 	cursor: not-allowed;
 }
+#tab-ajax + .wpzoom-forms-settings-upsell-container {
+	display:none;
+}
 
 
 @media (max-width: 1240px) {
@@ -440,8 +444,13 @@ div.wp-tab-panel-inactive {
 		margin:20px auto;
 		float:none;
 	}
+	.wpzoom-forms-settings-ajax-promo-container {
+		width: auto;
+	}
+	.wpzf-form_page_wpzf-settings div.wp-tab-panel {
+		width:calc(100% - 60px);
+	}
 
-	.wpzf-form_page_wpzf-settings div.wp-tab-panel,
 	.wpzoom-forms-settings-buttons-container {
 		width:100%;
 	}

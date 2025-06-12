@@ -607,6 +607,7 @@ class WPZOOM_Forms_Settings {
 
 						<?php if ( self::$active_tab === 'tab-ajax' ) : ?>
 							<?php $this->ajax_promo_banner( true ); ?>
+							<?php $this->upsell_banner(); ?>
 						<?php endif; ?>
 
 						<div class="wp-tab-panel" id="<?php echo esc_attr( $setting['tab_id'] ); ?>">
@@ -625,6 +626,7 @@ class WPZOOM_Forms_Settings {
 
 						<?php if ( $setting['tab_id'] === 'tab-ajax' ) : ?>
 							<?php $this->ajax_promo_banner( false ); ?>
+							<?php $this->upsell_banner(); ?>
 						<?php endif; ?>
 
 						<div class="wp-tab-panel" id="<?php echo esc_attr( $setting['tab_id'] ); ?>" style="display: none;">
@@ -674,7 +676,7 @@ class WPZOOM_Forms_Settings {
 	public function ajax_promo_banner( $show = true ) {
 		$wpzoom_forms = new WPZOOM_Forms();
 		if ( $show ) {
-			$display = 'block';
+			$display = 'inline-block';
 		} else {
 			$display = 'none';
 		}
