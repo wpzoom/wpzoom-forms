@@ -134,6 +134,18 @@ class WPZOOM_Forms {
 
 			load_plugin_textdomain( 'wpzoom-forms', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
+			// Register welcome guide setting
+			register_setting(
+				'general',
+				'wpzoom_forms_welcome_guide_shown',
+				array(
+					'type' => 'boolean',
+					'default' => false,
+					'show_in_rest' => true,
+					'sanitize_callback' => 'rest_sanitize_boolean',
+				)
+			);
+
 			add_filter( 'allowed_block_types_all',                      array( $this, 'filter_allowed_block_types' ),        10, 2 );
 			add_filter( 'block_categories_all',                         array( $this, 'filter_block_categories' ),           10, 2 );
 			add_filter( 'post_row_actions',                             array( $this, 'modify_row_actions' ),                10, 2 );
