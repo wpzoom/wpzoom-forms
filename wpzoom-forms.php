@@ -110,6 +110,13 @@ class WPZOOM_Forms {
 	public $dist_dir_url;
 
 	/**
+	 * UTM source for header and footer links.
+	 *
+	 * @var string
+	 */
+	public $utm_source = '?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=header-footer-links';
+
+	/**
 	 * Initializes the plugin and sets up needed hooks and features.
 	 *
 	 * @access public
@@ -714,7 +721,7 @@ class WPZOOM_Forms {
 			esc_html__( 'Upgrade to Pro &rarr;', 'wpzoom-forms' ),
 			'<span style="color:#f57c00">' . esc_html__( 'Upgrade to Pro &rarr;', 'wpzoom-forms' ) . '</span>',
 			'manage_options',
-			esc_url( 'https://www.wpzoom.com/plugins/wpzoom-forms/?utm_campaign=liteplugin&utm_medium=admin-menu&utm_source=WordPress&utm_content=Upgrade+to+Pro' )
+			esc_url( 'https://www.wpzoom.com/plugins/wpzoom-forms/' )
 		);
 
 	}
@@ -1690,7 +1697,7 @@ class WPZOOM_Forms {
 						'wpzf_admin-header-title',
 						sprintf(
 							__( 'WPZOOM Forms <small>by <a href="%s" target="_blank" title="WPZOOM - WordPress themes with modern features and professional support">WPZOOM</a></small>', 'wpzoom-forms' ),
-							esc_url( 'https://www.wpzoom.com/' )
+							esc_url( 'https://www.wpzoom.com/' . $this->utm_source )
 						)
 					);
 					?>
@@ -2054,20 +2061,20 @@ class WPZOOM_Forms {
 			<footer class="wpzoom-new-admin_settings-footer">
 				<div class="wpzoom-new-admin_settings-footer-wrap">
 					<h3 class="wpzoom-new-admin_settings-footer-logo">
-						<a href="https://www.wpzoom.com/" target="_blank" title="<?php esc_html_e( 'WPZOOM - WordPress themes with modern features and professional support', 'wpzoom-forms' ); ?>">
+						<a href="https://www.wpzoom.com/<?php echo $this->utm_source; ?>" target="_blank" title="<?php esc_html_e( 'WPZOOM - WordPress themes with modern features and professional support', 'wpzoom-forms' ); ?>">
 							<?php _e( 'WPZOOM', 'wpzoom-forms' ); ?>
 						</a>
 					</h3>
 
 					<ul class="wpzoom-new-admin_settings-footer-links">
 						<li class="wpzoom-new-admin_settings-footer-links-themes">
-							<a href="https://www.wpzoom.com/themes/" target="_blank" title="<?php _e( 'Check out our themes', 'wpzoom-forms' ); ?>">
+							<a href="https://www.wpzoom.com/themes/<?php echo $this->utm_source; ?>" target="_blank" title="<?php _e( 'Check out our themes', 'wpzoom-forms' ); ?>">
 								<?php _e( 'Our Themes', 'wpzoom-forms' ); ?>
 							</a>
 						</li>
 
                         <li class="wpzoom-new-admin_settings-footer-links-themes">
-                            <a href="https://www.wpzoom.com/plugins/" target="_blank" title="<?php _e( 'Check out our plugins', 'wpzoom-forms' ); ?>">
+                            <a href="https://www.wpzoom.com/plugins/<?php echo $this->utm_source; ?>" target="_blank" title="<?php _e( 'Check out our plugins', 'wpzoom-forms' ); ?>">
                                 <?php _e( 'Our Plugins', 'wpzoom-forms' ); ?>
                             </a>
                         </li>

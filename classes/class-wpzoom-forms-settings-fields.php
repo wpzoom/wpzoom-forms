@@ -23,7 +23,7 @@ class WPZOOM_Forms_Settings_Fields {
 	/**
 	 * @var array $fields_type
 	 */
-	private $fields_type = array( 'checkbox', 'select', 'multiselect', 'input', 'textarea', 'button' );
+	private $fields_type = array( 'checkbox', 'select', 'multiselect', 'input', 'textarea', 'button', 'note' );
 
 	/**
 	 * The Constructor.
@@ -205,6 +205,15 @@ class WPZOOM_Forms_Settings_Fields {
 		<?php
 	}
 
+	/**
+	 * HTML for Note field type
+	 *
+	 * @param array $args
+	 * @return void
+	 */
+	public function note( $args ) {
+		echo '<p class="description">' . wp_kses_post( $args['description'] ) . '</p>';
+	}
 
 	/**
 	 * HTML for Button field type

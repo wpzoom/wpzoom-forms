@@ -48,12 +48,19 @@
 .wpzoom-forms-templates-list li.active a {
 	color: #3496FF;
 }
-.wpzoom-forms-icon-holder svg {
-	fill: #242628;
+.wpzoom-forms-templates-list li svg:not(.wpzoom-contact-form-icon) {
+	fill: black;
 }
-.wpzoom-forms-templates-list li a:hover .wpzoom-forms-icon-holder svg,
-.wpzoom-forms-templates-list li.active a .wpzoom-forms-icon-holder svg {
+.wpzoom-forms-templates-list li:hover svg:not(.wpzoom-contact-form-icon),
+.wpzoom-forms-templates-list li.active svg:not(.wpzoom-contact-form-icon) {
 	fill: #3496FF;
+}
+.wpzoom-forms-templates-list li svg.wpzoom-contact-form-icon {
+	stroke: black;
+}
+.wpzoom-forms-templates-list li:hover svg.wpzoom-contact-form-icon,
+.wpzoom-forms-templates-list li.active svg.wpzoom-contact-form-icon {
+	stroke: #3496FF !important;
 }
 
 .wpzoom-forms-templates-list li a span,

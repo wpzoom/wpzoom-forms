@@ -449,11 +449,11 @@ registerPlugin('wpzoom-forms-document-settings', {
 					value={formMethod}
 					options={[
 						{
-							label: __('Save to Database', 'wpzoom-forms'),
+							label: __('Save to Database Only', 'wpzoom-forms'),
 							value: 'db'
 						},
 						{
-							label: __('Email', 'wpzoom-forms'),
+							label: __('Email Only', 'wpzoom-forms'),
 							value: 'email'
 						},
 						{
@@ -463,6 +463,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 
 					]}
 					onChange={value => setMeta({ ...meta, '_form_method': value })}
+					help={__('Choose how form submissions are handled.', 'wpzoom-forms')}
 				/>
 
 				{(formMethod == 'email' || formMethod == 'combined') && <TextControl
@@ -471,6 +472,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 					value={formEmail}
 					placeholder={__('someone@somedomain.com', 'wpzoom-forms')}
 					onChange={value => setMeta({ ...meta, '_form_email': value })}
+					help={__('Email address where submissions will be sent.', 'wpzoom-forms')}
 				/>}
 
 				<TextControl
@@ -489,18 +491,18 @@ registerPlugin('wpzoom-forms-document-settings', {
 					type="text"
 					label={__('Success Message', 'wpzoom-forms')}
 					value={formSuccessMessage}
-					placeholder={__('Thanks! We\'ve received your submission!', 'wpzoom-forms')}
+					placeholder={__('Thank you! Your message has been sent.', 'wpzoom-forms')}
 					onChange={value => setMeta({ ...meta, '_form_success_message': value })}
-					help={__('Message shown when form is submitted successfully.', 'wpzoom-forms')}
+					help={__('This message is shown when the form is submitted successfully.', 'wpzoom-forms')}
 				/>
 
 				<TextControl
 					type="text"
 					label={__('Failure Message', 'wpzoom-forms')}
 					value={formFailureMessage}
-					placeholder={__('Submission failed!', 'wpzoom-forms')}
+					placeholder={__('Oops! Something went wrong. Please try again.', 'wpzoom-forms')}
 					onChange={value => setMeta({ ...meta, '_form_failure_message': value })}
-					help={__('Message shown when form submission fails.', 'wpzoom-forms')}
+					help={__('This message is shown if the form fails to submit.', 'wpzoom-forms')}
 				/>
 				<Button
 					isPrimary
@@ -522,7 +524,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 						position: 'relative'
 					}}
 				>
-					{__('Open Email Template Editor', 'wpzoom-forms')}
+					{__('Customize Notification Email', 'wpzoom-forms')}
 					{<small class="pro-only">PRO</small>}
 				</Button>
 
@@ -709,13 +711,14 @@ registerPlugin('wpzoom-forms-document-settings', {
 			<PluginDocumentSettingPanel
 				name="wpzoom-forms-document-settings-details"
 				className="wpzoom-forms-document-settings-details"
-				title={__('Form Details', 'wpzoom-forms')}
+				title={__('Form Shortcode', 'wpzoom-forms')}
 			>
 				<HStack className="wpzf-shortcode-container" style={{ alignItems: 'center', justifyContent: 'flex-start' }}>
 					<TextControl
 						value={`[wpzf_form id="${postID}"]`}
 						readOnly={true}
 						style={{ margin: 0 }}
+						help={__('Copy and paste this shortcode into any page or post to display the form.', 'wpzoom-forms')}
 					/>
 					<ClipboardButton
 						className="wpzf-copy-button"

@@ -29,9 +29,9 @@ function WelcomeGuide( props ) {
 					),
 					content: (
 						<div className="wpzoom-forms-welcome-guide-page">
-							<h2 class="edit-post-welcome-guide__heading">{ __( 'Getting started with WPZOOM Forms', 'wpzoom-forms' ) }</h2>
+							<h2 class="edit-post-welcome-guide__heading">{ __( 'Welcome to WPZOOM Forms', 'wpzoom-forms' ) }</h2>
 							<p class="edit-post-welcome-guide__text">
-								{ __( 'With WPZOOM Forms, you can quickly create forms in WordPress thanks to the block editor.', 'wpzoom-forms' ) }
+								{ __( 'Easily build custom forms in WordPress using the intuitive block editor — no coding needed.', 'wpzoom-forms' ) }
 							</p>
 						</div>
 					),
@@ -44,7 +44,7 @@ function WelcomeGuide( props ) {
                         <div className="wpzoom-forms-welcome-guide-page">
                             <h2 class="edit-post-welcome-guide__heading">{ __( 'Drag & Drop Fields', 'wpzoom-forms' ) }</h2>
                             <p class="edit-post-welcome-guide__text">
-                                { __( 'No coding knowledge or learning is required. Just edit your form and its fields visually as you want. Remove fields or add new ones using the block editor.', 'wpzoom-forms' ) }
+                                { __( 'Edit your form visually. Add, remove, or rearrange fields directly in the editor with a simple drag-and-drop interface.', 'wpzoom-forms' ) }
                             </p>
                         </div>
                     ),
@@ -55,9 +55,9 @@ function WelcomeGuide( props ) {
                     ),
                     content: (
                         <div className="wpzoom-forms-welcome-guide-page">
-                            <h2 class="edit-post-welcome-guide__heading">{ __( 'Display your forms anywhere you want', 'wpzoom-forms' ) }</h2>
+                            <h2 class="edit-post-welcome-guide__heading">{ __( 'Embed Forms Anywhere.', 'wpzoom-forms' ) }</h2>
                             <p class="edit-post-welcome-guide__text">
-                                { __( 'Forms created with the WPZOOM Forms plugin can be embedded in pages using a block or a shortcode. You can even embed the shortcode in page builders.', 'wpzoom-forms' ) }
+                                { __( 'Insert your forms using a block or shortcode, on pages, posts, or inside page builders.', 'wpzoom-forms' ) }
                             </p>
                         </div>
                     ),
@@ -68,9 +68,9 @@ function WelcomeGuide( props ) {
                     ),
                     content: (
                         <div className="wpzoom-forms-welcome-guide-page">
-                            <h2 class="edit-post-welcome-guide__heading">{ __( 'Adjust your form\'s settings', 'wpzoom-forms' ) }</h2>
+                            <h2 class="edit-post-welcome-guide__heading">{ __( 'Customize Settings.', 'wpzoom-forms' ) }</h2>
                             <p class="edit-post-welcome-guide__text">
-                                { __( 'Each form and field can be customized from the right sidebar.', 'wpzoom-forms' ) }
+                                { __( 'Fine-tune each form and field from the sidebar to match your style and needs.', 'wpzoom-forms' ) }
                             </p>
                         </div>
                     ),
