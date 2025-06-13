@@ -733,7 +733,7 @@ class WPZOOM_Forms {
 			esc_html__( 'Upgrade to Pro &rarr;', 'wpzoom-forms' ),
 			'<span style="color:#f57c00">' . esc_html__( 'Upgrade to PRO &rarr;', 'wpzoom-forms' ) . '</span>',
 			'manage_options',
-			esc_url( 'https://www.wpzoom.com/plugins/wpzoom-forms/' . $this->utm_source )
+			esc_url( 'https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=left-sidebard-link' )
 		);
 
 	}

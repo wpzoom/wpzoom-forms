@@ -663,7 +663,7 @@ class WPZOOM_Forms_Settings {
 		$wpzoom_forms = new WPZOOM_Forms();
 		?>
 		<div class="wpzoom-forms-settings-upsell-container">
-			<a href="https://www.wpzoom.com/plugins/wpzoom-forms/<?php echo $wpzoom_forms->utm_source; ?>" target="_blank">
+			<a href="https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=upsell-banner-right-sidebar" target="_blank">
 				<img src="<?php echo WPZOOM_FORMS_URL; ?>/dist/assets/admin/images/upsell.png" alt="Upgrade to WPZOOM Forms Pro">
 			</a>
 		</div>
@@ -683,7 +683,7 @@ class WPZOOM_Forms_Settings {
 		?>
 		<div class="wpzoom-forms-settings-ajax-promo-container" style="display: <?php echo $display; ?>">
 			<div class="wpzoom-forms-settings-ajax-promo-container-inner">
-				<a href="https://www.wpzoom.com/plugins/wpzoom-forms/<?php echo $wpzoom_forms->utm_source; ?>" target="_blank">
+				<a href="https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=settings-ajax-pro-upsell" target="_blank">
 					<span class="wpzoom-forms-settings-ajax-promo-container-inner-lock">🔒</span> <?php esc_html_e('This feature is only available in the PRO version', 'wpzoom-forms'); ?>
 				</a>
 				<h2><?php esc_html_e('Unlock AJAX Submissions with WPZOOM Forms PRO', 'wpzoom-forms'); ?></h2>
@@ -693,7 +693,7 @@ class WPZOOM_Forms_Settings {
 					<li>✅ <?php esc_html_e('Works seamlessly with shortcodes and blocks', 'wpzoom-forms'); ?></li>
 					<li>✅ <?php esc_html_e('No reloading or redirecting after form submission', 'wpzoom-forms'); ?></li>
 				</ul>
-				<a href="https://www.wpzoom.com/plugins/wpzoom-forms/<?php echo $wpzoom_forms->utm_source; ?>" target="_blank" class="button button-primary"><?php esc_html_e('Upgrade to PRO', 'wpzoom-forms'); ?></a>
+				<a href="https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=settings-ajax-pro-upsell" target="_blank" class="button button-primary"><?php esc_html_e('Upgrade to PRO', 'wpzoom-forms'); ?></a>
 			</div>
 		</div>
 		<?php

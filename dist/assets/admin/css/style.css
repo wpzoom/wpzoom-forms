@@ -443,6 +443,11 @@ div.wp-tab-panel-inactive {
 	#tab-spam-protection .regular-text {
 		width:100%;
 	}
+	.wpzoom-new-admin #wpbody-content > .wrap #wpzf_global_captcha_type_v2,
+	.wpzoom-new-admin #wpbody-content > .wrap #wpzf_global_captcha_type_v2 + label.radio-field {
+		margin-bottom:10px !important;
+	}
+
 	.wpzoom-new-admin #wpbody-content > .wrap #wpzf_global_captcha_type_v2 + label.radio-field,
 	.wpzoom-new-admin #wpbody-content > .wrap #wpzf_global_captcha_type_v3 + label.radio-field {
 		float:none;
@@ -473,6 +478,7 @@ div.wp-tab-panel-inactive {
 }
 
 @media screen and (max-width: 782px) {
+
 	.wpzf-form_page_wpzf-settings .wpzoom_forms_settings_save,
 	.wpzf-form_page_wpzf-settings .wpzoom_forms_reset_settings {
 		margin: 25px 0;
@@ -485,17 +491,62 @@ div.wp-tab-panel-inactive {
 	}
 	.wpzf-form_page_wpzf-settings div.wp-tab-panel,
 	.wpzoom-forms-settings-buttons-container {
-		width:100%;
+		width:auto !important;
 	}
 }
 
 @media screen and (max-width: 600px) {
+	.wpzoom-new-admin #wpbody-content .wpzoom-new-admin_settings-header, 
+	.wpzoom-new-admin #wpcontent .wpzoom-new-admin_settings-header {
+		margin-right:13px !important;
+	}
 	.wpzf-form_page_wpzf-settings .wpzoom_forms_settings_save,
 	.wpzf-form_page_wpzf-settings .wpzoom_forms_reset_settings {
 		margin: 25px 0;
 	}
+	#tab-spam-protection table {
+		width:100% !important;
+	}
 	.wpzf-spam-protection-service .wpzoom-forms-field-radio {
-		flex-direction: column;
 		gap: 10px;
+	}
+	.wpzf-spam-protection-service .wpzoom-forms-field-radio input {
+		width: 33.33333333333333% !important;
+	}
+	.wpzoom-forms-field-radio {
+		margin-top:10px !important;
+	}
+	.wpzoom-new-admin #wpbody-content > .wrap #wpzf_global_captcha_type_v2 + label.radio-field, 
+	.wpzoom-new-admin #wpbody-content > .wrap #wpzf_global_captcha_type_v3 + label.radio-field {
+		margin-right:110px !important;
+	}	
+	.wpzoom_forms_reset_settings {
+		float:right !important;
+	}
+	.wpzoom-new-admin_settings-main-title-version {
+		display:none !important;
+	}
+	.wpzoom-new-admin #wpbody-content .wpzoom-new-admin_settings-header .wpzoom-new-admin_settings-main-nav ul, 
+	.wpzoom-new-admin #wpcontent .wpzoom-new-admin_settings-header .wpzoom-new-admin_settings-main-nav ul,
+	.wpzf-form_page_wpzf-settings ul.wp-tab-bar {
+		gap:20px !important;
+	}
+
+	.wpzoom-new-admin #wpbody-content > .wrap input[type="radio"]#wpzf_global_captcha_service_none, .wpzoom-new-admin #wpbody-content > .wrap input[type="radio"]#wpzf_global_captcha_service_recaptcha, .wpzoom-new-admin #wpbody-content > .wrap input[type="radio"]#wpzf_global_captcha_service_turnstile, .wpzoom-new-admin #wpcontent > .wrap input[type="radio"]#wpzf_global_captcha_service_none, .wpzoom-new-admin #wpcontent > .wrap input[type="radio"]#wpzf_global_captcha_service_recaptcha, .wpzoom-new-admin #wpcontent > .wrap input[type="radio"]#wpzf_global_captcha_service_turnstile {
+		height:160px !important;
+	}
+
+	.wpzoom-new-admin #wpbody-content > .wrap input[type="radio"]#wpzf_global_captcha_service_none::before, 
+	.wpzoom-new-admin #wpbody-content > .wrap input[type="radio"]#wpzf_global_captcha_service_recaptcha::before, 
+	.wpzoom-new-admin #wpbody-content > .wrap input[type="radio"]#wpzf_global_captcha_service_turnstile::before, 
+	.wpzoom-new-admin #wpcontent > .wrap input[type="radio"]#wpzf_global_captcha_service_none::before, 
+	.wpzoom-new-admin #wpcontent > .wrap input[type="radio"]#wpzf_global_captcha_service_recaptcha::before, 
+	.wpzoom-new-admin #wpcontent > .wrap input[type="radio"]#wpzf_global_captcha_service_turnstile::before {
+		height:150px !important;
+		width:85px;
+		padding:10px !important;
+		background-size: contain !important;
+		background-position: center !important;
+		font-size: 12px !important;
 	}
 }

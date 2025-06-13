@@ -2886,3 +2886,26 @@
 		margin-bottom:0;
 	}
 }
+@media screen and (max-width: 600px) {
+	.wpzf_wrap.wpzf_settings-add-new {
+		display: inline-block !important;
+		margin-top:0 !important;
+		margin-bottom:20px !important;
+	}
+	.post-type-wpzf-form .subsubsub {
+		display:inline-block !important;
+		float:right;
+		margin-top:0px !important;
+	}
+	.post-type-wpzf-form p.search-box {
+		flex-wrap:nowrap !important;
+	}
+	.post-type-wpzf-form #post-search-input {
+		width:calc(100% - 130px) !important;
+		display:inline-block !important;
+	}
+	.post-type-wpzf-form #search-submit {
+		display:inline-block !important;
+		margin-top:0px !important;
+	}
+} 
