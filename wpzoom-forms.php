@@ -731,9 +731,9 @@ class WPZOOM_Forms {
 		add_submenu_page(
 			'edit.php?post_type=wpzf-form',
 			esc_html__( 'Upgrade to Pro &rarr;', 'wpzoom-forms' ),
-			'<span style="color:#f57c00">' . esc_html__( 'Upgrade to Pro &rarr;', 'wpzoom-forms' ) . '</span>',
+			'<span style="color:#f57c00">' . esc_html__( 'Upgrade to PRO &rarr;', 'wpzoom-forms' ) . '</span>',
 			'manage_options',
-			esc_url( 'https://www.wpzoom.com/plugins/wpzoom-forms/' )
+			esc_url( 'https://www.wpzoom.com/plugins/wpzoom-forms/' . $this->utm_source )
 		);
 
 	}

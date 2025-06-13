@@ -527,23 +527,33 @@ registerPlugin('wpzoom-forms-document-settings', {
 					{__('Customize Notification Email', 'wpzoom-forms')}
 					{<small class="pro-only">PRO</small>}
 				</Button>
+				<p 
+					className="description"
+					style={{
+						marginTop: 'calc(8px)',
+						fontSize: '12px',
+						color: 'rgb(117, 117, 117)',
+					}}
+				>
+					{__('Edit the template for emails sent to you when a new form entry is submitted.', 'wpzoom-forms')}
+				</p>
 
 			</PluginDocumentSettingPanel>
 
 			<PluginDocumentSettingPanel
 				name="wpzoom-forms-document-settings-fields"
 				className="wpzoom-forms-document-settings-fields"
-				title={__('Add Form Fields', 'wpzoom-forms')}
+				title={__('Form Fields', 'wpzoom-forms')}
 			>
 				<div className="wpzoom-forms-block-patterns">
 					<div className="wpzoom-forms-block-patterns-list">
 						{[
 							{
 								name: 'multi-checkbox-field',
-								title: __('Multi Checkbox', 'wpzoom-forms'),
+								title: __('Multichoice', 'wpzoom-forms'),
 								icon: FormIcons.multiCheckbox,
 								defaultAttributes: {
-									label: __('Multiple Choice', 'wpzoom-forms'),
+									label: __('Multichoice', 'wpzoom-forms'),
 									required: false,
 									options: ['Option 1', 'Option 2', 'Option 3']
 								}
@@ -559,7 +569,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 							},
 							{
 								name: 'text-email-field',
-								title: __('Email Input', 'wpzoom-forms'),
+								title: __('Email', 'wpzoom-forms'),
 								icon: FormIcons.emailInput,
 								defaultAttributes: {
 									label: __('Email', 'wpzoom-forms'),
@@ -576,7 +586,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 							},
 							{
 								name: 'text-name-field',
-								title: __('Name Input', 'wpzoom-forms'),
+								title: __('Name', 'wpzoom-forms'),
 								icon: FormIcons.nameInput,
 								defaultAttributes: {
 									label: __('Name', 'wpzoom-forms'),
@@ -585,7 +595,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 							},
 							{
 								name: 'text-phone-field',
-								title: __('Phone Input', 'wpzoom-forms'),
+								title: __('Phone', 'wpzoom-forms'),
 								icon: FormIcons.phoneInput,
 								defaultAttributes: {
 									label: __('Phone', 'wpzoom-forms'),
@@ -594,7 +604,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 							},
 							{
 								name: 'text-plain-field',
-								title: __('Text Input', 'wpzoom-forms'),
+								title: __('Text', 'wpzoom-forms'),
 								icon: FormIcons.textInput,
 								defaultAttributes: {
 									label: __('Text', 'wpzoom-forms'),
@@ -631,7 +641,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 							},
 							{
 								name: 'textarea-field',
-								title: __('Textarea', 'wpzoom-forms'),
+								title: __('Message', 'wpzoom-forms'),
 								icon: FormIcons.textarea,
 								defaultAttributes: {
 									label: __('Message', 'wpzoom-forms'),
@@ -641,7 +651,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 							},
 							{
 								name: 'text-website-field',
-								title: __('Website Input', 'wpzoom-forms'),
+								title: __('Website', 'wpzoom-forms'),
 								icon: FormIcons.websiteInput,
 								defaultAttributes: {
 									label: __('Website', 'wpzoom-forms'),
@@ -659,11 +669,11 @@ registerPlugin('wpzoom-forms-document-settings', {
 							},
 							{
 								name: 'upload-field',
-								title: __('File Upload', 'wpzoom-forms'),
+								title: __('Upload', 'wpzoom-forms'),
 								icon: FormIcons.upload,
 								isPro: true,
 								defaultAttributes: {
-									label: __('File Upload', 'wpzoom-forms'),
+									label: __('Upload', 'wpzoom-forms'),
 									required: false,
 								}
 							}
@@ -705,6 +715,16 @@ registerPlugin('wpzoom-forms-document-settings', {
 							);
 						})}
 					</div>
+					<p 
+						className="description"
+						style={{
+							marginTop: 'calc(8px)',
+							fontSize: '12px',
+							color: 'rgb(117, 117, 117)',
+						}}
+					>
+						{__('Click or drag a field to add it to your form.', 'wpzoom-forms')}
+					</p>
 				</div>
 			</PluginDocumentSettingPanel>
 
@@ -1057,16 +1077,16 @@ registerBlockType('wpzoom-forms/form', {
 
 		return <div {...blockProps}>
 			<InspectorControls>
-				<PanelBody title={__('Add Form Fields', 'wpzoom-forms')} initialOpen={true}>
+				<PanelBody title={__('Form Fields', 'wpzoom-forms')} initialOpen={true}>
 					<div className="wpzoom-forms-block-patterns">
 						<div className="wpzoom-forms-block-patterns-list">
 							{[
 								{
 									name: 'multi-checkbox-field',
-									title: __('Multi Checkbox', 'wpzoom-forms'),
+									title: __('Multichoice', 'wpzoom-forms'),
 									icon: FormIcons.multiCheckbox,
 									defaultAttributes: {
-										label: __('Multiple Choice', 'wpzoom-forms'),
+										label: __('Multichoice', 'wpzoom-forms'),
 										required: false,
 										options: ['Option 1', 'Option 2', 'Option 3']
 									}
@@ -1082,7 +1102,7 @@ registerBlockType('wpzoom-forms/form', {
 								},
 								{
 									name: 'text-email-field',
-									title: __('Email Input', 'wpzoom-forms'),
+									title: __('Email', 'wpzoom-forms'),
 									icon: FormIcons.emailInput,
 									defaultAttributes: {
 										label: __('Email', 'wpzoom-forms'),
@@ -1099,7 +1119,7 @@ registerBlockType('wpzoom-forms/form', {
 								},
 								{
 									name: 'text-name-field',
-									title: __('Name Input', 'wpzoom-forms'),
+									title: __('Name', 'wpzoom-forms'),
 									icon: FormIcons.nameInput,
 									defaultAttributes: {
 										label: __('Name', 'wpzoom-forms'),
@@ -1108,7 +1128,7 @@ registerBlockType('wpzoom-forms/form', {
 								},
 								{
 									name: 'text-phone-field',
-									title: __('Phone Input', 'wpzoom-forms'),
+									title: __('Phone', 'wpzoom-forms'),
 									icon: FormIcons.phoneInput,
 									defaultAttributes: {
 										label: __('Phone', 'wpzoom-forms'),
@@ -1117,7 +1137,7 @@ registerBlockType('wpzoom-forms/form', {
 								},
 								{
 									name: 'text-plain-field',
-									title: __('Text Input', 'wpzoom-forms'),
+									title: __('Text', 'wpzoom-forms'),
 									icon: FormIcons.textInput,
 									defaultAttributes: {
 										label: __('Text', 'wpzoom-forms'),
@@ -1154,7 +1174,7 @@ registerBlockType('wpzoom-forms/form', {
 								},
 								{
 									name: 'textarea-field',
-									title: __('Textarea', 'wpzoom-forms'),
+									title: __('Message', 'wpzoom-forms'),
 									icon: FormIcons.textarea,
 									defaultAttributes: {
 										label: __('Message', 'wpzoom-forms'),
@@ -1164,7 +1184,7 @@ registerBlockType('wpzoom-forms/form', {
 								},
 								{
 									name: 'text-website-field',
-									title: __('Website Input', 'wpzoom-forms'),
+									title: __('Website', 'wpzoom-forms'),
 									icon: FormIcons.websiteInput,
 									defaultAttributes: {
 										label: __('Website', 'wpzoom-forms'),
@@ -1182,11 +1202,11 @@ registerBlockType('wpzoom-forms/form', {
 								},
 								{
 									name: 'upload-field',
-									title: __('File Upload', 'wpzoom-forms'),
+									title: __('Upload', 'wpzoom-forms'),
 									icon: FormIcons.upload,
 									isPro: true,
 									defaultAttributes: {
-										label: __('File Upload', 'wpzoom-forms'),
+										label: __('Upload', 'wpzoom-forms'),
 										required: false,
 									}
 								}
@@ -1228,6 +1248,16 @@ registerBlockType('wpzoom-forms/form', {
 								);
 							})}
 						</div>
+						<p 
+						className="description"
+						style={{
+							marginTop: 'calc(8px)',
+							fontSize: '12px',
+							color: 'rgb(117, 117, 117)',
+						}}
+					>
+						{__('Click or drag a field to add it to your form.', 'wpzoom-forms')}
+					</p>
 					</div>
 				</PanelBody>
 			</InspectorControls>

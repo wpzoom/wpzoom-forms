@@ -382,6 +382,12 @@
 					border-color: $primary-color;
 				}
 			}
+			.column-shortcode {
+				input {
+					max-width:210px;
+					width:100%;
+				}
+			}
 
 			input {
 				color: $main-font-color;
@@ -2832,4 +2838,51 @@
 .wpzoom-new-admin_settings-header + div.wrap > .notice,
 #wpzf-settings .notice {
 	display:none !important;
+}
+
+
+.post-type-wpzf-form .subsubsub {
+	float:none;
+	margin-bottom:-40px;
+}
+
+.post-type-wpzf-form #posts-filter {
+	width: calc(100% - 374px);
+	float:left;
+}
+.wpzoom-forms-settings-upsell-container {
+	display:block;
+	height:470px;
+	width:340px;
+	z-index:1000;
+	float:right;
+}
+.wpzoom-forms-settings-upsell-container a {
+	display:block;
+	width:100%;
+	height:100%;
+	text-decoration:none;
+}
+.wpzoom-forms-settings-upsell-container img {
+	display:block;
+	width:100%;
+	height:100%;
+	object-fit:cover;
+	object-position:center;
+}
+
+@media (max-width: 1024px) {
+	.post-type-wpzf-form #posts-filter {
+		float:none;
+		width:100%;
+	}
+	.wpzoom-forms-settings-upsell-container {
+		float:none;
+		margin:20px auto;
+	}
+}
+@media screen and (max-width: 782px) { 
+	.post-type-wpzf-form .subsubsub {
+		margin-bottom:0;
+	}
 }
