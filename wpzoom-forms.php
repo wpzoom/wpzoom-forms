@@ -1708,8 +1708,7 @@ class WPZOOM_Forms {
 					echo apply_filters(
 						'wpzf_admin-header-title',
 						sprintf(
-							__( 'WPZOOM Forms <small>by <a href="%s" target="_blank" title="WPZOOM - WordPress themes with modern features and professional support">WPZOOM</a></small>', 'wpzoom-forms' ),
-							esc_url( 'https://www.wpzoom.com/' . $this->utm_source )
+							__( 'WPZOOM Forms <small>Lite</small>', 'wpzoom-forms' )
 						)
 					);
 					?>
@@ -1719,7 +1718,7 @@ class WPZOOM_Forms {
 							echo apply_filters( 
 								'wpzf_admin-header-title-version', 
 								sprintf( 
-									esc_html__( 'V. %s', 'wpzoom-forms' ), 
+									esc_html__( 'v %s', 'wpzoom-forms' ),
 									WPZOOM_FORMS_VERSION 
 								) 
 							);
