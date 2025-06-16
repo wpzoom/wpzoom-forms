@@ -191,9 +191,14 @@ class WPZOOM_Forms_Settings_Fields {
 			<?php $this->create_nonce_field( $args ); ?>
 		
 				<?php foreach ( $args['options'] as $value => $text ) : ?>
+					<?php if( isset( $args['wrap'] ) && $args['wrap'] === true ) : ?>
+						<div class="wpzoom-wrap-radio">
+					<?php endif; ?>
 					 <input type="radio" id="<?php echo esc_attr( $args['label_for'] ); ?>_<?php echo esc_attr( $value ); ?>" name="wpzf-settings[<?php echo esc_attr( $args['label_for'] ); ?>]" value="<?php echo esc_attr( $value ); ?>" <?php checked( $value, $selected ); ?>>
 					 <label class="radio-field" for="<?php echo esc_attr( $args['label_for'] ); ?>_<?php echo esc_attr( $value ); ?>"><?php echo esc_html( $text ); ?></label>
-					 
+					<?php if( isset( $args['wrap'] ) && $args['wrap'] === true ) : ?>
+						</div>
+					<?php endif; ?>
 				<?php endforeach ?>
 
 			<?php if ( isset( $args['description'] ) ) : ?>

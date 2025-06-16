@@ -313,6 +313,7 @@ class WPZOOM_Forms_Settings {
 									'class'       => 'wpzoom-forms-field required-recaptcha',
 									'description' => '',
 									'default'     => 'v2',
+									'wrap'        => true,
 									'options'     => array(
 										'v2'      => esc_html__( 'Invisible reCAPTCHA v2', 'wpzoom-forms' ),
 										'v3'      => esc_html__( 'reCAPTCHA v3', 'wpzoom-forms' )
