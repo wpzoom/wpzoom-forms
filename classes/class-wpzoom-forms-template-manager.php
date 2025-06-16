@@ -163,9 +163,17 @@ if ( ! class_exists( 'WPZOOM_Forms_Template_Manager' ) ) {
 							<?php
 								$templates = include WPZOOM_FORMS_PATH . 'templates/templates.php';
 								foreach( $templates as $template_data ) {
-									$classActive = ( $template_data['id'] == 'contact-form' ) ? ' class="active" ' : '';
+									$is_pro = isset( $template_data['is_pro'] ) && $template_data['is_pro'] ? true : false;
+									$class = array( 'wpzoom-forms-template-list-item' );
+
+									if( $is_pro ) {
+										$class[] = ' wpzoom-forms-template-list-item-pro';
+									}
+									$class[] = ( $template_data['id'] == 'contact-form' ) ? ' active' : null;
+									$class = implode( ' ', $class );
+									
 									?>
-									<li <?php echo $classActive; ?>>
+									<li class="<?php echo $class; ?>">
 										<a href="#" data-template-id="<?php echo esc_attr( $template_data['id'] ) ?>">
 											<div class="wpzoom-forms-template-list-wrapper">
 												<span class="wpzoom-forms-icon-holder"><?php echo $template_data['icon'] ?></span>
@@ -175,6 +183,9 @@ if ( ! class_exists( 'WPZOOM_Forms_Template_Manager' ) ) {
 												</div>
 											</div>
 										</a>
+										<?php if( $is_pro ) : ?>
+											<small class="pro-only"><?php esc_html_e( 'PRO', 'wpzoom-forms' ); ?></small>
+										<?php endif; ?>
 									</li>
 									<?php
 								}

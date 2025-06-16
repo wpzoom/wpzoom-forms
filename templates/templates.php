@@ -149,59 +149,8 @@ $templates = array(
 ',
 
 		'desc'    => 'An RSVP form for events like weddings or parties.',
-		'content' => '<!-- wp:wpzoom-forms/form -->
-<div class="wp-block-wpzoom-forms-form"><!-- wp:group -->
-<div class="wp-block-group"><!-- wp:columns -->
-<div class="wp-block-columns"><!-- wp:column {"width":"100%"} -->
-<div class="wp-block-column" style="flex-basis:100%"><!-- wp:wpzoom-forms/text-name-field {"id":"input_name","name":"Your Name","label":"Your Name","className":"fullwidth"} -->
-<label for="input_name"><label for="input_name">Your Name</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_name" id="input_name" placeholder="" required class="wp-block-wpzoom-forms-text-name-field fullwidth"/>
-<!-- /wp:wpzoom-forms/text-name-field -->
-
-<!-- wp:wpzoom-forms/text-email-field {"id":"input_email","name":"Email","label":"Email","replyto":true,"className":"fullwidth"} -->
-<label for="input_email"><label for="input_email">Email</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="email" name="input_email" id="input_email" placeholder="" required data-replyto="true" class="wp-block-wpzoom-forms-text-email-field fullwidth"/>
-<!-- /wp:wpzoom-forms/text-email-field -->
-
-<!-- wp:wpzoom-forms/radio-field {"id":"input_3cac9a4a","name":"Will you be attending?","options":["Yes","No"],"label":"Will you be attending?"} -->
-<label for="input_3cac9a4a"><label for="input_3cac9a4a">Will you be attending?</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><ul class="wp-block-wpzoom-forms-radio-field"><li><label><input type="radio" name="input_3cac9a4a" id="input_3cac9a4a" value="Yes" required/>Yes</label></li><li><label><input type="radio" name="input_3cac9a4a" id="input_3cac9a4a" value="No" required/>No</label></li></ul>
-<!-- /wp:wpzoom-forms/radio-field -->
-
-<!-- wp:wpzoom-forms/select-field {"id":"input_15145568","name":"Your meal preference","options":["Omnivore","Vegetarian","Gluten Free","Kosher","Vegan","Halal"],"label":"Your meal preference"} -->
-<label for="input_15145568"><label for="input_15145568">Your meal preference</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><select name="input_15145568" id="input_15145568" required defaultvalue="Item #1" class="wp-block-wpzoom-forms-select-field"><option value="Omnivore">Omnivore</option><option value="Vegetarian">Vegetarian</option><option value="Gluten Free">Gluten Free</option><option value="Kosher">Kosher</option><option value="Vegan">Vegan</option><option value="Halal">Halal</option></select>
-<!-- /wp:wpzoom-forms/select-field -->
-
-<!-- wp:wpzoom-forms/radio-field {"id":"input_7a40e84d","name":"Are you bringing a +1?","options":["Yes","No"],"label":"Are you bringing a +1?"} -->
-<label for="input_7a40e84d"><label for="input_7a40e84d">Are you bringing a +1?</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><ul class="wp-block-wpzoom-forms-radio-field"><li><label><input type="radio" name="input_7a40e84d" id="input_7a40e84d" value="Yes" required/>Yes</label></li><li><label><input type="radio" name="input_7a40e84d" id="input_7a40e84d" value="No" required/>No</label></li></ul>
-<!-- /wp:wpzoom-forms/radio-field -->
-
-<!-- wp:wpzoom-forms/text-plain-field {"id":"input_0bbcc55a","name":"Your guest\'s name","label":"Your guest\'s name"} -->
-<label for="input_0bbcc55a"><label for="input_0bbcc55a">Your guest\'s name</label></label><input type="text" name="input_0bbcc55a" id="input_0bbcc55a" placeholder="" data-subject="false" class="wp-block-wpzoom-forms-text-plain-field"/>
-<!-- /wp:wpzoom-forms/text-plain-field -->
-
-<!-- wp:wpzoom-forms/select-field {"id":"input_15145568","name":"Your guest\'s meal preference","options":["Omnivore","Vegetarian","Gluten Free","Kosher","Vegan","Halal"],"label":"Your guest\'s meal preference"} -->
-<label for="input_15145568"><label for="input_15145568">Your guest\'s meal preference</label></label><select name="input_15145568" id="input_15145568" defaultvalue="Item #1" class="wp-block-wpzoom-forms-select-field"><option value="Omnivore">Omnivore</option><option value="Vegetarian">Vegetarian</option><option value="Gluten Free">Gluten Free</option><option value="Kosher">Kosher</option><option value="Vegan">Vegan</option><option value="Halal">Halal</option></select>
-<!-- /wp:wpzoom-forms/select-field -->
-
-<!-- wp:wpzoom-forms/textarea-field {"id":"input_message","name":"Any comments or questions?","label":"Any comments or questions?","className":"fullwidth"} -->
-<label for="input_message"><label for="input_message">Any comments or questions?</label></label><textarea name="input_message" id="input_message" cols="55" rows="10" placeholder="" class="wp-block-wpzoom-forms-textarea-field fullwidth"></textarea>
-<!-- /wp:wpzoom-forms/textarea-field --></div>
-<!-- /wp:column --></div>
-<!-- /wp:columns -->
-
-<!-- wp:columns -->
-<div class="wp-block-columns"><!-- wp:column {"width":"30%"} -->
-<div class="wp-block-column" style="flex-basis:30%"><!-- wp:wpzoom-forms/submit-field {"id":"input_submit"} -->
-<input type="submit" id="input_submit" value="Submit" class="wp-block-wpzoom-forms-submit-field"/>
-<!-- /wp:wpzoom-forms/submit-field --></div>
-<!-- /wp:column -->
-
-<!-- wp:column {"width":"70%"} -->
-<div class="wp-block-column" style="flex-basis:70%"><!-- wp:paragraph {"align":"right","style":{"typography":{"fontSize":16}}} -->
-<p class="has-text-align-right" style="font-size:16px">Fields marked with <strong class="has-accent-color has-text-color">*</strong> are required.</p>
-<!-- /wp:paragraph --></div>
-<!-- /wp:column --></div>
-<!-- /wp:columns --></div>
-<!-- /wp:group --></div>
-<!-- /wp:wpzoom-forms/form -->'
+		'content' => '',
+		'is_pro'   => true,
 	),
 	array(
 		'id'      => 'order-form',
@@ -334,60 +283,52 @@ $templates = array(
 <path d="M12.1152 11.9844C12.6186 12.0356 13.0137 12.4601 13.0137 12.9795C13.0134 13.5315 12.5657 13.9795 12.0137 13.9795C11.4962 13.9795 11.0701 13.5859 11.0186 13.082L11.0137 12.9795C11.0126 12.4245 11.4633 11.9795 12.0127 11.9795L12.1152 11.9844Z"  />
 <path d="M17.1152 11.9844C17.6186 12.0356 18.0137 12.4601 18.0137 12.9795C18.0134 13.5315 17.5657 13.9795 17.0137 13.9795C16.4962 13.9795 16.0701 13.5859 16.0186 13.082L16.0137 12.9795C16.0126 12.4245 16.4633 11.9795 17.0127 11.9795L17.1152 11.9844Z"  />
 <path fill-rule="evenodd" clip-rule="evenodd" d="M16 1.25C16.4142 1.25 16.75 1.58579 16.75 2V3.25H19C20.5192 3.25 21.75 4.48079 21.75 6V19C21.75 20.5192 20.5192 21.75 19 21.75H5C3.48079 21.75 2.25 20.5192 2.25 19V6C2.25 4.48079 3.48079 3.25 5 3.25H7.25V2C7.25 1.58579 7.58579 1.25 8 1.25C8.41421 1.25 8.75 1.58579 8.75 2V3.25H15.25V2C15.25 1.58579 15.5858 1.25 16 1.25ZM3.75 19C3.75 19.6908 4.30921 20.25 5 20.25H19C19.6908 20.25 20.25 19.6908 20.25 19V9.75H3.75V19ZM5 4.75C4.30921 4.75 3.75 5.30921 3.75 6V8.25H20.25V6C20.25 5.30921 19.6908 4.75 19 4.75H16.75V6C16.75 6.41421 16.4142 6.75 16 6.75C15.5858 6.75 15.25 6.41421 15.25 6V4.75H8.75V6C8.75 6.41421 8.41421 6.75 8 6.75C7.58579 6.75 7.25 6.41421 7.25 6V4.75H5Z"  />
-</svg>
-',
+</svg>',
 
-		'desc'    => 'Let customers request appointments. Ideal for salons or service-based businesses. You can follow up to confirm availability.',
-		'content' => '<!-- wp:wpzoom-forms/form -->
-<div class="wp-block-wpzoom-forms-form"><!-- wp:group -->
-<div class="wp-block-group"><!-- wp:columns -->
-<div class="wp-block-columns"><!-- wp:column {"width":"100%"} -->
-<div class="wp-block-column" style="flex-basis:100%"><!-- wp:wpzoom-forms/text-name-field {"id":"input_name","name":"Name","label":"Your Name","className":"fullwidth"} -->
-<label for="input_name"><label for="input_name">Your Name</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_name" id="input_name" placeholder="" required class="wp-block-wpzoom-forms-text-name-field fullwidth"/>
-<!-- /wp:wpzoom-forms/text-name-field -->
+		'desc'    => 'Let customers request appointments. Ideal for salons or service-based businesses.',
+		'content' => '',
+		'is_pro'  => true,
+	),
+	array(
+		'id'      => 'file-upload',
+		'name'    => 'File Upload',
+		
+		'icon'    =>  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M9.68652 3.26367C10.1821 3.32522 10.632 3.59626 10.917 4.01465L12.3223 6.08008L12.3623 6.12695C12.4076 6.16735 12.4672 6.19043 12.5293 6.19043H19L19.2812 6.2041C20.6679 6.345 21.7499 7.51663 21.75 8.94043V18L21.7363 18.2715C21.674 18.9012 21.3957 19.493 20.9443 19.9443C20.493 20.3957 19.9012 20.674 19.2715 20.7363L19 20.75H16C15.5858 20.75 15.25 20.4142 15.25 20C15.25 19.5858 15.5858 19.25 16 19.25H19L19.124 19.2441C19.4101 19.2157 19.6787 19.0888 19.8838 18.8838C20.0888 18.6787 20.2157 18.4101 20.2441 18.124L20.25 18V8.94043C20.25 8.29326 19.7582 7.76039 19.1279 7.69629L19 7.69043H12.5293C12.0221 7.69041 11.5437 7.46991 11.2139 7.09375L11.082 6.92383L9.67676 4.85938C9.6419 4.80819 9.58998 4.77251 9.53125 4.75781L9.4707 4.75H5C4.66851 4.74991 4.35061 4.88181 4.11621 5.11621C3.88181 5.35061 3.74991 5.66851 3.75 6V18L3.75586 18.124C3.78425 18.4101 3.91117 18.6787 4.11621 18.8838C4.35061 19.1182 4.66851 19.2501 5 19.25H8C8.41421 19.25 8.75 19.5858 8.75 20C8.75 20.4142 8.41421 20.75 8 20.75H5C4.27061 20.7501 3.57142 20.4601 3.05566 19.9443C2.6043 19.493 2.32601 18.9012 2.26367 18.2715L2.25 18V6C2.24985 5.27061 2.53991 4.57142 3.05566 4.05566C3.57142 3.53991 4.27061 3.24985 5 3.25H9.4707L9.68652 3.26367Z" fill="black"/>
+<path d="M12.0254 13.251C12.0319 13.2512 12.0384 13.2516 12.0449 13.252C12.0839 13.2543 12.122 13.2595 12.1592 13.2676C12.1925 13.2748 12.2246 13.2861 12.2568 13.2979C12.2693 13.3024 12.2828 13.3044 12.2949 13.3096C12.314 13.3177 12.3311 13.33 12.3496 13.3398C12.3734 13.3525 12.3977 13.3639 12.4199 13.3789C12.4588 13.4052 12.4959 13.4353 12.5303 13.4697L14.5303 15.4697L14.582 15.5264C14.8223 15.8209 14.8049 16.2557 14.5303 16.5303C14.2557 16.8049 13.8209 16.8223 13.5264 16.582L13.4697 16.5303L12.75 15.8105V20C12.75 20.4142 12.4142 20.75 12 20.75C11.5858 20.75 11.25 20.4142 11.25 20V15.8105L10.5303 16.5303C10.2374 16.8232 9.76262 16.8232 9.46973 16.5303C9.17683 16.2374 9.17683 15.7626 9.46973 15.4697L11.4697 13.4697L11.5264 13.418C11.5366 13.4097 11.5481 13.4032 11.5586 13.3955C11.5741 13.3841 11.59 13.3734 11.6064 13.3633C11.6303 13.3485 11.6546 13.3351 11.6797 13.3232C11.6979 13.3146 11.7164 13.307 11.7354 13.2998C11.7629 13.2894 11.7909 13.2814 11.8193 13.2744C11.8394 13.2694 11.8592 13.2631 11.8799 13.2598C11.8909 13.258 11.902 13.2562 11.9131 13.2549C11.9416 13.2516 11.9706 13.25 12 13.25C12.0085 13.25 12.017 13.2507 12.0254 13.251Z" fill="black"/>
+</svg>',
 
-<!-- wp:wpzoom-forms/text-email-field {"id":"input_email","name":"Email","label":"Email","replyto":true,"className":"fullwidth"} -->
-<label for="input_email"><label for="input_email">Email</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="email" name="input_email" id="input_email" placeholder="" required data-replyto="true" class="wp-block-wpzoom-forms-text-email-field fullwidth"/>
-<!-- /wp:wpzoom-forms/text-email-field -->
+		'desc'    => 'Allow users to send you documents, images, or other files through a simple upload form.',
+		'content' => '',
+		'is_pro'  => true,
+	),
+	array(
+		'id'      => 'job-application',
+		'name'    => 'Job Application',
+		
+		'icon'    =>  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M18.7197 16.8564C19.0126 16.5637 19.4874 16.5638 19.7803 16.8564C20.0731 17.1493 20.0731 17.6241 19.7803 17.917L18.2803 19.417C18.0057 19.6916 17.5709 19.7091 17.2764 19.4688L17.2197 19.417L16.2197 18.417L16.168 18.3604C15.9279 18.0658 15.9452 17.631 16.2197 17.3564C16.4943 17.082 16.9291 17.0646 17.2236 17.3047L17.2803 17.3564L17.75 17.8262L18.7197 16.8564Z" fill="black"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M18 13.25C20.6234 13.25 22.75 15.3766 22.75 18C22.75 20.6234 20.6234 22.75 18 22.75C15.3766 22.75 13.25 20.6234 13.25 18C13.25 15.3766 15.3766 13.25 18 13.25ZM18 14.75C16.2051 14.75 14.75 16.2051 14.75 18C14.75 19.7949 16.2051 21.25 18 21.25C19.7949 21.25 21.25 19.7949 21.25 18C21.25 16.2051 19.7949 14.75 18 14.75Z" fill="black"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M13.5 2.25C15.0188 2.25 16.25 3.48122 16.25 5V6.25H18.5C20.2949 6.25 21.75 7.70507 21.75 9.5V11C21.75 11.4142 21.4142 11.75 21 11.75C20.5858 11.75 20.25 11.4142 20.25 11V9.5C20.25 8.5335 19.4665 7.75 18.5 7.75H5.5C4.5335 7.75 3.75 8.5335 3.75 9.5V12.25H12C12.4142 12.25 12.75 12.5858 12.75 13C12.75 13.4142 12.4142 13.75 12 13.75H3.75V18C3.75 19.2426 4.75736 20.25 6 20.25H11C11.4142 20.25 11.75 20.5858 11.75 21C11.75 21.4142 11.4142 21.75 11 21.75H6C3.92893 21.75 2.25 20.0711 2.25 18V9.5C2.25 7.70507 3.70507 6.25 5.5 6.25H7.75V5C7.75 3.48122 8.98122 2.25 10.5 2.25H13.5ZM10.5 3.75C9.80964 3.75 9.25 4.30964 9.25 5V6.25H14.75V5C14.75 4.30964 14.1904 3.75 13.5 3.75H10.5Z" fill="black"/>
+</svg>',
 
-<!-- wp:wpzoom-forms/text-phone-field {"id":"input_48cf9a05","name":"Phone","label":"Your Phone"} -->
-<label for="input_48cf9a05"><label for="input_48cf9a05">Your Phone</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="tel" name="input_48cf9a05" id="input_48cf9a05" placeholder="" required class="wp-block-wpzoom-forms-text-phone-field"/>
-<!-- /wp:wpzoom-forms/text-phone-field -->
+		'desc'    => 'Let candidates apply for jobs by submitting their details, resume, and cover letter.',
+		'content' => '',
+		'is_pro'  => true,
+	),
+	array(
+		'id'      => 'support-request',
+		'name'    => 'Support Request',
+		
+		'icon'    =>  '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M7.18265 3.52372C10.166 1.82688 13.832 1.82625 16.8164 3.5247C17.4798 3.14913 18.3437 3.23688 18.918 3.80986L20.1914 5.08329L20.3194 5.22587C20.7775 5.79525 20.8214 6.57617 20.4746 7.18681C22.1719 10.1708 22.171 13.8341 20.4746 16.8167C20.8502 17.48 20.7642 18.343 20.1914 18.9173L18.918 20.1907C18.343 20.7657 17.4797 20.8504 16.8164 20.4749C13.8325 22.1718 10.1666 22.1726 7.18265 20.4729C6.51944 20.8486 5.65739 20.7636 5.08304 20.1907L3.80961 18.9173C3.23476 18.3424 3.14915 17.4789 3.52445 16.8157C1.82632 13.8315 1.82697 10.1661 3.52347 7.1829C3.14877 6.5196 3.23598 5.65634 3.80863 5.08232L5.08207 3.80888L5.22465 3.68095C5.79314 3.2234 6.57254 3.17885 7.18265 3.52372ZM14.1055 17.3684C12.7542 17.8976 11.2448 17.8979 9.89359 17.3684L8.26078 19.3518C10.6071 20.5474 13.3924 20.5477 15.7393 19.3538L14.1055 17.3684ZM16.6289 15.4397C16.4633 15.6621 16.28 15.8756 16.0782 16.0774C15.8762 16.2794 15.6619 16.4625 15.4395 16.6282L17.4834 19.1116L17.5225 19.1507C17.6207 19.228 17.7652 19.2224 17.8575 19.1302L19.1289 17.8577L19.1641 17.8147C19.2218 17.7241 19.2153 17.6063 19.1495 17.5227L19.1114 17.4837L16.6289 15.4397ZM4.88871 17.4827C4.77358 17.5776 4.76479 17.7513 4.87015 17.8567L6.14164 19.1282C6.24812 19.2344 6.4225 19.225 6.51664 19.1106L8.55961 16.6272C8.33766 16.4618 8.12443 16.279 7.92289 16.0774C7.72068 15.8752 7.53703 15.6615 7.37113 15.4388L4.88871 17.4827ZM14.8584 8.83134C13.1835 7.31797 10.5978 7.3687 8.98344 8.98271C7.31708 10.6491 7.31709 13.3505 8.98344 15.0169C10.6498 16.6832 13.3513 16.6832 15.0176 15.0169C16.6316 13.4026 16.6822 10.8168 15.169 9.14189L15.0176 8.98271L14.8584 8.83134ZM17.3692 9.89482C17.898 11.2458 17.8974 12.7548 17.3682 14.1058L19.3536 15.7395C20.5473 13.3933 20.5475 10.6087 19.3526 8.262L17.3692 9.89482ZM4.64554 8.25907C3.45128 10.6053 3.4517 13.3907 4.64652 15.7376L6.6309 14.1048C6.10205 12.7537 6.10146 11.2438 6.6309 9.89286L4.64554 8.25907ZM17.8584 4.87138C17.7653 4.77862 17.6212 4.7741 17.5235 4.85087L17.4844 4.88896L15.4395 7.37236C15.6566 7.53417 15.8658 7.71216 16.0635 7.90849L16.0782 7.92216L16.2832 8.137C16.4068 8.27374 16.5218 8.41567 16.6299 8.56083L19.1123 6.51786L19.1514 6.4788C19.2179 6.39463 19.223 6.27597 19.1651 6.18583L19.1309 6.14384L17.8584 4.87138ZM6.47758 4.84892C6.39336 4.78239 6.27478 4.77719 6.18461 4.83525L6.14261 4.86943L4.86918 6.14091L4.87015 6.14189C4.76411 6.24838 4.77339 6.42182 4.88773 6.51591L7.37113 8.55986C7.53683 8.33749 7.72099 8.12406 7.92289 7.92216C8.12477 7.72031 8.33825 7.53704 8.56058 7.37138L6.51664 4.88798L6.47758 4.84892ZM15.7393 4.64775C13.3921 3.45216 10.6065 3.45141 8.2598 4.64579L9.89359 6.63115C11.2446 6.10186 12.7544 6.10193 14.1055 6.63115L15.7393 4.64775Z" fill="black"/>
+</svg>',
 
-<!-- wp:wpzoom-forms/multi-checkbox-field {"id":"input_02ad61ed","name":"Services","options":["Hair Consult","Blow Dry Style","Balayage","Highlights","Hair Mask","Men\'s Cut"],"label":"Services Requested"} -->
-<label for="input_02ad61ed"><label for="input_02ad61ed">Services Requested</label></label><ul class="wp-block-wpzoom-forms-multi-checkbox-field"><li><label><input type="checkbox" name="input_02ad61ed[]" id="input_02ad61ed" value="Hair Consult"/>Hair Consult</label></li><li><label><input type="checkbox" name="input_02ad61ed[]" id="input_02ad61ed" value="Blow Dry Style"/>Blow Dry Style</label></li><li><label><input type="checkbox" name="input_02ad61ed[]" id="input_02ad61ed" value="Balayage"/>Balayage</label></li><li><label><input type="checkbox" name="input_02ad61ed[]" id="input_02ad61ed" value="Highlights"/>Highlights</label></li><li><label><input type="checkbox" name="input_02ad61ed[]" id="input_02ad61ed" value="Hair Mask"/>Hair Mask</label></li><li><label><input type="checkbox" name="input_02ad61ed[]" id="input_02ad61ed" value="Men\'s Cut"/>Men\'s Cut</label></li></ul>
-<!-- /wp:wpzoom-forms/multi-checkbox-field -->
-
-<!-- wp:wpzoom-forms/datepicker-field {"id":"input_de9be238","name":"Date","format":"d/m/Y","label":"Date"} -->
-<label for="input_de9be238"><label for="input_de9be238">Date</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><input data-datepicker="true" data-date-format="d/m/Y" data-mode="single" type="text" name="input_de9be238" id="input_de9be238" placeholder="d/m/Y" required class="wp-block-wpzoom-forms-datepicker-field"/>
-<!-- /wp:wpzoom-forms/datepicker-field -->
-
-<!-- wp:wpzoom-forms/select-field {"id":"input_59b29aed","name":"Start Time","options":["09:00","09:30","10:00","10:30","11:00","11:30","12:00","12:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30"],"label":"Start Time"} -->
-<label for="input_59b29aed"><label for="input_59b29aed">Start Time</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><select name="input_59b29aed" id="input_59b29aed" required defaultvalue="Item #1" class="wp-block-wpzoom-forms-select-field"><option value="09:00">09:00</option><option value="09:30">09:30</option><option value="10:00">10:00</option><option value="10:30">10:30</option><option value="11:00">11:00</option><option value="11:30">11:30</option><option value="12:00">12:00</option><option value="12:30">12:30</option><option value="13:00">13:00</option><option value="13:30">13:30</option><option value="14:00">14:00</option><option value="14:30">14:30</option><option value="15:00">15:00</option><option value="15:30">15:30</option><option value="16:00">16:00</option><option value="16:30">16:30</option><option value="17:00">17:00</option><option value="17:30">17:30</option></select>
-<!-- /wp:wpzoom-forms/select-field -->
-
-<!-- wp:wpzoom-forms/textarea-field {"id":"input_message","name":"Any notes?","label":"Any notes?","className":"fullwidth"} -->
-<label for="input_message"><label for="input_message">Any notes?</label></label><textarea name="input_message" id="input_message" cols="55" rows="3" placeholder="" class="wp-block-wpzoom-forms-textarea-field fullwidth"></textarea>
-<!-- /wp:wpzoom-forms/textarea-field --></div>
-<!-- /wp:column --></div>
-<!-- /wp:columns -->
-
-<!-- wp:columns -->
-<div class="wp-block-columns"><!-- wp:column {"width":"30%"} -->
-<div class="wp-block-column" style="flex-basis:30%"><!-- wp:wpzoom-forms/submit-field {"id":"input_submit"} -->
-<input type="submit" id="input_submit" value="Submit" class="wp-block-wpzoom-forms-submit-field"/>
-<!-- /wp:wpzoom-forms/submit-field --></div>
-<!-- /wp:column -->
-
-<!-- wp:column {"width":"70%"} -->
-<div class="wp-block-column" style="flex-basis:70%"><!-- wp:paragraph {"align":"right","style":{"typography":{"fontSize":16}}} -->
-<p class="has-text-align-right" style="font-size:16px">Fields marked with <strong class="has-accent-color has-text-color">*</strong> are required.</p>
-<!-- /wp:paragraph --></div>
-<!-- /wp:column --></div>
-<!-- /wp:columns --></div>
-<!-- /wp:group --></div>
-<!-- /wp:wpzoom-forms/form -->'
+		'desc'    => 'Collect customer support inquiries or technical issues with structured ticket details.',
+		'content' => '',
+		'is_pro'  => true,
 	)
+
 );
 
 return $templates;

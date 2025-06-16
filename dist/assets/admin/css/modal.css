@@ -27,10 +27,11 @@
 	border: 1px solid #ddd;
 	border-radius: 10px;
 	outline: none;
+	position: relative;
 }
-.wpzoom-forms-templates-list li:hover,
-.wpzoom-forms-templates-list li:focus,
-.wpzoom-forms-templates-list li.active {
+.wpzoom-forms-templates-list li:not(.wpzoom-forms-template-list-item-pro):hover,
+.wpzoom-forms-templates-list li:not(.wpzoom-forms-template-list-item-pro):focus,
+.wpzoom-forms-templates-list li:not(.wpzoom-forms-template-list-item-pro).active {
 	border-color: #3496FF;
 }
 .wpzoom-forms-templates-list li a {
@@ -44,22 +45,27 @@
 	font-weight: 600;
 	line-height: 26px;
 }
-.wpzoom-forms-templates-list li a:hover,
-.wpzoom-forms-templates-list li.active a {
+.wpzoom-forms-template-list-item.wpzoom-forms-template-list-item-pro a {
+	opacity: 0.5;
+	pointer-events: none;
+	cursor: not-allowed;
+}
+.wpzoom-forms-templates-list li:not(.wpzoom-forms-template-list-item-pro) a:hover,
+.wpzoom-forms-templates-list li:not(.wpzoom-forms-template-list-item-pro).active a {
 	color: #3496FF;
 }
 .wpzoom-forms-templates-list li svg:not(.wpzoom-contact-form-icon) {
 	fill: black;
 }
-.wpzoom-forms-templates-list li:hover svg:not(.wpzoom-contact-form-icon),
-.wpzoom-forms-templates-list li.active svg:not(.wpzoom-contact-form-icon) {
+.wpzoom-forms-templates-list li:not(.wpzoom-forms-template-list-item-pro):hover svg:not(.wpzoom-contact-form-icon),
+.wpzoom-forms-templates-list li:not(.wpzoom-forms-template-list-item-pro).active svg:not(.wpzoom-contact-form-icon) {
 	fill: #3496FF;
 }
 .wpzoom-forms-templates-list li svg.wpzoom-contact-form-icon {
 	stroke: black;
 }
-.wpzoom-forms-templates-list li:hover svg.wpzoom-contact-form-icon,
-.wpzoom-forms-templates-list li.active svg.wpzoom-contact-form-icon {
+.wpzoom-forms-templates-list li:not(.wpzoom-forms-template-list-item-pro):hover svg.wpzoom-contact-form-icon,
+.wpzoom-forms-templates-list li:not(.wpzoom-forms-template-list-item-pro).active svg.wpzoom-contact-form-icon {
 	stroke: #3496FF !important;
 }
 
@@ -71,6 +77,17 @@
 	color:#242628;
 	font-weight: 400;
 	opacity: 0.8;
+}
+.wpzoom-forms-templates-list li .pro-only {
+	position: absolute;
+	top: 0;
+	right: 10px;
+	line-height: 1.5;
+	color: #fff;
+	background: #f57c00;
+	padding: 0 4px;
+	border-radius: 2px;
+	transform: translate(50%, -50%);
 }
 
 .wpzoom-forms-modal-header {
