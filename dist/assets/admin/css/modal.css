@@ -1,6 +1,9 @@
 .wpzoom-forms-modal {
 	display: none;
 	position: fixed;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
 	z-index: 9999;
 	left: 0;
 	top: 0;
@@ -11,7 +14,7 @@
 }
 .wpzoom-forms-modal-content {
 	background-color: #fff;
-	margin: 15% auto;
+	margin: 0 auto;
 	padding: 20px;
 	border: 1px solid #888;
 	width:auto;
@@ -147,6 +150,14 @@ div.wpzoom-forms_form {
     border-radius: 5px;
     padding: 40px 20px;
 }
+
+/* When screen height is less than modal height, add top margin */
+@media screen and (max-height: 600px) {
+	.wpzoom-forms-modal {
+	  align-items: flex-start;
+	  padding-top: 30px;
+	}
+  }
 
 @media screen and (max-width: 782px) { 
 	.wpzoom-forms-templates-list {
