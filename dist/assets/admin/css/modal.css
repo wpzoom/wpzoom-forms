@@ -152,7 +152,7 @@ div.wpzoom-forms_form {
 }
 
 /* When screen height is less than modal height, add top margin */
-@media screen and (max-height: 600px) {
+@media screen and (max-height: 900px) {
 	.wpzoom-forms-modal {
 	  align-items: flex-start;
 	  padding-top: 30px;
