@@ -155,9 +155,12 @@ div.wpzoom-forms_form {
 @media screen and (max-height: 900px) {
 	.wpzoom-forms-modal {
 	  align-items: flex-start;
-	  padding-top: 30px;
+	  padding-top: 45px;
 	}
-  }
+	.wpzoom-forms-modal-content {
+		margin-bottom: 80px;
+	}
+}
 
 @media screen and (max-width: 782px) { 
 	.wpzoom-forms-templates-list {
@@ -166,5 +169,17 @@ div.wpzoom-forms_form {
 	.wpzoom-forms-modal {
 		align-items: flex-start;
 		padding-top: 45px;
-	  }
+	}
+	.wpzoom-forms-modal-content {
+		margin-bottom: 80px;
+	}
+}
+@media screen and (max-width: 375px) { 
+	.wpzoom-forms-modal {
+		align-items: flex-start;
+		padding-top: 60px;
+	}
+	.wpzoom-forms-modal-content {
+		margin-bottom: 100px;
+	}
 }
