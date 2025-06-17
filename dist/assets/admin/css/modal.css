@@ -163,4 +163,8 @@ div.wpzoom-forms_form {
 	.wpzoom-forms-templates-list {
 		grid-template-columns: 1fr;
 	}
+	.wpzoom-forms-modal {
+		align-items: flex-start;
+		padding-top: 45px;
+	  }
 }
