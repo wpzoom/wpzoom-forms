@@ -1469,7 +1469,7 @@ class WPZOOM_Forms {
 			echo '<li class="top"><h3>' . sprintf( __( 'Form: %s', 'wpzoom-forms' ), $form_name ) . '</h3></li>';
 
 			foreach ( $fields as $name => $value ) {
-				echo '<li><h3>' . esc_html( $name ) . '</h3><div>' . make_clickable( apply_filters( 'the_content', esc_html( $value ) ) ) . '</div></li>';
+				echo '<li><h3>' . esc_html( $name ) . '</h3><div>' . make_clickable( nl2br( esc_html( $value ) ) ) . '</div></li>';
 			}
 
 			echo '</ul>';
@@ -2452,7 +2452,7 @@ class WPZOOM_Forms {
 							}
 
 							$email_body .= '<strong>' . wp_kses_post( wp_unslash( $name ) ) . ':</strong><br/>' . nl2br( wp_kses_post( wp_unslash( $value ) ) ) . '<br/><br/>';
-							$raw_content['_wpzf_fields'][ $name ] = sanitize_text_field( $value );
+							$raw_content['_wpzf_fields'][ $name ] = sanitize_textarea_field( $value );
 						}
 					}
 
@@ -2522,7 +2522,7 @@ class WPZOOM_Forms {
 								continue;
 							}
 
-							$content['_wpzf_fields'][ $name ] = sanitize_text_field( $value );
+							$content['_wpzf_fields'][ $name ] = sanitize_textarea_field( $value );
 						}
 					}
 
