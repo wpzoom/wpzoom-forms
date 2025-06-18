@@ -731,18 +731,10 @@ class WPZOOM_Forms {
 		add_submenu_page(
 			'edit.php?post_type=wpzf-form',
 			$page_title,
-			esc_html__( 'Upgrade to PRO', 'wpzoom-forms' ),
+            '<span style="color:#3496fe; font-weight: 600;">' . esc_html__( 'UPGRADE', 'wpzoom-forms' ) . ' &rarr; <span class="rcb-premium-badge" style="background-color: #3496fe; color: #fff; margin-left: 3px; font-size: 11px; min-height: 16px;  border-radius: 8px; display: inline-block; font-weight: 600; line-height: 1.6; padding: 0 8px">PRO</span></span>',
 			'manage_options',
 			'wpzf-upsell',
 			array( $this, 'render_upsell_page' )
-		);
-
-		add_submenu_page(
-			'edit.php?post_type=wpzf-form',
-			esc_html__( 'Upgrade to Pro &rarr;', 'wpzoom-forms' ),
-			'<span style="color:#f57c00">' . esc_html__( 'Upgrade to PRO &rarr;', 'wpzoom-forms' ) . '</span>',
-			'manage_options',
-			esc_url( 'https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=left-sidebard-link' )
 		);
 
 	}
