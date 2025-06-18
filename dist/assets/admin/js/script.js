@@ -104,6 +104,15 @@ jQuery(document).ready(function () {
 			}
 		});
 
+		// Hide upsell container and buttons on page load
+		const url = window.location.href;
+		const urlParams = new URLSearchParams(url);
+		const tab = urlParams.get('tab');
+		if (tab === 'tab-upsell') {
+			$('.wpzoom-forms-settings-upsell-container').hide();
+			$('.wpzoom-forms-settings-buttons-container').hide();
+		}
+
 		$('.wp-tab-bar a').on('click', function() {
 			$this = $(this);
 			const url = window.location.href;
@@ -114,6 +123,13 @@ jQuery(document).ready(function () {
 			} else {
 				$('.wpzoom-forms-settings-ajax-promo-container').hide();
 			}
+			if (tab === 'tab-upsell') {
+				$('.wpzoom-forms-settings-upsell-container').hide();
+				$('.wpzoom-forms-settings-buttons-container').hide();
+			} else {
+				$('.wpzoom-forms-settings-upsell-container').css('display', 'inline-block');
+				$('.wpzoom-forms-settings-buttons-container').css('display', 'inline-block');
+			} 
 		});
 
 		function showCaptchaOptions() {

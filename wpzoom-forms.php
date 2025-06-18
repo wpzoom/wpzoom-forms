@@ -2604,6 +2604,7 @@ if( ! function_exists ( 'wpzoom_forms_load_files' ) ) {
 		require_once 'classes/class-wpzoom-forms-settings-fields.php';
 		require_once 'classes/class-wpzoom-forms-settings-page.php';
 		require_once 'classes/class-wpzoom-forms-template-manager.php';
+		require_once 'classes/class-wpzoom-forms-settings-upsell.php';
 	
 	}
 	add_action( 'plugin_loaded', 'wpzoom_forms_load_files' );
