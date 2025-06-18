@@ -506,25 +506,7 @@ class WPZOOM_Forms_Settings {
 						),
 					),
 				),
-			),
-			'upsell' => array(
-				'tab_id'       => 'tab-upsell',
-				'tab_title'    => __( 'Upgrade to PRO', 'wpzoom-forms' ),
-				'option_group' => 'wpzf-upsell',
-				'option_name'  => self::$option,
-				'sections'     => array(
-					array(
-						'id'       => 'wpzf-upsell-section',
-						'title'    => '',
-						'page'     => 'wpzf-upsell',
-						'callback'     => '__return_false',
-						'fields'   => array(
-							array(),
-						),
-					),
-				),
-			),
-
+			)
 		);
 
 		$this->register_settings();

@@ -730,6 +730,15 @@ class WPZOOM_Forms {
 
 		add_submenu_page(
 			'edit.php?post_type=wpzf-form',
+			$page_title,
+			esc_html__( 'Upgrade to PRO', 'wpzoom-forms' ),
+			'manage_options',
+			'wpzf-upsell',
+			array( $this, 'render_upsell_page' )
+		);
+
+		add_submenu_page(
+			'edit.php?post_type=wpzf-form',
 			esc_html__( 'Upgrade to Pro &rarr;', 'wpzoom-forms' ),
 			'<span style="color:#f57c00">' . esc_html__( 'Upgrade to PRO &rarr;', 'wpzoom-forms' ) . '</span>',
 			'manage_options',
@@ -759,7 +768,7 @@ class WPZOOM_Forms {
 
 		$current_page = get_current_screen()->id;
 
-		if ( 'edit-wpzf-form' == $current_page || 'wpzf-form' == $current_page || 'edit-wpzf-submission' == $current_page || 'wpzf-submission' == $current_page || 'wpzf-form_page_wpzf-settings' == $current_page || 'wpzf-form_page_wpzoom-forms-pro-license' == $current_page ) {
+		if ( 'edit-wpzf-form' == $current_page || 'wpzf-form' == $current_page || 'edit-wpzf-submission' == $current_page || 'wpzf-submission' == $current_page || 'wpzf-form_page_wpzf-settings' == $current_page || 'wpzf-form_page_wpzoom-forms-pro-license' == $current_page || 'wpzf-form_page_wpzf-upsell' == $current_page ) {
 			wp_enqueue_style(
 				'wpzoom-forms-css-backend-main',
 				trailingslashit( $this->main_dir_url ) . 'main/backend/style.css',
@@ -1690,6 +1699,17 @@ class WPZOOM_Forms {
 	}
 
 	/**
+	 * Render the contents of the upsell page in the admin.
+	 *
+	 * @access public
+	 * @return void
+	 * @since  1.0.0
+	 */
+	public function render_upsell_page() {
+		do_action( 'wpzoom_forms_admin_page_upsell' );
+	}
+
+	/**
 	 * Page header used on all admin pages.
 	 *
 	 * @access public
@@ -1700,7 +1720,7 @@ class WPZOOM_Forms {
 
 		$current_page = get_current_screen()->id;
 
-		if ( 'edit-wpzf-form' == $current_page || 'edit-wpzf-submission' == $current_page || 'wpzf-submission' == $current_page || 'wpzf-form_page_wpzf-settings' == $current_page || 'wpzf-form_page_wpzoom-forms-pro-license' == $current_page ) {
+		if ( 'edit-wpzf-form' == $current_page || 'edit-wpzf-submission' == $current_page || 'wpzf-submission' == $current_page || 'wpzf-form_page_wpzf-settings' == $current_page || 'wpzf-form_page_wpzoom-forms-pro-license' == $current_page || 'wpzf-form_page_wpzf-upsell' == $current_page ) {
 			?>
 			<header class="wpzoom-new-admin-wrap wpzoom-new-admin_settings-header">
 				<h1 class="wpzoom-new-admin_settings-main-title wp-heading">
@@ -1744,6 +1764,10 @@ class WPZOOM_Forms {
 								'wpzf-form_page_wpzf-settings' => array(
 									'name' => esc_html__( 'Settings', 'wpzoom-forms' ),
 									'url'  => admin_url( 'edit.php?post_type=wpzf-form&page=wpzf-settings' ),
+								),
+								'wpzf-form_page_wpzf-upsell' => array(
+									'name' => esc_html__( 'Upgrade to PRO', 'wpzoom-forms' ),
+									'url'  => admin_url( 'edit.php?post_type=wpzf-form&page=wpzf-upsell' ),
 								),
 							)
 						);
@@ -2067,7 +2091,7 @@ class WPZOOM_Forms {
 	public function admin_page_footer() {
 		$current_page = get_current_screen()->id;
 
-		if ( 'edit-wpzf-form' == $current_page || 'wpzf-form' == $current_page || 'edit-wpzf-submission' == $current_page || 'wpzf-submission' == $current_page || 'wpzf-form_page_wpzf-settings' == $current_page || 'wpzf-form_page_wpzoom-forms-pro-license' == $current_page ) {
+		if ( 'edit-wpzf-form' == $current_page || 'wpzf-form' == $current_page || 'edit-wpzf-submission' == $current_page || 'wpzf-submission' == $current_page || 'wpzf-form_page_wpzf-settings' == $current_page || 'wpzf-form_page_wpzoom-forms-pro-license' == $current_page || 'wpzf-form_page_wpzf-upsell' == $current_page ) {
 			?>
 			<footer class="wpzoom-new-admin_settings-footer">
 				<div class="wpzoom-new-admin_settings-footer-wrap">
@@ -2117,7 +2141,7 @@ class WPZOOM_Forms {
 	public function admin_body_class_filter( $classes ) {
 		$current_page = get_current_screen()->id;
 
-		if ( 'edit-wpzf-form' == $current_page || 'wpzf-form' == $current_page || 'edit-wpzf-submission' == $current_page || 'wpzf-submission' == $current_page || 'wpzf-form_page_wpzf-settings' == $current_page || 'wpzf-form_page_wpzoom-forms-pro-license' == $current_page ) {
+		if ( 'edit-wpzf-form' == $current_page || 'wpzf-form' == $current_page || 'edit-wpzf-submission' == $current_page || 'wpzf-submission' == $current_page || 'wpzf-form_page_wpzf-settings' == $current_page || 'wpzf-form_page_wpzoom-forms-pro-license' == $current_page || 'wpzf-form_page_wpzf-upsell' == $current_page ) {
 			$classes .= ' wpzoom-new-admin';
 		}
 

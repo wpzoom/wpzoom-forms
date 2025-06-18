@@ -3,11 +3,13 @@
 class WPZOOM_Forms_Settings_Upsell {
 
 	public function __construct() {
-		add_action( 'wpzoom_forms_settings_upsell_page_content', array( $this, 'upsell_page_content' ) );
+		//add_action( 'wpzoom_forms_settings_upsell_page_content', array( $this, 'upsell_page_content' ) );
+		add_action( 'wpzoom_forms_admin_page_upsell', array( $this, 'upsell_page_content' ) );
 	}
 
 	public function upsell_page_content() {
 		?>
+		<div id="tab-upsell">
 		<div class="wpzoom-forms-settings-upsell-page-container">
 			<img src="<?php echo WPZOOM_FORMS_URL; ?>/dist/assets/admin/images/pro-page.png" alt="Upgrade to WPZOOM Forms PRO">
 			<div class="wpzoom-forms-settings-upsell-page-container-header">
@@ -136,6 +138,7 @@ class WPZOOM_Forms_Settings_Upsell {
 				</ul>
 			</div>
 		</div>
+	</div>
 		<?php
 	}
 }
