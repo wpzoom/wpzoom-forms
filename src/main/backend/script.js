@@ -158,26 +158,30 @@ registerPlugin('wpzoom-forms-document-settings', {
 		useEffect(() => {
 			// No need to add inline styles anymore as they will be in style.scss
 			
-			// Add drop handler to the editor
-			const handleDrop = (event) => {
-				event.preventDefault();
-				event.stopPropagation();
+					// Add drop handler to the editor
+		const handleDrop = (event) => {
+			// Remove any existing drop indicators
+			document.querySelectorAll('.wpzoom-forms-drop-indicator').forEach(el => el.remove());
+
+			// Check if we've already handled this drop
+			if (event.handled) {
+				return;
+			}
+
+			try {
+				const data = event.dataTransfer.getData('text');
+				if (!data) return;
 				
-				// Remove any existing drop indicators
-				document.querySelectorAll('.wpzoom-forms-drop-indicator').forEach(el => el.remove());
-				
-				// Check if we've already handled this drop
-				if (event.handled) {
+				const { type, attributes } = JSON.parse(data);
+				if (!type || !type.startsWith('wpzoom-forms/')) {
+					// This is not a WPZOOM form field drag, let WordPress handle it
 					return;
 				}
+
+				// Only prevent default and stop propagation for WPZOOM form fields
+				event.preventDefault();
+				event.stopPropagation();
 				event.handled = true;
-				
-				try {
-					const data = event.dataTransfer.getData('text');
-					if (!data) return;
-					
-					const { type, attributes } = JSON.parse(data);
-					if (!type || !type.startsWith('wpzoom-forms/')) return;
 					
 					const { createBlock } = wp.blocks;
 					const { insertBlock, getBlockInsertionPoint } = wp.data.dispatch('core/block-editor');
@@ -235,14 +239,30 @@ registerPlugin('wpzoom-forms-document-settings', {
 				}
 			};
 
-			const handleDragOver = (event) => {
-				event.preventDefault();
-				event.stopPropagation();
-				
-				// Throttle the drag over handler
-				if (handleDragOver.timeout) {
-					return;
+					const handleDragOver = (event) => {
+			// Check if this is a WPZOOM form field drag first
+			try {
+				const data = event.dataTransfer.getData('text');
+				if (data) {
+					const { type } = JSON.parse(data);
+					if (!type || !type.startsWith('wpzoom-forms/')) {
+						// This is not a WPZOOM form field drag, let WordPress handle it
+						return;
+					}
 				}
+			} catch (error) {
+				// If we can't parse the data, let WordPress handle it
+				return;
+			}
+
+			// Only prevent default and stop propagation for WPZOOM form fields
+			event.preventDefault();
+			event.stopPropagation();
+
+			// Throttle the drag over handler
+			if (handleDragOver.timeout) {
+				return;
+			}
 				
 				handleDragOver.timeout = setTimeout(() => {
 					handleDragOver.timeout = null;
@@ -322,7 +342,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 				window.removeEventListener('blur', handleDragEnd);
 				
 				// Add new event listeners
-				editor.addEventListener('drop', handleDrop, { capture: true });
+				editor.addEventListener('drop', handleDrop);
 				editor.addEventListener('dragover', handleDragOver);
 				editor.addEventListener('dragleave', handleDragEnd);
 				editor.addEventListener('dragend', handleDragEnd);
@@ -1023,7 +1043,7 @@ registerBlockType('wpzoom-forms/form', {
 				window.removeEventListener('blur', handleDragEnd);
 				
 				// Add new event listeners
-				editor.addEventListener('drop', handleDrop, { capture: true });
+				editor.addEventListener('drop', handleDrop);
 				editor.addEventListener('dragover', handleDragOver);
 				editor.addEventListener('dragleave', handleDragEnd);
 				editor.addEventListener('dragend', handleDragEnd);
@@ -1275,7 +1295,16 @@ registerBlockType('wpzoom-forms/form', {
 					'wpzoom-forms/radio-field',
 					'wpzoom-forms/label-field',
 					'wpzoom-forms/submit-field',
-					'wpzoom-forms/datepicker-field'
+					'wpzoom-forms/datepicker-field',
+                    // Core WordPress blocks for layout and content
+                    'core/group',
+                    'core/columns',
+                    'core/column',
+                    'core/paragraph',
+                    'core/heading',
+                    'core/spacer',
+                    'core/separator',
+                    'core/html'
 
 				]}
 				template={[
