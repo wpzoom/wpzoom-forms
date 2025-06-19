@@ -30,7 +30,7 @@ $templates = array(
 <!-- /wp:wpzoom-forms/text-plain-field -->
 
 <!-- wp:wpzoom-forms/textarea-field {"id":"input_d8cf917c"} -->
-<label for="input_d8cf917c"><span>Message</span></label><textarea name="input_d8cf917c" id="input_d8cf917c" cols="20" rows="5" placeholder="" class="wp-block-wpzoom-forms-textarea-field"></textarea>
+<label for="input_d8cf917c"><span>Message</span></label><textarea name="input_d8cf917c" id="input_d8cf917c" cols="55" rows="10" placeholder="" class="wp-block-wpzoom-forms-textarea-field"></textarea>
 <!-- /wp:wpzoom-forms/textarea-field -->
 
 <!-- wp:columns {"verticalAlignment":"center"} -->
