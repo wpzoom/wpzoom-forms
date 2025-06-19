@@ -1527,6 +1527,59 @@ class WPZOOM_Forms {
 
 		if ( is_admin() || ( ! is_null( $current_screen ) && $current_screen->is_block_editor() ) ) return '';
 
+		// Get form ID and validate form exists and is published
+		$form_id = isset( $attributes['formId'] ) ? intval( $attributes['formId'] ) : 0;
+		$form_post = get_post( $form_id );
+
+		// Check if form exists and is published
+		if ( ! $form_post || 'wpzf-form' !== $form_post->post_type || 'publish' !== $form_post->post_status ) {
+			// Show message only to administrators
+			if ( current_user_can( 'manage_options' ) ) {
+				$message = '';
+				if ( ! $form_post ) {
+					$message = sprintf( 
+						__( 'Contact form not found (ID: %d). Please select a different form or create a new one.', 'wpzoom-forms' ), 
+						$form_id 
+					);
+				} elseif ( 'wpzf-form' !== $form_post->post_type ) {
+					$message = sprintf( 
+						__( 'Invalid form type (ID: %d). Please select a valid WPZOOM form.', 'wpzoom-forms' ), 
+						$form_id 
+					);
+				} elseif ( 'trash' === $form_post->post_status ) {
+					$message = sprintf( 
+						__( 'Contact form "%s" is in trash (ID: %d). Please restore it or select a different form.', 'wpzoom-forms' ), 
+						$form_post->post_title, 
+						$form_id 
+					);
+				} else {
+					$message = sprintf( 
+						__( 'Contact form "%s" is not published (ID: %d). Please publish it or select a different form.', 'wpzoom-forms' ), 
+						$form_post->post_title, 
+						$form_id 
+					);
+				}
+				
+				return sprintf(
+					'<div class="wpzoom-forms-admin-notice" style="background: #fff; border: 1px solid #c3c4c7; border-left: 4px solid #d63638; box-shadow: 0 1px 1px rgba(0,0,0,0.04); padding: 1em 12px; margin: 1em 0;">
+						<p style="margin: 0; font-size: 14px; color: #d63638;">
+							<strong>%s:</strong> %s
+						</p>
+						<p style="margin: 8px 0 0 0; font-size: 13px; color: #646970;">
+							<a href="%s" target="_blank">%s</a>
+						</p>
+					</div>',
+					esc_html__( 'WPZOOM Forms Admin Notice', 'wpzoom-forms' ),
+					esc_html( $message ),
+					esc_url( admin_url( 'edit.php?post_type=wpzf-form' ) ),
+					esc_html__( 'Manage Forms', 'wpzoom-forms' )
+				);
+			}
+			
+			// Don't show anything to non-administrators
+			return '';
+		}
+
 		$align = isset( $attributes['align'] ) && ! empty( $attributes['align'] ) ? $attributes['align'] : 'none';
 
 		//Get styles from the block
