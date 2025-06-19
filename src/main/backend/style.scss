@@ -2856,7 +2856,7 @@
 }
 .wpzoom-forms-settings-upsell-container {
 	display:block;
-	height:470px;
+	height:auto !important;
 	width:340px;
 	z-index:1000;
 	float:right;
@@ -3045,6 +3045,13 @@
 	}
 } 
 
+@media screen and (max-width: 425px) { 
+	.wpzoom-new-admin #wpbody-content .wpzoom-new-admin_settings-header .wpzoom-new-admin_settings-main-nav ul {
+		gap:10px !important;
+		flex-wrap: nowrap !important;
+	}
+}
+
 @media screen and (max-width: 375px) { 
 	.wpzoom-new-admin #wpbody-content > .wrap #wpzf_global_captcha_type_v2 + label.radio-field, 
 	.wpzoom-new-admin #wpbody-content > .wrap #wpzf_global_captcha_type_v3 + label.radio-field {
@@ -3212,6 +3219,23 @@
 	margin-top: 20px;
 	margin-bottom: 0px;
 }
+.wpzoom-forms-settings-subscribe-form {
+	display:block;
+}
+.ml-form-embedContent h4 {
+	font-size:18px !important;
+	line-height:24px;
+}
+
+.ml-form-formContent {
+	max-width:180px !important;
+	float:left !important;
+}
+.ml-form-embedSubmit {
+	float:right !important;
+	max-width:100px !important;
+}
+
 @media (max-width: 1240px) {
 	.features-table li {
 		width: 100%;
@@ -3235,5 +3259,11 @@
 	}
 	.wpzoom-forms-settings-upsell-page-container-header p {
 		margin-left:0;
+	}
+	.features-table li div {
+		flex:auto;
+	}
+	.features-table li:not(.t-footer) div:first-child {
+		width: 235px;
 	}
 }

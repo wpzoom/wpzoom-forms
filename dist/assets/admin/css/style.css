@@ -319,7 +319,7 @@ div.wp-tab-panel-inactive {
 
 .wpzoom-forms-settings-upsell-container {
 	display:block;
-	height:470px;
+	height:auto !important;
 	width:340px;
 	z-index:1000;
 	float:right;
