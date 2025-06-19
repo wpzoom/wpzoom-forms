@@ -2940,6 +2940,9 @@
 		gap:10px !important;
 		flex-wrap: nowrap !important;
 	}
+	.wpzoom-new-admin #wpbody-content .wpzoom-new-admin_settings-header .wpzoom-new-admin_settings-main-nav ul li {
+		font-size:12px !important;
+	}
 }
 
 @media screen and (max-width: 375px) { 
@@ -3085,6 +3088,9 @@
 .features-table li div {
 	flex: 1;
 }
+.features-table li div svg {
+	overflow: visible;
+}
 .features-table li .c {
 	text-align: center;
 }
@@ -3192,6 +3198,6 @@
 		flex:auto;
 	}
 	.features-table li:not(.t-footer) div:first-child {
-		width: 235px;
+		width: 130px;
 	}
 }
