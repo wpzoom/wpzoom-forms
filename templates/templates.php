@@ -183,45 +183,45 @@ $templates = array(
 <div class="wp-block-wpzoom-forms-form"><!-- wp:group -->
 <div class="wp-block-group"><!-- wp:columns -->
 <div class="wp-block-columns"><!-- wp:column {"width":"100%"} -->
-<div class="wp-block-column" style="flex-basis:100%"><!-- wp:wpzoom-forms/text-name-field {"id":"input_name","name":"Your Name","label":"Your Name","className":"fullwidth"} -->
-<label for="input_name"><label for="input_name">Your Name</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_name" id="input_name" placeholder="" required class="wp-block-wpzoom-forms-text-name-field fullwidth"/>
+<div class="wp-block-column" style="flex-basis:100%"><!-- wp:wpzoom-forms/text-name-field {"id":"input_name","name":"Your Name","label":"Your Name"} -->
+<label for="input_name"><span>Your Name</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_name" id="input_name" placeholder="" required class="wp-block-wpzoom-forms-text-name-field"/>
 <!-- /wp:wpzoom-forms/text-name-field -->
 
-<!-- wp:wpzoom-forms/text-email-field {"id":"input_email","name":"Your Email","label":"Your Email","replyto":true,"className":"fullwidth"} -->
-<label for="input_email"><label for="input_email">Your Email</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="email" name="input_email" id="input_email" placeholder="" required data-replyto="true" class="wp-block-wpzoom-forms-text-email-field fullwidth"/>
+<!-- wp:wpzoom-forms/text-email-field {"id":"input_email","name":"Your Email","label":"Your Email","replyto":true} -->
+<label for="input_email"><span>Your Email</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="email" name="input_email" id="input_email" placeholder="" required data-replyto="true" class="wp-block-wpzoom-forms-text-email-field"/>
 <!-- /wp:wpzoom-forms/text-email-field -->
 
 <!-- wp:wpzoom-forms/text-phone-field {"id":"input_9ff254c3","name":"Phone Number","label":"Phone Number"} -->
-<label for="input_9ff254c3"><label for="input_9ff254c3">Phone Number</label></label><input type="tel" name="input_9ff254c3" id="input_9ff254c3" placeholder="" class="wp-block-wpzoom-forms-text-phone-field"/>
+<label for="input_9ff254c3"><span>Phone Number</span></label><input type="tel" name="input_9ff254c3" id="input_9ff254c3" placeholder="" class="wp-block-wpzoom-forms-text-phone-field"/>
 <!-- /wp:wpzoom-forms/text-phone-field -->
 
 <!-- wp:wpzoom-forms/text-plain-field {"id":"input_984c7374","name":"Your Address","label":"Your Address"} -->
-<label for="input_984c7374"><label for="input_984c7374">Your Address</label></label><input type="text" name="input_984c7374" id="input_984c7374" placeholder="" data-subject="false" class="wp-block-wpzoom-forms-text-plain-field"/>
+<label for="input_984c7374"><span>Your Address</span></label><input type="text" name="input_984c7374" id="input_984c7374" placeholder="" data-subject="false" class="wp-block-wpzoom-forms-text-plain-field"/>
 <!-- /wp:wpzoom-forms/text-plain-field -->
 
 <!-- wp:wpzoom-forms/multi-checkbox-field {"id":"input_b627c5c7","name":"Required service(s)","options":["General maintenance","Repairs","House keeping","Landscape gardening","Other"],"label":"Required service(s)"} -->
-<label for="input_b627c5c7"><label for="input_b627c5c7">Required service(s)</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><ul class="wp-block-wpzoom-forms-multi-checkbox-field"><li><label><input type="checkbox" name="input_b627c5c7[]" id="input_b627c5c7" value="General maintenance" required/>General maintenance</label></li><li><label><input type="checkbox" name="input_b627c5c7[]" id="input_b627c5c7" value="Repairs" required/>Repairs</label></li><li><label><input type="checkbox" name="input_b627c5c7[]" id="input_b627c5c7" value="House keeping" required/>House keeping</label></li><li><label><input type="checkbox" name="input_b627c5c7[]" id="input_b627c5c7" value="Landscape gardening" required/>Landscape gardening</label></li><li><label><input type="checkbox" name="input_b627c5c7[]" id="input_b627c5c7" value="Other" required/>Other</label></li></ul>
+<label for="input_b627c5c7"><span>Required service(s)</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><ul class="wp-block-wpzoom-forms-multi-checkbox-field"><li><label><input type="checkbox" name="input_b627c5c7[]" id="input_b627c5c7" value="General maintenance" required/>General maintenance</label></li><li><label><input type="checkbox" name="input_b627c5c7[]" id="input_b627c5c7" value="Repairs" required/>Repairs</label></li><li><label><input type="checkbox" name="input_b627c5c7[]" id="input_b627c5c7" value="House keeping" required/>House keeping</label></li><li><label><input type="checkbox" name="input_b627c5c7[]" id="input_b627c5c7" value="Landscape gardening" required/>Landscape gardening</label></li><li><label><input type="checkbox" name="input_b627c5c7[]" id="input_b627c5c7" value="Other" required/>Other</label></li></ul>
 <!-- /wp:wpzoom-forms/multi-checkbox-field -->
 
 <!-- wp:spacer {"height":"34px"} -->
 <div style="height:34px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
-<!-- wp:wpzoom-forms/textarea-field {"id":"input_message","name":"How can we help you?","label":"How can we help you?","className":"fullwidth"} -->
-<label for="input_message"><label for="input_message">How can we help you?</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><textarea name="input_message" id="input_message" cols="55" rows="10" placeholder="" required class="wp-block-wpzoom-forms-textarea-field fullwidth"></textarea>
+<!-- wp:wpzoom-forms/textarea-field {"id":"input_message","name":"How can we help you?","label":"How can we help you?"} -->
+<label for="input_message"><span>How can we help you?</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><textarea name="input_message" id="input_message" cols="55" rows="10" placeholder="" required class="wp-block-wpzoom-forms-textarea-field"></textarea>
 <!-- /wp:wpzoom-forms/textarea-field --></div>
 <!-- /wp:column --></div>
 <!-- /wp:columns -->
 
-<!-- wp:columns -->
-<div class="wp-block-columns"><!-- wp:column {"width":"30%"} -->
-<div class="wp-block-column" style="flex-basis:30%"><!-- wp:wpzoom-forms/submit-field {"id":"input_submit"} -->
+<!-- wp:columns {"verticalAlignment":"center"} -->
+<div class="wp-block-columns are-vertically-aligned-center"><!-- wp:column {"verticalAlignment":"center","width":"30%"} -->
+<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:30%"><!-- wp:wpzoom-forms/submit-field {"id":"input_submit"} -->
 <input type="submit" id="input_submit" value="Submit" class="wp-block-wpzoom-forms-submit-field"/>
 <!-- /wp:wpzoom-forms/submit-field --></div>
 <!-- /wp:column -->
 
-<!-- wp:column {"width":"70%"} -->
-<div class="wp-block-column" style="flex-basis:70%"><!-- wp:paragraph {"align":"right","style":{"typography":{"fontSize":16}}} -->
+<!-- wp:column {"verticalAlignment":"center","width":"70%"} -->
+<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:70%"><!-- wp:paragraph {"align":"right","style":{"typography":{"fontSize":16}}} -->
 <p class="has-text-align-right" style="font-size:16px">Fields marked with <strong class="has-accent-color has-text-color">*</strong> are required.</p>
 <!-- /wp:paragraph --></div>
 <!-- /wp:column --></div>
@@ -249,24 +249,24 @@ $templates = array(
 <div class="wp-block-wpzoom-forms-form"><!-- wp:group -->
 <div class="wp-block-group"><!-- wp:columns -->
 <div class="wp-block-columns"><!-- wp:column {"width":"100%"} -->
-<div class="wp-block-column" style="flex-basis:100%"><!-- wp:wpzoom-forms/text-name-field {"id":"input_name","name":"Name","label":"Name","className":"fullwidth"} -->
-<label for="input_name"><label for="input_name">Name</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_name" id="input_name" placeholder="" required class="wp-block-wpzoom-forms-text-name-field fullwidth"/>
+<div class="wp-block-column" style="flex-basis:100%"><!-- wp:wpzoom-forms/text-name-field {"id":"input_name","name":"Name"} -->
+<label for="input_name"><span>Name</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_name" id="input_name" placeholder="" required class="wp-block-wpzoom-forms-text-name-field"/>
 <!-- /wp:wpzoom-forms/text-name-field -->
 
-<!-- wp:wpzoom-forms/text-email-field {"id":"input_email","name":"Email","label":"Email","replyto":true,"className":"fullwidth"} -->
-<label for="input_email"><label for="input_email">Email</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="email" name="input_email" id="input_email" placeholder="" required data-replyto="true" class="wp-block-wpzoom-forms-text-email-field fullwidth"/>
+<!-- wp:wpzoom-forms/text-email-field {"id":"input_email","name":"Email","replyto":true} -->
+<label for="input_email"><span>Email</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="email" name="input_email" id="input_email" placeholder="" required data-replyto="true" class="wp-block-wpzoom-forms-text-email-field"/>
 <!-- /wp:wpzoom-forms/text-email-field -->
 
 <!-- wp:wpzoom-forms/select-field {"id":"input_8e4aa5c6","name":"Department","options":["Sales","Customer Support","Marketing","Development","Other"],"label":"Which department do you have a suggestion for?"} -->
-<label for="input_8e4aa5c6"><label for="input_8e4aa5c6">Which department do you have a suggestion for?</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><select name="input_8e4aa5c6" id="input_8e4aa5c6" required defaultvalue="Item #1" class="wp-block-wpzoom-forms-select-field"><option value="Sales">Sales</option><option value="Customer Support">Customer Support</option><option value="Marketing">Marketing</option><option value="Development">Development</option><option value="Other">Other</option></select>
+<label for="input_8e4aa5c6"><span>Which department do you have a suggestion for?</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><select name="input_8e4aa5c6" id="input_8e4aa5c6" required defaultvalue="Item #1" class="wp-block-wpzoom-forms-select-field"><option value="Sales">Sales</option><option value="Customer Support">Customer Support</option><option value="Marketing">Marketing</option><option value="Development">Development</option><option value="Other">Other</option></select>
 <!-- /wp:wpzoom-forms/select-field -->
 
-<!-- wp:wpzoom-forms/text-plain-field {"id":"input_subject","name":"Subject","label":"Subject","subject":true,"className":"fullwidth"} -->
-<label for="input_subject"><label for="input_subject">Subject</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_subject" id="input_subject" placeholder="" required data-subject="true" class="wp-block-wpzoom-forms-text-plain-field fullwidth"/>
+<!-- wp:wpzoom-forms/text-plain-field {"id":"input_subject","name":"Subject","label":"Subject","subject":true} -->
+<label for="input_subject"><span>Subject</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_subject" id="input_subject" placeholder="" required data-subject="true" class="wp-block-wpzoom-forms-text-plain-field"/>
 <!-- /wp:wpzoom-forms/text-plain-field -->
 
-<!-- wp:wpzoom-forms/textarea-field {"id":"input_message","name":"Message","label":"Message","className":"fullwidth"} -->
-<label for="input_message"><label for="input_message">Message</label><sup class="wp-block-wpzoom-forms-required">*</sup></label><textarea name="input_message" id="input_message" cols="55" rows="10" placeholder="" required class="wp-block-wpzoom-forms-textarea-field fullwidth"></textarea>
+<!-- wp:wpzoom-forms/textarea-field {"id":"input_message","name":"Message"} -->
+<label for="input_message"><span>Message</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><textarea name="input_message" id="input_message" cols="55" rows="10" placeholder="" required class="wp-block-wpzoom-forms-textarea-field"></textarea>
 <!-- /wp:wpzoom-forms/textarea-field --></div>
 <!-- /wp:column --></div>
 <!-- /wp:columns -->
