@@ -52,7 +52,7 @@ if ( ! class_exists( 'WPZOOM_Forms_Template_Manager' ) ) {
 		}
 
 	/**
-	 * Set default content for the recipe card CPT.
+	 * Set default content for the form CPT.
 	 *
 	 * @since 1.2.0
 	 */
