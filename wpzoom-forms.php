@@ -13,7 +13,7 @@
  * Description: Simple, user-friendly contact form plugin for WordPress that utilizes Gutenberg blocks for easy form building and customization.
  * Author:      WPZOOM
  * Author URI:  https://www.wpzoom.com
- * Version:     1.3.0
+ * Version:     1.3.1
  * License:     GPL2+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
@@ -396,7 +396,37 @@ class WPZOOM_Forms {
 				'post_type'    => 'wpzf-form',
 				'post_status'  => 'publish',
 				'post_title'   => __( 'Example Form', 'wpzoom-forms' ),
-				'post_content' => "<!-- wp:wpzoom-forms/form -->\n<div class=\"wp-block-wpzoom-forms-form\"><!-- wp:group -->\n<div class=\"wp-block-group\"><!-- wp:columns -->\n<div class=\"wp-block-columns\"><!-- wp:column {\"width\":\"100%\"} -->\n<div class=\"wp-block-column\" style=\"flex-basis:100%\"><!-- wp:wpzoom-forms/text-name-field {\"id\":\"input_name\",\"name\":\"Name\",\"label\":\"Name\",\"className\":\"fullwidth\"} -->\n<label for=\"input_name\"><label for=\"input_name\">Name</label><sup class=\"wp-block-wpzoom-forms-required\">*</sup></label><input type=\"text\" name=\"input_name\" id=\"input_name\" placeholder=\"\" required class=\"wp-block-wpzoom-forms-text-name-field fullwidth\"/>\n<!-- /wp:wpzoom-forms/text-name-field -->\n\n<!-- wp:wpzoom-forms/text-email-field {\"id\":\"input_email\",\"name\":\"Email\",\"label\":\"Email\",\"replyto\":true,\"className\":\"fullwidth\"} -->\n<label for=\"input_email\"><label for=\"input_email\">Email</label><sup class=\"wp-block-wpzoom-forms-required\">*</sup></label><input type=\"email\" name=\"input_email\" id=\"input_email\" placeholder=\"\" required data-replyto=\"true\" class=\"wp-block-wpzoom-forms-text-email-field fullwidth\"/>\n<!-- /wp:wpzoom-forms/text-email-field -->\n\n<!-- wp:wpzoom-forms/text-plain-field {\"id\":\"input_subject\",\"name\":\"Subject\",\"label\":\"Subject\",\"subject\":true,\"className\":\"fullwidth\"} -->\n<label for=\"input_subject\"><label for=\"input_subject\">Subject</label><sup class=\"wp-block-wpzoom-forms-required\">*</sup></label><input type=\"text\" name=\"input_subject\" id=\"input_subject\" placeholder=\"\" required data-subject=\"true\" class=\"wp-block-wpzoom-forms-text-plain-field fullwidth\"/>\n<!-- /wp:wpzoom-forms/text-plain-field -->\n\n<!-- wp:wpzoom-forms/textarea-field {\"id\":\"input_message\",\"name\":\"Message\",\"label\":\"Message\",\"className\":\"fullwidth\"} -->\n<label for=\"input_message\"><label for=\"input_message\">Message</label><sup class=\"wp-block-wpzoom-forms-required\">*</sup></label><textarea name=\"input_message\" id=\"input_message\" cols=\"55\" rows=\"10\" placeholder=\"\" required class=\"wp-block-wpzoom-forms-textarea-field fullwidth\"></textarea>\n<!-- /wp:wpzoom-forms/textarea-field --></div>\n<!-- /wp:column --></div>\n<!-- /wp:columns -->\n\n<!-- wp:columns -->\n<div class=\"wp-block-columns\"><!-- wp:column {\"width\":\"30%\"} -->\n<div class=\"wp-block-column\" style=\"flex-basis:30%\"><!-- wp:wpzoom-forms/submit-field {\"id\":\"input_submit\"} -->\n<input type=\"submit\" id=\"input_submit\" value=\"Submit\" class=\"wp-block-wpzoom-forms-submit-field\"/>\n<!-- /wp:wpzoom-forms/submit-field --></div>\n<!-- /wp:column -->\n\n<!-- wp:column {\"width\":\"70%\"} -->\n<div class=\"wp-block-column\" style=\"flex-basis:70%\"><!-- wp:paragraph {\"align\":\"right\",\"style\":{\"typography\":{\"fontSize\":16}}} -->\n<p class=\"has-text-align-right\" style=\"font-size:16px\">Fields marked with <strong class=\"has-accent-color has-text-color\">*</strong> are required.</p>\n<!-- /wp:paragraph --></div>\n<!-- /wp:column --></div>\n<!-- /wp:columns --></div>\n<!-- /wp:group --></div>\n<!-- /wp:wpzoom-forms/form -->",
+				'post_content' => '<!-- wp:wpzoom-forms/form -->
+<div class="wp-block-wpzoom-forms-form"><!-- wp:wpzoom-forms/text-name-field {"id":"input_ae87379b"} -->
+<label for="input_ae87379b"><span>Name</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_ae87379b" id="input_ae87379b" placeholder="" required class="wp-block-wpzoom-forms-text-name-field"/>
+<!-- /wp:wpzoom-forms/text-name-field -->
+
+<!-- wp:wpzoom-forms/text-email-field {"id":"input_8468ae36"} -->
+<label for="input_8468ae36"><span>Email</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="email" name="input_8468ae36" id="input_8468ae36" placeholder="" required data-replyto="false" class="wp-block-wpzoom-forms-text-email-field"/>
+<!-- /wp:wpzoom-forms/text-email-field -->
+
+<!-- wp:wpzoom-forms/text-plain-field {"id":"input_85d61063","name":"Subject","label":"Subject","subject":true} -->
+<label for="input_85d61063"><span>Subject</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_85d61063" id="input_85d61063" placeholder="" required data-subject="true" class="wp-block-wpzoom-forms-text-plain-field"/>
+<!-- /wp:wpzoom-forms/text-plain-field -->
+
+<!-- wp:wpzoom-forms/textarea-field {"id":"input_d8cf917c"} -->
+<label for="input_d8cf917c"><span>Message</span></label><textarea name="input_d8cf917c" id="input_d8cf917c" cols="55" rows="10" placeholder="" class="wp-block-wpzoom-forms-textarea-field"></textarea>
+<!-- /wp:wpzoom-forms/textarea-field -->
+
+<!-- wp:columns {"verticalAlignment":"center"} -->
+<div class="wp-block-columns are-vertically-aligned-center"><!-- wp:column {"verticalAlignment":"center","width":"30%"} -->
+<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:30%"><!-- wp:wpzoom-forms/submit-field {"id":"input_submit"} -->
+<input type="submit" id="input_submit" value="Submit" class="wp-block-wpzoom-forms-submit-field"/>
+<!-- /wp:wpzoom-forms/submit-field --></div>
+<!-- /wp:column -->
+
+<!-- wp:column {"verticalAlignment":"center","width":"70%"} -->
+<div class="wp-block-column is-vertically-aligned-center" style="flex-basis:70%"><!-- wp:paragraph {"align":"right","style":{"typography":{"fontSize":16}}} -->
+<p class="has-text-align-right" style="font-size:16px">Fields marked with <strong class="has-accent-color has-text-color">*</strong> are required.</p>
+<!-- /wp:paragraph --></div>
+<!-- /wp:column --></div>
+<!-- /wp:columns --></div>
+<!-- /wp:wpzoom-forms/form -->',
 				'meta_input'   => array(
 					'_form_method'   => 'email',
 					'_form_email'    => trim( get_option( 'admin_email' ) ),
