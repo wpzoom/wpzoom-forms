@@ -32,7 +32,7 @@ const wpzoomFormsIcon = (
 );
 
 /**
- * Edit component for the Infinite Scroll block.
+ * Edit component for the Form Block.
  */
 export default function Edit({ attributes, setAttributes, clientId }) {
 	const { formId } = attributes;
