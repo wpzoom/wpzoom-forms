@@ -8,15 +8,18 @@ Tested up to:      6.9
 Stable tag:        1.3.4
 License:           GNU General Public License v2
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
-Tags:              contact, form, contact form, form builder, custom form
+Tags:              contact form, form builder, gutenberg form, contact form block, forms
 
-**WPZOOM Forms** is a simple, user-friendly contact form plugin for WordPress that utilizes Gutenberg blocks for easy form building and customization.
+Contact form plugin for WordPress - Build beautiful forms with Gutenberg blocks. Drag & drop form builder with spam protection, email notifications & submissions management.
 
 
 == Description ==
-[WPZOOM Forms](https://www.wpzoom.com/plugins/wpzoom-forms/) is a powerful yet intuitive contact form plugin for WordPress that seamlessly integrates with the Gutenberg editor. Create beautiful, responsive forms in minutes using our drag-and-drop interface – no coding required.
 
-Trusted by over 10,000 active websites, WPZOOM Forms combines ease of use with professional functionality, making it perfect for beginners and advanced users alike. Whether you need simple contact forms, complex multi-step forms, or specialized booking systems, WPZOOM Forms delivers the flexibility and reliability your website deserves.
+= Contact Form Builder for Gutenberg - Simple & Powerful =
+
+**The best contact form plugin for WordPress block editor.** Create beautiful, responsive contact forms using Gutenberg blocks. Drag & drop form builder with spam protection - no coding required.
+
+[WPZOOM Forms](https://www.wpzoom.com/plugins/wpzoom-forms/) is trusted by over 10,000 active websites. Perfect for contact forms, feedback forms, appointment booking, and more.
 
 ###💪 Want More Power? Try WPZOOM Forms PRO
 
