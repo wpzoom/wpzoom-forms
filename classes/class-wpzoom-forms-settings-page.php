@@ -86,8 +86,6 @@ class WPZOOM_Forms_Settings {
 			}
 
 			$this->_fields = new WPZOOM_Forms_Settings_Fields();
-
-			add_action( 'wpzoom_forms_settings_after_main_container', array( $this, 'upsell_banner' ) );
 		}
 	}
 
@@ -635,10 +633,12 @@ class WPZOOM_Forms_Settings {
 
 						<?php if ( self::$active_tab === 'tab-ajax' ) : ?>
 							<?php $this->ajax_promo_banner( true ); ?>
+							<?php $this->upsell_banner(); ?>
 						<?php endif; ?>
 
 						<?php if ( self::$active_tab === 'tab-integrations' ) : ?>
 							<?php $this->integrations_promo_banner( true ); ?>
+							<?php $this->upsell_banner(); ?>
 						<?php endif; ?>
 
 						<div class="wp-tab-panel" id="<?php echo esc_attr( $setting['tab_id'] ); ?>">
