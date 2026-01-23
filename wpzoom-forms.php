@@ -764,20 +764,20 @@ class WPZOOM_Forms {
 
 		add_submenu_page(
 			'edit.php?post_type=wpzf-form',
-			esc_html__( 'Import & Export', 'wpzoom-forms' ),
-			esc_html__( 'Import & Export', 'wpzoom-forms' ),
-			'edit_posts',
-			'wpzf-import',
-			array( $this, 'render_import_export_upsell_page' )
-		);
-
-		add_submenu_page(
-			'edit.php?post_type=wpzf-form',
 			$page_title,
             '<span style="color:#3496fe; font-weight: 600;">' . esc_html__( 'UPGRADE', 'wpzoom-forms' ) . ' &rarr; <span class="wpz-premium-badge" style="background-color: #3496fe; color: #fff; margin-left: 3px; font-size: 11px; min-height: 16px;  border-radius: 8px; display: inline-block; font-weight: 600; line-height: 1.6; padding: 0 8px">PRO</span></span>',
 			'manage_options',
 			'wpzf-upsell',
 			array( $this, 'render_upsell_page' )
+		);
+
+		add_submenu_page(
+			'edit.php?post_type=wpzf-form',
+			esc_html__( 'Import & Export', 'wpzoom-forms' ),
+			esc_html__( 'Import & Export', 'wpzoom-forms' ),
+			'edit_posts',
+			'wpzf-import',
+			array( $this, 'render_import_export_upsell_page' )
 		);
 
 	}
@@ -1910,13 +1910,13 @@ class WPZOOM_Forms {
 									'name' => esc_html__( 'Settings', 'wpzoom-forms' ),
 									'url'  => admin_url( 'edit.php?post_type=wpzf-form&page=wpzf-settings' ),
 								),
-								'wpzf-form_page_wpzf-import' => array(
-									'name' => esc_html__( 'Import & Export', 'wpzoom-forms' ),
-									'url'  => admin_url( 'edit.php?post_type=wpzf-form&page=wpzf-import' ),
-								),
 								'wpzf-form_page_wpzf-upsell' => array(
 									'name' => esc_html__( 'Upgrade to PRO', 'wpzoom-forms' ),
 									'url'  => admin_url( 'edit.php?post_type=wpzf-form&page=wpzf-upsell' ),
+								),
+								'wpzf-form_page_wpzf-import' => array(
+									'name' => esc_html__( 'Import & Export', 'wpzoom-forms' ),
+									'url'  => admin_url( 'edit.php?post_type=wpzf-form&page=wpzf-import' ),
 								),
 							)
 						);
