@@ -506,6 +506,34 @@ class WPZOOM_Forms_Settings {
 						),
 					),
 				),
+			),
+			'integrations_settings' => array(
+				'tab_id'       => 'tab-integrations',
+				'tab_title'    => __( 'Integrations [PRO]', 'wpzoom-forms' ),
+				'option_group' => 'wpzf-integrations-settings',
+				'option_name'  => self::$option,
+				'sections'     => array(
+					array(
+						'id'       => 'wpzf-integrations-settings-section',
+						'title'    => __( 'Email Marketing Integrations', 'wpzoom-forms' ),
+						'callback' => array( $this, 'section_integrations_cb' ),
+						'page'     => 'wpzf-integrations-settings',
+						'fields'   => array(
+							array(
+								'id'    => 'wpzf_mailchimp_api_key',
+								'title' => __( 'Mailchimp API Key', 'wpzoom-forms' ),
+								'type'  => 'input',
+								'args'  => array(
+									'label_for'   => 'wpzf_mailchimp_api_key',
+									'placeholder' => __( 'Enter your Mailchimp API key', 'wpzoom-forms' ),
+									'desc'        => __( 'Connect your Mailchimp account to automatically add form submissions to your audiences.', 'wpzoom-forms' ),
+									'default'     => '',
+									'type'        => 'text',
+								),
+							),
+						),
+					),
+				),
 			)
 		);
 
@@ -607,11 +635,14 @@ class WPZOOM_Forms_Settings {
 
 						<?php if ( self::$active_tab === 'tab-ajax' ) : ?>
 							<?php $this->ajax_promo_banner( true ); ?>
-							<?php $this->upsell_banner(); ?>
+						<?php endif; ?>
+
+						<?php if ( self::$active_tab === 'tab-integrations' ) : ?>
+							<?php $this->integrations_promo_banner( true ); ?>
 						<?php endif; ?>
 
 						<div class="wp-tab-panel" id="<?php echo esc_attr( $setting['tab_id'] ); ?>">
-							<?php if ( $setting['tab_id'] === 'tab-ajax' ) : ?>
+							<?php if ( $setting['tab_id'] === 'tab-ajax' || $setting['tab_id'] === 'tab-integrations' ) : ?>
 								<div class="wpzoom-lock-overlay"></div>
 							<?php endif; ?>
 
@@ -627,11 +658,14 @@ class WPZOOM_Forms_Settings {
 
 						<?php if ( $setting['tab_id'] === 'tab-ajax' ) : ?>
 							<?php $this->ajax_promo_banner( false ); ?>
-							<?php $this->upsell_banner(); ?>
+						<?php endif; ?>
+
+						<?php if ( $setting['tab_id'] === 'tab-integrations' ) : ?>
+							<?php $this->integrations_promo_banner( false ); ?>
 						<?php endif; ?>
 
 						<div class="wp-tab-panel" id="<?php echo esc_attr( $setting['tab_id'] ); ?>" style="display: none;">
-						<?php if ( $setting['tab_id'] === 'tab-ajax' ) : ?>
+						<?php if ( $setting['tab_id'] === 'tab-ajax' || $setting['tab_id'] === 'tab-integrations' ) : ?>
 							<div class="wpzoom-lock-overlay"></div>
 						<?php endif; ?>
 
@@ -698,6 +732,36 @@ class WPZOOM_Forms_Settings {
 					<li>✅ <?php esc_html_e('No reloading or redirecting after form submission', 'wpzoom-forms'); ?></li>
 				</ul>
 				<a href="https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=settings-ajax-pro-upsell" target="_blank" class="button button-primary"><?php esc_html_e('Upgrade to PRO', 'wpzoom-forms'); ?></a>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Integrations promo banner
+	 */
+	public function integrations_promo_banner( $show = true ) {
+		$wpzoom_forms = new WPZOOM_Forms();
+		if ( $show ) {
+			$display = 'inline-block';
+		} else {
+			$display = 'none';
+		}
+		?>
+		<div class="wpzoom-forms-settings-integrations-promo-container" style="display: <?php echo $display; ?>">
+			<div class="wpzoom-forms-settings-ajax-promo-container-inner">
+				<a href="https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=settings-integrations-pro-upsell" target="_blank">
+					<span class="wpzoom-forms-settings-ajax-promo-container-inner-lock">🔒</span> <?php esc_html_e('This feature is only available in the PRO version', 'wpzoom-forms'); ?>
+				</a>
+				<h2><?php esc_html_e('Unlock Email Marketing Integrations with WPZOOM Forms PRO', 'wpzoom-forms'); ?></h2>
+				<p><?php esc_html_e('Connect your forms to Mailchimp and automatically grow your email list. Every form submission can instantly add subscribers to your audiences.', 'wpzoom-forms'); ?></p>
+				<ul>
+					<li>✅ <?php esc_html_e('Connect to Mailchimp with API key authentication', 'wpzoom-forms'); ?></li>
+					<li>✅ <?php esc_html_e('Automatically add form submissions to your Mailchimp audiences', 'wpzoom-forms'); ?></li>
+					<li>✅ <?php esc_html_e('Map form fields to Mailchimp merge fields', 'wpzoom-forms'); ?></li>
+					<li>✅ <?php esc_html_e('Choose which forms send data to Mailchimp', 'wpzoom-forms'); ?></li>
+				</ul>
+				<a href="https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=settings-integrations-pro-upsell" target="_blank" class="button button-primary"><?php esc_html_e('Upgrade to PRO', 'wpzoom-forms'); ?></a>
 			</div>
 		</div>
 		<?php
@@ -838,6 +902,15 @@ class WPZOOM_Forms_Settings {
 	 */
 	public function section_ajax_cb( $args ) {
 		echo '<p class="section-description">' . esc_html__( 'Enable seamless form submissions without page reloads', 'wpzoom-forms' ) . '</p>';
+	}
+
+	/**
+	 * Integrations section callback
+	 *
+	 * @param array $args
+	 */
+	public function section_integrations_cb( $args ) {
+		echo '<p class="section-description">' . esc_html__( 'Connect your forms to email marketing services and automatically grow your subscriber list', 'wpzoom-forms' ) . '</p>';
 	}
 
 	/**
