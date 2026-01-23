@@ -3186,6 +3186,9 @@
 	}
 }
 @media screen and (max-width: 600px) {
+	.wpzoom-forms-settings-upsell-grid {
+		grid-template-columns: 1fr;
+	}
 	.wpzoom-forms-settings-upsell-page-container img {
 		float: none;
 		margin-right: 0;
