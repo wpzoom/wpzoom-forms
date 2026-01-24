@@ -126,14 +126,13 @@
 
 		.pro-only {
 			position: absolute;
-			top: 0;
-			right: 0;
+			top: -6px;
+			right: -4px;
 			line-height: 1.5;
-			color: $light-color;
-			background: $orange-color;
+			color: #fff;
+			background: #f57c00;
 			padding: 0 4px;
 			border-radius: 2px;
-			transform: translate(50%, -50%);
 		}
 
 		.notice-warning {
