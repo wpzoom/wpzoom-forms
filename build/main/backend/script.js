@@ -5460,6 +5460,42 @@ var SortableList = (0,react_sortable_hoc__WEBPACK_IMPORTED_MODULE_13__.SortableC
         label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Upload', 'wpzoom-forms'),
         required: false
       }
+    }, {
+      name: 'number-field',
+      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Number', 'wpzoom-forms'),
+      icon: _icons__WEBPACK_IMPORTED_MODULE_15__["default"].number,
+      isPro: true,
+      defaultAttributes: {
+        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Number', 'wpzoom-forms'),
+        required: false
+      }
+    }, {
+      name: 'timepicker-field',
+      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Time', 'wpzoom-forms'),
+      icon: _icons__WEBPACK_IMPORTED_MODULE_15__["default"].time,
+      isPro: true,
+      defaultAttributes: {
+        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Time', 'wpzoom-forms'),
+        required: false
+      }
+    }, {
+      name: 'gdpr-field',
+      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('GDPR', 'wpzoom-forms'),
+      icon: _icons__WEBPACK_IMPORTED_MODULE_15__["default"].gdpr,
+      isPro: true,
+      defaultAttributes: {
+        consentText: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('I consent to having this website store my submitted information so they can respond to my inquiry.', 'wpzoom-forms'),
+        required: true
+      }
+    }, {
+      name: 'hidden-field',
+      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Hidden', 'wpzoom-forms'),
+      icon: _icons__WEBPACK_IMPORTED_MODULE_15__["default"].hidden,
+      isPro: true,
+      defaultAttributes: {
+        name: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Hidden Field', 'wpzoom-forms'),
+        defaultValue: ''
+      }
     }].map(function (block) {
       var isDisabled = uniqueFieldsExist[block.name] || false || block.isPro;
       var isPro = block.isPro;
