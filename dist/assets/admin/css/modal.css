@@ -37,6 +37,13 @@
 .wpzoom-forms-templates-list li:not(.wpzoom-forms-template-list-item-pro).active {
 	border-color: #3496FF;
 }
+.wpzoom-forms-templates-list li.wpzoom-forms-template-list-item-pro:hover {
+	border-color: #f57c00;
+}
+.wpzoom-forms-templates-list li {
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
 .wpzoom-forms-templates-list li a {
 	display: block;
 	padding: 15px 20px;
@@ -48,10 +55,11 @@
 	font-weight: 600;
 	line-height: 26px;
 }
+.wpzoom-forms-template-list-item.wpzoom-forms-template-list-item-pro {
+	cursor: pointer;
+}
 .wpzoom-forms-template-list-item.wpzoom-forms-template-list-item-pro a {
 	opacity: 0.5;
-	pointer-events: none;
-	cursor: not-allowed;
 }
 .wpzoom-forms-templates-list li:not(.wpzoom-forms-template-list-item-pro) a:hover,
 .wpzoom-forms-templates-list li:not(.wpzoom-forms-template-list-item-pro).active a {
@@ -187,6 +195,12 @@
 }
 .wpzoom-forms-modal-header h2 span {
 	margin-right: 15px;
+}
+.wpzoom-forms-modal-hint {
+	color: #50575e;
+	font-size: 14px;
+	margin: 0 0 20px 0;
+	text-align: center;
 }
 .wpzoom-forms-templates-list li a .wpzoom-forms-icon-holder {
 	display: flex;

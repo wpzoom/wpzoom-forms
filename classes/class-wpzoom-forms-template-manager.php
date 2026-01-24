@@ -140,7 +140,7 @@ if ( ! class_exists( 'WPZOOM_Forms_Template_Manager' ) ) {
 				), $new_post_link );
 
 				?>
-				<div id="wpzoom-forms-modal" class="wpzoom-forms-modal">
+				<div id="wpzoom-forms-modal" class="wpzoom-forms-modal" data-new-post-url="<?php echo esc_url( $new_post_link ); ?>">
 					<div class="wpzoom-forms-modal-content">
 						<div class="wpzoom-forms-modal-header">
 							<h2>
@@ -189,7 +189,6 @@ if ( ! class_exists( 'WPZOOM_Forms_Template_Manager' ) ) {
 									if( $is_pro ) {
 										$class[] = ' wpzoom-forms-template-list-item-pro';
 									}
-									$class[] = ( $template_data['id'] == 'contact-form' ) ? ' active' : null;
 									$class = implode( ' ', $class );
 									
 									?>
@@ -226,7 +225,6 @@ if ( ! class_exists( 'WPZOOM_Forms_Template_Manager' ) ) {
 						</ul>
 						<div class="wpzoom-forms-modal-footer">
 							<a class="button-secondary wpzoom-btn-bordered" id="wpzoom_close_modal" href="#"><?php esc_html_e( 'Cancel', 'wpzoom-forms' ); ?></a>
-							<a class="button-primary wpzoom-btn-solid" id="wpzoom_proceed_template" href="<?php echo esc_url( $new_post_link ); ?>"><?php esc_html_e( 'Proceed', 'wpzoom-forms' ); ?></a>
 						</div>
 					</div>
 					
