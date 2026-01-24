@@ -1813,7 +1813,7 @@ class WPZOOM_Forms {
 		?>
 		<div class="wrap wpzoom-forms-import-export-upsell-page" style="position: relative;">
 			<h1><?php esc_html_e( 'Import & Export Forms', 'wpzoom-forms' ); ?></h1>
-			
+			<div class="wpzoom-forms-import-export-upsell-container">
 			<!-- Blurred placeholder content -->
 			<div class="wpzoom-forms-import-export-blurred-content" style="filter: blur(4px); pointer-events: none; opacity: 0.3; margin-bottom: 40px;">
 				<div style="background: #fff; border: 1px solid #c3c4c7; padding: 20px; margin: 20px 0; border-radius: 4px;">
@@ -1933,10 +1933,11 @@ class WPZOOM_Forms {
 				</p>
 				</div>
 			</div>
+			</di>
 		</div>
 
 		<style>
-		.wpzoom-forms-import-export-upsell-page {
+		.wpzoom-forms-import-export-upsell-container {
 			position: relative;
 			min-height: 680px;
 		}
