@@ -487,9 +487,9 @@ class WPZOOM_Forms_Settings {
 								'type'  => 'input',
 								'args'  => array(
 									'label_for'          => 'wpzf_ajax_error_message',
-									'placeholder' => __( 'Oops! Something went wrong. Please try again. Please try again.', 'wpzoom-forms' ),
+									'placeholder' => __( 'Oops! Something went wrong. Please try again.', 'wpzoom-forms' ),
 									'desc'        => __( 'Message displayed if form submission fails.', 'wpzoom-forms' ),
-									'default'     => __( 'Oops! Something went wrong. Please try again. Please try again.', 'wpzoom-forms' ),
+									'default'     => __( 'Oops! Something went wrong. Please try again.', 'wpzoom-forms' ),
 								),
 							),
 							array(

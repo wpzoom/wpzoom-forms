@@ -13,7 +13,7 @@
  * Description: Simple, user-friendly contact form plugin for WordPress that utilizes Gutenberg blocks for easy form building and customization.
  * Author:      WPZOOM
  * Author URI:  https://www.wpzoom.com
- * Version:     1.3.1
+ * Version:     1.3.4
  * License:     GPL2+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
@@ -397,11 +397,11 @@ class WPZOOM_Forms {
 				'post_status'  => 'publish',
 				'post_title'   => __( 'Example Form', 'wpzoom-forms' ),
 				'post_content' => '<!-- wp:wpzoom-forms/form -->
-<div class="wp-block-wpzoom-forms-form"><!-- wp:wpzoom-forms/text-name-field {"id":"input_ae87379b"} -->
+<div class="wp-block-wpzoom-forms-form"><!-- wp:wpzoom-forms/text-name-field {"id":"input_ae87379b","name":"Name"} -->
 <label for="input_ae87379b"><span>Name</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_ae87379b" id="input_ae87379b" placeholder="" required class="wp-block-wpzoom-forms-text-name-field"/>
 <!-- /wp:wpzoom-forms/text-name-field -->
 
-<!-- wp:wpzoom-forms/text-email-field {"id":"input_8468ae36"} -->
+<!-- wp:wpzoom-forms/text-email-field {"id":"input_8468ae36","name":"Email"} -->
 <label for="input_8468ae36"><span>Email</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="email" name="input_8468ae36" id="input_8468ae36" placeholder="" required data-replyto="false" class="wp-block-wpzoom-forms-text-email-field"/>
 <!-- /wp:wpzoom-forms/text-email-field -->
 
@@ -409,8 +409,8 @@ class WPZOOM_Forms {
 <label for="input_85d61063"><span>Subject</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_85d61063" id="input_85d61063" placeholder="" required data-subject="true" class="wp-block-wpzoom-forms-text-plain-field"/>
 <!-- /wp:wpzoom-forms/text-plain-field -->
 
-<!-- wp:wpzoom-forms/textarea-field {"id":"input_d8cf917c"} -->
-<label for="input_d8cf917c"><span>Message</span></label><textarea name="input_d8cf917c" id="input_d8cf917c" cols="55" rows="10" placeholder="" class="wp-block-wpzoom-forms-textarea-field"></textarea>
+<!-- wp:wpzoom-forms/textarea-field {"id":"input_7f6bf203","name":"Message"} -->
+<label for="input_7f6bf203"><span>Message</span></label><textarea name="input_7f6bf203" id="input_7f6bf203" cols="55" rows="10" placeholder="" class="wp-block-wpzoom-forms-textarea-field"></textarea>
 <!-- /wp:wpzoom-forms/textarea-field -->
 
 <!-- wp:columns {"verticalAlignment":"center"} -->
@@ -2239,7 +2239,8 @@ class WPZOOM_Forms {
 	 */
 	public function not_spam( $input ) {
 
-		if( is_callable( array( 'Akismet', 'get_api_key' ) ) && is_callable( array( 'Akismet', 'http_post' ) ) ) {
+		// Check if Akismet class exists and has required methods
+		if( class_exists( 'Akismet' ) && is_callable( array( 'Akismet', 'get_api_key' ) ) && is_callable( array( 'Akismet', 'http_post' ) ) ) {
 
 			$request    = array(
 				'comment_type'         => 'contact-form',
@@ -2258,7 +2259,7 @@ class WPZOOM_Forms {
 				'blog_charset'         => get_bloginfo( 'charset' ),
 				'user_role'            => Akismet::get_user_roles( get_current_user_id() ),
 				'is_test'              => false,
-			
+
 			);
 
 			$response = Akismet::http_post( build_query( $request ), 'comment-check' );
