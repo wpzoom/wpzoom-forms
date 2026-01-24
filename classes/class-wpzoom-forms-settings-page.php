@@ -633,13 +633,11 @@ class WPZOOM_Forms_Settings {
 
 						<?php if ( self::$active_tab === 'tab-ajax' ) : ?>
 							<?php $this->ajax_promo_banner( true ); ?>
-							<?php $this->upsell_banner(); ?>
+						<?php elseif ( self::$active_tab === 'tab-integrations' ) : ?>
+							<?php $this->integrations_promo_banner( true ); ?>
 						<?php endif; ?>
 
-						<?php if ( self::$active_tab === 'tab-integrations' ) : ?>
-							<?php $this->integrations_promo_banner( true ); ?>
-							<?php $this->upsell_banner(); ?>
-						<?php endif; ?>
+						<?php $this->upsell_banner(); ?>
 
 						<div class="wp-tab-panel" id="<?php echo esc_attr( $setting['tab_id'] ); ?>">
 							<?php if ( $setting['tab_id'] === 'tab-ajax' || $setting['tab_id'] === 'tab-integrations' ) : ?>
