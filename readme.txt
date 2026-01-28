@@ -5,7 +5,7 @@ Author URI:        https://www.wpzoom.com/
 Requires at least: 6.0
 Requires PHP:      7.4
 Tested up to:      6.9
-Stable tag:        1.3.4
+Stable tag:        1.3.5
 License:           GNU General Public License v2
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 Tags:              contact form, form builder, gutenberg form, contact form block, forms
@@ -140,6 +140,12 @@ To export form submissions, navigate to the Tools > Export page in Dashboard and
 
 
 == Changelog ==
+
+= 1.3.5 =
+* Improved template modal UI
+* Refactored the Form Block editor component for better maintainability
+* Improved block styling with currentColor for better theme compatibility
+* Multiple UI improvemens
 
 = 1.3.4 =
 * Minor bug fix
