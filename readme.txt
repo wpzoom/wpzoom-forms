@@ -23,7 +23,7 @@ Contact form plugin for WordPress - Build beautiful forms with Gutenberg blocks.
 
 ###💪 Want More Power? Try WPZOOM Forms PRO
 
-Take your forms to the professional level with [**WPZOOM Forms PRO**](https://www.wpzoom.com/plugins/wpzoom-forms/). Get advanced features like custom email notifications with visual editor, AJAX submissions for seamless user experience, and file upload capabilities for documents and images. Perfect for businesses that need more than basic contact forms.
+Take your forms to the professional level with [**WPZOOM Forms PRO**](https://www.wpzoom.com/plugins/wpzoom-forms/). Generate forms instantly with AI, connect to Mailchimp for email marketing, accept file uploads, enable AJAX submissions, and customize email notifications with a visual editor. Perfect for businesses that need more than basic contact forms.
 
 ⭐️ **[Get the PRO version!](https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wporg&utm_medium=website&utm_campaign=free_description)** ⭐️
 
@@ -71,6 +71,14 @@ All form submissions are safely stored in your WordPress dashboard. Search, filt
 
 ### 🌟 PRO Features Include:
 
+**🤖 AI Form Generator**
+
+Describe your form in plain language and let AI create it for you. Skip the manual setup – just type what you need and get a fully configured form in seconds.
+
+**📧 Mailchimp Integration**
+
+Automatically add form submissions to your Mailchimp audiences. Build newsletter signup forms or connect any form to your email marketing lists with just a few clicks.
+
 **Custom Email Notifications**
 
 Design beautiful, branded notification emails with our visual editor. Add dynamic field tags, customize layouts, and create professional emails that match your brand. No more generic, plain-text notifications.
@@ -87,6 +95,30 @@ Accept PDF documents and images directly through your forms. Perfect for:
 - Project briefs and client documentation
 - Media submissions and portfolios
 - Support ticket attachments
+
+**🕐 Time Picker Field**
+
+Add time selection to your forms with a customizable time picker. Supports 12-hour and 24-hour formats with configurable minute intervals – ideal for appointment and booking forms.
+
+**🔒 GDPR Consent Field**
+
+Stay compliant with privacy regulations by adding a GDPR consent checkbox to your forms. Customize the consent text and link to your privacy policy.
+
+**🔗 Hidden Fields**
+
+Capture UTM parameters, referrer data, and other metadata automatically. Track where your leads are coming from without cluttering the form.
+
+**📥 Import & Export Forms**
+
+Transfer forms between websites or create backups with JSON-based import/export. Keep your forms safe and portable across multiple WordPress installations.
+
+**📊 Export Submissions to CSV**
+
+Download your form submissions as CSV files for reporting, analysis, or migration to other tools.
+
+**📋 Duplicate Forms**
+
+Clone any existing form with one click. Quickly create variations of your forms without starting from scratch.
 
 **Love WPZOOM Forms?** Help other WordPress users discover this plugin by [leaving a 5-star review](https://wordpress.org/support/plugin/wpzoom-forms/reviews/#new-post). Your feedback helps us continue improving and adding new features for the community.
 
