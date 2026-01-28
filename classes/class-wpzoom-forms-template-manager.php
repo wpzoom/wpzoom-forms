@@ -169,7 +169,7 @@ if ( ! class_exists( 'WPZOOM_Forms_Template_Manager' ) ) {
 								</div>
 								<div class="wpzoom-forms-ai-upsell-text">
 									<h3><?php esc_html_e( 'Generate Forms with AI', 'wpzoom-forms' ); ?></h3>
-									<p><?php esc_html_e( 'Describe your form in plain English and let AI create it for you instantly.', 'wpzoom-forms' ); ?></p>
+									<p><?php esc_html_e( 'Describe your form in simple words and let AI create it for you instantly.', 'wpzoom-forms' ); ?></p>
 								</div>
 								<div class="wpzoom-forms-ai-upsell-button">
 									<a href="https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=ai-generator-upsell-template-modal" target="_blank" class="button button-primary">
