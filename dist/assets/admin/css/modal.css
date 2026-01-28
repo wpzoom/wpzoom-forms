@@ -19,6 +19,8 @@
 	border: 1px solid #888;
 	width:auto;
 	max-width: 850px;
+    max-height: 80vh;
+    overflow-y: scroll;
 }
 .wpzoom-forms-templates-list {
 	display: grid;
