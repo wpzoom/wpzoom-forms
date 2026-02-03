@@ -120,6 +120,10 @@ Download your form submissions as CSV files for reporting, analysis, or migratio
 
 Clone any existing form with one click. Quickly create variations of your forms without starting from scratch.
 
+**🔀 Conditional Logic**
+
+Create dynamic forms that adapt based on user input. Show or hide fields depending on previous answers to create personalized form experiences.
+
 **Love WPZOOM Forms?** Help other WordPress users discover this plugin by [leaving a 5-star review](https://wordpress.org/support/plugin/wpzoom-forms/reviews/#new-post). Your feedback helps us continue improving and adding new features for the community.
 
 ##Why Choose WPZOOM Forms?
