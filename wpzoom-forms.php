@@ -1653,6 +1653,15 @@ class WPZOOM_Forms {
 			$form_failure_message = __( 'Submission failed!', 'wpzoom-forms' );
 		}
 
+		// Process form content through do_blocks() to render inner blocks and enqueue their styles
+		$form_content = get_post_field( 'post_content', intval( $attributes['formId'] ), 'raw' );
+		$form_content = do_blocks( $form_content );
+		$form_content = preg_replace(
+			array( '/<!--(.*)-->/Uis', '/<(input|textarea|select)(.*)name="([^"]+)"/Uis' ),
+			array( '', '<$1$2name="wpzf_$3"' ),
+			$form_content
+		);
+
 		$content = sprintf(
 			'<!-- ZOOM Forms Start -->
 			<form id="wpzf-%2$s" method="post" action="%1$s" class="wpzoom-forms_form%6$s">
@@ -1672,11 +1681,7 @@ class WPZOOM_Forms {
 				  '</p></div>'
 				: ''
 			),
-			preg_replace(
-				array( '/<!--(.*)-->/Uis', '/<(input|textarea|select)(.*)name="([^"]+)"/Uis' ),
-				array( '', '<$1$2name="wpzf_$3"' ),
-				get_post_field( 'post_content', intval( $attributes['formId'] ), 'display' )
-			),
+			$form_content,
 			( 'none' !== $align ? ' align' . $align : '' )
 		);
 
