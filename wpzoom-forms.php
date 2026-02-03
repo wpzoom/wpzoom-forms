@@ -1653,6 +1653,9 @@ class WPZOOM_Forms {
 			$form_failure_message = __( 'Submission failed!', 'wpzoom-forms' );
 		}
 
+		// Enqueue core block library styles for inner blocks (columns, group, spacer, etc.)
+		wp_enqueue_style( 'wp-block-library' );
+
 		// Process form content through do_blocks() to render inner blocks and enqueue their styles
 		$form_content = get_post_field( 'post_content', intval( $attributes['formId'] ), 'raw' );
 		$form_content = do_blocks( $form_content );
