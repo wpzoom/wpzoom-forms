@@ -3021,15 +3021,12 @@ if ( ! function_exists( 'wpzoom_forms_plugin_action_links' ) ) {
 
 		array_unshift( $links, $settings_link );
 
-		// Add Go Pro link if the Pro plugin is not active.
-		if ( ! defined( 'WPZOOM_FORMS_PRO_VERSION' ) ) {
-			$links['go_pro'] = sprintf(
-				'<a href="%1$s" target="_blank" class="wpzoom-forms-gopro" style="color:#2271b1;font-weight:bold;">%2$s &rarr; <span class="wpzoom-premium-badge" style="background-color: #2271b1; color: #fff; margin-left: 5px; font-size: 11px; min-height: 16px; border-radius: 8px; display: inline-block; font-weight: 600; line-height: 1.6; padding: 0 8px;">%3$s</span></a>',
-				'https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=plugin&utm_campaign=wpzoom-forms-free&utm_content=plugins-page',
-				esc_html__( 'UPGRADE', 'wpzoom-forms' ),
-				esc_html__( 'PRO', 'wpzoom-forms' )
-			);
-		}
+		$links['go_pro'] = sprintf(
+			'<a href="%1$s" target="_blank" class="wpzoom-forms-gopro" style="color:#2271b1;font-weight:bold;">%2$s &rarr; <span class="wpzoom-premium-badge" style="background-color: #2271b1; color: #fff; margin-left: 5px; font-size: 11px; min-height: 16px; border-radius: 8px; display: inline-block; font-weight: 600; line-height: 1.6; padding: 0 8px;">%3$s</span></a>',
+			'https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=plugin&utm_campaign=wpzoom-forms-free&utm_content=plugins-page',
+			esc_html__( 'UPGRADE', 'wpzoom-forms' ),
+			esc_html__( 'PRO', 'wpzoom-forms' )
+		);
 
 		return $links;
 	}
