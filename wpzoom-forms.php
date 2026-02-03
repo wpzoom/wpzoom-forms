@@ -2993,11 +2993,48 @@ if( ! function_exists ( 'wpzoom_forms_load_files' ) ) {
 		require_once 'classes/class-wpzoom-forms-settings-page.php';
 		require_once 'classes/class-wpzoom-forms-template-manager.php';
 		require_once 'classes/class-wpzoom-forms-settings-upsell.php';
-	
+
 	}
 	add_action( 'plugin_loaded', 'wpzoom_forms_load_files' );
 }
 
+if ( ! function_exists( 'wpzoom_forms_plugin_action_links' ) ) {
+	/**
+	 * Plugin action links.
+	 *
+	 * Adds action links to the plugin list table.
+	 *
+	 * Fired by `plugin_action_links` filter.
+	 *
+	 * @since 1.3.5
+	 *
+	 * @param array $links An array of plugin action links.
+	 *
+	 * @return array An array of plugin action links.
+	 */
+	function wpzoom_forms_plugin_action_links( $links ) {
+		$settings_link = sprintf(
+			'<a href="%1$s">%2$s</a>',
+			admin_url( 'edit.php?post_type=wpzf-form&page=' . WPZOOM_FORMS_SETTINGS_PAGE ),
+			esc_html__( 'Settings', 'wpzoom-forms' )
+		);
+
+		array_unshift( $links, $settings_link );
+
+		// Add Go Pro link if the Pro plugin is not active.
+		if ( ! defined( 'WPZOOM_FORMS_PRO_VERSION' ) ) {
+			$links['go_pro'] = sprintf(
+				'<a href="%1$s" target="_blank" class="wpzoom-forms-gopro" style="color:#2271b1;font-weight:bold;">%2$s &rarr; <span class="wpzoom-premium-badge" style="background-color: #2271b1; color: #fff; margin-left: 5px; font-size: 11px; min-height: 16px; border-radius: 8px; display: inline-block; font-weight: 600; line-height: 1.6; padding: 0 8px;">%3$s</span></a>',
+				'https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=plugin&utm_campaign=wpzoom-forms-free&utm_content=plugins-page',
+				esc_html__( 'UPGRADE', 'wpzoom-forms' ),
+				esc_html__( 'PRO', 'wpzoom-forms' )
+			);
+		}
+
+		return $links;
+	}
+	add_filter( 'plugin_action_links_' . WPZOOM_FORMS_PLUGIN_BASE, 'wpzoom_forms_plugin_action_links' );
+}
 
 /**
  * Check if the Elementor Page Builder is enabled load the widget
