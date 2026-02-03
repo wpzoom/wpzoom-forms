@@ -1498,7 +1498,11 @@ class WPZOOM_Forms {
 			$wp_meta_boxes = array(
 				'wpzf-submission' => array(
 					'advanced' => array(),
-					'side'     => array(),
+					'side'     => array(
+						'high' => array(
+							'wpzf-submission-details-mb' => $wp_meta_boxes['wpzf-submission']['side']['high']['wpzf-submission-details-mb']
+						)
+					),
 					'normal'   => array(
 						'high' => array(
 							'wpzf-submission-mb' => $wp_meta_boxes['wpzf-submission']['normal']['high']['wpzf-submission-mb']
@@ -1507,7 +1511,7 @@ class WPZOOM_Forms {
 				)
 			);
 
-			add_screen_option( 'layout_columns', array( 'max' => 1, 'default' => 1 ) );
+			add_screen_option( 'layout_columns', array( 'max' => 2, 'default' => 2 ) );
 		}
 	}
 
@@ -1561,6 +1565,15 @@ class WPZOOM_Forms {
 	 */
 	public function add_meta_boxes() {
 		add_meta_box(
+			'wpzf-submission-details-mb',
+			__( 'Submission Details', 'wpzoom-forms' ),
+			array( $this, 'submission_meta_box_details' ),
+			'wpzf-submission',
+			'side',
+			'high'
+		);
+
+		add_meta_box(
 			'wpzf-submission-mb',
 			__( 'Submission', 'wpzoom-forms' ),
 			array( $this, 'submission_meta_box' ),
@@ -1568,6 +1581,131 @@ class WPZOOM_Forms {
 			'normal',
 			'high'
 		);
+	}
+
+	/**
+	 * Outputs the content for the submission details sidebar meta box.
+	 *
+	 * @access public
+	 * @return void
+	 * @since  1.3.5
+	 */
+	public function submission_meta_box_details() {
+		$post_id = get_the_ID();
+		$post = get_post( $post_id );
+
+		// Get form info
+		$form_id = get_post_meta( $post_id, '_wpzf_form_id', true );
+		$form_name = __( '[Unknown]', 'wpzoom-forms' );
+		$show_form_link = false;
+
+		if ( $form_id > 0 ) {
+			$form_post = get_post( $form_id );
+
+			if ( ! is_null( $form_post ) && 'wpzf-form' === $form_post->post_type ) {
+				$form_title = get_the_title( $form_id );
+
+				if ( ! empty( $form_title ) && 'trash' !== $form_post->post_status ) {
+					$form_name = $form_title;
+					$show_form_link = true;
+				} elseif ( 'trash' === $form_post->post_status ) {
+					$form_name = sprintf(
+						'<span style="color: #d63638;">%s</span> <small>(%s)</small>',
+						$form_title ?: __( 'Untitled Form', 'wpzoom-forms' ),
+						__( 'Trashed', 'wpzoom-forms' )
+					);
+				}
+			}
+		}
+
+		// Get submission date
+		$date = sprintf(
+			__( 'Submitted on %1$s at %2$s', 'wpzoom-forms' ),
+			get_the_date(),
+			get_the_time()
+		);
+
+		// Get trash/delete link
+		$delete_link = '';
+		$action_text = '';
+		if ( current_user_can( 'delete_post', $post_id ) ) {
+			if ( 'trash' === $post->post_status ) {
+				$delete_link = get_delete_post_link( $post_id, '', true );
+				$action_text = __( 'Delete Permanently', 'wpzoom-forms' );
+			} else {
+				$delete_link = get_delete_post_link( $post_id );
+				$action_text = _x( 'Move to Trash', 'verb', 'wpzoom-forms' );
+			}
+		}
+
+		// Output the details
+		?>
+		<style>
+			#wpzf-submission-details-mb {
+				display: block !important;
+			}
+			#wpzf-submission-details-mb .inside {
+				margin: 0;
+				padding: 0;
+			}
+			.wpzf-submission-details {
+				margin: 0;
+				padding: 0;
+				list-style: none;
+				display: block !important;
+			}
+			.wpzf-submission-details li {
+				margin: 0;
+				padding: 8px 12px;
+				border-bottom: 1px solid #eee;
+				display: block;
+				line-height: 1.5;
+			}
+			.wpzf-submission-details li:last-child {
+				border-bottom: none;
+			}
+			.wpzf-submission-details li strong {
+				display: block;
+				margin-bottom: 4px;
+				color: #1d2327;
+			}
+			.wpzf-submission-details .wpzf-submission-actions {
+				padding: 12px;
+			}
+			.wpzf-submission-details .submitdelete {
+				color: #b32d2e;
+				text-decoration: none;
+			}
+			.wpzf-submission-details .submitdelete:hover {
+				color: #a00;
+			}
+		</style>
+		<ul class="wpzf-submission-details">
+			<li>
+				<strong><?php esc_html_e( 'Submission ID:', 'wpzoom-forms' ); ?></strong>
+				#<?php echo esc_html( $post_id ); ?>
+			</li>
+			<li>
+				<strong><?php esc_html_e( 'Form:', 'wpzoom-forms' ); ?></strong>
+				<?php if ( $show_form_link ) : ?>
+					<a href="<?php echo esc_url( get_edit_post_link( $form_id ) ); ?>"><?php echo esc_html( $form_name ); ?></a>
+				<?php else : ?>
+					<?php echo wp_kses_post( $form_name ); ?>
+				<?php endif; ?>
+			</li>
+			<li>
+				<strong><?php esc_html_e( 'Date:', 'wpzoom-forms' ); ?></strong>
+				<?php echo esc_html( $date ); ?>
+			</li>
+			<?php if ( ! empty( $delete_link ) ) : ?>
+			<li class="wpzf-submission-actions">
+				<a href="<?php echo esc_url( $delete_link ); ?>" class="submitdelete deletion">
+					<?php echo esc_html( $action_text ); ?>
+				</a>
+			</li>
+			<?php endif; ?>
+		</ul>
+		<?php
 	}
 
 	/**
