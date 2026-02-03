@@ -708,7 +708,7 @@ class WPZOOM_Forms_Settings {
 		?>
 		<div class="wpzoom-forms-settings-upsell-container">
 			<a href="https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=upsell-banner-right-sidebar" target="_blank">
-				<img src="<?php echo WPZOOM_FORMS_URL; ?>/dist/assets/admin/images/upsell.png" alt="Upgrade to WPZOOM Forms Pro">
+				<img src="<?php echo WPZOOM_FORMS_URL; ?>/dist/assets/admin/images/pro2.png" alt="Upgrade to WPZOOM Forms Pro">
 			</a>
 			<?php $this->subscribe_form(); ?>
 		</div>
@@ -886,11 +886,26 @@ class WPZOOM_Forms_Settings {
         <div class="wpzf-akismet-upsell-box">
             <div class="wpzf-akismet-upsell-header">
                 <img src="https://akismet.com/wp-content/uploads/2023/04/akismet-logo-4x.png" alt="Akismet" width="100">
-                <span class="wpzf-pro-badge">PRO</span>
+                <span class="wpzf-akismet-status-label"><?php esc_html_e( 'Status:', 'wpzoom-forms' ); ?></span>
+                <?php
+                if ( ! class_exists( 'Akismet' ) ) {
+                    echo '<span class="wpzf-status-badge wpzf-status-inactive">' . esc_html__( 'Not Installed', 'wpzoom-forms' ) . '</span>';
+                } elseif ( ! is_callable( array( 'Akismet', 'get_api_key' ) ) || empty( \Akismet::get_api_key() ) ) {
+                    echo '<span class="wpzf-status-badge wpzf-status-warning">' . esc_html__( 'Detected, Not Configured', 'wpzoom-forms' ) . '</span>';
+                } else {
+                    echo '<span class="wpzf-status-badge wpzf-status-upgrade">' . esc_html__( 'Upgrade to Activate', 'wpzoom-forms' ) . '</span>';
+                }
+                ?>
             </div>
             <div class="wpzf-akismet-upsell-content">
-                <h4><?php esc_html_e( 'Advanced Akismet Integration', 'wpzoom-forms' ); ?></h4>
-                <p><?php esc_html_e( 'Get powerful spam protection with our PRO Akismet integration. Automatically filter submissions, mark spam, report false positives, and keep your inbox clean — all without annoying your users with CAPTCHAs.', 'wpzoom-forms' ); ?></p>
+                <h4><?php esc_html_e( 'Advanced Akismet Integration', 'wpzoom-forms' ); ?> <span class="wpzf-pro-badge">PRO</span></h4>
+                <?php if ( ! class_exists( 'Akismet' ) ) : ?>
+                    <p><?php printf( __( 'Akismet is the best way to protect your forms from spam. <a href="%s" target="_blank">Install and activate Akismet</a> first, then upgrade to WPZOOM Forms PRO to enable automatic spam filtering.', 'wpzoom-forms' ), esc_url( admin_url( 'plugin-install.php?tab=search&s=akismet' ) ) ); ?></p>
+                <?php elseif ( ! is_callable( array( 'Akismet', 'get_api_key' ) ) || empty( \Akismet::get_api_key() ) ) : ?>
+                    <p><?php printf( __( 'Akismet is installed but not configured. <a href="%s">Enter your API key</a> to prepare for spam protection, then upgrade to WPZOOM Forms PRO to enable the integration.', 'wpzoom-forms' ), esc_url( admin_url( 'admin.php?page=akismet-key-config' ) ) ); ?></p>
+                <?php else : ?>
+                    <p><?php esc_html_e( 'Akismet is installed and configured on your site. Upgrade to WPZOOM Forms PRO to enable automatic spam filtering on all form submissions.', 'wpzoom-forms' ); ?></p>
+                <?php endif; ?>
                 <ul>
                     <li><?php esc_html_e( 'Automatic spam detection on all submissions', 'wpzoom-forms' ); ?></li>
                     <li><?php esc_html_e( 'Mark submissions as spam or not spam', 'wpzoom-forms' ); ?></li>
@@ -915,29 +930,68 @@ class WPZOOM_Forms_Settings {
             .wpzf-akismet-upsell-header {
                 display: flex;
                 align-items: center;
-                gap: 15px;
+                gap: 12px;
                 margin-bottom: 15px;
+                flex-wrap: wrap;
             }
-            .wpzf-akismet-upsell-header .wpzf-pro-badge {
-                background: #3496ff;
-                color: #fff;
-                font-size: 11px;
+            .wpzf-akismet-status-label {
                 font-weight: 600;
-                padding: 3px 8px;
+                color: #1d2327;
+                margin-left: auto;
+            }
+            .wpzf-status-badge {
+                display: inline-block;
+                padding: 4px 10px;
                 border-radius: 3px;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
+                font-size: 12px;
+                font-weight: 500;
+            }
+            .wpzf-status-inactive {
+                background: #f6f7f7;
+                color: #646970;
+                border: 1px solid #dcdcde;
+            }
+            .wpzf-status-warning {
+                background: #fcf9e8;
+                color: #996800;
+                border: 1px solid #dba617;
+            }
+            .wpzf-status-upgrade {
+                background: #e8f4fc;
+                color: #2271b1;
+                border: 1px solid #3496ff;
+                font-weight: 600;
             }
             .wpzf-akismet-upsell-content h4 {
                 margin: 0 0 10px;
                 font-size: 15px;
                 color: #1d2327;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .wpzf-akismet-upsell-content h4 .wpzf-pro-badge {
+                background: #3496ff;
+                color: #fff;
+                font-size: 10px;
+                font-weight: 600;
+                padding: 2px 6px;
+                border-radius: 3px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
             }
             .wpzf-akismet-upsell-content p {
                 margin: 0 0 15px;
                 color: #50575e;
                 font-size: 13px;
                 line-height: 1.6;
+            }
+            .wpzf-akismet-upsell-content p a {
+                color: #3496ff;
+                text-decoration: none;
+            }
+            .wpzf-akismet-upsell-content p a:hover {
+                text-decoration: underline;
             }
             .wpzf-akismet-upsell-content ul {
                 margin: 0 0 20px;
