@@ -1173,10 +1173,13 @@ class WPZOOM_Forms {
 	 */
 	public function post_list_columns_submit( $columns ) {
 		return array(
-			'cb'   => $columns['cb'],
-			'desc' => __( 'Submission', 'wpzoom-forms' ),
-			'form' => __( 'Form', 'wpzoom-forms' ),
-			'date' => $columns['date']
+			'cb'            => $columns['cb'],
+			'submission_id' => __( 'ID', 'wpzoom-forms' ),
+			'name'          => __( 'Name', 'wpzoom-forms' ),
+			'email'         => __( 'Email', 'wpzoom-forms' ),
+			'subject'       => __( 'Subject', 'wpzoom-forms' ),
+			'form'          => __( 'Form', 'wpzoom-forms' ),
+			'date'          => $columns['date']
 		);
 	}
 
@@ -1189,7 +1192,7 @@ class WPZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function post_list_sortable_columns_submit( $columns ) {
-		$columns['desc'] = 'wpzf_desc';
+		$columns['submission_id'] = 'ID';
 		$columns['form'] = 'wpzf_form';
 
 		return $columns;
@@ -1311,33 +1314,125 @@ class WPZOOM_Forms {
 	 * @since  1.0.0
 	 */
 	public function post_list_custom_columns_submit( $column, $post_id ) {
-		if ( 'desc' == $column ) {
-			$data = get_post_meta( $post_id, '_wpzf_fields', true );
-			$title = __( '[Unknown]', 'wpzoom-forms' );
+		$fields = get_post_meta( $post_id, '_wpzf_fields', true );
 
-			if ( ! is_null( $data ) && false !== $data && is_array( $data ) && ! empty( $data ) ) {
-				$title = '';
+		switch ( $column ) {
+			case 'submission_id':
+				printf(
+					'<strong><a href="%s" class="row-title">%s #%s</a></strong>',
+					esc_url( get_edit_post_link( $post_id ) ),
+					esc_html__( 'Submission', 'wpzoom-forms' ),
+					esc_html( $post_id )
+				);
+				break;
 
-				foreach ( $data as $name => $value ) {
-					$title .= '<span class="field-name">' . esc_html( substr( $name, 0, 250 ) ) . ( strlen( $name ) > 250 ? '&hellip;' : '' ) . '</span>
-					           <span class="field-value">' . esc_html( substr( $value, 0, 250 ) ) . ( strlen( $value ) > 250 ? '&hellip;' : '' ) . '</span>';
+			case 'name':
+				$name_found = false;
+
+				if ( ! empty( $fields ) && is_array( $fields ) ) {
+					// Common name field patterns
+					$name_patterns = array( 'name', 'full_name', 'first_name', 'last_name', 'fullname', 'your_name' );
+
+					foreach ( $fields as $name => $value ) {
+						$field_name = strtolower( $name );
+						foreach ( $name_patterns as $pattern ) {
+							if ( strpos( $field_name, $pattern ) !== false && ! empty( $value ) ) {
+								echo '<strong>' . esc_html( $value ) . '</strong>';
+								$name_found = true;
+								break 2;
+							}
+						}
+					}
 				}
-			}
 
-			printf( '<a href="%s" class="row-title">%s</a>', esc_url( get_edit_post_link( $post_id ) ), $title );
-		} elseif ( 'form' == $column ) {
-			$form_id = intval( get_post_meta( $post_id, '_wpzf_form_id', true ) );
-			$form_name = __( '[Unknown]', 'wpzoom-forms' );
-
-			if ( $form_id > 0 ) {
-				$form_name = $form_id;
-
-				if ( ! is_null( get_post( $form_id ) ) ) {
-					$form_name = '<a href="' . esc_url( get_edit_post_link( $form_id ) ) . '">' . get_the_title( $form_id ) . '</a>';
+				if ( ! $name_found ) {
+					echo '&mdash;';
 				}
-			}
+				break;
 
-			echo wp_kses( $form_name, array( 'a' => array( 'href' => array() ) ) );
+			case 'email':
+				$email_found = false;
+
+				if ( ! empty( $fields ) && is_array( $fields ) ) {
+					// Common email field patterns
+					$email_patterns = array( 'email', 'e-mail', 'mail', 'email_address', 'your_email' );
+
+					foreach ( $fields as $name => $value ) {
+						$field_name = strtolower( $name );
+						foreach ( $email_patterns as $pattern ) {
+							if ( strpos( $field_name, $pattern ) !== false && ! empty( $value ) ) {
+								echo '<a href="mailto:' . esc_attr( $value ) . '">' . esc_html( $value ) . '</a>';
+								$email_found = true;
+								break 2;
+							}
+						}
+					}
+				}
+
+				if ( ! $email_found ) {
+					echo '&mdash;';
+				}
+				break;
+
+			case 'subject':
+				$subject_found = false;
+
+				if ( ! empty( $fields ) && is_array( $fields ) ) {
+					// First try to find a subject field
+					foreach ( $fields as $name => $value ) {
+						if ( stripos( $name, 'subject' ) !== false || stripos( $name, 'title' ) !== false || stripos( $name, 'topic' ) !== false ) {
+							echo esc_html( $value );
+							$subject_found = true;
+							break;
+						}
+					}
+
+					// If no subject field found, show first non-empty field (likely message)
+					if ( ! $subject_found ) {
+						foreach ( $fields as $name => $value ) {
+							// Skip name and email fields
+							$field_name = strtolower( $name );
+							if ( strpos( $field_name, 'name' ) !== false || strpos( $field_name, 'email' ) !== false ) {
+								continue;
+							}
+							if ( ! empty( $value ) ) {
+								echo esc_html( wp_trim_words( $value, 10, '...' ) );
+								$subject_found = true;
+								break;
+							}
+						}
+					}
+				}
+
+				if ( ! $subject_found ) {
+					echo '&mdash;';
+				}
+				break;
+
+			case 'form':
+				$form_id = intval( get_post_meta( $post_id, '_wpzf_form_id', true ) );
+				$form_name = __( '[Unknown]', 'wpzoom-forms' );
+
+				if ( $form_id > 0 ) {
+					$form_post = get_post( $form_id );
+
+					if ( ! is_null( $form_post ) && 'wpzf-form' === $form_post->post_type ) {
+						$form_title = get_the_title( $form_id );
+
+						if ( ! empty( $form_title ) && 'trash' !== $form_post->post_status ) {
+							$form_name = '<a href="' . esc_url( get_edit_post_link( $form_id ) ) . '">' . esc_html( $form_title ) . '</a>';
+						} elseif ( 'trash' === $form_post->post_status ) {
+							$form_name = sprintf(
+								'<span style="color: #d63638;">%s</span> <small>(%s)</small>',
+								esc_html( $form_title ?: __( 'Untitled Form', 'wpzoom-forms' ) ),
+								esc_html__( 'Trashed', 'wpzoom-forms' )
+							);
+						}
+					}
+				}
+
+				echo wp_kses( $form_name, array( 'a' => array( 'href' => array() ), 'span' => array( 'style' => array() ), 'small' => array() ) );
+				break;
 		}
 	}
 
@@ -1352,7 +1447,7 @@ class WPZOOM_Forms {
 	 */
 	public function post_list_primary_column( $default, $screen ) {
 		if ( 'edit-wpzf-submission' == $screen ) {
-			$default = 'desc';
+			$default = 'submission_id';
 		}
 
 		return $default;
