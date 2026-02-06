@@ -10,8 +10,7 @@ License:           GNU General Public License v2
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 Tags:              contact form, form builder, gutenberg form, contact form block, forms
 
-Contact form plugin for WordPress - Build beautiful forms with Gutenberg blocks. Drag & drop form builder with spam protection, email notifications & submissions management.
-
+WordPress contact form plugin. Create beautiful forms with drag & drop, embed anywhere, spam protection, email alerts & submissions.
 
 == Description ==
 
