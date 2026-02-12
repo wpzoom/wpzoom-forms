@@ -35,6 +35,16 @@ define( 'WPZOOM_FORMS_PLUGIN_DIR', dirname( WPZOOM_FORMS_PLUGIN_BASE ) );
 define( 'WPZOOM_FORMS_PATH', plugin_dir_path( WPZOOM_FORMS__FILE__ ) );
 define( 'WPZOOM_FORMS_URL', plugin_dir_url( WPZOOM_FORMS__FILE__ ) );
 
+
+// WPZOOM Notice Center (drop-in library for aggregating admin notices).
+if ( ! class_exists( 'WPZOOM_Notice_Center' ) ) {
+	require_once WPZOOM_FORMS_PATH . 'classes/class-wpzoom-notice-center.php';
+	WPZOOM_Notice_Center::get_instance()->set_assets( array(
+		'css_url' => WPZOOM_FORMS_URL . 'dist/assets/admin/css/notice-center.css',
+		'js_url'  => WPZOOM_FORMS_URL . 'dist/assets/admin/js/notice-center.js',
+	) );
+}
+
 // Instance the plugin
 $wpzoom_forms = new WPZOOM_Forms();
 
@@ -177,9 +187,8 @@ class WPZOOM_Forms {
 			add_action( 'restrict_manage_posts',                       array( $this, 'custom_filter_by_form' ),           10 );
 			add_action( 'parse_query',                                 array( $this, 'filter_posts_by_form' ),            10 );
 
-			// Upsell notice for PRO version
-			add_action( 'admin_notices',                               array( $this, 'upsell_notice' ) );
-			add_action( 'wp_ajax_wpzf_dismiss_upsell_notice',          array( $this, 'dismiss_upsell_notice' ) );
+			// Upsell notice for PRO version (via WPZOOM Notice Center)
+			add_filter( 'wpzoom_notice_center_notices',                array( $this, 'register_upsell_notice' ) );
 
 			register_post_type(
 				'wpzf-form',
@@ -3128,101 +3137,62 @@ class WPZOOM_Forms {
 	}
 
 	/**
-	 * Display upsell notice for PRO version.
+	 * Register the PRO upsell notice with WPZOOM Notice Center.
 	 *
 	 * @since  1.3.4
-	 * @return void
+	 * @param array $notices Existing notices from the filter.
+	 * @return array Notices with upsell notice added when applicable.
 	 */
-	public function upsell_notice() {
-		// Only show to users who can manage options
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
+	public function register_upsell_notice( $notices ) {
+		if ( ! is_array( $notices ) ) {
+			$notices = array();
 		}
 
-		// Don't show if PRO version is active
+		// Don't add if PRO version is active.
 		if ( defined( 'WPZOOM_FORMS_PRO_VERSION' ) ) {
-			return;
-		}
-
-		// Check if notice was dismissed
-		if ( get_option( 'wpzf_upsell_notice_dismissed' ) ) {
-			return;
-		}
-
-		// Only show on dashboard or WPZOOM Forms pages
-		$screen = get_current_screen();
-		if ( ! $screen ) {
-			return;
-		}
-
-		$allowed_screens = array( 'dashboard', 'edit-wpzf-form', 'wpzf-form', 'edit-wpzf-submission', 'wpzf-submission' );
-		if ( ! in_array( $screen->id, $allowed_screens, true ) ) {
-			return;
+			return $notices;
 		}
 
 		$upsell_url = admin_url( 'edit.php?post_type=wpzf-form&page=wpzf-pro-page' );
 		$pro_url    = 'https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=upsell-notice';
-		?>
-		<div class="notice notice-info is-dismissible wpzf-pro-page-notice" style="padding: 15px 20px; border-left-color: #3496FF;">
-			<div style="display: flex; align-items: flex-start; gap: 15px;">
-				<div style="flex-shrink: 0;">
-					<svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#3496FF"/>
-					</svg>
-				</div>
-				<div style="flex: 1;">
-					<h3 style="margin: 0 0 8px 0; font-size: 16px; color: #1d2327;">
-						<?php esc_html_e( 'Upgrade to WPZOOM Forms PRO', 'wpzoom-forms' ); ?>
-					</h3>
-					<p style="margin: 0 0 12px 0; color: #50575e; font-size: 14px;">
-						<?php esc_html_e( 'Unlock powerful features to build smarter, more flexible forms:', 'wpzoom-forms' ); ?>
-					</p>
-					<ul style="margin: 0 0 12px 0; padding-left: 0; color: #50575e; font-size: 13px; line-height: 1.8;">
-						<li><strong><?php esc_html_e( 'AI Form Generator', 'wpzoom-forms' ); ?></strong> &mdash; <?php esc_html_e( 'Describe your form in simple words and let AI create it for you!', 'wpzoom-forms' ); ?></li>
-						<li><strong><?php esc_html_e( '30+ Pre-built Templates', 'wpzoom-forms' ); ?></strong> &mdash; <?php esc_html_e( 'Healthcare, education, real estate, restaurant, HR, and more categories.', 'wpzoom-forms' ); ?></li>
-						<li><strong><?php esc_html_e( 'Mailchimp Integration', 'wpzoom-forms' ); ?></strong> &mdash; <?php esc_html_e( 'Automatically add subscribers to your Mailchimp audiences.', 'wpzoom-forms' ); ?></li>
-						<li><strong><?php esc_html_e( 'Import/Export Forms', 'wpzoom-forms' ); ?></strong> &mdash; <?php esc_html_e( 'Easily transfer forms between sites or back up your work.', 'wpzoom-forms' ); ?></li>
-						<li><strong><?php esc_html_e( 'Export Submissions to CSV', 'wpzoom-forms' ); ?></strong> &mdash; <?php esc_html_e( 'Download form submissions as CSV files for reporting.', 'wpzoom-forms' ); ?></li>
-					</ul>
-					<p style="margin: 0;">
-						<a href="<?php echo esc_url( $pro_url ); ?>" class="button button-primary" style="background: #3496FF; border-color: #3496FF; margin-right: 8px;" target="_blank">
-							<?php esc_html_e( 'Upgrade to PRO', 'wpzoom-forms' ); ?>
-						</a>
-						<a href="<?php echo esc_url( $upsell_url ); ?>" class="button">
-							<?php esc_html_e( 'Learn More', 'wpzoom-forms' ); ?>
-						</a>
-					</p>
-				</div>
-			</div>
-		</div>
-		<script>
-		jQuery(document).ready(function($) {
-			$('.wpzf-pro-page-notice').on('click', '.notice-dismiss', function() {
-				$.post(ajaxurl, {
-					action: 'wpzf_dismiss_upsell_notice',
-					_wpnonce: '<?php echo esc_js( wp_create_nonce( 'wpzf_dismiss_upsell_notice' ) ); ?>'
-				});
-			});
-		});
-		</script>
-		<?php
-	}
 
-	/**
-	 * AJAX handler to dismiss upsell notice.
-	 *
-	 * @since  1.3.4
-	 * @return void
-	 */
-	public function dismiss_upsell_notice() {
-		check_ajax_referer( 'wpzf_dismiss_upsell_notice' );
+		$content = '<p>' . esc_html__( 'Unlock powerful features to build smarter, more flexible forms:', 'wpzoom-forms' ) . '</p>';
+		$content .= '<ul>';
+		$content .= '<li><strong>' . esc_html__( 'AI Form Generator', 'wpzoom-forms' ) . '</strong> &mdash; ' . esc_html__( 'Describe your form in simple words and let AI create it for you!', 'wpzoom-forms' ) . '</li>';
+		$content .= '<li><strong>' . esc_html__( '30+ Pre-built Templates', 'wpzoom-forms' ) . '</strong> &mdash; ' . esc_html__( 'Healthcare, education, real estate, restaurant, HR, and more categories.', 'wpzoom-forms' ) . '</li>';
+		$content .= '<li><strong>' . esc_html__( 'Mailchimp Integration', 'wpzoom-forms' ) . '</strong> &mdash; ' . esc_html__( 'Automatically add subscribers to your Mailchimp audiences.', 'wpzoom-forms' ) . '</li>';
+		$content .= '<li><strong>' . esc_html__( 'Import/Export Forms', 'wpzoom-forms' ) . '</strong> &mdash; ' . esc_html__( 'Easily transfer forms between sites or back up your work.', 'wpzoom-forms' ) . '</li>';
+		$content .= '<li><strong>' . esc_html__( 'Export Submissions to CSV', 'wpzoom-forms' ) . '</strong> &mdash; ' . esc_html__( 'Download form submissions as CSV files for reporting.', 'wpzoom-forms' ) . '</li>';
+		$content .= '</ul>';
 
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die();
-		}
+		$notices[] = array(
+			'id'               => 'wpzf_upsell_pro',
+			'priority'         => 10,
+			'heading'          => __( 'Upgrade to WPZOOM Forms PRO', 'wpzoom-forms' ),
+			'content'          => $content,
+			'icon'             => array(
+				'type'             => 'image',
+				'src'              => plugins_url( 'dist/assets/admin/images/icon-forms.svg', __FILE__ ),
+			),
+			'primary_button'   => array(
+				'label'   => __( 'Upgrade to PRO', 'wpzoom-forms' ),
+				'url'     => $pro_url,
+				'new_tab' => true,
+			),
+			'secondary_button' => array(
+				'label'   => __( 'Learn More', 'wpzoom-forms' ),
+				'url'     => $upsell_url,
+				'new_tab' => false,
+			),
+			'capability'  => 'manage_options',
+			'screens'     => array( 'dashboard', 'edit-wpzf-form', 'wpzf-form', 'edit-wpzf-submission', 'wpzf-submission' ),
+			'source'      => 'WPZOOM Forms',
+			'conditions'  => function () {
+				return ! get_option( 'wpzf_upsell_notice_dismissed' );
+			},
+		);
 
-		update_option( 'wpzf_upsell_notice_dismissed', true );
-		wp_die();
+		return $notices;
 	}
 }
 
