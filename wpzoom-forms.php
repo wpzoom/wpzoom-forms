@@ -36,12 +36,14 @@ define( 'WPZOOM_FORMS_PATH', plugin_dir_path( WPZOOM_FORMS__FILE__ ) );
 define( 'WPZOOM_FORMS_URL', plugin_dir_url( WPZOOM_FORMS__FILE__ ) );
 
 
-// WPZOOM Notice Center (drop-in library for aggregating admin notices).
-if ( ! class_exists( 'WPZOOM_Notice_Center' ) ) {
-	require_once WPZOOM_FORMS_PATH . 'classes/class-wpzoom-notice-center.php';
+// WPZOOM Notice Center (submodule at classes/notice-center).
+$wpz_notice_center_path = WPZOOM_FORMS_PATH . 'classes/notice-center/';
+$wpz_notice_center_url  = WPZOOM_FORMS_URL . 'classes/notice-center/';
+if ( is_admin() && ! class_exists( 'WPZOOM_Notice_Center' ) && file_exists( $wpz_notice_center_path . 'notice-center.php' ) ) {
+	require_once $wpz_notice_center_path . 'notice-center.php';
 	WPZOOM_Notice_Center::get_instance()->set_assets( array(
-		'css_url' => WPZOOM_FORMS_URL . 'dist/assets/admin/css/notice-center.css',
-		'js_url'  => WPZOOM_FORMS_URL . 'dist/assets/admin/js/notice-center.js',
+		'css_url' => $wpz_notice_center_url . 'assets/notice-center.css',
+		'js_url'  => $wpz_notice_center_url . 'assets/notice-center.js',
 	) );
 }
 
