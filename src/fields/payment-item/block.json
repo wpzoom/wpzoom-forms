@@ -1,0 +1,32 @@
+{
+	"$schema":      "https://schemas.wp.org/trunk/block.json",
+	"apiVersion":   3,
+	"name":         "wpzoom-forms/payment-item",
+	"title":        "Payment Item",
+	"category":     "wpzoom-forms",
+	"ancestor":     [ "wpzoom-forms/form" ],
+	"description":  "A purchasable item with a name, price, and optional quantity selector.",
+	"keywords":     [ "wpzoom", "form", "payment", "item", "product", "price" ],
+	"version":      "1.0.0",
+	"textdomain":   "wpzoom-forms",
+	"attributes":   {
+		"id":        { "type": "string",  "default": "" },
+		"itemName":  { "type": "string",  "default": "Item" },
+		"price":     { "type": "number",  "default": 0 },
+		"quantity":  { "type": "number",  "default": 1 },
+		"minQty":    { "type": "number",  "default": 1 },
+		"maxQty":    { "type": "number",  "default": 99 },
+		"showQty":   { "type": "boolean", "default": true }
+	},
+	"supports":     {
+		"html":    false,
+		"spacing": {
+			"margin":  true,
+			"padding": true
+		}
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle":  "wpzoom-forms-css-backend-main",
+	"script":       "wpzoom-forms-js-frontend-formblock",
+	"style":        "wpzoom-forms-css-frontend-formblock"
+}

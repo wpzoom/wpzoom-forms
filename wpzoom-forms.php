@@ -23,6 +23,7 @@ defined( 'ABSPATH' ) || exit;
 
 // settings page url attribute
 define( 'WPZOOM_FORMS_SETTINGS_PAGE', 'wpzf-settings' );
+define( 'WPZOOM_STRIPE_CLIENT_ID', 'ca_U690IWxMibgupMr2GLMoivrI66pmlvmc' ); // TODO: Replace with your own client ID
 
 if ( ! defined( 'WPZOOM_FORMS_VERSION' ) ) {
 	define( 'WPZOOM_FORMS_VERSION', get_file_data( __FILE__, [ 'Version' ] )[0] ); // phpcs:ignore
@@ -543,7 +544,7 @@ class WPZOOM_Forms {
 			)
 		);
 
-		foreach ( array( 'multi-checkbox', 'checkbox', 'email', 'label', 'name', 'phone', 'plain', 'radio', 'select', 'submit', 'textarea', 'website', 'datepicker' ) as $block ) {
+		foreach ( array( 'multi-checkbox', 'checkbox', 'email', 'label', 'name', 'phone', 'plain', 'radio', 'select', 'submit', 'textarea', 'website', 'datepicker', 'payment-item', 'payment-single', 'payment-total', 'stripe-card' ) as $block ) {
 			register_block_type( $this->main_dir_path . 'fields/' . $block . '/block.json' );
 		}
 	}
@@ -679,6 +680,10 @@ class WPZOOM_Forms {
 				'wpzoom-forms/radio-field',
 				'wpzoom-forms/label-field',
 				'wpzoom-forms/submit-field',
+				'wpzoom-forms/payment-item',
+				'wpzoom-forms/payment-single',
+				'wpzoom-forms/payment-total',
+				'wpzoom-forms/stripe-card',
 				'core/paragraph',
 				'core/heading',
 				'core/list',
@@ -983,6 +988,24 @@ class WPZOOM_Forms {
 			WPZOOM_FORMS_VERSION,
 			true
 		);
+
+		// Register Stripe.js — must be loaded directly from Stripe's CDN per their TOS.
+		wp_register_script(
+			'stripe-js',
+			'https://js.stripe.com/v3/',
+			array(),
+			null,
+			true
+		);
+
+		// Register the stripe-card block frontend script (depends on Stripe.js).
+		wp_register_script(
+			'wpzoom-forms-js-frontend-stripe-card',
+			trailingslashit( $this->main_dir_url ) . 'fields/stripe-card/view.js',
+			array( 'stripe-js' ),
+			WPZOOM_FORMS_VERSION,
+			true
+		);
 	}
 
 	/**
@@ -1016,6 +1039,22 @@ class WPZOOM_Forms {
 			wp_enqueue_style( 'wpzoom-forms-css-frontend-flatpickr' );
 			wp_enqueue_script( 'wpzoom-forms-js-frontend-flatpickr' );
 			wp_enqueue_script( 'wpzoom-forms-js-frontend-datepicker' );
+		}
+
+		if ( self::has_block( 'wpzoom-forms/stripe-card' ) ) {
+			$stripe = new WPZOOM_Forms_Stripe();
+			if ( $stripe->is_connected() ) {
+				wp_enqueue_script( 'stripe-js' );
+				wp_enqueue_script( 'wpzoom-forms-js-frontend-stripe-card' );
+				wp_localize_script(
+					'wpzoom-forms-js-frontend-stripe-card',
+					'wpzfStripeData',
+					array(
+						'publishableKey'  => $stripe->get_publishable_key(),
+						'createIntentUrl' => rest_url( 'wpzoom-forms/v1/stripe/create-intent' ),
+					)
+				);
+			}
 		}
 
 	}
@@ -3055,7 +3094,7 @@ class WPZOOM_Forms {
 					}
 
 					if ( $this->not_spam( $details ) ) {
-						$success = false !== $content && 0 < wp_insert_post( array(
+						$submission_post_id = wp_insert_post( array(
 							'post_type'      => 'wpzf-submission',
 							'post_status'    => 'publish',
 							'comment_status' => 'closed',
@@ -3066,6 +3105,31 @@ class WPZOOM_Forms {
 							'post_content'   => __( 'Submission', 'wpzoom-forms' ),
 							'meta_input'     => $content
 						) );
+
+						$success = false !== $content && 0 < $submission_post_id;
+
+						// Create a payment record if this form has payment blocks.
+						if ( $success && $this->form_has_payment_blocks( $blocks ) ) {
+							$payment_intent_id = isset( $_POST['wpzf_payment_intent_id'] )
+								? sanitize_text_field( wp_unslash( $_POST['wpzf_payment_intent_id'] ) )
+								: '';
+							$payment_total = isset( $_POST['wpzf_payment_total'] )
+								? absint( $_POST['wpzf_payment_total'] )
+								: 0;
+							$payment_currency = strtolower( get_option( 'wpzf_payment_currency', 'usd' ) );
+							$payment_email = isset( $details['from'] ) ? sanitize_email( $details['from'] ) : '';
+
+							if ( ! empty( $payment_intent_id ) && $payment_total > 0 ) {
+								$stripe = new WPZOOM_Forms_Stripe();
+								$stripe->create_payment_post(
+									$form_id,
+									$payment_intent_id,
+									$payment_total,
+									$payment_currency,
+									$payment_email
+								);
+							}
+						}
 					}
 				}
 			}
@@ -3112,6 +3176,32 @@ class WPZOOM_Forms {
 		}
 
 		return $found;
+	}
+
+	/**
+	 * Checks whether any block in the parsed blocks array is a payment block.
+	 *
+	 * @access private
+	 * @param  array $blocks Parsed blocks array from parse_blocks().
+	 * @return bool
+	 */
+	private function form_has_payment_blocks( $blocks ) {
+		$payment_blocks = array(
+			'wpzoom-forms/payment-item',
+			'wpzoom-forms/payment-single',
+			'wpzoom-forms/stripe-card',
+		);
+
+		foreach ( $blocks as $block ) {
+			if ( isset( $block['blockName'] ) && in_array( $block['blockName'], $payment_blocks, true ) ) {
+				return true;
+			}
+			if ( ! empty( $block['innerBlocks'] ) && $this->form_has_payment_blocks( $block['innerBlocks'] ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -3206,6 +3296,13 @@ if( ! function_exists ( 'wpzoom_forms_load_files' ) ) {
 		require_once 'classes/class-wpzoom-forms-settings-page.php';
 		require_once 'classes/class-wpzoom-forms-template-manager.php';
 		require_once 'classes/class-wpzoom-forms-settings-upsell.php';
+
+		// Load Stripe Payments module.
+		require_once 'classes/class-wpzoom-forms-stripe.php';
+		require_once 'classes/class-wpzoom-forms-stripe-settings.php';
+
+		new WPZOOM_Forms_Stripe();
+		new WPZOOM_Forms_Stripe_Settings();
 
 	}
 	add_action( 'plugin_loaded', 'wpzoom_forms_load_files' );

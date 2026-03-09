@@ -28,7 +28,12 @@ module.exports = {
 		'fields/submit/index':         path.resolve( __dirname, 'src', 'fields', 'submit', 'index.js' ),
 		'fields/textarea/index':       path.resolve( __dirname, 'src', 'fields', 'textarea', 'index.js' ),
 		'fields/website/index':        path.resolve( __dirname, 'src', 'fields', 'website', 'index.js' ),
-		'fields/datepicker/index':     path.resolve( __dirname, 'src', 'fields', 'datepicker', 'index.js' )
+		'fields/datepicker/index':     path.resolve( __dirname, 'src', 'fields', 'datepicker', 'index.js' ),
+		'fields/payment-item/index':   path.resolve( __dirname, 'src', 'fields', 'payment-item', 'index.js' ),
+		'fields/payment-single/index': path.resolve( __dirname, 'src', 'fields', 'payment-single', 'index.js' ),
+		'fields/payment-total/index':  path.resolve( __dirname, 'src', 'fields', 'payment-total', 'index.js' ),
+		'fields/stripe-card/index':    path.resolve( __dirname, 'src', 'fields', 'stripe-card', 'index.js' ),
+		'fields/stripe-card/view':     path.resolve( __dirname, 'src', 'fields', 'stripe-card', 'view.js' )
 	},
 	optimization: {
 		...defaultConfig.optimization,

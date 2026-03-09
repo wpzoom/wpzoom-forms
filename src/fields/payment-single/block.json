@@ -1,0 +1,28 @@
+{
+	"$schema":      "https://schemas.wp.org/trunk/block.json",
+	"apiVersion":   3,
+	"name":         "wpzoom-forms/payment-single",
+	"title":        "Single Payment",
+	"category":     "wpzoom-forms",
+	"ancestor":     [ "wpzoom-forms/form" ],
+	"description":  "A fixed-price charge with no quantity selector. Use for fees, tickets, or one-time payments.",
+	"keywords":     [ "wpzoom", "form", "payment", "single", "fixed", "fee", "charge" ],
+	"version":      "1.0.0",
+	"textdomain":   "wpzoom-forms",
+	"attributes":   {
+		"id":          { "type": "string",  "default": "" },
+		"itemName":    { "type": "string",  "default": "Item" },
+		"price":       { "type": "number",  "default": 0 },
+		"description": { "type": "string",  "default": "" }
+	},
+	"supports":     {
+		"html":    false,
+		"spacing": {
+			"margin":  true,
+			"padding": true
+		}
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle":  "wpzoom-forms-css-backend-main",
+	"style":        "wpzoom-forms-css-frontend-formblock"
+}

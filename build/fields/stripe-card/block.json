@@ -1,0 +1,41 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "wpzoom-forms/stripe-card",
+  "title": "Stripe Card",
+  "category": "wpzoom-forms",
+  "ancestor": [
+    "wpzoom-forms/form"
+  ],
+  "description": "A secure credit/debit card input powered by Stripe Elements.",
+  "keywords": [
+    "wpzoom",
+    "form",
+    "stripe",
+    "card",
+    "payment",
+    "credit"
+  ],
+  "version": "1.0.0",
+  "textdomain": "wpzoom-forms",
+  "attributes": {
+    "label": {
+      "type": "string",
+      "default": "Card Details"
+    },
+    "showLabel": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "supports": {
+    "html": false,
+    "spacing": {
+      "margin": true,
+      "padding": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "wpzoom-forms-css-backend-main",
+  "style": "wpzoom-forms-css-frontend-formblock"
+}
