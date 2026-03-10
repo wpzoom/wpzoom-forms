@@ -65,9 +65,28 @@ class WPZOOM_Forms_Stripe {
 	const PROXY_DEAUTH_URL = 'https://patterns.blocklayouts.com/stripe-test/wp-json/wpzoom-stripe-proxy/v1/deauthorize';
 
 	/**
+	 * Singleton instance.
+	 *
+	 * @var self|null
+	 */
+	private static $instance = null;
+
+	/**
+	 * Returns the single class instance, creating it on first call.
+	 *
+	 * @return self
+	 */
+	public static function instance() {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
+	/**
 	 * The Constructor.
 	 */
-	public function __construct() {
+	private function __construct() {
 		add_action( 'init',                                    array( $this, 'register_payment_cpt' ) );
 		add_action( 'rest_api_init',                           array( $this, 'register_rest_routes' ) );
 		add_action( 'admin_init',                              array( $this, 'handle_disconnect' ) );
@@ -78,6 +97,8 @@ class WPZOOM_Forms_Stripe {
 		add_action( 'manage_wpzf-payment_posts_custom_column',   array( $this, 'payment_list_column_content' ), 10, 2 );
 		add_filter( 'manage_edit-wpzf-payment_sortable_columns', array( $this, 'payment_sortable_columns' ) );
 		add_filter( 'bulk_actions-edit-wpzf-payment',            array( $this, 'remove_payment_bulk_actions' ) );
+
+		add_action( 'admin_notices', array( $this, 'maybe_show_webhook_notice' ) );
 	}
 
 	// -------------------------------------------------------------------------
@@ -155,16 +176,26 @@ class WPZOOM_Forms_Stripe {
 				'callback'            => array( $this, 'rest_create_payment_intent' ),
 				'permission_callback' => '__return_true',
 				'args'                => array(
-					'amount'  => array(
+					'amount'         => array(
 						'required'          => true,
 						'type'              => 'integer',
 						'minimum'           => 50,
 						'sanitize_callback' => 'absint',
 					),
-					'form_id' => array(
+					'form_id'        => array(
 						'required'          => true,
 						'type'              => 'integer',
 						'sanitize_callback' => 'absint',
+					),
+					'customer_email' => array(
+						'required'          => false,
+						'type'              => 'string',
+						'sanitize_callback' => 'sanitize_email',
+					),
+					'customer_name'  => array(
+						'required'          => false,
+						'type'              => 'string',
+						'sanitize_callback' => 'sanitize_text_field',
 					),
 				),
 			)
@@ -259,32 +290,38 @@ class WPZOOM_Forms_Stripe {
 		if ( ! $form_post || 'wpzf-form' !== $form_post->post_type || 'publish' !== $form_post->post_status ) {
 			return new WP_Error( 'invalid_form', __( 'Invalid form.', 'wpzoom-forms' ), array( 'status' => 400 ) );
 		}
-		$currency = strtolower( get_option( 'wpzf_payment_currency', 'usd' ) );
-		$fee      = $this->calculate_application_fee( $amount );
+		$currency     = strtolower( get_option( 'wpzf_payment_currency', 'usd' ) );
+		$payment_type = get_post_meta( $form_id, '_wpzf_stripe_payment_type', true ) ?: 'one-time';
 
 		try {
-			$this->init_stripe(); // uses the connected account's access token
+			$this->init_stripe();
 
-			$params = array(
-				'amount'               => $amount,
-				'currency'             => $currency,
-				'automatic_payment_methods' => array( 'enabled' => true ),
-				'metadata'             => array(
-					'wpzf_form_id' => $form_id,
-				),
-			);
-
-			$account_id = get_option( 'wpzf_stripe_account_id', '' );
-			if ( ! empty( $account_id ) && $fee > 0 ) {
-				$params['application_fee_amount'] = $fee;
-				$params['on_behalf_of']            = $account_id;
-				$params['transfer_data']           = array( 'destination' => $account_id );
-			} elseif ( ! empty( $account_id ) ) {
-				$params['on_behalf_of']  = $account_id;
-				$params['transfer_data'] = array( 'destination' => $account_id );
+			if ( 'recurring' === $payment_type ) {
+				return $this->create_subscription_intent( $request, $form_post, $amount, $currency );
 			}
 
-			$intent = \Stripe\PaymentIntent::create( $params );
+			$intent_params = array(
+				'amount'                    => $amount,
+				'currency'                  => $currency,
+				'automatic_payment_methods' => array( 'enabled' => true ),
+				'description'               => get_post_meta( $form_id, '_wpzf_stripe_payment_description', true ) ?: '',
+				'metadata'                  => array( 'wpzf_form_id' => $form_id ),
+			);
+
+			$fee = $this->calculate_application_fee( $amount );
+			if ( $fee > 0 ) {
+				$intent_params['application_fee_amount'] = $fee;
+			}
+
+			$intent = \Stripe\PaymentIntent::create( $intent_params );
+
+			$this->create_payment_post(
+				$form_id,
+				$intent->id,
+				$amount,
+				$currency,
+				sanitize_email( $request->get_param( 'customer_email' ) ?: '' )
+			);
 
 			return new WP_REST_Response(
 				array(
@@ -296,6 +333,155 @@ class WPZOOM_Forms_Stripe {
 		} catch ( \Stripe\Exception\ApiErrorException $e ) {
 			return new WP_Error( 'stripe_api_error', $e->getMessage(), array( 'status' => 400 ) );
 		}
+	}
+
+	/**
+	 * Creates a Stripe Subscription for recurring payments.
+	 * Returns the first invoice's PaymentIntent client_secret so the frontend
+	 * can confirm the card with the same stripe.confirmCardPayment() call.
+	 *
+	 * @param WP_REST_Request $request
+	 * @param WP_Post         $form_post
+	 * @param int             $amount    Amount in cents (used as the price).
+	 * @param string          $currency  ISO currency code.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	private function create_subscription_intent( WP_REST_Request $request, WP_Post $form_post, $amount, $currency ) {
+		$form_id     = $form_post->ID;
+		$period      = get_post_meta( $form_id, '_wpzf_stripe_recurring_period', true ) ?: 'month';
+		$description = get_post_meta( $form_id, '_wpzf_stripe_payment_description',      true ) ?: '';
+
+		// Read customer details from submitted POST data if available (not yet submitted,
+		// so we use placeholder values; the webhook will receive the real data later).
+		$customer_email_field = get_post_meta( $form_id, '_wpzf_stripe_customer_email', true );
+		$customer_name_field  = get_post_meta( $form_id, '_wpzf_stripe_customer_name',  true );
+		$customer_email       = sanitize_email( $request->get_param( 'customer_email' ) ?: '' );
+		$customer_name        = sanitize_text_field( $request->get_param( 'customer_name' ) ?: '' );
+
+		// Create or retrieve Stripe Customer.
+		$customer_args = array( 'metadata' => array( 'wpzf_form_id' => $form_id ) );
+		if ( $customer_email ) {
+			$customer_args['email'] = $customer_email;
+		}
+		if ( $customer_name ) {
+			$customer_args['name'] = $customer_name;
+		}
+		$customer = \Stripe\Customer::create( $customer_args );
+
+		// Create an inline Price so no pre-existing Product is required.
+		$price = \Stripe\Price::create( array(
+			'unit_amount'  => $amount,
+			'currency'     => $currency,
+			'recurring'    => array( 'interval' => $period ),
+			'product_data' => array(
+				'name' => $description ?: get_the_title( $form_id ),
+			),
+		) );
+
+		// Create the Subscription with payment_behavior=default_incomplete.
+		// Stripe API >= 2025-03-31.basil removed the `payment_intent` field
+		// from the Invoice object. Use `confirmation_secret` instead to obtain
+		// the client_secret needed by the Payment Element on the frontend.
+		$sub_params = array(
+			'customer'         => $customer->id,
+			'items'            => array( array( 'price' => $price->id ) ),
+			'payment_behavior' => 'default_incomplete',
+			'payment_settings' => array( 'save_default_payment_method' => 'on_subscription' ),
+			'expand'           => array(
+				'latest_invoice.confirmation_secret',
+				'latest_invoice.payments',
+			),
+			'metadata'         => array( 'wpzf_form_id' => $form_id ),
+		);
+
+		$fee_percent = defined( 'WPZOOM_FORMS_PRO' ) ? 0 : ( self::FEE_RATE * 100 );
+		if ( $fee_percent > 0 ) {
+			$sub_params['application_fee_percent'] = $fee_percent;
+		}
+
+		$subscription = \Stripe\Subscription::create( $sub_params );
+
+		$latest_invoice = $subscription->latest_invoice;
+		$client_secret  = null;
+		$intent_id      = null;
+
+		if ( is_object( $latest_invoice ) && isset( $latest_invoice->confirmation_secret ) ) {
+			$client_secret = $latest_invoice->confirmation_secret->client_secret ?? null;
+		}
+
+		// Fallback: retrieve the invoice directly and expand confirmation_secret.
+		if ( ! $client_secret ) {
+			$inv_id = is_object( $latest_invoice ) ? $latest_invoice->id : $latest_invoice;
+			if ( $inv_id ) {
+				$invoice       = \Stripe\Invoice::retrieve( array( 'id' => $inv_id, 'expand' => array( 'confirmation_secret', 'payments' ) ) );
+				$client_secret = $invoice->confirmation_secret->client_secret ?? null;
+				$latest_invoice = $invoice;
+			}
+		}
+
+		// Extract the PaymentIntent ID from the invoice's payments array.
+		if ( is_object( $latest_invoice ) && isset( $latest_invoice->payments->data ) ) {
+			foreach ( $latest_invoice->payments->data as $inv_payment ) {
+				$pi = $inv_payment->payment->payment_intent ?? null;
+				if ( $pi ) {
+					$intent_id = is_object( $pi ) ? $pi->id : $pi;
+					break;
+				}
+			}
+		}
+
+		// Regex fallback: client_secret format is pi_xxx_secret_yyy.
+		if ( ! $intent_id && $client_secret && preg_match( '/^(pi_[^_]+)_secret_/', $client_secret, $m ) ) {
+			$intent_id = $m[1];
+		}
+
+		if ( $client_secret ) {
+			$this->create_payment_post(
+				$form_id,
+				$intent_id ?: $subscription->id,
+				$amount,
+				$currency,
+				$customer_email
+			);
+
+			return new WP_REST_Response(
+				array(
+					'client_secret'     => $client_secret,
+					'payment_intent_id' => $intent_id,
+					'subscription_id'   => $subscription->id,
+				),
+				200
+			);
+		}
+
+		// Stripe returns a pending_setup_intent when the first period is free (trial).
+		$pending_si = $subscription->pending_setup_intent ?? null;
+		if ( ! empty( $pending_si ) ) {
+			$si = is_string( $pending_si ) ? \Stripe\SetupIntent::retrieve( $pending_si ) : $pending_si;
+
+			$this->create_payment_post(
+				$form_id,
+				$subscription->id,
+				$amount,
+				$currency,
+				$customer_email
+			);
+
+			return new WP_REST_Response(
+				array(
+					'client_secret'   => $si->client_secret,
+					'subscription_id' => $subscription->id,
+					'setup_intent'    => true,
+				),
+				200
+			);
+		}
+
+		return new WP_Error(
+			'stripe_no_intent',
+			__( 'Payment could not be initialised. Please try again or contact support.', 'wpzoom-forms' ),
+			array( 'status' => 400 )
+		);
 	}
 
 	// -------------------------------------------------------------------------
@@ -506,7 +692,13 @@ class WPZOOM_Forms_Stripe {
 				'_wpzf_txn_stripe_account_id' => sanitize_text_field( get_option( 'wpzf_stripe_account_id', '' ) ),
 				'_wpzf_txn_customer_email'    => sanitize_email( $customer_email ),
 			),
-		) );
+		), true );
+
+		if ( is_wp_error( $post_id ) ) {
+			error_log( '[WPZF Payments] Failed to create payment CPT: ' . $post_id->get_error_message() );
+		} else {
+			error_log( '[WPZF Payments] Created payment CPT #' . $post_id . ' for intent ' . $payment_intent_id );
+		}
 
 		return $post_id;
 	}
@@ -575,6 +767,7 @@ class WPZOOM_Forms_Stripe {
 	public function init_stripe() {
 		\Stripe\Stripe::setApiKey( $this->get_secret_key() );
 		\Stripe\Stripe::setAppInfo( 'WPZOOM Forms', WPZOOM_FORMS_VERSION, 'https://www.wpzoom.com/plugins/wpzoom-forms' );
+		\Stripe\Stripe::setApiVersion( '2026-02-25.clover' );
 	}
 
 	/**
@@ -640,6 +833,43 @@ class WPZOOM_Forms_Stripe {
 	// -------------------------------------------------------------------------
 	// Admin List Columns
 	// -------------------------------------------------------------------------
+
+	/**
+	 * Shows an admin notice on the Payments list when no webhook secret is set.
+	 */
+	public function maybe_show_webhook_notice() {
+		$screen = get_current_screen();
+		if ( ! $screen || 'edit-wpzf-payment' !== $screen->id ) {
+			return;
+		}
+
+		if ( ! $this->is_connected() ) {
+			return;
+		}
+
+		$live_secret = (string) get_option( 'wpzf_stripe_webhook_secret', '' );
+		$test_secret = (string) get_option( 'wpzf_stripe_test_webhook_secret', '' );
+
+		if ( $live_secret || $test_secret ) {
+			return;
+		}
+
+		$settings_url = $this->payments_settings_url();
+		printf(
+			'<div class="notice notice-warning"><p>%s</p></div>',
+			wp_kses(
+				sprintf(
+					/* translators: %s: URL to the Payments settings tab */
+					__( '<strong>Stripe webhooks are not configured.</strong> Payment statuses will remain "Pending" until you add your webhook secret in <a href="%s">Payments Settings</a>.', 'wpzoom-forms' ),
+					esc_url( $settings_url )
+				),
+				array(
+					'strong' => array(),
+					'a'      => array( 'href' => array() ),
+				)
+			)
+		);
+	}
 
 	/**
 	 * Defines columns for the wpzf-payment list table.

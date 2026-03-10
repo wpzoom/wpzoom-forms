@@ -117,63 +117,75 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
 /* global wpzfStripeData, Stripe */
 
 /**
- * WPZOOM Forms — Stripe Card Frontend Handler
+ * WPZOOM Forms — Stripe Payment Element Frontend Handler
  *
- * Initialises Stripe Elements for every form on the page that contains a
- * .wpzf-stripe-card-element container, intercepts the form submit to:
- *   1. Create a PaymentIntent via the WP REST API.
- *   2. Confirm the card payment client-side with Stripe.
- *   3. Populate hidden inputs and re-submit the form to admin-post.php.
+ * Uses the modern Payment Element (not the legacy Card Element) with the
+ * deferred-intent pattern so the PaymentIntent is only created on submit
+ * (keeping dynamic amounts correct without needing to update the intent on
+ * every quantity change).
+ *
+ * Flow:
+ *   1. On DOMContentLoaded, mount the Payment Element using stripe.elements()
+ *      in "deferred" mode: pass mode/amount/currency instead of a clientSecret.
+ *   2. When quantity inputs change, call elements.update({ amount }) to keep
+ *      the Payment Element's displayed total in sync.
+ *   3. On form submit:
+ *        a. Validate the Payment Element (elements.submit()).
+ *        b. POST to /wp-json/wpzoom-forms/v1/stripe/create-intent to create
+ *           the PaymentIntent / Subscription on the server.
+ *        c. Call stripe.confirmPayment() with the returned clientSecret and
+ *           redirect: 'if_required' so card payments complete without a redirect.
+ *        d. Populate hidden inputs and re-submit the native form.
  */
 (function () {
   'use strict';
 
-  // --- DEBUG ---
-  console.log('[wpzf-stripe] view.js loaded');
-  console.log('[wpzf-stripe] wpzfStripeData:', typeof wpzfStripeData !== 'undefined' ? wpzfStripeData : 'UNDEFINED — script not localized or not enqueued via the correct handle');
-  console.log('[wpzf-stripe] Stripe global:', typeof Stripe !== 'undefined' ? 'present' : 'UNDEFINED — stripe-js CDN not loaded');
-  console.log('[wpzf-stripe] .wpzf-stripe-card-wrapper elements on page:', document.querySelectorAll('.wpzf-stripe-card-wrapper').length);
-  // --- END DEBUG ---
-
   if (typeof wpzfStripeData === 'undefined' || typeof Stripe === 'undefined') {
-    console.warn('[wpzf-stripe] Early exit — missing wpzfStripeData or Stripe. Card will NOT mount.');
     return;
   }
   var stripe = Stripe(wpzfStripeData.publishableKey);
+  var periodLabels = {
+    day: '/ day',
+    week: '/ week',
+    month: '/ month',
+    year: '/ year'
+  };
 
   /**
    * Calculates the order total by reading all .wpzf-payment-item elements
-   * inside the given form, multiplying price × quantity.
+   * inside the given form, multiplying price x quantity.
    *
-   * @param {HTMLElement} form The form element.
-   * @returns {number} Total in cents.
+   * @param {HTMLElement} form
+   * @returns {number} Total in cents (integer >= 0).
    */
   function calculateTotal(form) {
     var total = 0;
-    var items = form.querySelectorAll('.wpzf-payment-item');
-    items.forEach(function (item) {
+    form.querySelectorAll('.wpzf-payment-item').forEach(function (item) {
       var price = parseFloat(item.dataset.price) || 0;
       var qtyInput = item.querySelector('.wpzf-payment-item-qty, input[name$="_qty"]');
       var qty = qtyInput ? parseInt(qtyInput.value, 10) || 1 : 1;
       total += price * qty;
     });
-
-    // Return cents (integer).
     return Math.round(total * 100);
   }
 
   /**
-   * Updates the .wpzf-payment-total display and hidden input in the form.
+   * Updates the .wpzf-payment-total display and its hidden input.
    *
-   * @param {HTMLElement} form     The form element.
-   * @param {number}      totalCents Total in cents.
+   * @param {HTMLElement} form
+   * @param {number}      totalCents
    */
   function updateTotalDisplay(form, totalCents) {
     var amountEl = form.querySelector('.wpzf-payment-total-amount');
     var hiddenEl = form.querySelector('input[name="wpzf_payment_total"]');
     var dollars = (totalCents / 100).toFixed(2);
     if (amountEl) {
-      amountEl.textContent = '$' + dollars;
+      var display = '$' + dollars;
+      if (wpzfStripeData.paymentType === 'recurring') {
+        var period = wpzfStripeData.recurringPeriod || 'month';
+        display += ' ' + (periodLabels[period] || '/ ' + period);
+      }
+      amountEl.textContent = display;
     }
     if (hiddenEl) {
       hiddenEl.value = String(totalCents);
@@ -181,12 +193,12 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
   }
 
   /**
-   * Shows an error message in the card errors container.
+   * Shows an error in the #wpzf-card-errors container.
    *
-   * @param {HTMLElement} form    The form element.
-   * @param {string}      message Error text.
+   * @param {HTMLElement} form
+   * @param {string}      message
    */
-  function showCardError(form, message) {
+  function showError(form, message) {
     var errorEl = form.querySelector('#wpzf-card-errors');
     if (errorEl) {
       errorEl.textContent = message;
@@ -197,87 +209,98 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
   }
 
   /**
-   * Initialises Stripe Elements for a single form.
+   * Initialises the Payment Element for a single form.
    *
-   * @param {HTMLElement} form The form element.
+   * @param {HTMLElement} form
    */
   function initFormPayment(form) {
-    var _arguments = arguments;
-    var cardContainer = form.querySelector('#wpzf-card-element');
-    if (!cardContainer) {
+    var paymentContainer = form.querySelector('#wpzf-payment-element');
+    if (!paymentContainer) {
       return;
     }
-    var formId = form.querySelector('input[name="form_id"]');
-    if (!formId) {
+    var formIdInput = form.querySelector('input[name="form_id"]');
+    if (!formIdInput) {
       return;
     }
-    var elements = stripe.elements();
-    var cardElement = elements.create('card', {
-      style: {
-        base: {
-          fontSize: '16px',
-          color: '#424770',
-          '::placeholder': {
-            color: '#aab7c4'
-          }
-        },
-        invalid: {
-          color: '#cf222e'
-        }
+    var currency = (wpzfStripeData.currency || 'usd').toLowerCase();
+    var paymentType = wpzfStripeData.paymentType || 'one-time';
+    var mode = paymentType === 'recurring' ? 'subscription' : 'payment';
+    var totalCents = calculateTotal(form);
+
+    // Deferred-intent mode: mount the Payment Element without a clientSecret.
+    // The intent is created on submit so the amount can be dynamic.
+    var elements = stripe.elements({
+      mode: mode,
+      amount: totalCents,
+      currency: currency,
+      appearance: {
+        theme: 'stripe'
       }
     });
-    cardElement.mount(cardContainer);
+    var paymentElement = elements.create('payment');
+    paymentElement.mount(paymentContainer);
 
-    // Live validation feedback.
-    cardElement.on('change', function (event) {
-      if (event.error) {
-        showCardError(form, event.error.message);
-      } else {
-        showCardError(form, '');
-      }
-    });
-
-    // Update totals whenever quantities change.
+    // Keep the element's amount in sync when quantities change.
     form.addEventListener('change', function (e) {
       if (e.target.classList.contains('wpzf-payment-item-qty')) {
-        var total = calculateTotal(form);
-        updateTotalDisplay(form, total);
+        totalCents = calculateTotal(form);
+        updateTotalDisplay(form, totalCents);
+        elements.update({
+          amount: totalCents
+        });
       }
     });
 
-    // Set initial total.
-    updateTotalDisplay(form, calculateTotal(form));
+    // Set initial display.
+    updateTotalDisplay(form, totalCents);
 
     // Intercept form submission.
-    form.addEventListener('submit', /*#__PURE__*/function () {
+    var _handleSubmit = /*#__PURE__*/function () {
       var _ref = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_0__["default"])(/*#__PURE__*/_regenerator().m(function _callee(e) {
-        var submitBtn, totalCents, payload, intentResponse, intentData, client_secret, payment_intent_id, _yield$stripe$confirm, confirmError, intentInput, _t;
+        var submitBtn, _yield$elements$submi, submitError, emailField, nameField, payload, intentResponse, intentData, client_secret, payment_intent_id, confirmFn, _yield$confirmFn, confirmError, intentInput, _t;
         return _regenerator().w(function (_context) {
           while (1) switch (_context.p = _context.n) {
             case 0:
               e.preventDefault();
               submitBtn = form.querySelector('[type="submit"]');
-              if (submitBtn) {
-                submitBtn.disabled = true;
-              }
+              if (submitBtn) submitBtn.disabled = true;
               totalCents = calculateTotal(form);
               updateTotalDisplay(form, totalCents);
+              elements.update({
+                amount: totalCents
+              });
               if (!(totalCents < 50)) {
                 _context.n = 1;
                 break;
               }
-              showCardError(form, 'Order total must be at least $0.50.');
+              showError(form, 'Order total must be at least $0.50.');
               if (submitBtn) submitBtn.disabled = false;
               return _context.a(2);
             case 1:
-              _context.p = 1;
-              // 1. Create a PaymentIntent on the server.
+              _context.n = 2;
+              return elements.submit();
+            case 2:
+              _yield$elements$submi = _context.v;
+              submitError = _yield$elements$submi.error;
+              if (!submitError) {
+                _context.n = 3;
+                break;
+              }
+              showError(form, submitError.message);
+              if (submitBtn) submitBtn.disabled = false;
+              return _context.a(2);
+            case 3:
+              _context.p = 3;
+              // Step 2 — create the PaymentIntent / Subscription on the server.
+              emailField = form.querySelector('input[type="email"]');
+              nameField = form.querySelector('.wpzoom-forms_text-name-field input');
               payload = {
                 amount: totalCents,
-                form_id: parseInt(formId.value, 10)
+                form_id: parseInt(formIdInput.value, 10),
+                customer_email: emailField ? emailField.value : '',
+                customer_name: nameField ? nameField.value : ''
               };
-              console.log('[wpzf-stripe] Sending to create-intent:', payload);
-              _context.n = 2;
+              _context.n = 4;
               return fetch(wpzfStripeData.createIntentUrl, {
                 method: 'POST',
                 credentials: 'same-origin',
@@ -286,64 +309,76 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
                 },
                 body: JSON.stringify(payload)
               });
-            case 2:
-              intentResponse = _context.v;
-              _context.n = 3;
-              return intentResponse.json();
-            case 3:
-              intentData = _context.v;
-              console.log('[wpzf-stripe] create-intent response status:', intentResponse.status, intentData);
-              if (!(!intentResponse.ok || intentData.code)) {
-                _context.n = 4;
-                break;
-              }
-              showCardError(form, intentData.message || 'Payment setup failed. Please try again.');
-              if (submitBtn) submitBtn.disabled = false;
-              return _context.a(2);
             case 4:
-              client_secret = intentData.client_secret, payment_intent_id = intentData.payment_intent_id; // 2. Confirm the card payment client-side.
+              intentResponse = _context.v;
               _context.n = 5;
-              return stripe.confirmCardPayment(client_secret, {
-                payment_method: {
-                  card: cardElement
-                }
-              });
+              return intentResponse.json();
             case 5:
-              _yield$stripe$confirm = _context.v;
-              confirmError = _yield$stripe$confirm.error;
-              if (!confirmError) {
+              intentData = _context.v;
+              if (!(!intentResponse.ok || intentData.code)) {
                 _context.n = 6;
                 break;
               }
-              showCardError(form, confirmError.message);
+              showError(form, intentData.message || 'Payment setup failed. Please try again.');
               if (submitBtn) submitBtn.disabled = false;
               return _context.a(2);
             case 6:
-              // 3. Populate hidden input and re-submit the form.
+              client_secret = intentData.client_secret, payment_intent_id = intentData.payment_intent_id;
+              if (client_secret) {
+                _context.n = 7;
+                break;
+              }
+              showError(form, 'Payment setup failed: no client secret returned.');
+              if (submitBtn) submitBtn.disabled = false;
+              return _context.a(2);
+            case 7:
+              // Step 3 — confirm the payment (or setup for free-trial subscriptions).
+              confirmFn = intentData.setup_intent ? stripe.confirmSetup.bind(stripe) : stripe.confirmPayment.bind(stripe);
+              _context.n = 8;
+              return confirmFn({
+                elements: elements,
+                clientSecret: client_secret,
+                confirmParams: {
+                  return_url: window.location.href
+                },
+                redirect: 'if_required'
+              });
+            case 8:
+              _yield$confirmFn = _context.v;
+              confirmError = _yield$confirmFn.error;
+              if (!confirmError) {
+                _context.n = 9;
+                break;
+              }
+              showError(form, confirmError.message);
+              if (submitBtn) submitBtn.disabled = false;
+              return _context.a(2);
+            case 9:
+              // Step 4 — payment confirmed: write the intent / subscription ID then re-submit.
               intentInput = form.querySelector('input[name="wpzf_payment_intent_id"]');
               if (intentInput) {
-                intentInput.value = payment_intent_id;
+                intentInput.value = payment_intent_id || intentData.subscription_id || '';
               }
-
-              // Re-submit without triggering our listener again.
-              form.removeEventListener('submit', _arguments.callee);
+              form.removeEventListener('submit', _handleSubmit);
               form.submit();
-              _context.n = 8;
+              _context.n = 11;
               break;
-            case 7:
-              _context.p = 7;
+            case 10:
+              _context.p = 10;
               _t = _context.v;
-              showCardError(form, 'An unexpected error occurred. Please try again.');
+              console.error('[wpzf-stripe] Unexpected error:', _t);
+              showError(form, 'An unexpected error occurred. Please try again.');
               if (submitBtn) submitBtn.disabled = false;
-            case 8:
+            case 11:
               return _context.a(2);
           }
-        }, _callee, null, [[1, 7]]);
+        }, _callee, null, [[3, 10]]);
       }));
-      return function (_x) {
+      return function handleSubmit(_x) {
         return _ref.apply(this, arguments);
       };
-    }());
+    }();
+    form.addEventListener('submit', _handleSubmit);
   }
 
   // Initialise on DOM ready.

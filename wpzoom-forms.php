@@ -374,7 +374,30 @@ class WPZOOM_Forms {
 				)
 			);
 
-			add_shortcode( 'wpzf_form', array( $this, 'shortcode_output' ) );
+			// Payment settings meta — readable/writable by the block editor via REST.
+		foreach ( array(
+			array( '_wpzf_stripe_payment_enabled',          'boolean', false,     'rest_sanitize_boolean' ),
+			array( '_wpzf_stripe_payment_type',             'string',  'one-time', null ),
+			array( '_wpzf_stripe_payment_description',      'string',  '',         null ),
+			array( '_wpzf_stripe_customer_email',   'string',  '',         null ),
+			array( '_wpzf_stripe_customer_name',    'string',  '',         null ),
+			array( '_wpzf_stripe_recurring_period', 'string',  'month',  null ),
+		) as [ $key, $type, $default, $sanitize ] ) {
+			$args = array(
+				'object_subtype' => 'wpzf-form',
+				'show_in_rest'   => true,
+				'single'         => true,
+				'type'           => $type,
+				'default'        => $default,
+				'auth_callback'  => function() { return current_user_can( 'edit_posts' ); },
+			);
+			if ( $sanitize ) {
+				$args['sanitize_callback'] = $sanitize;
+			}
+			register_meta( 'post', $key, $args );
+		}
+
+		add_shortcode( 'wpzf_form', array( $this, 'shortcode_output' ) );
 
 			//$form_pto           = get_post_type_object( 'wpzf-form' );
 			//$form_pto->template = array( array( 'wpzoom-forms/form' ) );
@@ -1042,8 +1065,24 @@ class WPZOOM_Forms {
 		}
 
 		if ( self::has_block( 'wpzoom-forms/stripe-card' ) ) {
-			$stripe = new WPZOOM_Forms_Stripe();
+			$stripe = WPZOOM_Forms_Stripe::instance();
 			if ( $stripe->is_connected() ) {
+				// Resolve the form ID to read payment meta.
+				global $post;
+				$form_id      = 0;
+				$payment_type = 'one-time';
+				if ( $post ) {
+					preg_match( '/<!--\s+wp:wpzoom-forms\/form-block\s+(\{.*?\})\s+\/-->/', $post->post_content, $m );
+					if ( ! empty( $m[1] ) ) {
+						$atts    = json_decode( $m[1], true );
+						$form_id = isset( $atts['formId'] ) ? (int) $atts['formId'] : 0;
+					}
+					if ( $form_id ) {
+						$payment_type     = get_post_meta( $form_id, '_wpzf_stripe_payment_type',     true ) ?: 'one-time';
+						$recurring_period = get_post_meta( $form_id, '_wpzf_stripe_recurring_period', true ) ?: 'month';
+					}
+				}
+
 				wp_enqueue_script( 'stripe-js' );
 				wp_enqueue_script( 'wpzoom-forms-js-frontend-stripe-card' );
 				wp_localize_script(
@@ -1052,6 +1091,9 @@ class WPZOOM_Forms {
 					array(
 						'publishableKey'  => $stripe->get_publishable_key(),
 						'createIntentUrl' => rest_url( 'wpzoom-forms/v1/stripe/create-intent' ),
+						'paymentType'     => $payment_type,
+						'recurringPeriod' => $recurring_period ?? 'month',
+						'currency'        => strtolower( get_option( 'wpzf_payment_currency', 'usd' ) ),
 					)
 				);
 			}
@@ -3107,31 +3149,11 @@ class WPZOOM_Forms {
 						) );
 
 						$success = false !== $content && 0 < $submission_post_id;
-
-						// Create a payment record if this form has payment blocks.
-						if ( $success && $this->form_has_payment_blocks( $blocks ) ) {
-							$payment_intent_id = isset( $_POST['wpzf_payment_intent_id'] )
-								? sanitize_text_field( wp_unslash( $_POST['wpzf_payment_intent_id'] ) )
-								: '';
-							$payment_total = isset( $_POST['wpzf_payment_total'] )
-								? absint( $_POST['wpzf_payment_total'] )
-								: 0;
-							$payment_currency = strtolower( get_option( 'wpzf_payment_currency', 'usd' ) );
-							$payment_email = isset( $details['from'] ) ? sanitize_email( $details['from'] ) : '';
-
-							if ( ! empty( $payment_intent_id ) && $payment_total > 0 ) {
-								$stripe = new WPZOOM_Forms_Stripe();
-								$stripe->create_payment_post(
-									$form_id,
-									$payment_intent_id,
-									$payment_total,
-									$payment_currency,
-									$payment_email
-								);
-							}
-						}
 					}
 				}
+
+				// Create a payment record for any form method when payment blocks exist.
+				$this->maybe_create_payment_record( $form_id, $blocks, $input_blocks );
 			}
 		}
 
@@ -3141,6 +3163,69 @@ class WPZOOM_Forms {
 		);
 
 		exit;
+	}
+
+	/**
+	 * Creates a wpzf-payment record when the submitted form contains payment
+	 * blocks. Called after the form is processed regardless of the form method
+	 * (email, db, or combined) so that payments are always tracked.
+	 *
+	 * @param int   $form_id      The form post ID.
+	 * @param array $blocks       Parsed blocks from the form content.
+	 * @param array $input_blocks Map of block IDs to names.
+	 */
+	private function maybe_create_payment_record( $form_id, $blocks, $input_blocks ) {
+		if ( ! $this->form_has_payment_blocks( $blocks ) ) {
+			return;
+		}
+
+		$payment_intent_id = isset( $_POST['wpzf_payment_intent_id'] )
+			? sanitize_text_field( wp_unslash( $_POST['wpzf_payment_intent_id'] ) )
+			: '';
+		$payment_total = isset( $_POST['wpzf_payment_total'] )
+			? absint( $_POST['wpzf_payment_total'] )
+			: 0;
+
+		if ( empty( $payment_intent_id ) || $payment_total <= 0 ) {
+			return;
+		}
+
+		// Skip if the REST endpoint already created a record for this intent.
+		$existing = get_posts( array(
+			'post_type'      => 'wpzf-payment',
+			'post_status'    => 'publish',
+			'posts_per_page' => 1,
+			'meta_query'     => array(
+				array(
+					'key'   => '_wpzf_txn_payment_intent_id',
+					'value' => $payment_intent_id,
+				),
+			),
+			'fields'         => 'ids',
+		) );
+		if ( ! empty( $existing ) ) {
+			return;
+		}
+
+		$payment_currency = strtolower( get_option( 'wpzf_payment_currency', 'usd' ) );
+
+		$payment_email = '';
+		foreach ( $input_blocks as $id => $name ) {
+			$key = 'wpzf_' . $id;
+			if ( isset( $_POST[ $key ] ) && is_email( $_POST[ $key ] ) ) {
+				$payment_email = sanitize_email( $_POST[ $key ] );
+				break;
+			}
+		}
+
+		$stripe = WPZOOM_Forms_Stripe::instance();
+		$stripe->create_payment_post(
+			$form_id,
+			$payment_intent_id,
+			$payment_total,
+			$payment_currency,
+			$payment_email
+		);
 	}
 
 	/**
@@ -3301,7 +3386,7 @@ if( ! function_exists ( 'wpzoom_forms_load_files' ) ) {
 		require_once 'classes/class-wpzoom-forms-stripe.php';
 		require_once 'classes/class-wpzoom-forms-stripe-settings.php';
 
-		new WPZOOM_Forms_Stripe();
+		WPZOOM_Forms_Stripe::instance();
 		new WPZOOM_Forms_Stripe_Settings();
 
 	}

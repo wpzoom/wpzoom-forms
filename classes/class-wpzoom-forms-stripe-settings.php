@@ -76,8 +76,16 @@ class WPZOOM_Forms_Stripe_Settings {
 		);
 
 		// Webhook fields are only relevant once a Stripe account is connected.
-		$stripe = new WPZOOM_Forms_Stripe();
+		$stripe = WPZOOM_Forms_Stripe::instance();
 		if ( $stripe->is_connected() ) {
+			add_settings_field(
+				'wpzf_stripe_webhook_endpoint',
+				esc_html__( 'Webhook Endpoint URL', 'wpzoom-forms' ),
+				array( $this, 'field_webhook_endpoint_cb' ),
+				self::OPTION_GROUP,
+				'wpzoom_section_payments'
+			);
+
 			add_settings_field(
 				'wpzf_stripe_test_webhook_secret',
 				esc_html__( 'Test Webhook Secret', 'wpzoom-forms' ),
@@ -107,8 +115,9 @@ class WPZOOM_Forms_Stripe_Settings {
 			array( 'id' => 'wpzf_payment_currency' ),
 		);
 
-		$stripe = new WPZOOM_Forms_Stripe();
+		$stripe = WPZOOM_Forms_Stripe::instance();
 		if ( $stripe->is_connected() ) {
+			$fields[] = array( 'id' => 'wpzf_stripe_webhook_endpoint' );
 			$fields[] = array( 'id' => 'wpzf_stripe_test_webhook_secret' );
 			$fields[] = array( 'id' => 'wpzf_stripe_webhook_secret' );
 		}
@@ -184,7 +193,7 @@ class WPZOOM_Forms_Stripe_Settings {
 	 * (connected).
 	 */
 	public function section_payments_cb() {
-		$stripe = new WPZOOM_Forms_Stripe();
+		$stripe = WPZOOM_Forms_Stripe::instance();
 
 		?>
 		<p style="margin-top:16px;padding:10px 14px;background:#fff8e1;border-left:4px solid #f0b429;border-radius:0 4px 4px 0;font-size:13px;">
@@ -206,7 +215,7 @@ class WPZOOM_Forms_Stripe_Settings {
 			<tbody>
 				<tr>
 					<th scope="row">
-						<p><?php esc_html_e( 'Status', 'wpzoom-forms' ); ?></p>
+						<p><?php esc_html_e( 'Stripe', 'wpzoom-forms' ); ?></p>
 					</th>
 					<td>
 						<?php
@@ -523,6 +532,37 @@ class WPZOOM_Forms_Stripe_Settings {
 	}
 
 	/**
+	 * Renders the Webhook Endpoint URL field (read-only, with copy button).
+	 */
+	public function field_webhook_endpoint_cb() {
+		$endpoint_url = rest_url( 'wpzoom-forms/v1/stripe/webhook' );
+		?>
+		<div style="display:inline-flex;align-items:center;gap:0;">
+			<input
+				type="text"
+				value="<?php echo esc_url( $endpoint_url ); ?>"
+				class="regular-text"
+				readonly
+				style="border-top-right-radius:0;border-bottom-right-radius:0;background:#f0f0f1;color:#50575e;"
+				onfocus="this.select();"
+			/>
+			<button
+				type="button"
+				class="button wpzf-copy-endpoint"
+				data-clipboard-text="<?php echo esc_url( $endpoint_url ); ?>"
+				style="border-top-left-radius:0;border-bottom-left-radius:0;margin-left:-1px;height:30px;display:inline-flex;align-items:center;gap:4px;"
+				title="<?php esc_attr_e( 'Copy to clipboard', 'wpzoom-forms' ); ?>"
+			>
+				<span class="dashicons dashicons-clipboard" style="font-size:16px;width:16px;height:16px;line-height:16px;"></span>
+				<span class="wpzf-copy-label"><?php esc_html_e( 'Copy', 'wpzoom-forms' ); ?></span>
+			</button>
+		</div>
+		<p class="description"><?php esc_html_e( 'Use this URL when creating a webhook in your Stripe Dashboard.', 'wpzoom-forms' ); ?></p>
+		<?php $this->render_copy_script(); ?>
+		<?php
+	}
+
+	/**
 	 * Renders the Test Webhook Secret field.
 	 */
 	public function field_test_webhook_secret_cb() {
@@ -530,10 +570,9 @@ class WPZOOM_Forms_Stripe_Settings {
 			'wpzf_stripe_test_webhook_secret',
 			'password',
 			sprintf(
-				/* translators: 1: Stripe test webhooks URL 2: webhook endpoint URL */
-				__( 'Signing secret from your <a href="%1$s" target="_blank">Stripe Test Dashboard → Webhooks</a>. Endpoint URL: <code>%2$s</code>', 'wpzoom-forms' ),
-				'https://dashboard.stripe.com/test/webhooks',
-				esc_url( rest_url( 'wpzoom-forms/v1/stripe/webhook' ) )
+				/* translators: %s: Stripe test webhooks URL */
+				__( 'Signing secret from your <a href="%s" target="_blank">Stripe Test Dashboard → Webhooks</a>.', 'wpzoom-forms' ),
+				'https://dashboard.stripe.com/test/webhooks'
 			)
 		);
 	}
@@ -546,10 +585,9 @@ class WPZOOM_Forms_Stripe_Settings {
 			'wpzf_stripe_webhook_secret',
 			'password',
 			sprintf(
-				/* translators: 1: Stripe live webhooks URL 2: webhook endpoint URL */
-				__( 'Signing secret from your <a href="%1$s" target="_blank">Stripe Live Dashboard → Webhooks</a>. Endpoint URL: <code>%2$s</code>', 'wpzoom-forms' ),
-				'https://dashboard.stripe.com/webhooks',
-				esc_url( rest_url( 'wpzoom-forms/v1/stripe/webhook' ) )
+				/* translators: %s: Stripe live webhooks URL */
+				__( 'Signing secret from your <a href="%s" target="_blank">Stripe Live Dashboard → Webhooks</a>.', 'wpzoom-forms' ),
+				'https://dashboard.stripe.com/webhooks'
 			)
 		);
 	}
@@ -583,6 +621,29 @@ class WPZOOM_Forms_Stripe_Settings {
 			);
 			?>
 		</p>
+		<?php
+	}
+
+	/**
+	 * Outputs the inline JS for the copy-to-clipboard buttons (once per page).
+	 */
+	private function render_copy_script() {
+		?>
+		<script>
+		document.addEventListener( 'click', function( e ) {
+			var btn = e.target.closest( '.wpzf-copy-endpoint' );
+			if ( ! btn ) return;
+
+			var text  = btn.getAttribute( 'data-clipboard-text' );
+			var label = btn.querySelector( '.wpzf-copy-label' );
+
+			navigator.clipboard.writeText( text ).then( function() {
+				var original = label.textContent;
+				label.textContent = <?php echo wp_json_encode( __( 'Copied!', 'wpzoom-forms' ) ); ?>;
+				setTimeout( function() { label.textContent = original; }, 2000 );
+			} );
+		} );
+		</script>
 		<?php
 	}
 }

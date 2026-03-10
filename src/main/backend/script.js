@@ -138,6 +138,47 @@ registerPlugin('wpzoom-forms-document-settings', {
 		const formCustomSuccessRedirectTimeoutMessageHideTime = meta['_form_custom_success_redirect_timeout_message_hide_time'] || 0;
 		const formCustomSuccessRedirectTimeoutMessageHideEffect = meta['_form_custom_success_redirect_timeout_message_hide_effect'] || 'fade';
 		const formCustomSuccessRedirectTimeoutMessageShowEffect = meta['_form_custom_success_redirect_timeout_message_show_effect'] || 'fade';
+
+		// Payment settings.
+		const paymentEnabled         = meta['_wpzf_stripe_payment_enabled']          || false;
+		const paymentType            = meta['_wpzf_stripe_payment_type']             || 'one-time';
+		const paymentDescription     = meta['_wpzf_stripe_payment_description']      || '';
+		const paymentCustomerEmail   = meta['_wpzf_stripe_customer_email']   || '';
+		const paymentCustomerName    = meta['_wpzf_stripe_customer_name']    || '';
+		const paymentRecurringPeriod = meta['_wpzf_stripe_recurring_period'] || 'month';
+
+		// Collect form field blocks for payment field dropdowns.
+		const formFieldBlocks = useSelect( select => {
+			const allBlocks = select( 'core/block-editor' ).getBlocks();
+			const fieldBlockTypes = [
+				'wpzoom-forms/text-plain-field',
+				'wpzoom-forms/text-name-field',
+				'wpzoom-forms/text-email-field',
+				'wpzoom-forms/text-website-field',
+				'wpzoom-forms/text-phone-field',
+				'wpzoom-forms/textarea-field',
+				'wpzoom-forms/select-field',
+				'wpzoom-forms/multi-checkbox-field',
+				'wpzoom-forms/checkbox-field',
+				'wpzoom-forms/radio-field',
+				'wpzoom-forms/datepicker-field',
+			];
+			const collectFields = ( blocks ) => {
+				let fields = [];
+				for ( const block of blocks ) {
+					if ( fieldBlockTypes.includes( block.name ) && block.attributes.name ) {
+						fields.push( { label: block.attributes.label || block.attributes.name, value: block.attributes.name } );
+					}
+					if ( block.innerBlocks && block.innerBlocks.length ) {
+						fields = fields.concat( collectFields( block.innerBlocks ) );
+					}
+				}
+				return fields;
+			};
+			return collectFields( allBlocks );
+		}, [] );
+
+		const fieldOptions = [ { label: __( '— Select a field —', 'wpzoom-forms' ), value: '' }, ...formFieldBlocks ];
 		
 		// Use dispatch to open panels by default
 		const { toggleEditorPanelOpened } = useDispatch('core/edit-post');
@@ -559,6 +600,74 @@ registerPlugin('wpzoom-forms-document-settings', {
 					{__('Edit the template for emails sent to you when a new form entry is submitted.', 'wpzoom-forms')}
 				</p>
 
+			</PluginDocumentSettingPanel>
+
+			<PluginDocumentSettingPanel
+				name="payment-settings"
+				className="wpzoom-forms-payment-settings"
+				title={__('Payment Settings', 'wpzoom-forms')}
+			>
+				<ToggleControl
+					label={__('Enable Stripe Payments', 'wpzoom-forms')}
+					checked={!!paymentEnabled}
+					onChange={value => setMeta({ ...meta, '_wpzf_stripe_payment_enabled': !!value })}
+					help={__('Collect payments through Stripe when this form is submitted.', 'wpzoom-forms')}
+					__next40pxDefaultSize
+				/>
+
+				{paymentEnabled && <>
+					<SelectControl
+						label={__('Payment Type', 'wpzoom-forms')}
+						value={paymentType}
+						options={[
+							{ label: __('One-time Payment', 'wpzoom-forms'), value: 'one-time' },
+							{ label: __('Recurring Subscription', 'wpzoom-forms'), value: 'recurring' },
+						]}
+						onChange={value => setMeta({ ...meta, '_wpzf_stripe_payment_type': value })}
+						__next40pxDefaultSize
+					/>
+
+					{paymentType === 'recurring' && <SelectControl
+						label={__('Billing Period', 'wpzoom-forms')}
+						value={paymentRecurringPeriod}
+						options={[
+							{ label: __('Daily', 'wpzoom-forms'),   value: 'day' },
+							{ label: __('Weekly', 'wpzoom-forms'),  value: 'week' },
+							{ label: __('Monthly', 'wpzoom-forms'), value: 'month' },
+							{ label: __('Yearly', 'wpzoom-forms'),  value: 'year' },
+						]}
+						onChange={value => setMeta({ ...meta, '_wpzf_stripe_recurring_period': value })}
+						__next40pxDefaultSize
+					/>}
+
+					<TextControl
+						type="text"
+						label={__('Payment Description', 'wpzoom-forms')}
+						value={paymentDescription}
+						placeholder={__('e.g. Conference Ticket', 'wpzoom-forms')}
+						onChange={value => setMeta({ ...meta, '_wpzf_stripe_payment_description': value })}
+						help={__('Shown on the Stripe receipt and in your dashboard.', 'wpzoom-forms')}
+						__next40pxDefaultSize
+					/>
+
+					<SelectControl
+						label={__('Customer Email Field', 'wpzoom-forms')}
+						value={paymentCustomerEmail}
+						options={fieldOptions}
+						onChange={value => setMeta({ ...meta, '_wpzf_stripe_customer_email': value })}
+						help={__('The email field used for the Stripe customer.', 'wpzoom-forms')}
+						__next40pxDefaultSize
+					/>
+
+					<SelectControl
+						label={__('Customer Name Field', 'wpzoom-forms')}
+						value={paymentCustomerName}
+						options={fieldOptions}
+						onChange={value => setMeta({ ...meta, '_wpzf_stripe_customer_name': value })}
+						help={__('The name field used for the Stripe customer.', 'wpzoom-forms')}
+						__next40pxDefaultSize
+					/>
+				</>}
 			</PluginDocumentSettingPanel>
 
 			<PluginDocumentSettingPanel

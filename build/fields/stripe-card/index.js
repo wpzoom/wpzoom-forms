@@ -37,7 +37,7 @@ var Edit = function Edit(props) {
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.Fragment, {
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InspectorControls, {
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__.PanelBody, {
-        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Card Field Options', 'wpzoom-forms'),
+        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Payment Field Options', 'wpzoom-forms'),
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__.ToggleControl, {
           label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Show Label', 'wpzoom-forms'),
           checked: !!showLabel,
@@ -65,7 +65,7 @@ var Edit = function Edit(props) {
         children: [showLabel && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.RichText, {
           tagName: "label",
           className: "wpzf-stripe-card-label",
-          placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Card Details', 'wpzoom-forms'),
+          placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Payment Details', 'wpzoom-forms'),
           value: label,
           onChange: function onChange(value) {
             return setAttributes({
@@ -105,7 +105,7 @@ var Edit = function Edit(props) {
               strokeWidth: "2"
             })]
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("span", {
-            children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Card number', 'wpzoom-forms')
+            children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Payment details', 'wpzoom-forms')
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("span", {
             style: {
               marginLeft: 'auto',
@@ -162,7 +162,7 @@ var Save = function Save(_ref) {
         value: label
       })
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-      id: "wpzf-card-element",
+      id: "wpzf-payment-element",
       className: "wpzf-stripe-card-element"
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
       id: "wpzf-card-errors",
@@ -340,7 +340,7 @@ function _typeof(o) {
   \*******************************************/
 /***/ (function(module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"wpzoom-forms/stripe-card","title":"Stripe Card","category":"wpzoom-forms","ancestor":["wpzoom-forms/form"],"description":"A secure credit/debit card input powered by Stripe Elements.","keywords":["wpzoom","form","stripe","card","payment","credit"],"version":"1.0.0","textdomain":"wpzoom-forms","attributes":{"label":{"type":"string","default":"Card Details"},"showLabel":{"type":"boolean","default":true}},"supports":{"html":false,"spacing":{"margin":true,"padding":true}},"editorScript":"file:./index.js","editorStyle":"wpzoom-forms-css-backend-main","style":"wpzoom-forms-css-frontend-formblock"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"wpzoom-forms/stripe-card","title":"Stripe Card","category":"wpzoom-forms","ancestor":["wpzoom-forms/form"],"description":"A secure credit/debit card input powered by Stripe Elements.","keywords":["wpzoom","form","stripe","card","payment","credit"],"version":"1.0.0","textdomain":"wpzoom-forms","attributes":{"label":{"type":"string","default":"Card Details"},"showLabel":{"type":"boolean","default":true}},"supports":{"align":true,"html":false,"shadow":true,"color":{"background":true,"gradients":true,"text":true},"typography":{"fontSize":true,"lineHeight":true,"__experimentalFontFamily":true,"__experimentalFontWeight":true,"__experimentalFontStyle":true,"__experimentalTextTransform":true,"__experimentalTextDecoration":true,"__experimentalLetterSpacing":true,"__experimentalDefaultControls":{"fontSize":true}},"dimensions":{"minHeight":true},"spacing":{"margin":true,"padding":true,"__experimentalDefaultControls":{"padding":true}},"__experimentalBorder":{"color":true,"radius":true,"style":true,"width":true}},"styles":[{"name":"modern","label":"Modern","isDefault":true},{"name":"classic","label":"Classic"}],"editorScript":"file:./index.js","editorStyle":"wpzoom-forms-css-backend-main","style":"wpzoom-forms-css-frontend-formblock"}');
 
 /***/ })
 

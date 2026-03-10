@@ -12,7 +12,7 @@ const Save = ( { attributes } ) => {
 				</label>
 			) }
 
-			<div id="wpzf-card-element" className="wpzf-stripe-card-element"></div>
+			<div id="wpzf-payment-element" className="wpzf-stripe-card-element"></div>
 			<div id="wpzf-card-errors" className="wpzf-stripe-card-errors" role="alert"></div>
 
 			<input type="hidden" name="wpzf_payment_intent_id" value="" />

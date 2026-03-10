@@ -10,19 +10,68 @@
 	"version":      "1.0.0",
 	"textdomain":   "wpzoom-forms",
 	"attributes":   {
-		"id":          { "type": "string",  "default": "" },
-		"itemName":    { "type": "string",  "default": "Item" },
-		"price":       { "type": "number",  "default": 0 },
-		"description": { "type": "string",  "default": "" }
-	},
-	"supports":     {
-		"html":    false,
-		"spacing": {
-			"margin":  true,
-			"padding": true
+		"id":            {
+			"type":      "string",
+			"default":   ""
+		},
+		"itemName":      {
+			"type":      "string",
+			"default":   "Item"
+		},
+		"price":         {
+			"type":      "number",
+			"default":   0
+		},
+		"description":   {
+			"type":      "string",
+			"default":   ""
 		}
 	},
+	"supports":     {
+		"align":         true,
+		"html":          false,
+		"shadow":        true,
+		"color":         {
+			"background": true,
+			"gradients":  true,
+			"text":       true
+		},
+		"typography":    {
+			"fontSize":   true,
+			"lineHeight": true,
+			"__experimentalFontFamily": true,
+			"__experimentalFontWeight": true,
+			"__experimentalFontStyle": true,
+			"__experimentalTextTransform": true,
+			"__experimentalTextDecoration": true,
+			"__experimentalLetterSpacing": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true
+			}
+		},
+		"dimensions":    {
+			"minHeight":  true
+		},
+		"spacing":       {
+			"margin":     true,
+			"padding":    true,
+			"__experimentalDefaultControls": {
+				"padding": true
+			}
+		},
+		"__experimentalBorder": {
+			"color":      true,
+			"radius":     true,
+			"style":      true,
+			"width":      true
+		}
+	},
+	"styles":       [
+		{ "name": "modern", "label": "Modern", "isDefault": true },
+		{ "name": "classic", "label": "Classic" }
+	],
 	"editorScript": "file:./index.js",
 	"editorStyle":  "wpzoom-forms-css-backend-main",
+	"script":       "wpzoom-forms-js-frontend-formblock",
 	"style":        "wpzoom-forms-css-frontend-formblock"
 }

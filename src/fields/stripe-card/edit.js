@@ -10,7 +10,7 @@ const Edit = props => {
 
 	return <>
 		<InspectorControls>
-			<PanelBody title={ __( 'Card Field Options', 'wpzoom-forms' ) }>
+			<PanelBody title={ __( 'Payment Field Options', 'wpzoom-forms' ) }>
 				<ToggleControl
 					label={ __( 'Show Label', 'wpzoom-forms' ) }
 					checked={ !! showLabel }
@@ -33,7 +33,7 @@ const Edit = props => {
 					<RichText
 						tagName="label"
 						className="wpzf-stripe-card-label"
-						placeholder={ __( 'Card Details', 'wpzoom-forms' ) }
+						placeholder={ __( 'Payment Details', 'wpzoom-forms' ) }
 						value={ label }
 						onChange={ value => setAttributes( { label: value } ) }
 					/>
@@ -58,7 +58,7 @@ const Edit = props => {
 						<rect x="2" y="5" width="20" height="14" rx="2" stroke="#ccc" strokeWidth="2"/>
 						<path d="M2 10h20" stroke="#ccc" strokeWidth="2"/>
 					</svg>
-					<span>{ __( 'Card number', 'wpzoom-forms' ) }</span>
+					<span>{ __( 'Payment details', 'wpzoom-forms' ) }</span>
 					<span style={ { marginLeft: 'auto', color: '#bbb', fontSize: '12px' } }>MM / YY &nbsp; CVC</span>
 				</div>
 
