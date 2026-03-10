@@ -5,19 +5,6 @@
  * Core Stripe integration: Connect OAuth (via proxy), PaymentIntents,
  * Webhooks, and the wpzf-payment Custom Post Type.
  *
- * OAuth flow:
- *   1. User clicks "Connect with Stripe" — redirected to Stripe with the
- *      platform Client ID.
- *   2. Stripe redirects the user to the WPZOOM Proxy (not back here).
- *   3. The Proxy exchanges the code for an access token using the platform
- *      Secret Key (which lives only on the proxy server, never here).
- *   4. The Proxy signs the token data with HMAC and redirects the user back
- *      to this plugin's callback handler.
- *   5. This plugin verifies the HMAC signature and stores the tokens.
- *
- * Only define WPZOOM_STRIPE_CLIENT_ID in wp-config.php on the USER's site:
- *   define( 'WPZOOM_STRIPE_CLIENT_ID', 'ca_...' );
- *
  * The WPZOOM_FORMS_PRO constant, when defined by the PRO plugin, removes the
  * 3% application fee from every transaction.
  *
@@ -49,20 +36,20 @@ class WPZOOM_Forms_Stripe {
 	 * Your platform's Stripe Connect Client ID (ca_...).
 	 * Safe to hardcode — it is a public identifier.
 	 */
-	const STRIPE_CLIENT_ID = 'ca_REPLACE_WITH_YOUR_CLIENT_ID';
+	const STRIPE_CLIENT_ID = 'ca_U690IWxMibgupMr2GLMoivrI66pmlvmc';
 
 	/**
 	 * URL of the WPZOOM OAuth Proxy callback endpoint.
 	 * Stripe redirects the user HERE after they authorise — never directly
 	 * back to the user's site.
 	 */
-	const PROXY_CALLBACK_URL = 'https://patterns.blocklayouts.com/stripe-test/wp-json/wpzoom-stripe-proxy/v1/callback';
+	const PROXY_CALLBACK_URL = 'https://patterns.blocklayouts.com/stripe-test/wp-json/wpzoom-stripe-proxy/v1/callback'; // TODO: Change to the actual callback URL
 
 	/**
 	 * URL of the WPZOOM OAuth Proxy deauthorize endpoint.
 	 * Called when the user disconnects their Stripe account.
 	 */
-	const PROXY_DEAUTH_URL = 'https://patterns.blocklayouts.com/stripe-test/wp-json/wpzoom-stripe-proxy/v1/deauthorize';
+	const PROXY_DEAUTH_URL = 'https://patterns.blocklayouts.com/stripe-test/wp-json/wpzoom-stripe-proxy/v1/deauthorize'; // TODO: Change to the actual deauthorize URL
 
 	/**
 	 * Singleton instance.
@@ -116,6 +103,9 @@ class WPZOOM_Forms_Stripe {
 				'labels'              => array(
 					'name'               => _x( 'Payments', 'post type general name', 'wpzoom-forms' ),
 					'singular_name'      => _x( 'Payment', 'post type singular name', 'wpzoom-forms' ),
+					'edit_item'          => __( 'Payment Details', 'wpzoom-forms' ),
+					'view_item'          => __( 'View Payment', 'wpzoom-forms' ),
+					'search_items'       => __( 'Search Payments', 'wpzoom-forms' ),
 					'all_items'          => __( 'Payments', 'wpzoom-forms' ),
 					'not_found'          => __( 'No payments found.', 'wpzoom-forms' ),
 					'not_found_in_trash' => __( 'No payments found in Trash.', 'wpzoom-forms' ),
@@ -212,15 +202,18 @@ class WPZOOM_Forms_Stripe {
 	 * @param WP_REST_Request $request The REST request object.
 	 * @return WP_REST_Response
 	 */
+
 	public function handle_webhook( WP_REST_Request $request ) {
-		$payload    = $request->get_body();
+		$payload = $request->get_body();
+
+		// IMPORTANT: Do NOT run sanitize_text_field() on the Stripe-Signature header.
+		// That strips characters used in the HMAC value and breaks signature
+		// verification. wp_unslash() is the only safe transformation here.
 		$sig_header = isset( $_SERVER['HTTP_STRIPE_SIGNATURE'] )
-			? sanitize_text_field( wp_unslash( $_SERVER['HTTP_STRIPE_SIGNATURE'] ) )
+			? wp_unslash( $_SERVER['HTTP_STRIPE_SIGNATURE'] )
 			: '';
 
-		// Try the live secret first, then fall back to the test secret.
-		// Both webhooks share one endpoint URL so we probe both rather than
-		// requiring the caller to declare which mode the event belongs to.
+		// Try live secret then test secret. Both modes share one endpoint URL.
 		$live_secret = (string) get_option( 'wpzf_stripe_webhook_secret',      '' );
 		$test_secret = (string) get_option( 'wpzf_stripe_test_webhook_secret', '' );
 		$secrets     = array_filter( array( $live_secret, $test_secret ) );
@@ -245,10 +238,20 @@ class WPZOOM_Forms_Stripe {
 			return new WP_REST_Response( array( 'error' => 'Invalid signature.' ), 400 );
 		}
 
+		// Idempotency: Stripe retries delivery on non-2xx responses, so the same
+		// event can arrive more than once. Use a transient keyed on the event ID
+		// to skip any event we have already successfully processed.
+		$transient_key = 'wpzf_whk_' . sanitize_key( $event->id );
+		if ( get_transient( $transient_key ) ) {
+			return new WP_REST_Response( array( 'received' => true ), 200 );
+		}
+		set_transient( $transient_key, 1, DAY_IN_SECONDS );
+
 		switch ( $event->type ) {
+
+			// -- One-time payments -----------------------------------------------
 			case 'payment_intent.succeeded':
-				$pi = $event->data->object;
-				$this->update_payment_by_intent_id( $pi->id, 'paid', $pi->amount );
+				$this->on_payment_intent_succeeded( $event->data->object );
 				break;
 
 			case 'payment_intent.payment_failed':
@@ -256,15 +259,165 @@ class WPZOOM_Forms_Stripe {
 				$this->update_payment_by_intent_id( $pi->id, 'failed' );
 				break;
 
+			// -- Subscription / invoice payments ---------------------------------
+			// invoice.paid fires for every successful subscription charge,
+			// including the initial payment and all subsequent renewals.
+			case 'invoice.paid':
+				$this->on_invoice_paid( $event->data->object );
+				break;
+
+			case 'invoice.payment_failed':
+				$this->on_invoice_payment_failed( $event->data->object );
+				break;
+
+			// -- Refunds ---------------------------------------------------------
 			case 'charge.refunded':
 				$charge = $event->data->object;
 				if ( ! empty( $charge->payment_intent ) ) {
-					$this->update_payment_by_intent_id( $charge->payment_intent, 'refunded' );
+					$pi_id = is_string( $charge->payment_intent )
+						? $charge->payment_intent
+						: $charge->payment_intent->id;
+					$this->update_payment_by_intent_id( $pi_id, 'refunded' );
 				}
 				break;
 		}
 
 		return new WP_REST_Response( array( 'received' => true ), 200 );
+	}
+
+	/**
+	 * Handles payment_intent.succeeded.
+	 * Re-fetches the PI with latest_charge expanded to get card details
+	 * in a single API call.
+	 *
+	 * @param object $pi PaymentIntent snapshot from the event.
+	 */
+	private function on_payment_intent_succeeded( $pi ) {
+		$this->update_payment_by_intent_id( $pi->id, 'paid', $pi->amount );
+
+		try {
+			$pi_expanded = \Stripe\PaymentIntent::retrieve( array(
+				'id'     => $pi->id,
+				'expand' => array( 'latest_charge' ),
+			) );
+			if ( is_object( $pi_expanded->latest_charge ) ) {
+				$this->store_card_meta_from_charge( $pi->id, $pi_expanded->latest_charge );
+			}
+		} catch ( \Exception $e ) {
+			// Non-fatal: card details just won't be stored.
+		}
+	}
+
+	/**
+	 * Handles invoice.paid.
+	 *
+	 * Fires for every successful subscription charge (initial + renewals).
+	 * For renewals a new wpzf-payment record is created automatically so
+	 * every charge appears in the Payments list.
+	 *
+	 * @param object $invoice Invoice snapshot from the event.
+	 */
+	private function on_invoice_paid( $invoice ) {
+		$pi_id = is_string( $invoice->payment_intent )
+			? $invoice->payment_intent
+			: ( is_object( $invoice->payment_intent ) ? $invoice->payment_intent->id : null );
+
+		if ( ! $pi_id ) {
+			return; // Free-trial invoice with no charge.
+		}
+
+		// Try to update an existing payment post (initial subscription payment).
+		$updated = $this->update_payment_by_intent_id( $pi_id, 'paid', $invoice->amount_paid );
+
+		// No existing record = this is a renewal. Create a new payment post.
+		if ( ! $updated ) {
+			$sub_id  = is_string( $invoice->subscription )
+				? $invoice->subscription
+				: ( is_object( $invoice->subscription ) ? $invoice->subscription->id : '' );
+			$form_id = 0;
+
+			if ( $sub_id ) {
+				try {
+					$sub     = \Stripe\Subscription::retrieve( $sub_id );
+					$form_id = absint( $sub->metadata['wpzf_form_id'] ?? 0 );
+				} catch ( \Exception $e ) {
+					// Metadata unavailable; continue without form link.
+				}
+			}
+
+			$this->create_payment_post(
+				$form_id,
+				$pi_id,
+				$invoice->amount_paid,
+				strtoupper( $invoice->currency ?: 'USD' ),
+				$invoice->customer_email ?: ''
+			);
+			$this->update_payment_by_intent_id( $pi_id, 'paid' );
+		}
+
+		// Capture card details from the expanded charge.
+		try {
+			$pi_expanded = \Stripe\PaymentIntent::retrieve( array(
+				'id'     => $pi_id,
+				'expand' => array( 'latest_charge' ),
+			) );
+			if ( is_object( $pi_expanded->latest_charge ) ) {
+				$this->store_card_meta_from_charge( $pi_id, $pi_expanded->latest_charge );
+			}
+		} catch ( \Exception $e ) {
+			// Non-fatal.
+		}
+	}
+
+	/**
+	 * Handles invoice.payment_failed.
+	 *
+	 * @param object $invoice Invoice snapshot from the event.
+	 */
+	private function on_invoice_payment_failed( $invoice ) {
+		$pi_id = is_string( $invoice->payment_intent )
+			? $invoice->payment_intent
+			: ( is_object( $invoice->payment_intent ) ? $invoice->payment_intent->id : null );
+
+		if ( $pi_id ) {
+			$this->update_payment_by_intent_id( $pi_id, 'failed' );
+		}
+	}
+
+	/**
+	 * Stores card brand and last4 on the wpzf-payment post for a given PI.
+	 *
+	 * @param string $pi_id  Stripe PaymentIntent ID.
+	 * @param object $charge Stripe Charge object (already expanded).
+	 */
+	private function store_card_meta_from_charge( $pi_id, $charge ) {
+		if ( empty( $charge->payment_method_details->card ) ) {
+			return;
+		}
+
+		$brand = sanitize_text_field( ucfirst( $charge->payment_method_details->card->brand ?? '' ) );
+		$last4 = sanitize_text_field( $charge->payment_method_details->card->last4 ?? '' );
+
+		if ( ! $brand && ! $last4 ) {
+			return;
+		}
+
+		$posts = get_posts( array(
+			'post_type'      => 'wpzf-payment',
+			'post_status'    => 'publish',
+			'posts_per_page' => 1,
+			'meta_query'     => array(
+				array(
+					'key'   => '_wpzf_txn_payment_intent_id',
+					'value' => sanitize_text_field( $pi_id ),
+				),
+			),
+		) );
+
+		if ( ! empty( $posts ) ) {
+			update_post_meta( $posts[0]->ID, '_wpzf_txn_payment_method', $brand );
+			update_post_meta( $posts[0]->ID, '_wpzf_txn_card_last4',     $last4 );
+		}
 	}
 
 	// -------------------------------------------------------------------------
@@ -511,7 +664,7 @@ class WPZOOM_Forms_Stripe {
 		}
 
 		// Verify HMAC: confirm the data came from our proxy, not forged by a third party.
-		$client_id    = defined( 'WPZOOM_STRIPE_CLIENT_ID' ) ? WPZOOM_STRIPE_CLIENT_ID : self::STRIPE_CLIENT_ID;
+		$client_id    = self::STRIPE_CLIENT_ID;
 		$expected_sig = hash_hmac( 'sha256', $access_token . '|' . $account_id, $client_id );
 
 		if ( ! hash_equals( $expected_sig, $proxy_sig ) ) {
@@ -556,11 +709,11 @@ class WPZOOM_Forms_Stripe {
 			wp_send_json_error( 'Missing required fields.' );
 		}
 
-		$client_id    = defined( 'WPZOOM_STRIPE_CLIENT_ID' ) ? WPZOOM_STRIPE_CLIENT_ID : self::STRIPE_CLIENT_ID;
+		$client_id    = self::STRIPE_CLIENT_ID;
 		$expected_sig = hash_hmac( 'sha256', $access_token . '|' . $account_id, $client_id );
 
 		if ( ! hash_equals( $expected_sig, $proxy_sig ) ) {
-			wp_send_json_error( 'Invalid proxy signature. Ensure WPZOOM_STRIPE_CLIENT_ID is defined in wp-config.php and matches the proxy.' );
+			wp_send_json_error( 'Invalid proxy signature. Ensure STRIPE_CLIENT_ID is defined in the code and matches the proxy.' );
 		}
 
 		// Route the token to the correct option based on its prefix so the right
@@ -593,7 +746,7 @@ class WPZOOM_Forms_Stripe {
 		$oauth_token = wp_generate_uuid4();
 		$state       = base64_encode( wp_json_encode( array( 'token' => $oauth_token ) ) );
 
-		$client_id = defined( 'WPZOOM_STRIPE_CLIENT_ID' ) ? WPZOOM_STRIPE_CLIENT_ID : self::STRIPE_CLIENT_ID;
+		$client_id = self::STRIPE_CLIENT_ID;
 
 		return 'https://connect.stripe.com/oauth/authorize?' . http_build_query( array(
 			'response_type' => 'code',
@@ -630,7 +783,7 @@ class WPZOOM_Forms_Stripe {
 		if ( ! empty( $account_id ) ) {
 			// The platform secret key lives only on the proxy, so we ask the
 			// proxy to call Stripe's deauthorize API on our behalf.
-			$client_id = defined( 'WPZOOM_STRIPE_CLIENT_ID' ) ? WPZOOM_STRIPE_CLIENT_ID : self::STRIPE_CLIENT_ID;
+			$client_id = self::STRIPE_CLIENT_ID;
 			$sig       = hash_hmac( 'sha256', 'deauthorize|' . $account_id, $client_id );
 
 			wp_remote_post(
@@ -724,7 +877,7 @@ class WPZOOM_Forms_Stripe {
 		) );
 
 		if ( empty( $posts ) ) {
-			return;
+			return false;
 		}
 
 		$post_id = $posts[0]->ID;
@@ -733,6 +886,8 @@ class WPZOOM_Forms_Stripe {
 		if ( null !== $amount ) {
 			update_post_meta( $post_id, '_wpzf_txn_amount', absint( $amount ) );
 		}
+
+		return true;
 	}
 
 	// -------------------------------------------------------------------------
