@@ -4,3 +4,5 @@ node_modules/
 *.css.map
 package-lock.json
 CLAUDE.md
+.agents/
+skills-lock.json
