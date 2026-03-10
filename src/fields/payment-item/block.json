@@ -5,7 +5,7 @@
 	"title":        "Payment Item",
 	"category":     "wpzoom-forms",
 	"ancestor":     [ "wpzoom-forms/form" ],
-	"description":  "A purchasable item with a name, price, and optional quantity selector.",
+	"description":  "A single purchasable item with a name, price, optional description, and optional quantity selector.",
 	"keywords":     [ "wpzoom", "form", "payment", "item", "product", "price" ],
 	"version":      "1.0.0",
 	"textdomain":   "wpzoom-forms",
@@ -22,6 +22,10 @@
 			"type":      "number",
 			"default":   0
 		},
+		"description":   {
+			"type":      "string",
+			"default":   ""
+		},
 		"quantity":      {
 			"type":      "number",
 			"default":   1
@@ -36,7 +40,7 @@
 		},
 		"showQty":       {
 			"type":      "boolean",
-			"default":   true
+			"default":   false
 		}
 	},
 	"supports":     {

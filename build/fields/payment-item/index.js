@@ -37,6 +37,7 @@ var Edit = function Edit(props) {
   var id = attributes.id,
     itemName = attributes.itemName,
     price = attributes.price,
+    description = attributes.description,
     quantity = attributes.quantity,
     minQty = attributes.minQty,
     maxQty = attributes.maxQty,
@@ -44,7 +45,7 @@ var Edit = function Edit(props) {
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useEffect)(function () {
     if (!id) {
       setAttributes({
-        id: 'payment_item_' + clientId.substr(0, 8)
+        id: 'wpzf_payment_item_' + clientId.substr(0, 8)
       });
     }
   }, []);
@@ -56,7 +57,7 @@ var Edit = function Edit(props) {
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__.TextControl, {
           label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Item Name', 'wpzoom-forms'),
           value: itemName,
-          placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('e.g. Conference Ticket', 'wpzoom-forms'),
+          placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('e.g. Registration Fee', 'wpzoom-forms'),
           onChange: function onChange(value) {
             return setAttributes({
               itemName: value
@@ -71,6 +72,16 @@ var Edit = function Edit(props) {
           onChange: function onChange(value) {
             return setAttributes({
               price: parseFloat(value) || 0
+            });
+          },
+          __next40pxDefaultSize: true
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__.TextControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Description (optional)', 'wpzoom-forms'),
+          value: description,
+          placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Short description shown below the name...', 'wpzoom-forms'),
+          onChange: function onChange(value) {
+            return setAttributes({
+              description: value
             });
           },
           __next40pxDefaultSize: true
@@ -118,11 +129,7 @@ var Edit = function Edit(props) {
         })]
       })
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.Fragment, {
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", _objectSpread(_objectSpread({
-        className: "wpzf-payment-item",
-        "data-price": price,
-        "data-id": id
-      }, blockProps), {}, {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", _objectSpread(_objectSpread({}, blockProps), {}, {
         style: _objectSpread({
           padding: '12px',
           border: '1px solid #ddd',
@@ -131,26 +138,46 @@ var Edit = function Edit(props) {
           justifyContent: 'space-between',
           alignItems: 'center'
         }, blockProps.style),
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("span", {
-          className: "wpzf-payment-item-name",
-          children: itemName || (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Item Name', 'wpzoom-forms')
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("span", {
-          className: "wpzf-payment-item-price",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("span", {
+            className: "wpzf-payment-item-name",
+            style: {
+              fontWeight: 500
+            },
+            children: itemName || (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Item Name', 'wpzoom-forms')
+          }), description && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("span", {
+            style: {
+              display: 'block',
+              fontSize: '12px',
+              color: '#888',
+              marginTop: '2px'
+            },
+            children: description
+          })]
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
           style: {
-            fontWeight: 600
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
           },
-          children: ["$", formattedPrice]
-        }), showQty && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("input", {
-          type: "number",
-          className: "wpzf-payment-item-qty",
-          defaultValue: quantity,
-          min: minQty,
-          max: maxQty,
-          style: {
-            width: '60px',
-            textAlign: 'center'
-          },
-          readOnly: true
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("span", {
+            className: "wpzf-payment-item-price",
+            style: {
+              fontWeight: 600
+            },
+            children: ["$", formattedPrice]
+          }), showQty && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("input", {
+            type: "number",
+            className: "wpzf-payment-item-qty",
+            defaultValue: quantity,
+            min: minQty,
+            max: maxQty,
+            style: {
+              width: '60px',
+              textAlign: 'center'
+            },
+            readOnly: true
+          })]
         })]
       }))
     })]
@@ -183,6 +210,7 @@ var Save = function Save(_ref) {
   var id = attributes.id,
     itemName = attributes.itemName,
     price = attributes.price,
+    description = attributes.description,
     quantity = attributes.quantity,
     minQty = attributes.minQty,
     maxQty = attributes.maxQty,
@@ -191,23 +219,32 @@ var Save = function Save(_ref) {
     className: "wpzf-payment-item ".concat(blockProps.className),
     "data-price": price,
     "data-id": id,
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
-      className: "wpzf-payment-item-name",
-      children: itemName
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("span", {
-      className: "wpzf-payment-item-price",
-      children: ["$", Number(price).toFixed(2)]
-    }), showQty ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("input", {
-      type: "number",
-      className: "wpzf-payment-item-qty",
-      name: "".concat(id, "_qty"),
-      defaultValue: quantity,
-      min: minQty,
-      max: maxQty
-    }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("input", {
-      type: "hidden",
-      name: "".concat(id, "_qty"),
-      value: quantity
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
+      className: "wpzf-payment-item-info",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+        className: "wpzf-payment-item-name",
+        children: itemName
+      }), description && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
+        className: "wpzf-payment-item-desc",
+        children: description
+      })]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
+      className: "wpzf-payment-item-right",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("span", {
+        className: "wpzf-payment-item-price",
+        children: ["$", Number(price).toFixed(2)]
+      }), showQty ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("input", {
+        type: "number",
+        className: "wpzf-payment-item-qty",
+        name: "".concat(id, "_qty"),
+        defaultValue: quantity,
+        min: minQty,
+        max: maxQty
+      }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("input", {
+        type: "hidden",
+        name: "".concat(id, "_qty"),
+        value: quantity
+      })]
     })]
   }));
 };
@@ -376,7 +413,7 @@ function _typeof(o) {
   \********************************************/
 /***/ (function(module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"wpzoom-forms/payment-item","title":"Payment Item","category":"wpzoom-forms","ancestor":["wpzoom-forms/form"],"description":"A purchasable item with a name, price, and optional quantity selector.","keywords":["wpzoom","form","payment","item","product","price"],"version":"1.0.0","textdomain":"wpzoom-forms","attributes":{"id":{"type":"string","default":""},"itemName":{"type":"string","default":"Item"},"price":{"type":"number","default":0},"quantity":{"type":"number","default":1},"minQty":{"type":"number","default":1},"maxQty":{"type":"number","default":99},"showQty":{"type":"boolean","default":true}},"supports":{"align":true,"html":false,"shadow":true,"color":{"background":true,"gradients":true,"text":true},"typography":{"fontSize":true,"lineHeight":true,"__experimentalFontFamily":true,"__experimentalFontWeight":true,"__experimentalFontStyle":true,"__experimentalTextTransform":true,"__experimentalTextDecoration":true,"__experimentalLetterSpacing":true,"__experimentalDefaultControls":{"fontSize":true}},"dimensions":{"minHeight":true},"spacing":{"margin":true,"padding":true,"__experimentalDefaultControls":{"padding":true}},"__experimentalBorder":{"color":true,"radius":true,"style":true,"width":true}},"styles":[{"name":"modern","label":"Modern","isDefault":true},{"name":"classic","label":"Classic"}],"editorScript":"file:./index.js","editorStyle":"wpzoom-forms-css-backend-main","script":"wpzoom-forms-js-frontend-formblock","style":"wpzoom-forms-css-frontend-formblock"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"wpzoom-forms/payment-item","title":"Payment Item","category":"wpzoom-forms","ancestor":["wpzoom-forms/form"],"description":"A single purchasable item with a name, price, optional description, and optional quantity selector.","keywords":["wpzoom","form","payment","item","product","price"],"version":"1.0.0","textdomain":"wpzoom-forms","attributes":{"id":{"type":"string","default":""},"itemName":{"type":"string","default":"Item"},"price":{"type":"number","default":0},"description":{"type":"string","default":""},"quantity":{"type":"number","default":1},"minQty":{"type":"number","default":1},"maxQty":{"type":"number","default":99},"showQty":{"type":"boolean","default":false}},"supports":{"align":true,"html":false,"shadow":true,"color":{"background":true,"gradients":true,"text":true},"typography":{"fontSize":true,"lineHeight":true,"__experimentalFontFamily":true,"__experimentalFontWeight":true,"__experimentalFontStyle":true,"__experimentalTextTransform":true,"__experimentalTextDecoration":true,"__experimentalLetterSpacing":true,"__experimentalDefaultControls":{"fontSize":true}},"dimensions":{"minHeight":true},"spacing":{"margin":true,"padding":true,"__experimentalDefaultControls":{"padding":true}},"__experimentalBorder":{"color":true,"radius":true,"style":true,"width":true}},"styles":[{"name":"modern","label":"Modern","isDefault":true},{"name":"classic","label":"Classic"}],"editorScript":"file:./index.js","editorStyle":"wpzoom-forms-css-backend-main","script":"wpzoom-forms-js-frontend-formblock","style":"wpzoom-forms-css-frontend-formblock"}');
 
 /***/ })
 
@@ -475,33 +512,14 @@ __webpack_require__.r(__webpack_exports__);
 
 var name = _block_json__WEBPACK_IMPORTED_MODULE_1__.name;
 (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.registerBlockType)(name, {
-  icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("svg", {
-    width: "24",
-    height: "24",
-    viewBox: "0 0 24 24",
-    fill: "none",
+  icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("svg", {
     xmlns: "http://www.w3.org/2000/svg",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("path", {
-      d: "M3 6h18M3 12h18M3 18h18",
-      stroke: "currentColor",
-      strokeWidth: "2",
-      strokeLinecap: "round"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("circle", {
-      cx: "7",
-      cy: "6",
-      r: "1.5",
-      fill: "currentColor"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("circle", {
-      cx: "7",
-      cy: "12",
-      r: "1.5",
-      fill: "currentColor"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("circle", {
-      cx: "7",
-      cy: "18",
-      r: "1.5",
-      fill: "currentColor"
-    })]
+    height: "24px",
+    viewBox: "0 -960 960 960",
+    width: "24px",
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("path", {
+      d: "M446-80q-15 0-30-6t-27-18L103-390q-12-12-17.5-26.5T80-446q0-15 5.5-30t17.5-27l352-353q11-11 26-17.5t31-6.5h287q33 0 56.5 23.5T879-800v287q0 16-6 30.5T856-457L503-104q-12 12-27 18t-30 6Zm0-80 353-354v-286H513L160-446l286 286Zm253-480q25 0 42.5-17.5T759-700q0-25-17.5-42.5T699-760q-25 0-42.5 17.5T639-700q0 25 17.5 42.5T699-640ZM480-480Z"
+    })
   }),
   edit: _edit__WEBPACK_IMPORTED_MODULE_2__["default"],
   save: _save__WEBPACK_IMPORTED_MODULE_3__["default"]

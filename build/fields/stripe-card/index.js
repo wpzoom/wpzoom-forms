@@ -28,12 +28,211 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
 
 
+/* ── Theme tokens ─────────────────────────────────────────────────────────── */
+
+var THEMES = {
+  stripe: {
+    bg: '#ffffff',
+    inputBg: '#ffffff',
+    text: '#30313d',
+    label: '#6d6e78',
+    border: '1px solid #e0e0e0',
+    shadow: '0 1px 3px rgba(0,0,0,.1)',
+    radius: '5px',
+    placeholder: '#b3b3c0'
+  },
+  flat: {
+    bg: '#ffffff',
+    inputBg: '#f8f8f8',
+    text: '#30313d',
+    label: '#6d6e78',
+    border: '1px solid #ccc',
+    shadow: 'none',
+    radius: '4px',
+    placeholder: '#b3b3c0'
+  },
+  night: {
+    bg: '#0d1117',
+    inputBg: '#161b22',
+    text: '#c9d1d9',
+    label: '#8b949e',
+    border: '1px solid #30363d',
+    shadow: 'none',
+    radius: '6px',
+    placeholder: '#484f58'
+  }
+};
+
+/* ── Small inline SVG icons ───────────────────────────────────────────────── */
+var MastercardIcon = function MastercardIcon() {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("svg", {
+    width: "28",
+    height: "18",
+    viewBox: "0 0 38 24",
+    xmlns: "http://www.w3.org/2000/svg",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("rect", {
+      width: "38",
+      height: "24",
+      rx: "4",
+      fill: "#252525"
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("circle", {
+      cx: "15",
+      cy: "12",
+      r: "7",
+      fill: "#eb001b"
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("circle", {
+      cx: "23",
+      cy: "12",
+      r: "7",
+      fill: "#f79e1b"
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("path", {
+      d: "M19 6.8a7 7 0 0 1 0 10.4A7 7 0 0 1 19 6.8z",
+      fill: "#ff5f00"
+    })]
+  });
+};
+var VisaIcon = function VisaIcon() {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("svg", {
+    width: "28",
+    height: "18",
+    viewBox: "0 0 38 24",
+    xmlns: "http://www.w3.org/2000/svg",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("rect", {
+      width: "38",
+      height: "24",
+      rx: "4",
+      fill: "#1a1f71"
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("text", {
+      x: "19",
+      y: "17",
+      textAnchor: "middle",
+      fill: "#fff",
+      fontSize: "12",
+      fontWeight: "bold",
+      fontFamily: "Arial,sans-serif",
+      children: "VISA"
+    })]
+  });
+};
+var DiscoverIcon = function DiscoverIcon() {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("svg", {
+    width: "28",
+    height: "18",
+    viewBox: "0 0 38 24",
+    xmlns: "http://www.w3.org/2000/svg",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("rect", {
+      width: "38",
+      height: "24",
+      rx: "4",
+      fill: "#fff",
+      stroke: "#ddd",
+      strokeWidth: "1"
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("circle", {
+      cx: "24",
+      cy: "12",
+      r: "7",
+      fill: "#f76f20"
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("text", {
+      x: "8",
+      y: "16",
+      fill: "#231f20",
+      fontSize: "7.5",
+      fontWeight: "bold",
+      fontFamily: "Arial,sans-serif",
+      children: "DIS"
+    })]
+  });
+};
+var CvcIcon = function CvcIcon() {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("svg", {
+    width: "20",
+    height: "16",
+    viewBox: "0 0 20 16",
+    fill: "none",
+    xmlns: "http://www.w3.org/2000/svg",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("rect", {
+      x: "0.5",
+      y: "0.5",
+      width: "19",
+      height: "15",
+      rx: "2",
+      stroke: "#aaa"
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("path", {
+      d: "M0 5h20",
+      stroke: "#aaa"
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("rect", {
+      x: "3",
+      y: "8",
+      width: "5",
+      height: "2",
+      rx: "0.5",
+      fill: "#aaa"
+    })]
+  });
+};
+var ChevronIcon = function ChevronIcon(_ref) {
+  var color = _ref.color;
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("svg", {
+    width: "14",
+    height: "14",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("path", {
+      d: "M6 9l6 6 6-6",
+      stroke: color,
+      strokeWidth: "2",
+      strokeLinecap: "round",
+      strokeLinejoin: "round"
+    })
+  });
+};
+
+/* ── Helper: detect active theme from className ───────────────────────────── */
+function getTheme(className) {
+  if (className && className.includes('is-style-night')) return 'night';
+  if (className && className.includes('is-style-flat')) return 'flat';
+  return 'stripe';
+}
+
+/* ── Edit component ───────────────────────────────────────────────────────── */
 var Edit = function Edit(props) {
   var blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)();
   var attributes = props.attributes,
     setAttributes = props.setAttributes;
   var label = attributes.label,
     showLabel = attributes.showLabel;
+  var themeKey = getTheme(blockProps.className);
+  var t = THEMES[themeKey];
+  var fieldGroupStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px'
+  };
+  var labelStyle = {
+    fontSize: '13px',
+    fontWeight: '500',
+    color: t.label,
+    lineHeight: '1.4'
+  };
+  var inputStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    background: t.inputBg,
+    border: t.border,
+    borderRadius: t.radius,
+    padding: '4px 12px',
+    height: '40px'
+  };
+  var placeholderStyle = {
+    fontSize: '14px',
+    color: t.placeholder
+  };
+  var rowStyle = {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '12px'
+  };
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.Fragment, {
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InspectorControls, {
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__.PanelBody, {
@@ -73,55 +272,77 @@ var Edit = function Edit(props) {
             });
           }
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
-          className: "wpzf-stripe-card-element-preview",
-          style: {
-            padding: '10px 12px',
-            border: '1px solid #d0d0d0',
-            borderRadius: '4px',
-            background: '#fff',
-            color: '#888',
-            fontSize: '14px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            minHeight: '38px'
-          },
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("svg", {
-            width: "20",
-            height: "20",
-            viewBox: "0 0 24 24",
-            fill: "none",
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("rect", {
-              x: "2",
-              y: "5",
-              width: "20",
-              height: "14",
-              rx: "2",
-              stroke: "#ccc",
-              strokeWidth: "2"
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("path", {
-              d: "M2 10h20",
-              stroke: "#ccc",
-              strokeWidth: "2"
+          className: "wpzf-stripe-payment-preview",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+            style: _objectSpread(_objectSpread({}, fieldGroupStyle), {}, {
+              marginBottom: '12px'
+            }),
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("label", {
+              style: labelStyle,
+              children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Card number', 'wpzoom-forms')
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+              style: inputStyle,
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("span", {
+                style: placeholderStyle,
+                children: "1234 1234 1234 1234"
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("span", {
+                style: {
+                  display: 'flex',
+                  gap: '4px',
+                  alignItems: 'center'
+                },
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(MastercardIcon, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(VisaIcon, {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(DiscoverIcon, {})]
+              })]
             })]
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("span", {
-            children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Payment details', 'wpzoom-forms')
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("span", {
-            style: {
-              marginLeft: 'auto',
-              color: '#bbb',
-              fontSize: '12px'
-            },
-            children: "MM / YY \xA0 CVC"
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+            style: _objectSpread(_objectSpread({}, rowStyle), {}, {
+              marginBottom: '12px'
+            }),
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+              style: fieldGroupStyle,
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("label", {
+                style: labelStyle,
+                children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Expiration date', 'wpzoom-forms')
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+                style: inputStyle,
+                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("span", {
+                  style: placeholderStyle,
+                  children: "MM / YY"
+                })
+              })]
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+              style: fieldGroupStyle,
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("label", {
+                style: labelStyle,
+                children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Security code', 'wpzoom-forms')
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+                style: inputStyle,
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("span", {
+                  style: placeholderStyle,
+                  children: "CVC"
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(CvcIcon, {})]
+              })]
+            })]
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+            style: fieldGroupStyle,
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("label", {
+              style: labelStyle,
+              children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Country', 'wpzoom-forms')
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+              style: _objectSpread(_objectSpread({}, inputStyle), {}, {
+                cursor: 'default'
+              }),
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("span", {
+                style: {
+                  fontSize: '14px',
+                  color: t.text
+                },
+                children: "United States"
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(ChevronIcon, {
+                color: t.placeholder
+              })]
+            })]
           })]
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__.Notice, {
-          status: "info",
-          isDismissible: false,
-          style: {
-            marginTop: '8px',
-            fontSize: '12px'
-          },
-          children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('The Stripe Card Element will be rendered on the frontend after Stripe Connect is configured in Settings → Payments.', 'wpzoom-forms')
         })]
       }))
     })]
@@ -340,7 +561,7 @@ function _typeof(o) {
   \*******************************************/
 /***/ (function(module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"wpzoom-forms/stripe-card","title":"Stripe Card","category":"wpzoom-forms","ancestor":["wpzoom-forms/form"],"description":"A secure credit/debit card input powered by Stripe Elements.","keywords":["wpzoom","form","stripe","card","payment","credit"],"version":"1.0.0","textdomain":"wpzoom-forms","attributes":{"label":{"type":"string","default":"Card Details"},"showLabel":{"type":"boolean","default":true}},"supports":{"align":true,"html":false,"shadow":true,"color":{"background":true,"gradients":true,"text":true},"typography":{"fontSize":true,"lineHeight":true,"__experimentalFontFamily":true,"__experimentalFontWeight":true,"__experimentalFontStyle":true,"__experimentalTextTransform":true,"__experimentalTextDecoration":true,"__experimentalLetterSpacing":true,"__experimentalDefaultControls":{"fontSize":true}},"dimensions":{"minHeight":true},"spacing":{"margin":true,"padding":true,"__experimentalDefaultControls":{"padding":true}},"__experimentalBorder":{"color":true,"radius":true,"style":true,"width":true}},"styles":[{"name":"modern","label":"Modern","isDefault":true},{"name":"classic","label":"Classic"}],"editorScript":"file:./index.js","editorStyle":"wpzoom-forms-css-backend-main","style":"wpzoom-forms-css-frontend-formblock"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"wpzoom-forms/stripe-card","title":"Stripe Card","category":"wpzoom-forms","ancestor":["wpzoom-forms/form"],"description":"A secure credit/debit card input powered by Stripe Elements.","keywords":["wpzoom","form","stripe","card","payment","credit"],"version":"1.0.0","textdomain":"wpzoom-forms","attributes":{"label":{"type":"string","default":"Card Details"},"showLabel":{"type":"boolean","default":true}},"supports":{"align":true,"html":false,"shadow":true,"color":{"background":true,"gradients":true,"text":true},"typography":{"fontSize":true,"lineHeight":true,"__experimentalFontFamily":true,"__experimentalFontWeight":true,"__experimentalFontStyle":true,"__experimentalTextTransform":true,"__experimentalTextDecoration":true,"__experimentalLetterSpacing":true,"__experimentalDefaultControls":{"fontSize":true}},"dimensions":{"minHeight":true},"spacing":{"margin":true,"padding":true,"__experimentalDefaultControls":{"padding":true}},"__experimentalBorder":{"color":true,"radius":true,"style":true,"width":true}},"styles":[{"name":"stripe","label":"Stripe","isDefault":true},{"name":"flat","label":"Flat"},{"name":"night","label":"Night"}],"editorScript":"file:./index.js","editorStyle":"wpzoom-forms-css-backend-main","style":"wpzoom-forms-css-frontend-formblock"}');
 
 /***/ })
 
@@ -439,39 +660,15 @@ __webpack_require__.r(__webpack_exports__);
 
 var name = _block_json__WEBPACK_IMPORTED_MODULE_1__.name;
 (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.registerBlockType)(name, {
-  icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("svg", {
-    width: "24",
-    height: "24",
-    viewBox: "0 0 24 24",
-    fill: "none",
+  icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("svg", {
     xmlns: "http://www.w3.org/2000/svg",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("rect", {
-      x: "2",
-      y: "5",
-      width: "20",
-      height: "14",
-      rx: "2",
-      stroke: "currentColor",
-      strokeWidth: "2"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("path", {
-      d: "M2 10h20",
-      stroke: "currentColor",
-      strokeWidth: "2"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("rect", {
-      x: "5",
-      y: "13",
-      width: "4",
-      height: "2",
-      rx: "0.5",
-      fill: "currentColor"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("rect", {
-      x: "11",
-      y: "13",
-      width: "3",
-      height: "2",
-      rx: "0.5",
-      fill: "currentColor"
-    })]
+    height: "24px",
+    viewBox: "0 -960 960 960",
+    width: "24px",
+    fill: "currentColor",
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("path", {
+      d: "M880-720v480q0 33-23.5 56.5T800-160H160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720Zm-720 80h640v-80H160v80Zm0 160v240h640v-240H160Zm0 240v-480 480Z"
+    })
   }),
   edit: _edit__WEBPACK_IMPORTED_MODULE_2__["default"],
   save: _save__WEBPACK_IMPORTED_MODULE_3__["default"]

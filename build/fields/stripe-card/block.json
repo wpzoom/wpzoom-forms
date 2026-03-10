@@ -69,13 +69,17 @@
   },
   "styles": [
     {
-      "name": "modern",
-      "label": "Modern",
+      "name": "stripe",
+      "label": "Stripe",
       "isDefault": true
     },
     {
-      "name": "classic",
-      "label": "Classic"
+      "name": "flat",
+      "label": "Flat"
+    },
+    {
+      "name": "night",
+      "label": "Night"
     }
   ],
   "editorScript": "file:./index.js",

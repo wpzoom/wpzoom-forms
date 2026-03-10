@@ -1,22 +1,42 @@
 {
 	"$schema":      "https://schemas.wp.org/trunk/block.json",
 	"apiVersion":   3,
-	"name":         "wpzoom-forms/stripe-card",
-	"title":        "Stripe Card",
+	"name":         "wpzoom-forms/payment-dropdown",
+	"title":        "Dropdown Items",
 	"category":     "wpzoom-forms",
 	"ancestor":     [ "wpzoom-forms/form" ],
-	"description":  "A secure credit/debit card input powered by Stripe Elements.",
-	"keywords":     [ "wpzoom", "form", "stripe", "card", "payment", "credit" ],
+	"description":  "A dropdown select field where each option has a price. Users pick one item from the list.",
+	"keywords":     [ "wpzoom", "form", "payment", "dropdown", "select", "items", "price" ],
 	"version":      "1.0.0",
 	"textdomain":   "wpzoom-forms",
 	"attributes":   {
+		"id":            {
+			"type":      "string",
+			"default":   ""
+		},
+		"name":          {
+			"type":      "string",
+			"default":   ""
+		},
+		"options":       {
+			"type":      "array",
+			"default":   [ { "label": "Item #1", "price": 10 } ]
+		},
+		"defaultValue":  {
+			"type":      "string",
+			"default":   ""
+		},
 		"label":         {
 			"type":      "string",
-			"default":   "Card Details"
+			"default":   "Select an option"
 		},
 		"showLabel":     {
 			"type":      "boolean",
 			"default":   true
+		},
+		"required":      {
+			"type":      "boolean",
+			"default":   false
 		}
 	},
 	"supports":     {
@@ -59,11 +79,11 @@
 		}
 	},
 	"styles":       [
-		{ "name": "stripe", "label": "Stripe", "isDefault": true },
-		{ "name": "flat",   "label": "Flat" },
-		{ "name": "night",  "label": "Night" }
+		{ "name": "modern", "label": "Modern", "isDefault": true },
+		{ "name": "classic", "label": "Classic" }
 	],
 	"editorScript": "file:./index.js",
 	"editorStyle":  "wpzoom-forms-css-backend-main",
+	"script":       "wpzoom-forms-js-frontend-formblock",
 	"style":        "wpzoom-forms-css-frontend-formblock"
 }

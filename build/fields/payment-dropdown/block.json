@@ -1,21 +1,21 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "wpzoom-forms/payment-single",
-  "title": "Single Payment",
+  "name": "wpzoom-forms/payment-dropdown",
+  "title": "Dropdown Items",
   "category": "wpzoom-forms",
   "ancestor": [
     "wpzoom-forms/form"
   ],
-  "description": "A fixed-price charge with no quantity selector. Use for fees, tickets, or one-time payments.",
+  "description": "A dropdown select field where each option has a price. Users pick one item from the list.",
   "keywords": [
     "wpzoom",
     "form",
     "payment",
-    "single",
-    "fixed",
-    "fee",
-    "charge"
+    "dropdown",
+    "select",
+    "items",
+    "price"
   ],
   "version": "1.0.0",
   "textdomain": "wpzoom-forms",
@@ -24,17 +24,34 @@
       "type": "string",
       "default": ""
     },
-    "itemName": {
-      "type": "string",
-      "default": "Item"
-    },
-    "price": {
-      "type": "number",
-      "default": 0
-    },
-    "description": {
+    "name": {
       "type": "string",
       "default": ""
+    },
+    "options": {
+      "type": "array",
+      "default": [
+        {
+          "label": "Item #1",
+          "price": 10
+        }
+      ]
+    },
+    "defaultValue": {
+      "type": "string",
+      "default": ""
+    },
+    "label": {
+      "type": "string",
+      "default": "Select an option"
+    },
+    "showLabel": {
+      "type": "boolean",
+      "default": true
+    },
+    "required": {
+      "type": "boolean",
+      "default": false
     }
   },
   "supports": {

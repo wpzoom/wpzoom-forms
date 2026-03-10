@@ -34,19 +34,36 @@
 
 	/**
 	 * Calculates the order total by reading all .wpzf-payment-item elements
-	 * inside the given form, multiplying price x quantity.
+	 * (single items) and .wpzf-payment-options (checkbox/radio/dropdown)
+	 * inside the given form.
 	 *
 	 * @param {HTMLElement} form
 	 * @returns {number} Total in cents (integer >= 0).
 	 */
 	function calculateTotal( form ) {
 		let total = 0;
+
+		// Single payment items (price x quantity).
 		form.querySelectorAll( '.wpzf-payment-item' ).forEach( item => {
 			const price    = parseFloat( item.dataset.price ) || 0;
 			const qtyInput = item.querySelector( '.wpzf-payment-item-qty, input[name$="_qty"]' );
 			const qty      = qtyInput ? ( parseInt( qtyInput.value, 10 ) || 1 ) : 1;
 			total += price * qty;
 		} );
+
+		// Checkbox / radio payment options (checked inputs with data-price).
+		form.querySelectorAll( '.wpzf-payment-options[data-payment-type="checkbox"] input.wpzf-payment-option:checked, .wpzf-payment-options[data-payment-type="radio"] input.wpzf-payment-option:checked' ).forEach( input => {
+			total += parseFloat( input.dataset.price ) || 0;
+		} );
+
+		// Dropdown payment options (selected option with data-price).
+		form.querySelectorAll( 'select.wpzf-payment-options[data-payment-type="dropdown"]' ).forEach( select => {
+			const selected = select.options[ select.selectedIndex ];
+			if ( selected ) {
+				total += parseFloat( selected.dataset.price ) || 0;
+			}
+		} );
+
 		return Math.round( total * 100 );
 	}
 
@@ -75,6 +92,77 @@
 	}
 
 	/**
+	 * Collects all payment line-items from single items and option-based
+	 * payment blocks (checkbox, radio, dropdown).
+	 *
+	 * @param {HTMLElement} form
+	 * @returns {Array<{name:string,price:number,qty:number,subtotal:number}>}
+	 */
+	function collectPaymentItems( form ) {
+		const items = [];
+
+		// Single payment items.
+		form.querySelectorAll( '.wpzf-payment-item' ).forEach( item => {
+			const price    = parseFloat( item.dataset.price ) || 0;
+			const qtyInput = item.querySelector( '.wpzf-payment-item-qty, input[name$="_qty"]' );
+			const qty      = qtyInput ? ( parseInt( qtyInput.value, 10 ) || 1 ) : 1;
+			const nameEl   = item.querySelector( '.wpzf-payment-item-name' );
+			items.push( {
+				name:     nameEl ? nameEl.textContent.trim() : 'Item',
+				price,
+				qty,
+				subtotal: price * qty,
+			} );
+		} );
+
+		// Checkbox / radio payment options.
+		form.querySelectorAll( '.wpzf-payment-options[data-payment-type="checkbox"] input.wpzf-payment-option:checked, .wpzf-payment-options[data-payment-type="radio"] input.wpzf-payment-option:checked' ).forEach( input => {
+			const price = parseFloat( input.dataset.price ) || 0;
+			items.push( {
+				name:     input.value || 'Item',
+				price,
+				qty:      1,
+				subtotal: price,
+			} );
+		} );
+
+		// Dropdown payment options.
+		form.querySelectorAll( 'select.wpzf-payment-options[data-payment-type="dropdown"]' ).forEach( select => {
+			const selected = select.options[ select.selectedIndex ];
+			if ( selected ) {
+				const price = parseFloat( selected.dataset.price ) || 0;
+				items.push( {
+					name:     selected.value || 'Item',
+					price,
+					qty:      1,
+					subtotal: price,
+				} );
+			}
+		} );
+
+		return items;
+	}
+
+	/**
+	 * Ensures a hidden input with the given name exists inside the form,
+	 * creating it if needed, then sets its value.
+	 *
+	 * @param {HTMLElement} form
+	 * @param {string}      name
+	 * @param {string}      value
+	 */
+	function setHiddenInput( form, name, value ) {
+		let input = form.querySelector( `input[name="${ name }"]` );
+		if ( ! input ) {
+			input = document.createElement( 'input' );
+			input.type = 'hidden';
+			input.name = name;
+			form.appendChild( input );
+		}
+		input.value = value;
+	}
+
+	/**
 	 * Shows an error in the #wpzf-card-errors container.
 	 *
 	 * @param {HTMLElement} form
@@ -95,7 +183,19 @@
 	 *
 	 * @param {HTMLElement} form
 	 */
-	function initFormPayment( form ) {
+	/**
+	 * Reads the Stripe theme from the block's is-style-* class on the wrapper.
+	 *
+	 * @param {HTMLElement} wrapper
+	 * @returns {'stripe'|'flat'|'night'}
+	 */
+	function getStripeTheme( wrapper ) {
+		if ( wrapper.classList.contains( 'is-style-night' ) ) return 'night';
+		if ( wrapper.classList.contains( 'is-style-flat' ) )  return 'flat';
+		return 'stripe';
+	}
+
+	function initFormPayment( form, wrapper ) {
 		const paymentContainer = form.querySelector( '#wpzf-payment-element' );
 		if ( ! paymentContainer ) {
 			return;
@@ -109,6 +209,7 @@
 		const currency    = ( wpzfStripeData.currency || 'usd' ).toLowerCase();
 		const paymentType = wpzfStripeData.paymentType || 'one-time';
 		const mode        = paymentType === 'recurring' ? 'subscription' : 'payment';
+		const theme       = getStripeTheme( wrapper );
 
 		let totalCents = calculateTotal( form );
 
@@ -118,15 +219,20 @@
 			mode,
 			amount:   totalCents,
 			currency,
-			appearance: { theme: 'stripe' },
+			appearance: { theme },
 		} );
 
 		const paymentElement = elements.create( 'payment' );
 		paymentElement.mount( paymentContainer );
 
-		// Keep the element's amount in sync when quantities change.
+		// Keep the element's amount in sync when payment inputs change.
 		form.addEventListener( 'change', e => {
-			if ( e.target.classList.contains( 'wpzf-payment-item-qty' ) ) {
+			const t = e.target;
+			if (
+				t.classList.contains( 'wpzf-payment-item-qty' ) ||
+				t.classList.contains( 'wpzf-payment-option' ) ||
+				( t.tagName === 'SELECT' && t.classList.contains( 'wpzf-payment-options' ) )
+			) {
 				totalCents = calculateTotal( form );
 				updateTotalDisplay( form, totalCents );
 				elements.update( { amount: totalCents } );
@@ -213,11 +319,16 @@
 					return;
 				}
 
-				// Step 4 — payment confirmed: write the intent / subscription ID then re-submit.
+				// Step 4 — payment confirmed: populate hidden fields then re-submit.
 				const intentInput = form.querySelector( 'input[name="wpzf_payment_intent_id"]' );
 				if ( intentInput ) {
 					intentInput.value = payment_intent_id || intentData.subscription_id || '';
 				}
+
+				setHiddenInput( form, 'wpzf_payment_type',   paymentType );
+				setHiddenInput( form, 'wpzf_payment_method', 'Stripe' );
+				setHiddenInput( form, 'wpzf_payment_status', 'processing' );
+				setHiddenInput( form, 'wpzf_payment_items',  JSON.stringify( collectPaymentItems( form ) ) );
 
 				form.removeEventListener( 'submit', handleSubmit );
 				form.submit();
@@ -237,7 +348,7 @@
 		document.querySelectorAll( '.wpzf-stripe-card-wrapper' ).forEach( wrapper => {
 			const form = wrapper.closest( 'form' );
 			if ( form ) {
-				initFormPayment( form );
+				initFormPayment( form, wrapper );
 			}
 		} );
 	} );

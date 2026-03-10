@@ -1,19 +1,20 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "wpzoom-forms/payment-item",
-  "title": "Payment Item",
+  "name": "wpzoom-forms/payment-multiple",
+  "title": "Multiple Items",
   "category": "wpzoom-forms",
   "ancestor": [
     "wpzoom-forms/form"
   ],
-  "description": "A single purchasable item with a name, price, optional description, and optional quantity selector.",
+  "description": "A radio button field where each option has a price. Users can select one item.",
   "keywords": [
     "wpzoom",
     "form",
     "payment",
-    "item",
-    "product",
+    "radio",
+    "multiple",
+    "items",
     "price"
   ],
   "version": "1.0.0",
@@ -23,31 +24,32 @@
       "type": "string",
       "default": ""
     },
-    "itemName": {
-      "type": "string",
-      "default": "Item"
-    },
-    "price": {
-      "type": "number",
-      "default": 0
-    },
-    "description": {
+    "name": {
       "type": "string",
       "default": ""
     },
-    "quantity": {
-      "type": "number",
-      "default": 1
+    "options": {
+      "type": "array",
+      "default": [
+        {
+          "label": "Item #1",
+          "price": 10
+        }
+      ]
     },
-    "minQty": {
-      "type": "number",
-      "default": 1
+    "defaultValue": {
+      "type": "string",
+      "default": ""
     },
-    "maxQty": {
-      "type": "number",
-      "default": 99
+    "label": {
+      "type": "string",
+      "default": "Choose an option"
     },
-    "showQty": {
+    "showLabel": {
+      "type": "boolean",
+      "default": true
+    },
+    "required": {
       "type": "boolean",
       "default": false
     }
@@ -90,6 +92,14 @@
       "style": true,
       "width": true
     }
+  },
+  "selectors": {
+    "root": ".wpzoom-forms_payment_multiple-field",
+    "color": ".wpzoom-forms_payment_multiple-field > input",
+    "typography": ".wpzoom-forms_payment_multiple-field > input",
+    "dimensions": ".wpzoom-forms_payment_multiple-field > input",
+    "spacing": ".wpzoom-forms_payment_multiple-field > input",
+    "__experimentalBorder": ".wpzoom-forms_payment_multiple-field > input"
   },
   "styles": [
     {
