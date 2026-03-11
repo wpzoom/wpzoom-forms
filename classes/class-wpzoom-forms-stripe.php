@@ -222,6 +222,10 @@ class WPZOOM_Forms_Stripe {
 			return new WP_REST_Response( array( 'error' => 'Webhook secret not configured.' ), 400 );
 		}
 
+		if ( empty( $sig_header ) ) {
+			return new WP_REST_Response( array( 'error' => 'Missing signature header.' ), 400 );
+		}
+
 		$event = null;
 		foreach ( $secrets as $secret ) {
 			try {
@@ -246,6 +250,8 @@ class WPZOOM_Forms_Stripe {
 			return new WP_REST_Response( array( 'received' => true ), 200 );
 		}
 		set_transient( $transient_key, 1, DAY_IN_SECONDS );
+
+		$this->init_stripe();
 
 		switch ( $event->type ) {
 
@@ -844,13 +850,12 @@ class WPZOOM_Forms_Stripe {
 				'_wpzf_txn_form_id'           => absint( $form_id ),
 				'_wpzf_txn_stripe_account_id' => sanitize_text_field( get_option( 'wpzf_stripe_account_id', '' ) ),
 				'_wpzf_txn_customer_email'    => sanitize_email( $customer_email ),
+				'_wpzf_txn_test_mode'         => $this->is_test_mode() ? '1' : '0',
 			),
 		), true );
 
 		if ( is_wp_error( $post_id ) ) {
-			error_log( '[WPZF Payments] Failed to create payment CPT: ' . $post_id->get_error_message() );
-		} else {
-			error_log( '[WPZF Payments] Created payment CPT #' . $post_id . ' for intent ' . $payment_intent_id );
+			return $post_id;
 		}
 
 		return $post_id;

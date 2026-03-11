@@ -25,11 +25,27 @@ class WPZOOM_Forms_Payment_Detail {
 	 */
 	public function __construct() {
 		add_action( 'admin_menu',                            array( $this, 'register_page' ) );
+		add_action( 'admin_enqueue_scripts',                 array( $this, 'enqueue_assets' ) );
 		add_action( 'admin_post_wpzf_refund_payment',        array( $this, 'handle_refund' ) );
 		add_filter( 'get_edit_post_link',                    array( $this, 'custom_edit_link' ), 10, 2 );
 		add_filter( 'post_row_actions',                      array( $this, 'modify_row_actions' ), 10, 2 );
 		// Redirect the default edit.php?post=ID screen to our custom page.
 		add_action( 'current_screen',                        array( $this, 'redirect_edit_screen' ) );
+	}
+
+	/**
+	 * Enqueues the main backend stylesheet so subscribe-form styles are available.
+	 */
+	public function enqueue_assets( $hook ) {
+		if ( 'admin_page_wpzf-payment-detail' !== $hook ) {
+			return;
+		}
+		wp_enqueue_style(
+			'wpzoom-forms-backend',
+			plugins_url( 'build/main/backend/style.css', dirname( __FILE__ ) ),
+			array(),
+			WPZOOM_FORMS_VERSION
+		);
 	}
 
 	// -------------------------------------------------------------------------
@@ -231,16 +247,16 @@ class WPZOOM_Forms_Payment_Detail {
 	 */
 	private function render_html( $d ) {
 		extract( $d ); // phpcs:ignore WordPress.PHP.DontExtract
-		$form_title = $form_id ? get_the_title( $form_id ) : '';
+		$current_user = wp_get_current_user();
 		?>
 		<div class="wrap wpzf-payment-detail">
 
 		<style>
-		.wpzf-payment-detail { max-width: 1080px; }
 		.wpzf-payment-detail .page-title-action { display: none; }
 		.wpzf-payment-breadcrumb { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; color: #999; font-size: 13px; }
 		.wpzf-back-link { display: inline-flex; align-items: center; gap: 5px; color: #3c434a; text-decoration: none; font-size: 13px; margin: 8px 0 20px; }
 		.wpzf-back-link:hover { color: #0071a1; }
+		.wpzf-layout { display: grid; grid-template-columns: 1fr 280px; gap: 20px; align-items: start; }
 		.wpzf-card { background: #fff; border: 1px solid #dcdde0; border-radius: 4px; padding: 24px; margin-bottom: 20px; }
 		.wpzf-card h2 { margin: 0 0 20px; font-size: 15px; font-weight: 600; color: #1d2327; border-bottom: 1px solid #f0f0f0; padding-bottom: 14px; }
 		.wpzf-stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 22px; }
@@ -264,6 +280,11 @@ class WPZOOM_Forms_Payment_Detail {
 		.wpzf-entry-table th { width: 28%; font-size: 13px; font-weight: 600; color: #3c434a; text-align: left; padding: 10px 0; vertical-align: top; }
 		.wpzf-entry-table td { font-size: 13px; color: #50575e; padding: 10px 0 10px 16px; }
 		.wpzf-empty { color: #787c82; font-style: italic; font-size: 13px; }
+		.wpzf-sidebar .wpzf-card { padding: 20px; }
+		.wpzf-sidebar .wpzf-card h2 { font-size: 14px; margin-bottom: 10px; padding-bottom: 0; border-bottom: none; display: flex; align-items: center; gap: 8px; }
+		.wpzf-sidebar .wpzf-card p { font-size: 13px; color: #50575e; margin: 0 0 14px; line-height: 1.6; }
+		.wpzf-sidebar .wpzf-card .button { font-size: 13px; }
+		@media (max-width: 1100px) { .wpzf-layout { grid-template-columns: 1fr; } }
 		@media (max-width: 900px) { .wpzf-stats-row { grid-template-columns: repeat(2,1fr); } }
 		</style>
 
@@ -271,9 +292,7 @@ class WPZOOM_Forms_Payment_Detail {
 			<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Payment has been refunded successfully.', 'wpzoom-forms' ); ?></p></div>
 		<?php endif; ?>
 
-		<h1 class="wp-heading-inline">
-			<?php esc_html_e( 'Payments', 'wpzoom-forms' ); ?>
-		</h1>
+		<h1 class="wp-heading-inline"><?php esc_html_e( 'Payments', 'wpzoom-forms' ); ?></h1>
 		<span class="wpzf-payment-breadcrumb">
 			<span>&rsaquo;</span>
 			<span>WPZOOM Forms</span>
@@ -283,131 +302,196 @@ class WPZOOM_Forms_Payment_Detail {
 			&#8592; <?php esc_html_e( 'Back to all', 'wpzoom-forms' ); ?>
 		</a>
 
-		<!-- ── Main card ── -->
-		<div class="wpzf-card">
-			<h2><?php printf( esc_html__( 'Payment Details #%d', 'wpzoom-forms' ), absint( $payment_id ) ); ?></h2>
+		<div class="wpzf-layout">
 
-			<!-- Stats -->
-			<div class="wpzf-stats-row">
+		<!-- ── Main column ── -->
+		<div class="wpzf-main">
 
-				<div class="wpzf-stat-box">
-					<div class="wpzf-stat-icon">
-						<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M2 10h20" stroke="currentColor" stroke-width="2"/></svg>
+			<div class="wpzf-card">
+				<h2><?php printf( esc_html__( 'Payment Details #%d', 'wpzoom-forms' ), absint( $payment_id ) ); ?></h2>
+
+				<div class="wpzf-stats-row">
+
+					<div class="wpzf-stat-box">
+						<div class="wpzf-stat-icon">
+							<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M2 10h20" stroke="currentColor" stroke-width="2"/></svg>
+						</div>
+						<div>
+							<div class="wpzf-stat-label"><?php esc_html_e( 'Total', 'wpzoom-forms' ); ?></div>
+							<div class="wpzf-stat-value"><?php echo esc_html( $amount_fmt ); ?></div>
+						</div>
 					</div>
-					<div>
-						<div class="wpzf-stat-label"><?php esc_html_e( 'Total', 'wpzoom-forms' ); ?></div>
-						<div class="wpzf-stat-value"><?php echo esc_html( $amount_fmt ); ?></div>
+
+					<div class="wpzf-stat-box">
+						<div class="wpzf-stat-icon">
+							<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v4l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+						</div>
+						<div>
+							<div class="wpzf-stat-label"><?php esc_html_e( 'Type', 'wpzoom-forms' ); ?></div>
+							<div class="wpzf-stat-value"><?php echo esc_html( $type_label ); ?></div>
+						</div>
 					</div>
+
+					<div class="wpzf-stat-box">
+						<div class="wpzf-stat-icon">
+							<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/><rect x="5" y="13" width="4" height="2" rx="0.5" fill="currentColor"/><rect x="11" y="13" width="3" height="2" rx="0.5" fill="currentColor"/></svg>
+						</div>
+						<div>
+							<div class="wpzf-stat-label"><?php esc_html_e( 'Method', 'wpzoom-forms' ); ?></div>
+							<div class="wpzf-stat-value"><?php echo esc_html( $method_label ); ?></div>
+						</div>
+					</div>
+
+					<div class="wpzf-stat-box">
+						<div class="wpzf-stat-icon">
+							<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M9 14l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/></svg>
+						</div>
+						<div>
+							<div class="wpzf-stat-label"><?php esc_html_e( 'Coupon', 'wpzoom-forms' ); ?></div>
+							<div class="wpzf-stat-value">N/A</div>
+						</div>
+					</div>
+
 				</div>
 
-				<div class="wpzf-stat-box">
-					<div class="wpzf-stat-icon">
-						<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v4l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+				<div class="wpzf-status-row">
+					<div class="wpzf-status-badge">
+						<?php esc_html_e( 'Status:', 'wpzoom-forms' ); ?>
+						<span class="wpzf-status-pill" style="background:<?php echo esc_attr( $sc['bg'] ); ?>;color:<?php echo esc_attr( $sc['text'] ); ?>">
+							<span class="wpzf-status-dot" style="background:<?php echo esc_attr( $sc['dot'] ); ?>"></span>
+							<?php echo esc_html( $sc['label'] ); ?>
+						</span>
 					</div>
-					<div>
-						<div class="wpzf-stat-label"><?php esc_html_e( 'Type', 'wpzoom-forms' ); ?></div>
-						<div class="wpzf-stat-value"><?php echo esc_html( $type_label ); ?></div>
+
+					<div class="wpzf-btns">
+						<?php if ( $intent_id ) : ?>
+							<a href="<?php echo esc_url( $stripe_url ); ?>" target="_blank" rel="noopener noreferrer" class="wpzf-btn wpzf-btn-outline">
+								<svg width="13" height="13" fill="none" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 3h6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+								<?php esc_html_e( 'View on Stripe', 'wpzoom-forms' ); ?>
+							</a>
+						<?php endif; ?>
+						<?php if ( $can_refund ) : ?>
+							<a href="<?php echo esc_url( $refund_url ); ?>"
+							   class="wpzf-btn wpzf-btn-danger"
+							   onclick="return confirm('<?php echo esc_js( __( 'Are you sure you want to refund this payment? This action cannot be undone.', 'wpzoom-forms' ) ); ?>');">
+								<?php esc_html_e( 'Refund', 'wpzoom-forms' ); ?>
+							</a>
+						<?php endif; ?>
 					</div>
 				</div>
+			</div><!-- /.wpzf-card -->
 
-				<div class="wpzf-stat-box">
-					<div class="wpzf-stat-icon">
-						<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/><rect x="5" y="13" width="4" height="2" rx="0.5" fill="currentColor"/><rect x="11" y="13" width="3" height="2" rx="0.5" fill="currentColor"/></svg>
-					</div>
-					<div>
-						<div class="wpzf-stat-label"><?php esc_html_e( 'Method', 'wpzoom-forms' ); ?></div>
-						<div class="wpzf-stat-value"><?php echo esc_html( $method_label ); ?></div>
-					</div>
-				</div>
-
-				<div class="wpzf-stat-box">
-					<div class="wpzf-stat-icon">
-						<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M9 14l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/></svg>
-					</div>
-					<div>
-						<div class="wpzf-stat-label"><?php esc_html_e( 'Coupon', 'wpzoom-forms' ); ?></div>
-						<div class="wpzf-stat-value">N/A</div>
-					</div>
-				</div>
-
-			</div><!-- /.wpzf-stats-row -->
-
-			<!-- Status + buttons -->
-			<div class="wpzf-status-row">
-				<div class="wpzf-status-badge">
-					<?php esc_html_e( 'Status:', 'wpzoom-forms' ); ?>
-					<span class="wpzf-status-pill" style="background:<?php echo esc_attr( $sc['bg'] ); ?>;color:<?php echo esc_attr( $sc['text'] ); ?>">
-						<span class="wpzf-status-dot" style="background:<?php echo esc_attr( $sc['dot'] ); ?>"></span>
-						<?php echo esc_html( $sc['label'] ); ?>
-					</span>
-				</div>
-
-				<div class="wpzf-btns">
-					<?php if ( $intent_id ) : ?>
-						<a href="<?php echo esc_url( $stripe_url ); ?>" target="_blank" rel="noopener noreferrer" class="wpzf-btn wpzf-btn-outline">
-							<svg width="13" height="13" fill="none" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M15 3h6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-							<?php esc_html_e( 'View on Stripe', 'wpzoom-forms' ); ?>
-						</a>
+			<div class="wpzf-card">
+				<h2>
+					<?php esc_html_e( 'Entry Summary', 'wpzoom-forms' ); ?>
+					<?php if ( $sub_link ) : ?>
+						<a href="<?php echo esc_url( $sub_link ); ?>" style="font-size:12px;font-weight:400;margin-left:10px;"><?php esc_html_e( 'View submission', 'wpzoom-forms' ); ?> &rarr;</a>
 					<?php endif; ?>
+				</h2>
 
-					<?php if ( $can_refund ) : ?>
-						<a href="<?php echo esc_url( $refund_url ); ?>"
-						   class="wpzf-btn wpzf-btn-danger"
-						   onclick="return confirm('<?php echo esc_js( __( 'Are you sure you want to refund this payment? This action cannot be undone.', 'wpzoom-forms' ) ); ?>');">
-							<?php esc_html_e( 'Refund', 'wpzoom-forms' ); ?>
-						</a>
-					<?php endif; ?>
-				</div>
-			</div>
-		</div><!-- /.wpzf-card -->
-
-		<!-- ── Entry Summary card ── -->
-		<div class="wpzf-card">
-			<h2>
-				<?php esc_html_e( 'Entry Summary', 'wpzoom-forms' ); ?>
-				<?php if ( $sub_link ) : ?>
-					<a href="<?php echo esc_url( $sub_link ); ?>" style="font-size:12px;font-weight:400;margin-left:10px;"><?php esc_html_e( 'View submission', 'wpzoom-forms' ); ?> &rarr;</a>
-				<?php endif; ?>
-			</h2>
-
-			<table class="wpzf-entry-table">
-				<?php if ( ! empty( $fields ) ) : ?>
-					<?php foreach ( $fields as $field_label => $field_value ) : ?>
+				<table class="wpzf-entry-table">
+					<?php if ( ! empty( $fields ) ) : ?>
+						<?php foreach ( $fields as $field_label => $field_value ) : ?>
+							<tr>
+								<th><?php echo esc_html( $field_label ); ?></th>
+								<td><?php echo nl2br( esc_html( (string) $field_value ) ); ?></td>
+							</tr>
+						<?php endforeach; ?>
+					<?php elseif ( $email ) : ?>
 						<tr>
-							<th><?php echo esc_html( $field_label ); ?></th>
-							<td><?php echo nl2br( esc_html( (string) $field_value ) ); ?></td>
+							<th><?php esc_html_e( 'Email', 'wpzoom-forms' ); ?></th>
+							<td><?php echo esc_html( $email ); ?></td>
 						</tr>
-					<?php endforeach; ?>
-				<?php elseif ( $email ) : ?>
-					<tr>
-						<th><?php esc_html_e( 'Email', 'wpzoom-forms' ); ?></th>
-						<td><?php echo esc_html( $email ); ?></td>
-					</tr>
-				<?php else : ?>
-					<tr>
-						<td colspan="2" class="wpzf-empty"><?php esc_html_e( 'No submission data linked to this payment.', 'wpzoom-forms' ); ?></td>
-					</tr>
-				<?php endif; ?>
+					<?php else : ?>
+						<tr>
+							<td colspan="2" class="wpzf-empty"><?php esc_html_e( 'No submission data linked to this payment.', 'wpzoom-forms' ); ?></td>
+						</tr>
+					<?php endif; ?>
 
-				<?php if ( $method || $last4 ) : ?>
+					<?php if ( $method || $last4 ) : ?>
+						<tr>
+							<th><?php esc_html_e( 'Stripe Credit Card', 'wpzoom-forms' ); ?></th>
+							<td>
+								<?php if ( $last4 ) : ?>
+									xxxx xxxx xxxx <?php echo esc_html( $last4 ); ?><br>
+								<?php endif; ?>
+								<?php echo esc_html( ucfirst( (string) $method ) ); ?>
+							</td>
+						</tr>
+					<?php endif; ?>
+
 					<tr>
-						<th><?php esc_html_e( 'Stripe Credit Card', 'wpzoom-forms' ); ?></th>
-						<td>
-							<?php if ( $last4 ) : ?>
-								xxxx xxxx xxxx <?php echo esc_html( $last4 ); ?><br>
-							<?php endif; ?>
-							<?php echo esc_html( ucfirst( $method ) ); ?>
-						</td>
+						<th><?php esc_html_e( 'Total', 'wpzoom-forms' ); ?></th>
+						<td><?php echo esc_html( $amount_fmt ); ?></td>
 					</tr>
-				<?php endif; ?>
+				</table>
+			</div><!-- /.wpzf-card -->
 
-				<tr>
-					<th><?php esc_html_e( 'Total', 'wpzoom-forms' ); ?></th>
-					<td><?php echo esc_html( $amount_fmt ); ?></td>
-				</tr>
-			</table>
-		</div><!-- /.wpzf-card -->
+		</div><!-- /.wpzf-main -->
 
+		<!-- ── Sidebar ── -->
+		<div class="wpzf-sidebar">
+
+			<div class="wpzf-card">
+				<h2>
+					<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 1 0 20A10 10 0 0 1 12 2zm0 9v5m0-8v1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+					<?php esc_html_e( 'Read documentation', 'wpzoom-forms' ); ?>
+				</h2>
+				<p><?php esc_html_e( 'Documentation is the place where you\'ll find the information needed to setup the plugin quickly and configure all its features.', 'wpzoom-forms' ); ?></p>
+				<a href="https://www.wpzoom.com/documentation/wpzoom-forms/" target="_blank" rel="noopener noreferrer" class="button button-primary"><?php esc_html_e( 'Read documentation', 'wpzoom-forms' ); ?></a>
+			</div>
+
+			<div class="wpzf-card">
+				<h2>
+					<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3m.08 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+					<?php esc_html_e( 'Need assistance?', 'wpzoom-forms' ); ?>
+				</h2>
+				<p><?php esc_html_e( 'Need help setting up the plugin or have a question? Get in touch with our Support Team.', 'wpzoom-forms' ); ?></p>
+				<a href="https://www.wpzoom.com/support/" target="_blank" rel="noopener noreferrer" class="button button-secondary"><?php esc_html_e( 'Open Support Desk', 'wpzoom-forms' ); ?></a>
+			</div>
+
+			<div class="wpzoom-forms-settings-subscribe-form">
+				<div id="mlb2-6096806" class="ml-form-embedContainer ml-subscribe-form ml-subscribe-form-6096806">
+				<div class="ml-form-align-center">
+				<div class="ml-form-embedWrapper embedForm">
+				<div class="ml-form-embedBody ml-form-embedBodyDefault row-form">
+				<div class="ml-form-embedContent">
+					<h4><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.386 8.357C7.031 8.144 6.57 8.259 6.357 8.614c-.213.355-.098.816.257 1.029L11.614 12.643c.238.143.535.143.772 0l5-3c.355-.213.47-.674.257-1.029-.213-.355-.674-.47-1.029-.257L12 11.126 7.386 8.357z" fill="#242628"/><path fill-rule="evenodd" clip-rule="evenodd" d="M5 19.732H19c1.519 0 2.75-1.231 2.75-2.75V7.02C21.75 5.5 20.519 4.27 19 4.27H5C3.481 4.27 2.25 5.5 2.25 7.02v9.962C2.25 18.501 3.481 19.732 5 19.732zM3.75 7.02C3.75 6.329 4.309 5.77 5 5.77h14c.691 0 1.25.559 1.25 1.25v9.962c0 .69-.559 1.25-1.25 1.25H5c-.691 0-1.25-.55-1.25-1.25V7.02z" fill="#242628"/></svg> <?php esc_html_e( 'Stay Updated on WPZOOM Forms', 'wpzoom-forms' ); ?></h4>
+					<p><?php esc_html_e( 'Subscribe to get notified about new plugin updates and features. We\'ll also send you useful tips, tutorials, and limited-time promotions.', 'wpzoom-forms' ); ?></p>
+				</div>
+				<form class="ml-block-form" action="https://static.mailerlite.com/webforms/submit/p0c0n3" data-code="p0c0n3" method="post" target="_blank">
+					<div class="ml-form-formContent">
+					<div class="ml-form-fieldRow ml-last-item">
+						<div class="ml-field-group ml-field-email ml-validate-email ml-validate-required">
+						<input aria-label="email" aria-required="true" value="<?php echo esc_attr( $current_user->user_email ); ?>" type="email" class="form-control" data-inputmask="" name="fields[email]" placeholder="Email" autocomplete="email">
+						</div>
+					</div>
+					</div>
+					<input type="hidden" name="ml-submit" value="1">
+					<div class="ml-form-embedSubmit">
+					<button type="submit" class="button button-primary"><?php esc_html_e( 'Subscribe', 'wpzoom-forms' ); ?></button>
+					<button disabled="disabled" style="display:none" type="button" class="loading"><div class="ml-form-embedSubmitLoad"></div> <span class="sr-only">Loading...</span></button>
+					</div>
+					<input type="hidden" name="anticsrf" value="true">
+				</form>
+				</div>
+				<div class="ml-form-successBody row-success" style="display:none">
+				<div class="ml-form-successContent">
+					<h4><?php esc_html_e( 'Thank you!', 'wpzoom-forms' ); ?></h4>
+					<p><?php esc_html_e( 'You have successfully joined our subscriber list.', 'wpzoom-forms' ); ?></p>
+				</div>
+				</div>
+				</div>
+				</div>
+				</div>
+				<script>function ml_webform_success_6096806(){var r=ml_jQuery||jQuery;r(".ml-subscribe-form-6096806 .row-success").show();r(".ml-subscribe-form-6096806 .row-form").hide()}</script>
+				<img src="https://track.mailerlite.com/webforms/o/6096806/p0c0n3?v1750160739" width="1" height="1" style="max-width:1px;max-height:1px;visibility:hidden;padding:0;margin:0;display:block" alt="" border="0">
+				<script src="https://static.mailerlite.com/js/w/webforms.min.js?vd4de52e171e8eb9c47c0c20caf367ddf" type="text/javascript"></script>
+			</div>
+
+		</div><!-- /.wpzf-sidebar -->
+
+		</div><!-- /.wpzf-layout -->
 		</div><!-- /.wrap -->
 		<?php
 	}

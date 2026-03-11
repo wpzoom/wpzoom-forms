@@ -1,0 +1,186 @@
+
+.wpzf-analytics {
+	margin: 10px 0px 30px 2px;
+	background-color: #fff;
+	padding: 20px;
+	border-radius: 4px;
+	// ── Header ────────────────────────────────────────────────────────────
+
+	&__header {
+		margin-bottom: 20px;
+	}
+
+	&__title {
+		margin: 0;
+		font-size: 16px;
+		font-weight: 600;
+		color: #1d2327;
+	}
+
+	// ── Test-mode toggle ──────────────────────────────────────────────────
+
+	&__test-toggle {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+
+		.wpzf-analytics__toggle-track {
+			display: inline-block;
+			width: 36px;
+			height: 20px;
+			border-radius: 10px;
+			background: #8c8f94;
+			position: relative;
+			transition: background 0.2s;
+			flex-shrink: 0;
+		}
+
+		.wpzf-analytics__toggle-knob {
+			display: block;
+			width: 16px;
+			height: 16px;
+			border-radius: 50%;
+			background: #fff;
+			position: absolute;
+			top: 2px;
+			left: 2px;
+			transition: left 0.2s;
+		}
+
+		&.is-active {
+			.wpzf-analytics__toggle-track {
+				background: #00a32a;
+			}
+
+			.wpzf-analytics__toggle-knob {
+				left: 18px;
+			}
+		}
+	}
+
+	// ── Period select ─────────────────────────────────────────────────────
+
+	&__period-select {
+		min-width: 140px;
+	}
+
+	// ── Stat cards ────────────────────────────────────────────────────────
+
+	&__stats {
+		margin-bottom: 4px;
+	}
+
+	&__stat-card {
+		cursor: pointer;
+		display: flex;
+		gap: 12px;
+		transition: border-color 0.15s, box-shadow 0.15s;
+		padding: 16px;
+		border-radius: 4px;
+		border: 1px solid #e0e0e0;
+
+		&:hover {
+			border-color: #a7aaad;
+		}
+
+		&.is-active {
+			border-color: #2271b1;
+			box-shadow: 0 0 0 1px #2271b1;
+		}
+	}
+
+	&__stat-icon-box {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 48px;
+		height: 48px;
+		min-width: 48px;
+		background: #f0f0f1;
+		border-radius: 4px;
+		color: #50575e;
+	}
+
+	&__stat-content {
+		flex: 1;
+		min-width: 0;
+	}
+
+	&__stat-label {
+		display: block;
+		font-size: 14px;
+		color: #50575e;
+		font-weight: 500;
+		text-transform: uppercase;
+		letter-spacing: 0.3px;
+		margin-bottom: 2px;
+	}
+
+	&__stat-value {
+		font-size: 22px;
+		font-weight: 700;
+		color: #1d2327;
+		line-height: 1.2;
+	}
+
+	&__stat-trend {
+		display: flex;
+		flex-direction: column;
+	}
+
+	&__stat-trend-label {
+		font-size: 10px;
+		color: #8c8f94;
+		text-transform: uppercase;
+		letter-spacing: 0.3px;
+		line-height: 1;
+	}
+
+	// ── Trend badges ──────────────────────────────────────────────────────
+
+	&__trend {
+		display: inline-flex;
+		align-items: center;
+		gap: 2px;
+		font-size: 12px;
+		font-weight: 600;
+
+		svg {
+			flex-shrink: 0;
+		}
+
+		&--neutral {
+			color: #8c8f94;
+		}
+
+		&--up {
+			color: #00a32a;
+		}
+
+		&--down {
+			color: #d63638;
+		}
+	}
+
+	// ── Chart ─────────────────────────────────────────────────────────────
+
+	&__chart {
+		position: relative;
+		height: 220px;
+		margin-top: 20px;
+	}
+
+	// ── States ────────────────────────────────────────────────────────────
+
+	&__loading {
+		display: flex;
+		justify-content: center;
+		padding: 40px 0;
+	}
+
+	&__error {
+		color: #d63638;
+		font-size: 13px;
+		padding: 20px 0;
+	}
+}

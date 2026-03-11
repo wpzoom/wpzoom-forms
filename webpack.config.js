@@ -35,7 +35,8 @@ module.exports = {
 		'fields/payment-dropdown/index': path.resolve( __dirname, 'src', 'fields', 'payment-dropdown', 'index.js' ),
 		'fields/payment-total/index':    path.resolve( __dirname, 'src', 'fields', 'payment-total', 'index.js' ),
 		'fields/stripe-card/index':    path.resolve( __dirname, 'src', 'fields', 'stripe-card', 'index.js' ),
-		'fields/stripe-card/view':     path.resolve( __dirname, 'src', 'fields', 'stripe-card', 'view.js' )
+		'fields/stripe-card/view':     path.resolve( __dirname, 'src', 'fields', 'stripe-card', 'view.js' ),
+		'payments/analytics/script':   path.resolve( __dirname, 'src', 'payments', 'analytics', 'script.js' )
 	},
 	optimization: {
 		...defaultConfig.optimization,

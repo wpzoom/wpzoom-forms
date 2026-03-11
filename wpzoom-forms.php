@@ -3579,10 +3579,12 @@ if( ! function_exists ( 'wpzoom_forms_load_files' ) ) {
 		require_once 'classes/class-wpzoom-forms-stripe.php';
 		require_once 'classes/class-wpzoom-forms-stripe-settings.php';
 		require_once 'classes/class-wpzoom-forms-payment-detail.php';
+		require_once 'classes/class-wpzoom-forms-payments-analytics.php';
 
 		WPZOOM_Forms_Stripe::instance();
 		new WPZOOM_Forms_Stripe_Settings();
 		new WPZOOM_Forms_Payment_Detail();
+		new WPZOOM_Forms_Payments_Analytics();
 
 	}
 	add_action( 'plugin_loaded', 'wpzoom_forms_load_files' );
