@@ -257,5 +257,6 @@ class WPZOOM_Forms_Payments_Analytics {
 			return;
 		}
 		echo '<div id="wpzf-payments-analytics"></div>';
+		WPZOOM_Forms_Sidebar::render();
 	}
 }

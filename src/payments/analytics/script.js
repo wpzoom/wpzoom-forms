@@ -356,9 +356,22 @@ document.addEventListener( 'DOMContentLoaded', () => {
 		return;
 	}
 
-	const heading = document.querySelector( '.wp-heading-inline' );
-	if ( heading ) {
-		heading.parentNode.insertBefore( container, heading.nextSibling );
+	const wrap = document.querySelector( '.wrap' );
+	if ( wrap ) {
+		const heading = wrap.querySelector( '.wp-heading-inline' );
+		if ( heading ) {
+			heading.parentNode.insertBefore( container, heading.nextSibling );
+		}
+
+		const sidebar = document.querySelector( '.wpzf-sidebar' );
+		if ( sidebar ) {
+			const postsFilter = wrap.querySelector( '#posts-filter' );
+			if ( postsFilter ) {
+				postsFilter.parentNode.insertBefore( sidebar, postsFilter.nextSibling );
+			} else {
+				wrap.appendChild( sidebar );
+			}
+		}
 	}
 
 	render( <PaymentsSummary />, container );

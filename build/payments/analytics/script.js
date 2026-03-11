@@ -16176,9 +16176,21 @@ document.addEventListener('DOMContentLoaded', function () {
   if (!container) {
     return;
   }
-  var heading = document.querySelector('.wp-heading-inline');
-  if (heading) {
-    heading.parentNode.insertBefore(container, heading.nextSibling);
+  var wrap = document.querySelector('.wrap');
+  if (wrap) {
+    var heading = wrap.querySelector('.wp-heading-inline');
+    if (heading) {
+      heading.parentNode.insertBefore(container, heading.nextSibling);
+    }
+    var sidebar = document.querySelector('.wpzf-sidebar');
+    if (sidebar) {
+      var postsFilter = wrap.querySelector('#posts-filter');
+      if (postsFilter) {
+        postsFilter.parentNode.insertBefore(sidebar, postsFilter.nextSibling);
+      } else {
+        wrap.appendChild(sidebar);
+      }
+    }
   }
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.render)(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(PaymentsSummary, {}), container);
 });

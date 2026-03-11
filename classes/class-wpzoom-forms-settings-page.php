@@ -631,63 +631,45 @@ class WPZOOM_Forms_Settings {
 				<ul class="wp-tab-bar">
 					<?php foreach ( self::$settings as $setting ) : ?>
 						<?php if ( self::$active_tab === $setting['tab_id'] ) : ?>
-							<li class="wp-tab-active"><a href="?post_type=wpzf-form&page=wpzf-settings&tab=<?php echo esc_attr( $setting['tab_id'] ); ?>"><?php if ( $setting['tab_id'] === 'tab-integrations' ) { echo self::get_mailchimp_icon(); } ?><?php echo esc_html( $setting['tab_title'] ); ?></a></li>
+							<li class="wp-tab-active" data-tab-id="<?php echo esc_attr( $setting['tab_id'] ); ?>"><a href="?post_type=wpzf-form&page=wpzf-settings&tab=<?php echo esc_attr( $setting['tab_id'] ); ?>"><?php if ( $setting['tab_id'] === 'tab-integrations' ) { echo self::get_mailchimp_icon(); } ?><?php echo esc_html( $setting['tab_title'] ); ?></a></li>
 						<?php else : ?>
-							<li><a href="?post_type=wpzf-form&page=wpzf-settings&tab=<?php echo esc_attr( $setting['tab_id'] ); ?>"><?php if ( $setting['tab_id'] === 'tab-integrations' ) { echo self::get_mailchimp_icon(); } ?><?php echo esc_html( $setting['tab_title'] ); ?></a></li>
+							<li data-tab-id="<?php echo esc_attr( $setting['tab_id'] ); ?>"><a href="?post_type=wpzf-form&page=wpzf-settings&tab=<?php echo esc_attr( $setting['tab_id'] ); ?>"><?php if ( $setting['tab_id'] === 'tab-integrations' ) { echo self::get_mailchimp_icon(); } ?><?php echo esc_html( $setting['tab_title'] ); ?></a></li>
 						<?php endif ?>
 					<?php endforeach ?>
 				</ul>
 
-				<?php foreach ( self::$settings as $setting ) : ?>
-					<?php if ( self::$active_tab === $setting['tab_id'] ) : ?>
+			<?php $this->upsell_banner(); ?>
 
-						<?php if ( self::$active_tab === 'tab-ajax' ) : ?>
-							<?php $this->ajax_promo_banner( true ); ?>
-						<?php elseif ( self::$active_tab === 'tab-integrations' ) : ?>
-							<?php $this->integrations_promo_banner( true ); ?>
-						<?php endif; ?>
+			<?php foreach ( self::$settings as $setting ) :
+				$is_active = ( self::$active_tab === $setting['tab_id'] );
+				$style     = $is_active ? '' : ' style="display: none;"';
+				$is_locked = ( 'tab-ajax' === $setting['tab_id'] || 'tab-integrations' === $setting['tab_id'] );
+				$panel_classes = 'wp-tab-panel' . ( $is_locked ? ' wpzf-tab-panel--locked' : '' );
+			?>
+				<div class="<?php echo esc_attr( $panel_classes ); ?>" id="<?php echo esc_attr( $setting['tab_id'] ); ?>"<?php echo $style; ?>>
 
-						<?php $this->upsell_banner(); ?>
+					<?php if ( 'tab-ajax' === $setting['tab_id'] ) : ?>
+						<?php $this->ajax_promo_banner(); ?>
+					<?php elseif ( 'tab-integrations' === $setting['tab_id'] ) : ?>
+						<?php $this->integrations_promo_banner(); ?>
+					<?php endif; ?>
 
-						<div class="wp-tab-panel" id="<?php echo esc_attr( $setting['tab_id'] ); ?>">
-							<?php if ( $setting['tab_id'] === 'tab-ajax' || $setting['tab_id'] === 'tab-integrations' ) : ?>
-								<div class="wpzoom-lock-overlay"></div>
-							<?php endif; ?>
-
-							<?php
-								settings_fields( $setting['option_group'] );
-								do_settings_sections( $setting['option_group'] );
-								if ( isset( $setting['sections'][0]['after_section'] ) ) {
-									call_user_func( $setting['sections'][0]['after_section'], $setting['sections'][0] );
-								}
-							?>
+					<?php if ( $is_locked ) : ?>
+						<div class="wpzf-settings-form-content">
+					<?php endif; ?>
+					<?php
+						settings_fields( $setting['option_group'] );
+						do_settings_sections( $setting['option_group'] );
+						if ( isset( $setting['sections'][0]['after_section'] ) ) {
+							call_user_func( $setting['sections'][0]['after_section'], $setting['sections'][0] );
+						}
+					?>
+					<?php if ( $is_locked ) : ?>
 						</div>
-					<?php else : ?>
-
-						<?php if ( $setting['tab_id'] === 'tab-ajax' ) : ?>
-							<?php $this->ajax_promo_banner( false ); ?>
-						<?php endif; ?>
-
-						<?php if ( $setting['tab_id'] === 'tab-integrations' ) : ?>
-							<?php $this->integrations_promo_banner( false ); ?>
-						<?php endif; ?>
-
-						<div class="wp-tab-panel" id="<?php echo esc_attr( $setting['tab_id'] ); ?>" style="display: none;">
-						<?php if ( $setting['tab_id'] === 'tab-ajax' || $setting['tab_id'] === 'tab-integrations' ) : ?>
-							<div class="wpzoom-lock-overlay"></div>
-						<?php endif; ?>
-
-							<?php
-								settings_fields( $setting['option_group'] );
-								do_settings_sections( $setting['option_group'] );
-								if ( isset( $setting['sections'][0]['after_section'] ) ) {
-									call_user_func( $setting['sections'][0]['after_section'], $setting['sections'][0] );
-								}
-							?>
-						</div>
-					<?php endif ?>
-				<?php endforeach ?>
-				<?php do_action( 'wpzoom_forms_settings_after_main_container' ); ?>
+					<?php endif; ?>
+				</div>
+			<?php endforeach ?>
+			<?php do_action( 'wpzoom_forms_settings_after_main_container' ); ?>
 				
 				<div class="wpzoom-forms-settings-buttons-container">
 					<span class="wpzoom_forms_settings_save"><?php submit_button( 'Save Settings', 'primary', 'wpzoom_forms_settings_save', false ); ?></span>
@@ -703,41 +685,25 @@ class WPZOOM_Forms_Settings {
 	 * Upsell banner
 	 */
 	public function upsell_banner() {
-
-		$wpzoom_forms = new WPZOOM_Forms();
-		?>
-		<div class="wpzoom-forms-settings-upsell-container">
-			<a href="https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=upsell-banner-right-sidebar" target="_blank">
-				<img src="<?php echo WPZOOM_FORMS_URL; ?>/dist/assets/admin/images/pro2.png" alt="Upgrade to WPZOOM Forms Pro">
-			</a>
-			<?php $this->subscribe_form(); ?>
-		</div>
-		<?php
-		
+		WPZOOM_Forms_Sidebar::render();
 	}
 
 	/**
 	 * Ajax promo banner
 	 */
-	public function ajax_promo_banner( $show = true ) {
-		$wpzoom_forms = new WPZOOM_Forms();
-		if ( $show ) {
-			$display = 'inline-block';
-		} else {
-			$display = 'none';
-		}
+	public function ajax_promo_banner() {
 		?>
-		<div class="wpzoom-forms-settings-ajax-promo-container" style="display: <?php echo $display; ?>">
-			<div class="wpzoom-forms-settings-ajax-promo-container-inner">
+		<div class="wpzf-upsell-box wpzoom-forms-settings-promo-banner">
+			<div class="wpzf-upsell-box__content wpzoom-forms-settings-ajax-promo-container-inner">
 				<a href="https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=settings-ajax-pro-upsell" target="_blank">
 					<span class="wpzoom-forms-settings-ajax-promo-container-inner-lock">🔒</span> <?php esc_html_e('This feature is only available in the PRO version', 'wpzoom-forms'); ?>
 				</a>
 				<h2><?php esc_html_e('Unlock AJAX Submissions with WPZOOM Forms PRO', 'wpzoom-forms'); ?></h2>
 				<p><?php esc_html_e('Let your forms submit instantly without page reloads. Improve user experience and reduce drop-offs with real-time feedback.', 'wpzoom-forms'); ?></p>
 				<ul>
-					<li>✅ <?php esc_html_e('Display custom success & error messages', 'wpzoom-forms'); ?></li>
-					<li>✅ <?php esc_html_e('Works seamlessly with shortcodes and blocks', 'wpzoom-forms'); ?></li>
-					<li>✅ <?php esc_html_e('No reloading or redirecting after form submission', 'wpzoom-forms'); ?></li>
+					<li><?php esc_html_e('Display custom success & error messages', 'wpzoom-forms'); ?></li>
+					<li><?php esc_html_e('Works seamlessly with shortcodes and blocks', 'wpzoom-forms'); ?></li>
+					<li><?php esc_html_e('No reloading or redirecting after form submission', 'wpzoom-forms'); ?></li>
 				</ul>
 				<a href="https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=settings-ajax-pro-upsell" target="_blank" class="button button-primary"><?php esc_html_e('Upgrade to PRO', 'wpzoom-forms'); ?></a>
 			</div>
@@ -748,26 +714,20 @@ class WPZOOM_Forms_Settings {
 	/**
 	 * Integrations promo banner
 	 */
-	public function integrations_promo_banner( $show = true ) {
-		$wpzoom_forms = new WPZOOM_Forms();
-		if ( $show ) {
-			$display = 'inline-block';
-		} else {
-			$display = 'none';
-		}
+	public function integrations_promo_banner() {
 		?>
-		<div class="wpzoom-forms-settings-integrations-promo-container" style="display: <?php echo $display; ?>">
-			<div class="wpzoom-forms-settings-ajax-promo-container-inner">
+		<div class="wpzf-upsell-box wpzoom-forms-settings-promo-banner">
+			<div class="wpzf-upsell-box__content wpzoom-forms-settings-ajax-promo-container-inner">
 				<a href="https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=settings-integrations-pro-upsell" target="_blank">
 					<span class="wpzoom-forms-settings-ajax-promo-container-inner-lock">🔒</span> <?php esc_html_e('This feature is only available in the PRO version', 'wpzoom-forms'); ?>
 				</a>
 				<h2><?php esc_html_e('Unlock Email Marketing Integrations with WPZOOM Forms PRO', 'wpzoom-forms'); ?></h2>
 				<p><?php esc_html_e('Connect your forms to Mailchimp and automatically grow your email list. Every form submission can instantly add subscribers to your audiences.', 'wpzoom-forms'); ?></p>
 				<ul>
-					<li>✅ <?php esc_html_e('Connect to Mailchimp with API key authentication', 'wpzoom-forms'); ?></li>
-					<li>✅ <?php esc_html_e('Automatically add form submissions to your Mailchimp audiences', 'wpzoom-forms'); ?></li>
-					<li>✅ <?php esc_html_e('Map form fields to Mailchimp merge fields', 'wpzoom-forms'); ?></li>
-					<li>✅ <?php esc_html_e('Choose which forms send data to Mailchimp', 'wpzoom-forms'); ?></li>
+					<li><?php esc_html_e('Connect to Mailchimp with API key authentication', 'wpzoom-forms'); ?></li>
+					<li><?php esc_html_e('Automatically add form submissions to your Mailchimp audiences', 'wpzoom-forms'); ?></li>
+					<li><?php esc_html_e('Map form fields to Mailchimp merge fields', 'wpzoom-forms'); ?></li>
+					<li><?php esc_html_e('Choose which forms send data to Mailchimp', 'wpzoom-forms'); ?></li>
 				</ul>
 				<a href="https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=settings-integrations-pro-upsell" target="_blank" class="button button-primary"><?php esc_html_e('Upgrade to PRO', 'wpzoom-forms'); ?></a>
 			</div>
@@ -883,10 +843,10 @@ class WPZOOM_Forms_Settings {
 		?>
         <p class="section-description"><?php esc_html_e( 'Protect your forms from bots, spam, and abuse using privacy-friendly verification tools. Block fake submissions while keeping the experience smooth for real users.', 'wpzoom-forms' ); ?></p>
 
-        <div class="wpzf-akismet-upsell-box">
-            <div class="wpzf-akismet-upsell-header">
+        <div class="wpzf-upsell-box">
+            <div class="wpzf-upsell-box__header">
                 <img src="https://akismet.com/wp-content/uploads/2023/04/akismet-logo-4x.png" alt="Akismet" width="100">
-                <span class="wpzf-akismet-status-label"><?php esc_html_e( 'Status:', 'wpzoom-forms' ); ?></span>
+                <span class="wpzf-status-label"><?php esc_html_e( 'Status:', 'wpzoom-forms' ); ?></span>
                 <?php
                 if ( ! class_exists( 'Akismet' ) ) {
                     echo '<span class="wpzf-status-badge wpzf-status-inactive">' . esc_html__( 'Not Installed', 'wpzoom-forms' ) . '</span>';
@@ -897,7 +857,7 @@ class WPZOOM_Forms_Settings {
                 }
                 ?>
             </div>
-            <div class="wpzf-akismet-upsell-content">
+            <div class="wpzf-upsell-box__content">
                 <h4><?php esc_html_e( 'Advanced Akismet Integration', 'wpzoom-forms' ); ?> <span class="wpzf-pro-badge">PRO</span></h4>
                 <?php if ( ! class_exists( 'Akismet' ) ) : ?>
                     <p><?php printf( __( 'Akismet is the best way to protect your forms from spam. <a href="%s" target="_blank">Install and activate Akismet</a> first, then upgrade to WPZOOM Forms PRO to enable automatic spam filtering.', 'wpzoom-forms' ), esc_url( admin_url( 'plugin-install.php?tab=search&s=akismet' ) ) ); ?></p>
@@ -915,116 +875,6 @@ class WPZOOM_Forms_Settings {
                 <a href="https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=akismet-upsell" target="_blank" class="button button-primary"><?php esc_html_e( 'Upgrade to PRO', 'wpzoom-forms' ); ?></a>
             </div>
         </div>
-
-        <style>
-            .wpzf-akismet-upsell-box {
-                background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
-                border: 1px solid #c3c4c7;
-                border-left: 4px solid #3496ff;
-                padding: 20px;
-                margin: 20px 0 30px;
-                max-width: 800px;
-                border-radius: 4px;
-                box-shadow: 0 1px 3px rgba(0,0,0,.05);
-            }
-            .wpzf-akismet-upsell-header {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                margin-bottom: 15px;
-                flex-wrap: wrap;
-            }
-            .wpzf-akismet-status-label {
-                font-weight: 600;
-                color: #1d2327;
-                margin-left: auto;
-            }
-            .wpzf-status-badge {
-                display: inline-block;
-                padding: 4px 10px;
-                border-radius: 3px;
-                font-size: 12px;
-                font-weight: 500;
-            }
-            .wpzf-status-inactive {
-                background: #f6f7f7;
-                color: #646970;
-                border: 1px solid #dcdcde;
-            }
-            .wpzf-status-warning {
-                background: #fcf9e8;
-                color: #996800;
-                border: 1px solid #dba617;
-            }
-            .wpzf-status-upgrade {
-                background: #e8f4fc;
-                color: #2271b1;
-                border: 1px solid #3496ff;
-                font-weight: 600;
-            }
-            .wpzf-akismet-upsell-content h4 {
-                margin: 0 0 10px;
-                font-size: 15px;
-                color: #1d2327;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-            .wpzf-akismet-upsell-content h4 .wpzf-pro-badge {
-                background: #3496ff;
-                color: #fff;
-                font-size: 10px;
-                font-weight: 600;
-                padding: 2px 6px;
-                border-radius: 3px;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-            .wpzf-akismet-upsell-content p {
-                margin: 0 0 15px;
-                color: #50575e;
-                font-size: 13px;
-                line-height: 1.6;
-            }
-            .wpzf-akismet-upsell-content p a {
-                color: #3496ff;
-                text-decoration: none;
-            }
-            .wpzf-akismet-upsell-content p a:hover {
-                text-decoration: underline;
-            }
-            .wpzf-akismet-upsell-content ul {
-                margin: 0 0 20px;
-                padding: 0;
-                list-style: none;
-            }
-            .wpzf-akismet-upsell-content ul li {
-                position: relative;
-                padding-left: 20px;
-                margin-bottom: 8px;
-                color: #50575e;
-                font-size: 13px;
-            }
-            .wpzf-akismet-upsell-content ul li:before {
-                content: '';
-                position: absolute;
-                left: 0;
-                top: 5px;
-                width: 12px;
-                height: 12px;
-                background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2346b450'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E") no-repeat center;
-                background-size: contain;
-            }
-            .wpzf-akismet-upsell-content .button-primary {
-                background: #3496ff;
-                border-color: #3496ff;
-                text-decoration: none;
-            }
-            .wpzf-akismet-upsell-content .button-primary:hover {
-                background: #2271b1;
-                border-color: #2271b1;
-            }
-        </style>
         <?php
 	}
 
@@ -1068,61 +918,7 @@ class WPZOOM_Forms_Settings {
 	 * Subscribe form
 	 */
 	public function subscribe_form() {
-
-		$current_user = wp_get_current_user();
-		$screen = get_current_screen();
-		
-		if(  'edit-wpzf-form' !== $screen->id ) { 
-			return;
-		}
-		?>
-		<div class="wpzoom-forms-settings-subscribe-form">
-            <?php $current_user = wp_get_current_user(); ?>
-
-            <div id="mlb2-6096806" class="ml-form-embedContainer ml-subscribe-form ml-subscribe-form-6096806">
-            <div class="ml-form-align-center">
-            <div class="ml-form-embedWrapper embedForm">
-            <div class="ml-form-embedBody ml-form-embedBodyDefault row-form">
-            <div class="ml-form-embedContent" style="">
-            	<h4><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M7.38586 8.35699C7.03068 8.14388 6.56998 8.25906 6.35687 8.61424C6.14376 8.96943 6.25893 9.43012 6.61412 9.64323L11.6141 12.6432C11.8516 12.7857 12.1484 12.7857 12.3859 12.6432L17.3859 9.64323C17.741 9.43012 17.8562 8.96943 17.6431 8.61424C17.43 8.25906 16.9693 8.14388 16.6141 8.35699L12 11.1255L7.38586 8.35699Z" fill="#242628"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M5 19.7315H19C20.519 19.7315 21.75 18.501 21.75 16.9825V7.01953C21.75 5.50032 20.5192 4.26953 19 4.26953H5C3.48079 4.26953 2.25 5.50032 2.25 7.01953V16.9815C2.25 18.5007 3.48079 19.7315 5 19.7315ZM3.75 7.01953C3.75 6.32874 4.30921 5.76953 5 5.76953H19C19.6908 5.76953 20.25 6.32874 20.25 7.01953V16.9825C20.25 17.6721 19.691 18.2315 19 18.2315H5C4.30921 18.2315 3.75 17.6723 3.75 16.9815V7.01953Z" fill="#242628"/>
-</svg> Stay Updated on WPZOOM Forms</h4>
-            	<p>Subscribe to get notified about new plugin updates and features. We’ll also send you useful tips, tutorials, and limited-time promotions.</p>
-            </div>
-            <form class="ml-block-form" action="https://static.mailerlite.com/webforms/submit/p0c0n3" data-code="p0c0n3" method="post" target="_blank">
-            	<div class="ml-form-formContent">
-            	<div class="ml-form-fieldRow ml-last-item">
-            		<div class="ml-field-group ml-field-email ml-validate-email ml-validate-required">
-            		<input aria-label="email" aria-required="true" value="<?php echo esc_attr( $current_user->user_email ); ?>" type="email" class="form-control" data-inputmask="" name="fields[email]" placeholder="Email" autocomplete="email">
-            		</div>
-            	</div>
-            	</div>
-            	<input type="hidden" name="ml-submit" value="1">
-            	<div class="ml-form-embedSubmit">
-            	<button type="submit" class="button button-primary">Subscribe</button>
-            	<button disabled="disabled" style="display:none" type="button" class="loading"> <div class="ml-form-embedSubmitLoad"></div> <span class="sr-only">Loading...</span> </button>
-            	</div>
-            	<input type="hidden" name="anticsrf" value="true">
-            </form>
-            </div>
-            <div class="ml-form-successBody row-success" style="display:none">
-            <div class="ml-form-successContent">
-            	<h4>Thank you!</h4>
-            	<p>You have successfully joined our subscriber list.</p>
-            </div>
-            </div>
-            </div>
-            </div>
-            </div>
-            <script>
-            function ml_webform_success_6096806(){var r=ml_jQuery||jQuery;r(".ml-subscribe-form-6096806 .row-success").show(),r(".ml-subscribe-form-6096806 .row-form").hide()}
-            </script>
-            <img src="https://track.mailerlite.com/webforms/o/6096806/p0c0n3?v1750160739" width="1" height="1" style="max-width:1px;max-height:1px;visibility:hidden;padding:0;margin:0;display:block" alt="." border="0">
-            <script src="https://static.mailerlite.com/js/w/webforms.min.js?vd4de52e171e8eb9c47c0c20caf367ddf" type="text/javascript"></script>
-		</div>
-
-	<?php
+		WPZOOM_Forms_Sidebar::render();
 	}
 }
 
