@@ -566,7 +566,7 @@ class WPZOOM_Forms {
 			)
 		);
 
-		foreach ( array( 'multi-checkbox', 'checkbox', 'email', 'label', 'name', 'phone', 'plain', 'radio', 'select', 'submit', 'textarea', 'website', 'datepicker', 'payment-item', 'payment-checkbox', 'payment-multiple', 'payment-dropdown', 'payment-total', 'stripe-card' ) as $block ) {
+		foreach ( array( 'multi-checkbox', 'checkbox', 'email', 'label', 'name', 'phone', 'plain', 'radio', 'select', 'submit', 'textarea', 'website', 'datepicker', 'payment-item', 'payment-checkbox', 'payment-multiple', 'payment-dropdown', 'payment-total', 'payment-input', 'stripe-card' ) as $block ) {
 			register_block_type( $this->main_dir_path . 'fields/' . $block . '/block.json' );
 		}
 	}
@@ -707,6 +707,7 @@ class WPZOOM_Forms {
 				'wpzoom-forms/payment-multiple',
 				'wpzoom-forms/payment-dropdown',
 				'wpzoom-forms/payment-total',
+				'wpzoom-forms/payment-input',
 				'wpzoom-forms/stripe-card',
 				'core/paragraph',
 				'core/heading',
@@ -749,6 +750,17 @@ class WPZOOM_Forms {
 	public function filter_block_categories( $categories, $block_editor_context ) {
 		if ( null !== $block_editor_context->post && 'wpzf-form' == $block_editor_context->post->post_type ) {
 			$category_slugs = wp_list_pluck( $categories, 'slug' );
+
+			if ( ! in_array( 'wpzoom-forms-payments', $category_slugs, true ) ) {
+				array_unshift(
+					$categories,
+					array(
+						'slug'  => 'wpzoom-forms-payments',
+						'title' => __( 'Payments Blocks', 'wpzoom-forms' ),
+						'icon'  => 'money-alt'
+					)
+				);
+			}
 
 			if ( ! in_array( 'wpzoom-forms', $category_slugs, true ) ) {
 				array_unshift(
@@ -2076,7 +2088,7 @@ class WPZOOM_Forms {
 		$form_content = get_post_field( 'post_content', intval( $attributes['formId'] ), 'raw' );
 		$form_content = do_blocks( $form_content );
 		$form_content = preg_replace(
-			array( '/<!--(.*)-->/Uis', '/<(input|textarea|select)(.*)name="([^"]+)"/Uis' ),
+			array( '/<!--(.*)-->/Uis', '/<(input|textarea|select)(.*)name="((?!wpzf_)[^"]+)"/Uis' ),
 			array( '', '<$1$2name="wpzf_$3"' ),
 			$form_content
 		);
@@ -3437,11 +3449,34 @@ class WPZOOM_Forms {
 				if ( isset( $block['blockName'] ) &&
 				     preg_match( '/^wpzoom\-forms\//i', $block['blockName'] ) &&
 				     ! preg_match( '/(label|submit)\-field$/i', $block['blockName'] ) &&
+				     ! preg_match( '/\/payment\-total$/i', $block['blockName'] ) &&
 				     isset( $block['attrs'] ) ) {
 					$attrs = $block['attrs'];
 
-					if ( array_key_exists( 'id', $attrs ) && array_key_exists( 'name', $attrs ) ) {
-						$found[ $attrs['id'] ] = $attrs['name'];
+					if ( 'wpzoom-forms/payment-item' === $block['blockName'] ) {
+						// payment-item submits as {id}_qty; use itemName as the display label.
+						if ( array_key_exists( 'id', $attrs ) ) {
+							$item_label = ! empty( $attrs['itemName'] ) ? $attrs['itemName'] : __( 'Payment Item', 'wpzoom-forms' );
+							$found[ $attrs['id'] . '_qty' ] = $item_label;
+						}
+					} elseif ( 'wpzoom-forms/payment-input' === $block['blockName'] ) {
+						// payment-input submits as {id}; use label as display name.
+						if ( array_key_exists( 'id', $attrs ) ) {
+							$pi_label = ! empty( $attrs['label'] ) ? wp_strip_all_tags( $attrs['label'] ) : __( 'Payment Amount', 'wpzoom-forms' );
+							$found[ $attrs['id'] ] = $pi_label;
+						}
+					} elseif ( array_key_exists( 'id', $attrs ) && array_key_exists( 'name', $attrs ) ) {
+						// For all other blocks: prefer name attr, fall back to label attr.
+						$display_name = ! empty( $attrs['name'] )
+							? $attrs['name']
+							: ( ! empty( $attrs['label'] ) ? wp_strip_all_tags( $attrs['label'] ) : '' );
+						$found[ $attrs['id'] ] = $display_name;
+
+						// payment-multiple uses the name attr as the HTML radio group name when set,
+						// so also index by name to ensure the submission lookup succeeds.
+						if ( 'wpzoom-forms/payment-multiple' === $block['blockName'] && ! empty( $attrs['name'] ) ) {
+							$found[ $attrs['name'] ] = $display_name;
+						}
 					}
 				}
 
@@ -3467,6 +3502,7 @@ class WPZOOM_Forms {
 			'wpzoom-forms/payment-checkbox',
 			'wpzoom-forms/payment-multiple',
 			'wpzoom-forms/payment-dropdown',
+			'wpzoom-forms/payment-input',
 			'wpzoom-forms/stripe-card',
 		);
 
