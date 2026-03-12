@@ -28,6 +28,43 @@ function wpzf_submit(token) {
     jQuery('form.wpzoom-forms_form').trigger('submit');
   }
 }
+(function () {
+  function injectOverlay(form) {
+    if (form.querySelector('.wpzf-loading-overlay')) return;
+    var overlay = document.createElement('div');
+    overlay.className = 'wpzf-loading-overlay';
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.innerHTML = '<div class="wpzf-loading-spinner"></div>';
+    form.appendChild(overlay);
+  }
+  function showOverlay(form) {
+    var overlay = form.querySelector('.wpzf-loading-overlay');
+    if (overlay) overlay.classList.add('is-visible');
+  }
+  function hideOverlay(form) {
+    var overlay = form.querySelector('.wpzf-loading-overlay');
+    if (overlay) overlay.classList.remove('is-visible');
+  }
+
+  // Expose for stripe-card/view.js (loaded separately).
+  window.wpzfOverlay = {
+    show: showOverlay,
+    hide: hideOverlay,
+    inject: injectOverlay
+  };
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('form.wpzoom-forms_form').forEach(function (form) {
+      injectOverlay(form);
+
+      // For non-Stripe forms, show overlay on submit (page navigates away).
+      if (!form.querySelector('.wpzf-stripe-card-wrapper')) {
+        form.addEventListener('submit', function () {
+          showOverlay(form);
+        });
+      }
+    });
+  });
+})();
 /******/ })()
 ;
 //# sourceMappingURL=script.js.map

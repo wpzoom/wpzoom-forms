@@ -6,6 +6,56 @@
  * Deprecated colors.
  * Please avoid using these.
  */
+/* Loading overlay ------------------------------------------ */
+.wpzf-loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.82);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  z-index: 100;
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  -webkit-transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease;
+  backdrop-filter: blur(2px);
+}
+.wpzf-loading-overlay.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.wpzf-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(8, 62, 167, 0.15);
+  border-top-color: #083EA7;
+  border-radius: 50%;
+  -webkit-animation: wpzf-spin 0.7s linear infinite;
+          animation: wpzf-spin 0.7s linear infinite;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
+}
+@-webkit-keyframes wpzf-spin {
+  to {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+@keyframes wpzf-spin {
+  to {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+/* Thank you screen ----------------------------------------- */
 .wpzf-payment-success {
   text-align: center;
   padding: 48px 24px;
@@ -29,6 +79,7 @@
 }
 .wpzoom-forms_form,
 .wp-block-wpzoom-forms-form {
+  position: relative;
   /* Box Sizing Reset
   -----------------------------------------------*/
   /* All of our custom controls should be what we expect them to be */

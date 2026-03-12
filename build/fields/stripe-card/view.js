@@ -297,6 +297,25 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
   }
 
   /**
+   * Shows/hides the loading overlay on the form.
+   * Falls back to a self-managed overlay if frontend/script.js hasn't run yet.
+   *
+   * @param {HTMLElement} form
+   * @param {boolean}     visible
+   */
+  function setOverlay(form, visible) {
+    var overlay = form.querySelector('.wpzf-loading-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.className = 'wpzf-loading-overlay';
+      overlay.setAttribute('aria-hidden', 'true');
+      overlay.innerHTML = '<div class="wpzf-loading-spinner"></div>';
+      form.appendChild(overlay);
+    }
+    overlay.classList.toggle('is-visible', visible);
+  }
+
+  /**
    * Shows an error in the #wpzf-card-errors container.
    *
    * @param {HTMLElement} form
@@ -381,6 +400,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
               e.preventDefault();
               submitBtn = form.querySelector('[type="submit"]');
               if (submitBtn) submitBtn.disabled = true;
+              setOverlay(form, true);
               totalCents = calculateTotal(form);
               updateTotalDisplay(form, totalCents);
               elements.update({
@@ -392,6 +412,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
               }
               showError(form, 'Order total must be at least $0.50.');
               if (submitBtn) submitBtn.disabled = false;
+              setOverlay(form, false);
               return _context.a(2);
             case 1:
               _context.n = 2;
@@ -405,6 +426,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
               }
               showError(form, submitError.message);
               if (submitBtn) submitBtn.disabled = false;
+              setOverlay(form, false);
               return _context.a(2);
             case 3:
               _context.p = 3;
@@ -438,6 +460,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
               }
               showError(form, intentData.message || 'Payment setup failed. Please try again.');
               if (submitBtn) submitBtn.disabled = false;
+              setOverlay(form, false);
               return _context.a(2);
             case 6:
               client_secret = intentData.client_secret, payment_intent_id = intentData.payment_intent_id;
@@ -447,6 +470,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
               }
               showError(form, 'Payment setup failed: no client secret returned.');
               if (submitBtn) submitBtn.disabled = false;
+              setOverlay(form, false);
               return _context.a(2);
             case 7:
               // Step 3 — confirm the payment (or setup for free-trial subscriptions).
@@ -469,6 +493,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
               }
               showError(form, confirmError.message);
               if (submitBtn) submitBtn.disabled = false;
+              setOverlay(form, false);
               return _context.a(2);
             case 9:
               // Step 4 — payment confirmed: populate hidden fields then re-submit.
@@ -490,6 +515,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
               console.error('[wpzf-stripe] Unexpected error:', _t);
               showError(form, 'An unexpected error occurred. Please try again.');
               if (submitBtn) submitBtn.disabled = false;
+              setOverlay(form, false);
             case 11:
               return _context.a(2);
           }

@@ -181,6 +181,25 @@
 	}
 
 	/**
+	 * Shows/hides the loading overlay on the form.
+	 * Falls back to a self-managed overlay if frontend/script.js hasn't run yet.
+	 *
+	 * @param {HTMLElement} form
+	 * @param {boolean}     visible
+	 */
+	function setOverlay( form, visible ) {
+		let overlay = form.querySelector( '.wpzf-loading-overlay' );
+		if ( ! overlay ) {
+			overlay = document.createElement( 'div' );
+			overlay.className = 'wpzf-loading-overlay';
+			overlay.setAttribute( 'aria-hidden', 'true' );
+			overlay.innerHTML = '<div class="wpzf-loading-spinner"></div>';
+			form.appendChild( overlay );
+		}
+		overlay.classList.toggle( 'is-visible', visible );
+	}
+
+	/**
 	 * Shows an error in the #wpzf-card-errors container.
 	 *
 	 * @param {HTMLElement} form
@@ -266,6 +285,7 @@
 
 			const submitBtn = form.querySelector( '[type="submit"]' );
 			if ( submitBtn ) submitBtn.disabled = true;
+			setOverlay( form, true );
 
 			totalCents = calculateTotal( form );
 			updateTotalDisplay( form, totalCents );
@@ -274,6 +294,7 @@
 			if ( totalCents < 50 ) {
 				showError( form, 'Order total must be at least $0.50.' );
 				if ( submitBtn ) submitBtn.disabled = false;
+				setOverlay( form, false );
 				return;
 			}
 
@@ -282,6 +303,7 @@
 			if ( submitError ) {
 				showError( form, submitError.message );
 				if ( submitBtn ) submitBtn.disabled = false;
+				setOverlay( form, false );
 				return;
 			}
 
@@ -308,6 +330,7 @@
 				if ( ! intentResponse.ok || intentData.code ) {
 					showError( form, intentData.message || 'Payment setup failed. Please try again.' );
 					if ( submitBtn ) submitBtn.disabled = false;
+					setOverlay( form, false );
 					return;
 				}
 
@@ -316,6 +339,7 @@
 				if ( ! client_secret ) {
 					showError( form, 'Payment setup failed: no client secret returned.' );
 					if ( submitBtn ) submitBtn.disabled = false;
+					setOverlay( form, false );
 					return;
 				}
 
@@ -334,6 +358,7 @@
 				if ( confirmError ) {
 					showError( form, confirmError.message );
 					if ( submitBtn ) submitBtn.disabled = false;
+					setOverlay( form, false );
 					return;
 				}
 
@@ -355,6 +380,7 @@
 				console.error( '[wpzf-stripe] Unexpected error:', err );
 				showError( form, 'An unexpected error occurred. Please try again.' );
 				if ( submitBtn ) submitBtn.disabled = false;
+				setOverlay( form, false );
 			}
 		};
 
