@@ -43,12 +43,12 @@ var THEMES = {
   },
   flat: {
     bg: '#ffffff',
-    inputBg: '#f8f8f8',
+    inputBg: '#fff',
     text: '#30313d',
     label: '#6d6e78',
-    border: '1px solid #ccc',
+    border: 'none',
     shadow: 'none',
-    radius: '4px',
+    radius: '12px',
     placeholder: '#b3b3c0'
   },
   night: {
@@ -58,8 +58,8 @@ var THEMES = {
     label: '#8b949e',
     border: '1px solid #30363d',
     shadow: 'none',
-    radius: '6px',
-    placeholder: '#484f58'
+    radius: '4px',
+    placeholder: '#fff'
   }
 };
 
@@ -209,7 +209,7 @@ var Edit = function Edit(props) {
     gap: '4px'
   };
   var labelStyle = {
-    fontSize: '13px',
+    fontSize: '14px',
     fontWeight: '500',
     color: t.label,
     lineHeight: '1.4'
