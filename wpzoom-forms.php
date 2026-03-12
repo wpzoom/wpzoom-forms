@@ -1933,10 +1933,22 @@ class WPZOOM_Forms {
 
 			<div style="text-align:right;font-size:14px;font-weight:600;padding-top:8px;border-top:1px solid #ddd;">
 				<?php
+				$period_suffix = '';
+				if ( 'recurring' === $type ) {
+					$form_id       = intval( get_post_meta( $post_id, '_wpzf_form_id', true ) );
+					$period        = get_post_meta( $form_id, '_wpzf_stripe_recurring_period', true ) ?: 'month';
+					$period_labels = array(
+						'day'   => __( '/ day',   'wpzoom-forms' ),
+						'week'  => __( '/ week',  'wpzoom-forms' ),
+						'month' => __( '/ month', 'wpzoom-forms' ),
+						'year'  => __( '/ year',  'wpzoom-forms' ),
+					);
+					$period_suffix = ' ' . ( $period_labels[ $period ] ?? '/ ' . $period );
+				}
 				printf(
 					/* translators: %s: formatted total amount */
 					esc_html__( 'Total: %s', 'wpzoom-forms' ),
-					'$' . esc_html( number_format( intval( $payment_total ) / 100, 2 ) )
+					'$' . esc_html( number_format( intval( $payment_total ) / 100, 2 ) ) . esc_html( $period_suffix )
 				);
 				?>
 			</div>
@@ -3181,7 +3193,7 @@ class WPZOOM_Forms {
 					}
 
 					if ( $this->form_has_payment_blocks( $blocks ) ) {
-						$email_body .= $this->build_payment_email_section();
+						$email_body .= $this->build_payment_email_section( $form_id );
 					}
 
 					$fromaddr     = ! empty( $replyto ) && isset( $_REQUEST[ $replyto ] ) ? sanitize_email( $_REQUEST[ $replyto ] ) : $sendto;
@@ -3305,7 +3317,7 @@ class WPZOOM_Forms {
 	 *
 	 * @return string HTML fragment.
 	 */
-	private function build_payment_email_section() {
+	private function build_payment_email_section( $form_id = 0 ) {
 		$total   = isset( $_POST['wpzf_payment_total'] )  ? absint( $_POST['wpzf_payment_total'] )                              : 0;
 		$type    = isset( $_POST['wpzf_payment_type'] )    ? sanitize_text_field( wp_unslash( $_POST['wpzf_payment_type'] ) )     : '';
 		$method  = isset( $_POST['wpzf_payment_method'] )  ? sanitize_text_field( wp_unslash( $_POST['wpzf_payment_method'] ) )   : '';
@@ -3346,9 +3358,20 @@ class WPZOOM_Forms {
 			}
 		}
 
-		$formatted_total = '$' . number_format( $total / 100, 2 );
-		$html .= '<strong>' . esc_html__( 'Total:', 'wpzoom-forms' ) . '</strong> ' . esc_html( $formatted_total ) . '<br/><br/>';
 
+		$period_suffix = '';
+		if ( 'recurring' === $type && $form_id ) {
+			$period        = get_post_meta( intval( $form_id ), '_wpzf_stripe_recurring_period', true ) ?: 'month';
+			$period_labels = array(
+				'day'   => __( '/ day',   'wpzoom-forms' ),
+				'week'  => __( '/ week',  'wpzoom-forms' ),
+				'month' => __( '/ month', 'wpzoom-forms' ),
+				'year'  => __( '/ year',  'wpzoom-forms' ),
+			);
+			$period_suffix = ' ' . ( $period_labels[ $period ] ?? '/ ' . $period );
+		}
+		$formatted_total = '$' . number_format( $total / 100, 2 );
+		$html .= '<strong>' . esc_html__( 'Total:', 'wpzoom-forms' ) . '</strong> ' . esc_html( $formatted_total . $period_suffix ) . '<br/><br/>';
 		return $html;
 	}
 
