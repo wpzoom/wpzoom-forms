@@ -4682,9 +4682,40 @@ var insertFormField = function insertFormField(blockName, defaultAttributes, isD
       value: ''
     }].concat((0,_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1__["default"])(formFieldBlocks));
 
+    // Detect payment blocks in the editor.
+    var PAYMENT_BLOCK_TYPES = ['wpzoom-forms/payment-item', 'wpzoom-forms/payment-checkbox', 'wpzoom-forms/payment-multiple', 'wpzoom-forms/payment-dropdown', 'wpzoom-forms/payment-input', 'wpzoom-forms/payment-total', 'wpzoom-forms/stripe-card'];
+    var hasPaymentBlocks = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_7__.useSelect)(function (select) {
+      var _checkBlocks = function checkBlocks(blocks) {
+        var _iterator2 = _createForOfIteratorHelper(blocks),
+          _step2;
+        try {
+          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+            var block = _step2.value;
+            if (PAYMENT_BLOCK_TYPES.includes(block.name)) return true;
+            if (block.innerBlocks && block.innerBlocks.length && _checkBlocks(block.innerBlocks)) return true;
+          }
+        } catch (err) {
+          _iterator2.e(err);
+        } finally {
+          _iterator2.f();
+        }
+        return false;
+      };
+      return _checkBlocks(select('core/block-editor').getBlocks());
+    });
+
     // Use dispatch to open panels by default
     var _useDispatch = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_7__.useDispatch)('core/edit-post'),
       toggleEditorPanelOpened = _useDispatch.toggleEditorPanelOpened;
+    var _useDispatch2 = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_7__.useDispatch)('core/notices'),
+      createNotice = _useDispatch2.createNotice;
+    (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_8__.useEffect)(function () {
+      if (hasPaymentBlocks && !paymentEnabled) {
+        createNotice('warning', (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Payment fields detected, but payments are not enabled for this form. Enable them in Payment Settings to collect payments.', 'wpzoom-forms'), {
+          isDismissible: true
+        });
+      }
+    }, [hasPaymentBlocks]);
     (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_8__.useEffect)(function () {
       // Open the Form Settings panel by default
       toggleEditorPanelOpened('wpzoom-forms-document-settings/form-settings', true);

@@ -180,10 +180,42 @@ registerPlugin('wpzoom-forms-document-settings', {
 		}, [] );
 
 		const fieldOptions = [ { label: __( '— Select a field —', 'wpzoom-forms' ), value: '' }, ...formFieldBlocks ];
-		
+
+		// Detect payment blocks in the editor.
+		const PAYMENT_BLOCK_TYPES = [
+			'wpzoom-forms/payment-item',
+			'wpzoom-forms/payment-checkbox',
+			'wpzoom-forms/payment-multiple',
+			'wpzoom-forms/payment-dropdown',
+			'wpzoom-forms/payment-input',
+			'wpzoom-forms/payment-total',
+			'wpzoom-forms/stripe-card',
+		];
+		const hasPaymentBlocks = useSelect( select => {
+			const checkBlocks = ( blocks ) => {
+				for ( const block of blocks ) {
+					if ( PAYMENT_BLOCK_TYPES.includes( block.name ) ) return true;
+					if ( block.innerBlocks && block.innerBlocks.length && checkBlocks( block.innerBlocks ) ) return true;
+				}
+				return false;
+			};
+			return checkBlocks( select( 'core/block-editor' ).getBlocks() );
+		} );
+
 		// Use dispatch to open panels by default
 		const { toggleEditorPanelOpened } = useDispatch('core/edit-post');
+		const { createNotice } = useDispatch('core/notices');
 		
+		useEffect(() => {
+			if ( hasPaymentBlocks && ! paymentEnabled ) {
+				createNotice(
+					'warning',
+					__( 'Payment fields detected, but payments are not enabled for this form. Enable them in Payment Settings to collect payments.', 'wpzoom-forms' ),
+					{ isDismissible: true }
+				);
+			}
+		}, [ hasPaymentBlocks ] );
+
 		useEffect(() => {
 			// Open the Form Settings panel by default
 			toggleEditorPanelOpened('wpzoom-forms-document-settings/form-settings', true);
