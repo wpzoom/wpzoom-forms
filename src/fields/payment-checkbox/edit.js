@@ -1,5 +1,16 @@
-import { useBlockProps, InspectorControls, RichText } from '@wordpress/block-editor';
-import { useState, Fragment, useEffect } from '@wordpress/element';
+/**
+ * External dependencies
+ */
+import clsx from 'clsx';
+
+/**
+ * WordPress dependencies
+ */
+import { useBlockProps, InspectorControls, RichText,
+	__experimentalUseBorderProps as useBorderProps,
+	__experimentalUseColorProps as useColorProps,
+} from '@wordpress/block-editor';
+import { useState, Fragment, useEffect, useRef } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import {
 	PanelBody,
@@ -16,9 +27,17 @@ import {
 import { __experimentalNumberControl as NumberControl } from '@wordpress/components';
 
 const Edit = props => {
-	const blockProps = useBlockProps( { className: 'unstyled-list' } );
+	const blockProps = useBlockProps();
 	const { attributes, setAttributes, clientId } = props;
 	const { id, name, options, label, showLabel, required } = attributes;
+	const ref = useRef();
+
+	const borderProps = useBorderProps( attributes );
+	const colorProps  = useColorProps( attributes );
+
+	if ( ref.current ) {
+		ref.current.focus();
+	}
 
 	useEffect( () => {
 		if ( ! id ) {
@@ -140,37 +159,45 @@ const Edit = props => {
 			</PanelBody>
 		</InspectorControls>
 
-		<Fragment>
-			{ showLabel && <label htmlFor={ uniqueId }>
-				<RichText
-					tagName="label"
-					placeholder={ __( 'Label', 'wpzoom-forms' ) }
-					value={ label }
-					htmlFor={ uniqueId }
-					onChange={ value => setAttributes( { label: value } ) }
-				/>
-				{ required && <sup className="wp-block-wpzoom-forms-required">{ __( '*', 'wpzoom-forms' ) }</sup> }
-			</label> }
-
-			<ul { ...blockProps }>
-				{ options.map( ( option, index ) =>
-					<li key={ index }>
-						<label>
-							<input
-								type="checkbox"
-								name={ `${ uniqueId }[]` }
-								value={ option.label }
-								data-price={ option.price }
-								className="wpzf-payment-option"
-								onChange={ e => {} }
-								required={ !! required }
-							/>
-							{ option.label } — ${ Number( option.price ).toFixed( 2 ) }
-						</label>
-					</li>
+		<div { ...blockProps }>
+			<fieldset
+				className={ clsx( 'wpzf-payment-options', colorProps.className, borderProps.className ) }
+				style={ { ...borderProps.style, ...colorProps.style } }
+				id={ uniqueId }
+				data-payment-type="checkbox"
+			>
+				{ showLabel && (
+					<legend>
+						<RichText
+							tagName="span"
+							placeholder={ __( 'Label', 'wpzoom-forms' ) }
+							value={ label }
+							onChange={ value => setAttributes( { label: value } ) }
+						/>
+						{ required && <sup className="wp-block-wpzoom-forms-required">{ __( '*', 'wpzoom-forms' ) }</sup> }
+					</legend>
 				) }
-			</ul>
-		</Fragment>
+
+				<ul>
+					{ options.map( ( option, index ) =>
+						<li key={ index }>
+							<label>
+								<input
+									type="checkbox"
+									name={ `${ uniqueId }[]` }
+									value={ option.label }
+									data-price={ option.price }
+									className="wpzf-payment-option"
+									onChange={ e => {} }
+									required={ !! required }
+								/>
+								{ option.label } — ${ Number( option.price ).toFixed( 2 ) }
+							</label>
+						</li>
+					) }
+				</ul>
+			</fieldset>
+		</div>
 	</>;
 };
 

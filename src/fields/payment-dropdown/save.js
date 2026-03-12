@@ -1,11 +1,36 @@
-import { useBlockProps, RichText } from '@wordpress/block-editor';
+/**
+ * External dependencies
+ */
+import clsx from 'clsx';
+
+/**
+ * WordPress dependencies
+ */
+import { useBlockProps, RichText,__experimentalGetBorderClassesAndStyles as getBorderClassesAndStyles,
+	__experimentalGetColorClassesAndStyles as getColorClassesAndStyles, } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
 const Save = ( { attributes } ) => {
-	const blockProps = useBlockProps.save();
 	const { id, options, defaultValue, label, showLabel, required } = attributes;
 
-	return <>
+	const borderProps = getBorderClassesAndStyles( attributes );
+	const colorProps = getColorClassesAndStyles( attributes );
+
+	const inputStyle = {
+		...borderProps.style,
+		...colorProps.style,
+	};
+
+	const inputClasses = clsx(
+		'wpzf-payment-options',
+		colorProps.className,
+		borderProps.className
+	);
+
+	const blockProps = useBlockProps.save();
+
+
+	return <div { ...blockProps }>
 		{ showLabel && <label htmlFor={ id }>
 			<RichText.Content
 				tagName="span"
@@ -15,13 +40,13 @@ const Save = ( { attributes } ) => {
 		</label> }
 
 		<select
+			className={ inputClasses }
 			name={ id }
 			id={ id }
 			required={ !! required }
 			defaultValue={ defaultValue }
-			className={ `wpzf-payment-options ${ blockProps.className || '' }` }
 			data-payment-type="dropdown"
-			{ ...blockProps }
+			style={ inputStyle }
 		>
 			{ options.map( ( option, index ) =>
 				<option
@@ -34,7 +59,7 @@ const Save = ( { attributes } ) => {
 				</option>
 			) }
 		</select>
-	</>;
+	</div>;
 };
 
 export default Save;

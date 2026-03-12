@@ -117,22 +117,94 @@
   padding: 10px 25px;
   margin: 15px 0;
 }
+.wpzoom-forms_form fieldset,
+.wp-block-wpzoom-forms-form fieldset {
+  border: none;
+  padding: 0;
+}
+.wpzoom-forms_form legend,
+.wp-block-wpzoom-forms-form legend {
+  margin-bottom: 10px;
+}
 .wpzoom-forms_form .wp-block-wpzoom-forms-multi-checkbox-field,
 .wpzoom-forms_form .wp-block-wpzoom-forms-radio-field,
+.wpzoom-forms_form .wp-block-wpzoom-forms-payment-checkbox,
+.wpzoom-forms_form .wp-block-wpzoom-forms-payment-multiple,
 .wp-block-wpzoom-forms-form .wp-block-wpzoom-forms-multi-checkbox-field,
-.wp-block-wpzoom-forms-form .wp-block-wpzoom-forms-radio-field {
+.wp-block-wpzoom-forms-form .wp-block-wpzoom-forms-radio-field,
+.wp-block-wpzoom-forms-form .wp-block-wpzoom-forms-payment-checkbox,
+.wp-block-wpzoom-forms-form .wp-block-wpzoom-forms-payment-multiple {
   list-style-type: none;
-  margin: 0;
   padding: 0;
+  margin: 0;
+}
+.wpzoom-forms_form .wp-block-wpzoom-forms-multi-checkbox-field ul,
+.wpzoom-forms_form .wp-block-wpzoom-forms-radio-field ul,
+.wpzoom-forms_form .wp-block-wpzoom-forms-payment-checkbox ul,
+.wpzoom-forms_form .wp-block-wpzoom-forms-payment-multiple ul,
+.wp-block-wpzoom-forms-form .wp-block-wpzoom-forms-multi-checkbox-field ul,
+.wp-block-wpzoom-forms-form .wp-block-wpzoom-forms-radio-field ul,
+.wp-block-wpzoom-forms-form .wp-block-wpzoom-forms-payment-checkbox ul,
+.wp-block-wpzoom-forms-form .wp-block-wpzoom-forms-payment-multiple ul {
+  padding: 0;
+  margin: 0;
 }
 .wpzoom-forms_form .wp-block-wpzoom-forms-multi-checkbox-field li,
 .wpzoom-forms_form .wp-block-wpzoom-forms-radio-field li,
+.wpzoom-forms_form .wp-block-wpzoom-forms-payment-checkbox li,
+.wpzoom-forms_form .wp-block-wpzoom-forms-payment-multiple li,
 .wp-block-wpzoom-forms-form .wp-block-wpzoom-forms-multi-checkbox-field li,
-.wp-block-wpzoom-forms-form .wp-block-wpzoom-forms-radio-field li {
+.wp-block-wpzoom-forms-form .wp-block-wpzoom-forms-radio-field li,
+.wp-block-wpzoom-forms-form .wp-block-wpzoom-forms-payment-checkbox li,
+.wp-block-wpzoom-forms-form .wp-block-wpzoom-forms-payment-multiple li {
   margin: 0;
   padding: 0;
   margin-bottom: 5px;
   list-style-type: none;
+}
+.wpzoom-forms_form .wp-block-wpzoom-forms-payment-total.is-style-inline,
+.wp-block-wpzoom-forms-form .wp-block-wpzoom-forms-payment-total.is-style-inline {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+.wpzoom-forms_form .wp-block-wpzoom-forms-payment-item.is-style-inline,
+.wp-block-wpzoom-forms-form .wp-block-wpzoom-forms-payment-item.is-style-inline {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+.wpzoom-forms_form .wp-block-wpzoom-forms-payment-item.is-style-inline .wpzf-payment-item-desc,
+.wp-block-wpzoom-forms-form .wp-block-wpzoom-forms-payment-item.is-style-inline .wpzf-payment-item-desc {
+  font-size: 14px;
+}
+.wpzoom-forms_form .wp-block-wpzoom-forms-payment-item.is-style-inline .wpzf-payment-item-right,
+.wp-block-wpzoom-forms-form .wp-block-wpzoom-forms-payment-item.is-style-inline .wpzf-payment-item-right {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 8px;
+}
+.wpzoom-forms_form .wp-block-wpzoom-forms-payment-item.is-style-inline .wpzf-payment-item-right .wpzf-payment-item-qty,
+.wp-block-wpzoom-forms-form .wp-block-wpzoom-forms-payment-item.is-style-inline .wpzf-payment-item-right .wpzf-payment-item-qty {
+  margin: 0;
+  padding: 6px 10px;
+  min-width: 50px;
 }
 .wpzoom-forms_form .wp-block-wpzoom-forms-checkbox-field,
 .wpzoom-forms_form .wp-block-wpzoom-forms-multi-checkbox-field,

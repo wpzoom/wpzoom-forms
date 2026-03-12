@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "wpzoom-forms/payment-total",
   "title": "Payment Total",
-  "category": "wpzoom-forms",
+  "category": "wpzoom-forms-payments",
   "ancestor": [
     "wpzoom-forms/form"
   ],
@@ -64,13 +64,8 @@
   },
   "styles": [
     {
-      "name": "modern",
-      "label": "Modern",
-      "isDefault": true
-    },
-    {
-      "name": "classic",
-      "label": "Classic"
+      "name": "inline",
+      "label": "Inline"
     }
   ],
   "editorScript": "file:./index.js",

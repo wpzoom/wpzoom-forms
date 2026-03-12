@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "wpzoom-forms/payment-checkbox",
   "title": "Checkbox Items",
-  "category": "wpzoom-forms",
+  "category": "wpzoom-forms-payments",
   "ancestor": [
     "wpzoom-forms/form"
   ],
@@ -82,10 +82,11 @@
       }
     },
     "__experimentalBorder": {
-      "color": true,
       "radius": true,
-      "style": true,
-      "width": true
+      "__experimentalSkipSerialization": true,
+      "__experimentalDefaultControls": {
+        "radius": true
+      }
     }
   },
   "selectors": {

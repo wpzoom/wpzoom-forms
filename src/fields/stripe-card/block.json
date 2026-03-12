@@ -3,7 +3,7 @@
 	"apiVersion":   3,
 	"name":         "wpzoom-forms/stripe-card",
 	"title":        "Stripe Card",
-	"category":     "wpzoom-forms",
+	"category":     "wpzoom-forms-payments",
 	"ancestor":     [ "wpzoom-forms/form" ],
 	"description":  "A secure credit/debit card input powered by Stripe Elements.",
 	"keywords":     [ "wpzoom", "form", "stripe", "card", "payment", "credit" ],

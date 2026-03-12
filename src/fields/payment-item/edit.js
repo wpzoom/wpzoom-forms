@@ -1,5 +1,9 @@
-import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { Fragment, useEffect } from '@wordpress/element';
+import clsx from 'clsx';
+import { useBlockProps, InspectorControls,
+	__experimentalUseBorderProps as useBorderProps,
+	__experimentalUseColorProps as useColorProps,
+} from '@wordpress/block-editor';
+import { Fragment, useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { PanelBody, TextControl, ToggleControl } from '@wordpress/components';
 import { __experimentalNumberControl as NumberControl } from '@wordpress/components';
@@ -8,6 +12,14 @@ const Edit = props => {
 	const blockProps = useBlockProps();
 	const { attributes, setAttributes, clientId } = props;
 	const { id, itemName, price, description, quantity, minQty, maxQty, showQty } = attributes;
+	const ref = useRef();
+
+	const borderProps = useBorderProps( attributes );
+	const colorProps  = useColorProps( attributes );
+
+	if ( ref.current ) {
+		ref.current.focus();
+	}
 
 	useEffect( () => {
 		if ( ! id ) {
@@ -78,37 +90,32 @@ const Edit = props => {
 			</PanelBody>
 		</InspectorControls>
 
-		<Fragment>
-			<div
-				{ ...blockProps }
-				style={ { padding: '12px', border: '1px solid #ddd', borderRadius: '4px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', ...blockProps.style } }
-			>
-				<div>
-					<span className="wpzf-payment-item-name" style={ { fontWeight: 500 } }>
-						{ itemName || __( 'Item Name', 'wpzoom-forms' ) }
-					</span>
-					{ description && (
-						<span style={ { display: 'block', fontSize: '12px', color: '#888', marginTop: '2px' } }>
-							{ description }
-						</span>
-					) }
+		<div { ...blockProps }>
+			<div className="wpzf-payment-item-info">
+				<div className="wpzf-payment-item-name" style={ { fontWeight: 500 } }>
+					{ itemName || __( 'Item Name', 'wpzoom-forms' ) }
 				</div>
-				<div style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
-					<span className="wpzf-payment-item-price" style={ { fontWeight: 600 } }>${ formattedPrice }</span>
-					{ showQty && (
-						<input
-							type="number"
-							className="wpzf-payment-item-qty"
-							defaultValue={ quantity }
-							min={ minQty }
-							max={ maxQty }
-							style={ { width: '60px', textAlign: 'center' } }
-							readOnly
-						/>
-					) }
-				</div>
+				{ description && (
+					<div className="wpzf-payment-item-desc">
+						{ description }
+					</div>
+				) }
 			</div>
-		</Fragment>
+			<div className="wpzf-payment-item-right">
+				<span className="wpzf-payment-item-price">${ formattedPrice }</span>
+				{ showQty && (
+					<input
+						className={ clsx( 'wpzf-payment-item-qty', colorProps.className, borderProps.className ) }
+						style={ { ...borderProps.style, ...colorProps.style, width: '60px', textAlign: 'center', padding: '6px 10px' } }
+						type="number"
+						defaultValue={ quantity }
+						min={ minQty }
+						max={ maxQty }
+						readOnly
+					/>
+				) }
+			</div>
+		</div>
 	</>;
 };
 

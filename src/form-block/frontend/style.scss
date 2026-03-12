@@ -85,17 +85,53 @@
         padding: 10px 25px;
         margin: 15px 0;
     }
-    .wp-block-wpzoom-forms-multi-checkbox-field,
-    .wp-block-wpzoom-forms-radio-field {
-        list-style-type: none;
-        margin: 0;
+    fieldset{
+        border: none;
         padding: 0;
+    }
+    legend{
+        margin-bottom: 10px;
+    }
 
+    .wp-block-wpzoom-forms-multi-checkbox-field,
+    .wp-block-wpzoom-forms-radio-field,
+    .wp-block-wpzoom-forms-payment-checkbox,
+    .wp-block-wpzoom-forms-payment-multiple {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        ul {
+            padding: 0;
+            margin: 0;
+        }
         li {
             margin: 0;
             padding: 0;
             margin-bottom: 5px;
             list-style-type: none;
+        }
+    }
+    .wp-block-wpzoom-forms-payment-total.is-style-inline{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .wp-block-wpzoom-forms-payment-item.is-style-inline{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .wpzf-payment-item-desc{
+            font-size: 14px;
+        }
+        .wpzf-payment-item-right{
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            .wpzf-payment-item-qty {
+                margin: 0;
+                padding: 6px 10px;
+                min-width: 50px;
+            }
         }
     }
 

@@ -64,6 +64,11 @@
 			}
 		} );
 
+		// Custom number inputs (payment-input block).
+		form.querySelectorAll( 'input.wpzf-payment-amount' ).forEach( input => {
+			total += parseFloat( input.value ) || 0;
+		} );
+
 		return Math.round( total * 100 );
 	}
 
@@ -138,6 +143,19 @@
 					subtotal: price,
 				} );
 			}
+		} );
+
+		// Custom number inputs (payment-input block).
+		form.querySelectorAll( 'input.wpzf-payment-amount' ).forEach( input => {
+			const price = parseFloat( input.value ) || 0;
+			const labelEl = input.closest( '.wp-block-wpzoom-forms-payment-input' );
+			const labelText = labelEl ? ( labelEl.querySelector( 'label span' ) || {} ).textContent || 'Amount' : 'Amount';
+			items.push( {
+				name:     labelText.trim(),
+				price,
+				qty:      1,
+				subtotal: price,
+			} );
 		} );
 
 		return items;

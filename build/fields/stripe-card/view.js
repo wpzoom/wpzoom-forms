@@ -182,6 +182,11 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
         total += parseFloat(selected.dataset.price) || 0;
       }
     });
+
+    // Custom number inputs (payment-input block).
+    form.querySelectorAll('input.wpzf-payment-amount').forEach(function (input) {
+      total += parseFloat(input.value) || 0;
+    });
     return Math.round(total * 100);
   }
 
@@ -255,6 +260,19 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
           subtotal: price
         });
       }
+    });
+
+    // Custom number inputs (payment-input block).
+    form.querySelectorAll('input.wpzf-payment-amount').forEach(function (input) {
+      var price = parseFloat(input.value) || 0;
+      var labelEl = input.closest('.wp-block-wpzoom-forms-payment-input');
+      var labelText = labelEl ? (labelEl.querySelector('label span') || {}).textContent || 'Amount' : 'Amount';
+      items.push({
+        name: labelText.trim(),
+        price: price,
+        qty: 1,
+        subtotal: price
+      });
     });
     return items;
   }

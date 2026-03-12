@@ -1,20 +1,22 @@
-import { useBlockProps } from '@wordpress/block-editor';
+import clsx from 'clsx';
+import { useBlockProps,
+	__experimentalGetBorderClassesAndStyles as getBorderClassesAndStyles,
+	__experimentalGetColorClassesAndStyles as getColorClassesAndStyles,
+} from '@wordpress/block-editor';
 
 const Save = ( { attributes } ) => {
 	const blockProps = useBlockProps.save();
 	const { id, itemName, price, description, quantity, minQty, maxQty, showQty } = attributes;
 
+	const borderProps = getBorderClassesAndStyles( attributes );
+	const colorProps  = getColorClassesAndStyles( attributes );
+
 	return (
-		<div
-			{ ...blockProps }
-			className={ `wpzf-payment-item ${ blockProps.className }` }
-			data-price={ price }
-			data-id={ id }
-		>
+		<div { ...blockProps } data-price={ price } data-id={ id }>
 			<div className="wpzf-payment-item-info">
-				<span className="wpzf-payment-item-name">{ itemName }</span>
+				<div className="wpzf-payment-item-name">{ itemName }</div>
 				{ description && (
-					<span className="wpzf-payment-item-desc">{ description }</span>
+					<div className="wpzf-payment-item-desc">{ description }</div>
 				) }
 			</div>
 			<div className="wpzf-payment-item-right">
@@ -22,9 +24,11 @@ const Save = ( { attributes } ) => {
 				{ showQty ? (
 					<input
 						type="number"
-						className="wpzf-payment-item-qty"
+						className={ clsx( 'wpzf-payment-item-qty', colorProps.className, borderProps.className ) }
+						style={ { ...borderProps.style, ...colorProps.style } }
 						name={ `${ id }_qty` }
 						defaultValue={ quantity }
+						value={ minQty }
 						min={ minQty }
 						max={ maxQty }
 					/>

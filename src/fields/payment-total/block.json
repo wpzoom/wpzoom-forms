@@ -3,7 +3,7 @@
 	"apiVersion":   3,
 	"name":         "wpzoom-forms/payment-total",
 	"title":        "Payment Total",
-	"category":     "wpzoom-forms",
+	"category":     "wpzoom-forms-payments",
 	"ancestor":     [ "wpzoom-forms/form" ],
 	"description":  "Displays the dynamically calculated total of all Payment Item blocks in the form.",
 	"keywords":     [ "wpzoom", "form", "payment", "total", "sum" ],
@@ -54,9 +54,8 @@
 			"width":      true
 		}
 	},
-	"styles":       [
-		{ "name": "modern", "label": "Modern", "isDefault": true },
-		{ "name": "classic", "label": "Classic" }
+	"styles":[
+		{ "name": "inline", "label": "Inline" }
 	],
 	"editorScript": "file:./index.js",
 	"editorStyle":  "wpzoom-forms-css-backend-main",

@@ -2,10 +2,10 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./src/fields/payment-item/edit.js":
-/*!*****************************************!*\
-  !*** ./src/fields/payment-item/edit.js ***!
-  \*****************************************/
+/***/ "./src/fields/payment-input/edit.js":
+/*!******************************************!*\
+  !*** ./src/fields/payment-input/edit.js ***!
+  \******************************************/
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -37,13 +37,13 @@ var Edit = function Edit(props) {
     setAttributes = props.setAttributes,
     clientId = props.clientId;
   var id = attributes.id,
-    itemName = attributes.itemName,
-    price = attributes.price,
-    description = attributes.description,
-    quantity = attributes.quantity,
-    minQty = attributes.minQty,
-    maxQty = attributes.maxQty,
-    showQty = attributes.showQty;
+    label = attributes.label,
+    showLabel = attributes.showLabel,
+    placeholder = attributes.placeholder,
+    min = attributes.min,
+    max = attributes.max,
+    step = attributes.step,
+    required = attributes.required;
   var ref = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_3__.useRef)();
   var borderProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.__experimentalUseBorderProps)(attributes);
   var colorProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.__experimentalUseColorProps)(attributes);
@@ -53,120 +53,107 @@ var Edit = function Edit(props) {
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_3__.useEffect)(function () {
     if (!id) {
       setAttributes({
-        id: 'wpzf_payment_item_' + clientId.substr(0, 8)
+        id: 'input_' + clientId.substr(0, 8)
       });
     }
   }, []);
-  var formattedPrice = Number(price).toFixed(2);
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.Fragment, {
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.InspectorControls, {
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.PanelBody, {
-        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Payment Item Options', 'wpzoom-forms'),
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.TextControl, {
-          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Item Name', 'wpzoom-forms'),
-          value: itemName,
-          placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('e.g. Registration Fee', 'wpzoom-forms'),
+        title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Payment Number Input', 'wpzoom-forms'),
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.ToggleControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Show Label', 'wpzoom-forms'),
+          checked: !!showLabel,
           onChange: function onChange(value) {
             return setAttributes({
-              itemName: value
+              showLabel: !!value
             });
           },
           __next40pxDefaultSize: true
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.__experimentalNumberControl, {
-          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Price', 'wpzoom-forms'),
-          value: price,
-          min: 0,
-          step: 0.01,
+        }), showLabel && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.TextControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Label', 'wpzoom-forms'),
+          value: label,
           onChange: function onChange(value) {
             return setAttributes({
-              price: parseFloat(value) || 0
+              label: value
             });
           },
           __next40pxDefaultSize: true
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.TextControl, {
-          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Description (optional)', 'wpzoom-forms'),
-          value: description,
-          placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Short description shown below the name...', 'wpzoom-forms'),
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Placeholder', 'wpzoom-forms'),
+          value: placeholder,
           onChange: function onChange(value) {
             return setAttributes({
-              description: value
+              placeholder: value
+            });
+          },
+          __next40pxDefaultSize: true
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.__experimentalNumberControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Step', 'wpzoom-forms'),
+          value: step,
+          min: 0.01,
+          step: 0.01,
+          onChange: function onChange(value) {
+            return setAttributes({
+              step: parseFloat(value) || 1
+            });
+          },
+          __next40pxDefaultSize: true
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.__experimentalNumberControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Minimum (0 = no limit)', 'wpzoom-forms'),
+          value: min,
+          min: 0,
+          step: 0.01,
+          onChange: function onChange(value) {
+            return setAttributes({
+              min: parseFloat(value) || 0
+            });
+          },
+          __next40pxDefaultSize: true
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.__experimentalNumberControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Maximum (0 = no limit)', 'wpzoom-forms'),
+          value: max,
+          min: 0,
+          step: 0.01,
+          onChange: function onChange(value) {
+            return setAttributes({
+              max: parseFloat(value) || 0
             });
           },
           __next40pxDefaultSize: true
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.ToggleControl, {
-          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Show Quantity Selector', 'wpzoom-forms'),
-          checked: !!showQty,
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Required', 'wpzoom-forms'),
+          checked: !!required,
           onChange: function onChange(value) {
             return setAttributes({
-              showQty: !!value
+              required: !!value
             });
           },
           __next40pxDefaultSize: true
-        }), showQty && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.Fragment, {
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.__experimentalNumberControl, {
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Default Quantity', 'wpzoom-forms'),
-            value: quantity,
-            min: 1,
-            onChange: function onChange(value) {
-              return setAttributes({
-                quantity: parseInt(value) || 1
-              });
-            },
-            __next40pxDefaultSize: true
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.__experimentalNumberControl, {
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Minimum Quantity', 'wpzoom-forms'),
-            value: minQty,
-            min: 1,
-            onChange: function onChange(value) {
-              return setAttributes({
-                minQty: parseInt(value) || 1
-              });
-            },
-            __next40pxDefaultSize: true
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.__experimentalNumberControl, {
-            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Maximum Quantity', 'wpzoom-forms'),
-            value: maxQty,
-            min: 1,
-            onChange: function onChange(value) {
-              return setAttributes({
-                maxQty: parseInt(value) || 99
-              });
-            },
-            __next40pxDefaultSize: true
-          })]
         })]
       })
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", _objectSpread(_objectSpread({}, blockProps), {}, {
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
-        className: "wpzf-payment-item-info",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-          className: "wpzf-payment-item-name",
-          style: {
-            fontWeight: 500
-          },
-          children: itemName || (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Item Name', 'wpzoom-forms')
-        }), description && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("div", {
-          className: "wpzf-payment-item-desc",
-          children: description
-        })]
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
-        className: "wpzf-payment-item-right",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("span", {
-          className: "wpzf-payment-item-price",
-          children: ["$", formattedPrice]
-        }), showQty && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
-          className: (0,clsx__WEBPACK_IMPORTED_MODULE_1__["default"])('wpzf-payment-item-qty', colorProps.className, borderProps.className),
-          style: _objectSpread(_objectSpread(_objectSpread({}, borderProps.style), colorProps.style), {}, {
-            width: '60px',
-            textAlign: 'center',
-            padding: '6px 10px'
-          }),
-          type: "number",
-          defaultValue: quantity,
-          min: minQty,
-          max: maxQty,
-          readOnly: true
-        })]
+      children: [showLabel && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.RichText, {
+        tagName: "label",
+        htmlFor: id,
+        placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Label', 'wpzoom-forms'),
+        value: label,
+        onChange: function onChange(value) {
+          return setAttributes({
+            label: value
+          });
+        }
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
+        ref: ref,
+        type: "number",
+        className: (0,clsx__WEBPACK_IMPORTED_MODULE_1__["default"])('wpzf-payment-amount', colorProps.className, borderProps.className),
+        style: _objectSpread(_objectSpread({}, borderProps.style), colorProps.style),
+        placeholder: placeholder,
+        step: step > 0 ? step : 1,
+        min: min > 0 ? min : undefined,
+        max: max > 0 ? max : undefined,
+        required: !!required,
+        readOnly: true
       })]
     }))]
   });
@@ -175,10 +162,10 @@ var Edit = function Edit(props) {
 
 /***/ }),
 
-/***/ "./src/fields/payment-item/save.js":
-/*!*****************************************!*\
-  !*** ./src/fields/payment-item/save.js ***!
-  \*****************************************/
+/***/ "./src/fields/payment-input/save.js":
+/*!******************************************!*\
+  !*** ./src/fields/payment-input/save.js ***!
+  \******************************************/
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -186,11 +173,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var clsx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.mjs");
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0,_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__["default"])(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+
 
 
 
@@ -198,47 +188,38 @@ var Save = function Save(_ref) {
   var attributes = _ref.attributes;
   var blockProps = _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.useBlockProps.save();
   var id = attributes.id,
-    itemName = attributes.itemName,
-    price = attributes.price,
-    description = attributes.description,
-    quantity = attributes.quantity,
-    minQty = attributes.minQty,
-    maxQty = attributes.maxQty,
-    showQty = attributes.showQty;
+    label = attributes.label,
+    showLabel = attributes.showLabel,
+    placeholder = attributes.placeholder,
+    min = attributes.min,
+    max = attributes.max,
+    step = attributes.step,
+    required = attributes.required;
   var borderProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.__experimentalGetBorderClassesAndStyles)(attributes);
   var colorProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.__experimentalGetColorClassesAndStyles)(attributes);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", _objectSpread(_objectSpread({}, blockProps), {}, {
-    "data-price": price,
-    "data-id": id,
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
-      className: "wpzf-payment-item-info",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
-        className: "wpzf-payment-item-name",
-        children: itemName
-      }), description && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("div", {
-        className: "wpzf-payment-item-desc",
-        children: description
+  var inputProps = {
+    type: 'number',
+    id: id,
+    name: id,
+    placeholder: placeholder,
+    step: step > 0 ? step : 1,
+    required: !!required,
+    className: (0,clsx__WEBPACK_IMPORTED_MODULE_1__["default"])('wpzf-payment-amount', colorProps.className, borderProps.className),
+    style: _objectSpread(_objectSpread({}, borderProps.style), colorProps.style)
+  };
+  if (min > 0) inputProps.min = min;
+  if (max > 0) inputProps.max = max;
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", _objectSpread(_objectSpread({}, blockProps), {}, {
+    children: [showLabel && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("label", {
+      htmlFor: id,
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.RichText.Content, {
+        tagName: "span",
+        value: label
+      }), required && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("sup", {
+        className: "wp-block-wpzoom-forms-required",
+        children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('*', 'wpzoom-forms')
       })]
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
-      className: "wpzf-payment-item-right",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("span", {
-        className: "wpzf-payment-item-price",
-        children: ["$", Number(price).toFixed(2)]
-      }), showQty ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("input", {
-        type: "number",
-        className: (0,clsx__WEBPACK_IMPORTED_MODULE_1__["default"])('wpzf-payment-item-qty', colorProps.className, borderProps.className),
-        style: _objectSpread(_objectSpread({}, borderProps.style), colorProps.style),
-        name: "".concat(id, "_qty"),
-        defaultValue: quantity,
-        value: minQty,
-        min: minQty,
-        max: maxQty
-      }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("input", {
-        type: "hidden",
-        name: "".concat(id, "_qty"),
-        value: quantity
-      })]
-    })]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("input", _objectSpread({}, inputProps))]
   }));
 };
 /* harmony default export */ __webpack_exports__["default"] = (Save);
@@ -414,13 +395,13 @@ function r(e){var t,f,n="";if("string"==typeof e||"number"==typeof e)n+=e;else i
 
 /***/ }),
 
-/***/ "./src/fields/payment-item/block.json":
-/*!********************************************!*\
-  !*** ./src/fields/payment-item/block.json ***!
-  \********************************************/
+/***/ "./src/fields/payment-input/block.json":
+/*!*********************************************!*\
+  !*** ./src/fields/payment-input/block.json ***!
+  \*********************************************/
 /***/ (function(module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"wpzoom-forms/payment-item","title":"Payment Item","category":"wpzoom-forms-payments","ancestor":["wpzoom-forms/form"],"description":"A single purchasable item with a name, price, optional description, and optional quantity selector.","keywords":["wpzoom","form","payment","item","product","price"],"version":"1.0.0","textdomain":"wpzoom-forms","attributes":{"id":{"type":"string","default":""},"itemName":{"type":"string","default":"Item"},"price":{"type":"number","default":0},"description":{"type":"string","default":""},"quantity":{"type":"number","default":1},"minQty":{"type":"number","default":1},"maxQty":{"type":"number","default":99},"showQty":{"type":"boolean","default":false}},"supports":{"align":true,"html":false,"shadow":true,"color":{"background":true,"gradients":true,"text":true},"typography":{"fontSize":true,"lineHeight":true,"__experimentalFontFamily":true,"__experimentalFontWeight":true,"__experimentalFontStyle":true,"__experimentalTextTransform":true,"__experimentalTextDecoration":true,"__experimentalLetterSpacing":true,"__experimentalDefaultControls":{"fontSize":true}},"dimensions":{"minHeight":true},"spacing":{"margin":true,"padding":true,"__experimentalDefaultControls":{"padding":true}},"__experimentalBorder":{"radius":true,"__experimentalSkipSerialization":true,"__experimentalDefaultControls":{"radius":true}}},"styles":[{"name":"inline","label":"Inline"}],"editorScript":"file:./index.js","editorStyle":"wpzoom-forms-css-backend-main","script":"wpzoom-forms-js-frontend-formblock","style":"wpzoom-forms-css-frontend-formblock"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"wpzoom-forms/payment-input","title":"Payment Number Input","category":"wpzoom-forms-payments","ancestor":["wpzoom-forms/form"],"description":"A number input field where users enter a custom payment amount (e.g. donation).","keywords":["wpzoom","form","payment","number","input","amount","donation"],"version":"1.0.0","textdomain":"wpzoom-forms","attributes":{"id":{"type":"string","default":""},"label":{"type":"string","default":"Amount"},"showLabel":{"type":"boolean","default":true},"placeholder":{"type":"string","default":"0.00"},"min":{"type":"number","default":0},"max":{"type":"number","default":0},"step":{"type":"number","default":1},"required":{"type":"boolean","default":false}},"supports":{"align":true,"html":false,"shadow":true,"color":{"background":true,"gradients":true,"text":true},"typography":{"fontSize":true,"lineHeight":true,"__experimentalFontFamily":true,"__experimentalFontWeight":true,"__experimentalFontStyle":true,"__experimentalTextTransform":true,"__experimentalTextDecoration":true,"__experimentalLetterSpacing":true,"__experimentalDefaultControls":{"fontSize":true}},"dimensions":{"minHeight":true},"spacing":{"margin":true,"padding":true,"__experimentalDefaultControls":{"padding":true}},"__experimentalBorder":{"radius":true,"__experimentalSkipSerialization":true,"__experimentalDefaultControls":{"radius":true}}},"styles":[{"name":"modern","label":"Modern","isDefault":true},{"name":"classic","label":"Classic"}],"editorScript":"file:./index.js","editorStyle":"wpzoom-forms-css-backend-main","script":"wpzoom-forms-js-frontend-formblock","style":"wpzoom-forms-css-frontend-formblock"}');
 
 /***/ })
 
@@ -501,15 +482,15 @@ module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/tru
 var __webpack_exports__ = {};
 // This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 !function() {
-/*!******************************************!*\
-  !*** ./src/fields/payment-item/index.js ***!
-  \******************************************/
+/*!*******************************************!*\
+  !*** ./src/fields/payment-input/index.js ***!
+  \*******************************************/
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./block.json */ "./src/fields/payment-item/block.json");
-/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./edit */ "./src/fields/payment-item/edit.js");
-/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./save */ "./src/fields/payment-item/save.js");
+/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./block.json */ "./src/fields/payment-input/block.json");
+/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./edit */ "./src/fields/payment-input/edit.js");
+/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./save */ "./src/fields/payment-input/save.js");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__);
 
@@ -525,7 +506,7 @@ var name = _block_json__WEBPACK_IMPORTED_MODULE_1__.name;
     viewBox: "0 -960 960 960",
     width: "24px",
     children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("path", {
-      d: "M446-80q-15 0-30-6t-27-18L103-390q-12-12-17.5-26.5T80-446q0-15 5.5-30t17.5-27l352-353q11-11 26-17.5t31-6.5h287q33 0 56.5 23.5T879-800v287q0 16-6 30.5T856-457L503-104q-12 12-27 18t-30 6Zm0-80 353-354v-286H513L160-446l286 286Zm253-480q25 0 42.5-17.5T759-700q0-25-17.5-42.5T699-760q-25 0-42.5 17.5T639-700q0 25 17.5 42.5T699-640ZM480-480Z"
+      d: "M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm47-308-57-57v-195q0-17-11.5-28.5T430-760q-17 0-28.5 11.5T390-720v211q0 8 3 15.5t9 13.5l65 65q12 12 28.5 12t28.5-12q12-12 12-28.5T527-468Z"
     })
   }),
   edit: _edit__WEBPACK_IMPORTED_MODULE_2__["default"],

@@ -1,12 +1,12 @@
 {
 	"$schema":      "https://schemas.wp.org/trunk/block.json",
 	"apiVersion":   3,
-	"name":         "wpzoom-forms/payment-multiple",
-	"title":        "Multiple Items",
+	"name":         "wpzoom-forms/payment-input",
+	"title":        "Payment Number Input",
 	"category":     "wpzoom-forms-payments",
 	"ancestor":     [ "wpzoom-forms/form" ],
-	"description":  "A radio button field where each option has a price. Users can select one item.",
-	"keywords":     [ "wpzoom", "form", "payment", "radio", "multiple", "items", "price" ],
+	"description":  "A number input field where users enter a custom payment amount (e.g. donation).",
+	"keywords":     [ "wpzoom", "form", "payment", "number", "input", "amount", "donation" ],
 	"version":      "1.0.0",
 	"textdomain":   "wpzoom-forms",
 	"attributes":   {
@@ -14,25 +14,29 @@
 			"type":      "string",
 			"default":   ""
 		},
-		"name":          {
-			"type":      "string",
-			"default":   ""
-		},
-		"options":       {
-			"type":      "array",
-			"default":   [ { "label": "Item #1", "price": 10 } ]
-		},
-		"defaultValue":  {
-			"type":      "string",
-			"default":   ""
-		},
 		"label":         {
 			"type":      "string",
-			"default":   "Choose an option"
+			"default":   "Amount"
 		},
 		"showLabel":     {
 			"type":      "boolean",
 			"default":   true
+		},
+		"placeholder":   {
+			"type":      "string",
+			"default":   "0.00"
+		},
+		"min":           {
+			"type":      "number",
+			"default":   0
+		},
+		"max":           {
+			"type":      "number",
+			"default":   0
+		},
+		"step":          {
+			"type":      "number",
+			"default":   1
 		},
 		"required":      {
 			"type":      "boolean",
@@ -78,14 +82,6 @@
 				"radius": true
 			}
 		}
-	},
-	"selectors":    {
-		"root":          ".wpzoom-forms_payment_multiple-field",
-		"color":         ".wpzoom-forms_payment_multiple-field > input",
-		"typography":    ".wpzoom-forms_payment_multiple-field > input",
-		"dimensions":    ".wpzoom-forms_payment_multiple-field > input",
-		"spacing":       ".wpzoom-forms_payment_multiple-field > input",
-		"__experimentalBorder": ".wpzoom-forms_payment_multiple-field > input"
 	},
 	"styles":       [
 		{ "name": "modern", "label": "Modern", "isDefault": true },

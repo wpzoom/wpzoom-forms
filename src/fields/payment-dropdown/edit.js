@@ -1,5 +1,13 @@
-import { useBlockProps, InspectorControls, RichText } from '@wordpress/block-editor';
-import { useState, Fragment, useEffect } from '@wordpress/element';
+/**
+ * External dependencies
+ */
+import clsx from 'clsx';
+
+/**
+ * WordPress dependencies
+ */
+import { useBlockProps, InspectorControls, RichText, __experimentalUseBorderProps as useBorderProps,
+	__experimentalUseColorProps as useColorProps, } from '@wordpress/block-editor';
 import { __, sprintf } from '@wordpress/i18n';
 import {
 	PanelBody,
@@ -13,13 +21,22 @@ import {
 	CardBody,
 	CardHeader,
 	Button,
+	__experimentalNumberControl as NumberControl
 } from '@wordpress/components';
-import { __experimentalNumberControl as NumberControl } from '@wordpress/components';
+import { useState, Fragment, useEffect, useRef } from '@wordpress/element';
 
 const Edit = props => {
 	const blockProps = useBlockProps();
-	const { attributes, setAttributes, clientId } = props;
+	const { attributes, setAttributes, clientId, className  } = props;
 	const { id, name, options, defaultValue, label, showLabel, required } = attributes;
+	const ref = useRef();
+
+	const borderProps = useBorderProps( attributes );
+	const colorProps = useColorProps( attributes );
+
+	if ( ref.current ) {
+		ref.current.focus();
+	}
 
 	useEffect( () => {
 		if ( ! id ) {
@@ -153,7 +170,7 @@ const Edit = props => {
 			</PanelBody>
 		</InspectorControls>
 
-		<Fragment>
+		<div { ...blockProps }>
 			{ showLabel && (
 				<>
 					<RichText
@@ -172,9 +189,17 @@ const Edit = props => {
 				id={ uniqueId }
 				required={ !! required }
 				defaultValue={ defaultValue }
-				className="wpzf-payment-options"
 				data-payment-type="dropdown"
-				{ ...blockProps }
+				className={ clsx(
+					className,
+					'wpzf-payment-options',
+					colorProps.className,
+					borderProps.className
+				) }
+				style={ {
+					...borderProps.style,
+					...colorProps.style,
+				} }
 			>
 				{ options.map( ( option, index ) => (
 					<option key={ index } value={ option.label } data-price={ option.price }>
@@ -182,7 +207,7 @@ const Edit = props => {
 					</option>
 				) ) }
 			</select>
-		</Fragment>
+		</div>
 	</>;
 };
 

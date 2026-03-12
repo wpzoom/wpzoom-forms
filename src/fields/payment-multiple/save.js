@@ -1,41 +1,53 @@
-import { useBlockProps, RichText } from '@wordpress/block-editor';
+import clsx from 'clsx';
+import { useBlockProps, RichText,
+	__experimentalGetBorderClassesAndStyles as getBorderClassesAndStyles,
+	__experimentalGetColorClassesAndStyles as getColorClassesAndStyles,
+} from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
 const Save = ( { attributes } ) => {
 	const blockProps = useBlockProps.save();
-	const { id, name, options, defaultValue, label, showLabel, required } = attributes;
-	const fieldName = name || id;
+	const { id, options, defaultValue, label, showLabel, required } = attributes;
 
-	return <>
-		{ showLabel && <label htmlFor={ id }>
-			<RichText.Content
-				tagName="span"
-				value={ label }
-			/>
-			{ required && <sup className="wp-block-wpzoom-forms-required">{ __( '*', 'wpzoom-forms' ) }</sup> }
-		</label> }
+	const borderProps = getBorderClassesAndStyles( attributes );
+	const colorProps  = getColorClassesAndStyles( attributes );
 
-		<ul { ...blockProps } className={ `wpzf-payment-options ${ blockProps.className || '' }` } id={ id } data-payment-type="radio">
-			{ options.map( ( option, index ) =>
-				<li key={ index }>
-					<label>
-						<input
-							type="radio"
-							name={ fieldName }
-							id={ `${ id }-${ index }` }
-							value={ option.label }
-							data-price={ option.price }
-							className="wpzf-payment-option"
-							checked={ option.label === defaultValue }
-							onChange={ e => {} }
-							required={ !! required }
-						/>
-						{ option.label } — ${ Number( option.price ).toFixed( 2 ) }
-					</label>
-				</li>
+	return <div { ...blockProps }>
+		<fieldset
+			className={ clsx( 'wpzf-payment-options', colorProps.className, borderProps.className ) }
+			style={ { ...borderProps.style, ...colorProps.style } }
+			id={ id }
+			data-payment-type="radio"
+		>
+			{ showLabel && (
+				<legend>
+					<RichText.Content tagName="span" value={ label } />
+					{ required && <sup className="wp-block-wpzoom-forms-required">{ __( '*', 'wpzoom-forms' ) }</sup> }
+				</legend>
 			) }
-		</ul>
-	</>;
+
+			<ul>
+				{ options.map( ( option, index ) =>
+					<li key={ index }>
+						<label>
+							<input
+								type="radio"
+								name={ id }
+								id={ `${ id }-${ index }` }
+								value={ option.label }
+								data-price={ option.price }
+								className="wpzf-payment-option"
+								checked={ option.label === defaultValue }
+								onChange={ e => {} }
+								required={ !! required }
+							/>
+							{ option.label } — ${ Number( option.price ).toFixed( 2 ) }
+						</label>
+					</li>
+				) }
+			</ul>
+		</fieldset>
+	</div>;
 };
 
 export default Save;
