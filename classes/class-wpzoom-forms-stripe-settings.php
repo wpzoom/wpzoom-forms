@@ -347,6 +347,68 @@ class WPZOOM_Forms_Stripe_Settings {
 			<span><?php esc_html_e( 'Enable test mode', 'wpzoom-forms' ); ?></span>
 		</label>
 		<p class="description"><?php esc_html_e( 'When enabled, no real payments are processed. Use Stripe test card numbers to simulate transactions.', 'wpzoom-forms' ); ?></p>
+
+		<!-- Test Mode confirmation modal -->
+		<div id="wpzf-test-mode-modal" style="display:none;position:fixed;inset:0;z-index:100000;align-items:center;justify-content:center;">
+			<div id="wpzf-test-mode-backdrop" style="position:absolute;inset:0;background:rgba(0,0,0,0.55);"></div>
+			<div style="position:relative;background:#fff;border-radius:8px;padding:32px 28px 24px;max-width:380px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,0.18);text-align:center;">
+				<div style="width:52px;height:52px;border-radius:50%;background:#fff8e1;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+					<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M200-200q-17 0-28.5-11.5T160-240q0-17 11.5-28.5T200-280h40v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h40q17 0 28.5 11.5T800-240q0 17-11.5 28.5T760-200H200ZM480-80q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM120-560q-17 0-28.5-13T82-603q8-75 42-139.5T211-855q13-11 29.5-10t26.5 15q10 14 8 30t-15 28q-39 37-64 86t-33 106q-2 17-14 28.5T120-560Zm720 0q-17 0-29-11.5T797-600q-8-57-33-106t-64-86q-13-12-15-28t8-30q10-14 26.5-15t29.5 10q53 48 87 112.5T878-603q2 17-9.5 30T840-560Z"/></svg>
+				</div>
+				<h2><?php esc_html_e( 'Enable Test Mode?', 'wpzoom-forms' ); ?></h2>
+				<p style="color:#757575;"><?php esc_html_e( 'In test mode, payments are simulated only. Remember to disable test mode and use live keys before launching.  Your Stripe account must be connected for test mode to work.', 'wpzoom-forms' ); ?></p>
+				<div style="display:flex;justify-content:flex-end;margin-top:24px;">
+					<button type="button" id="wpzf-test-mode-confirm" class="button button-primary"><?php esc_html_e( 'OK', 'wpzoom-forms' ); ?></button>
+				</div>
+			</div>
+		</div>
+
+		<script>
+		( function () {
+			var checkbox = document.getElementById( 'wpzf_stripe_test_mode' );
+			var modal    = document.getElementById( 'wpzf-test-mode-modal' );
+			var backdrop = document.getElementById( 'wpzf-test-mode-backdrop' );
+			var btnConfirm = document.getElementById( 'wpzf-test-mode-confirm' );
+
+			if ( ! checkbox || ! modal ) return;
+
+			function openModal() {
+				modal.style.display = 'flex';
+				document.body.style.overflow = 'hidden';
+				btnConfirm.focus();
+			}
+
+			function closeModal() {
+				modal.style.display = 'none';
+				document.body.style.overflow = '';
+			}
+
+			checkbox.addEventListener( 'change', function () {
+				if ( this.checked ) {
+					// Revert immediately; only check for real if confirmed.
+					this.checked = false;
+					openModal();
+				}
+			} );
+
+			btnConfirm.addEventListener( 'click', function () {
+				checkbox.checked = true;
+				closeModal();
+			} );
+
+			backdrop.addEventListener( 'click', function () {
+				checkbox.checked = false;
+				closeModal();
+			} );
+
+			document.addEventListener( 'keydown', function ( e ) {
+				if ( e.key === 'Escape' && modal.style.display === 'flex' ) {
+					checkbox.checked = false;
+					closeModal();
+				}
+			} );
+		} )();
+		</script>
 		<?php
 	}
 
