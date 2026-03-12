@@ -263,18 +263,21 @@
 		paymentElement.mount( paymentContainer );
 
 		// Keep the element's amount in sync when payment inputs change.
-		form.addEventListener( 'change', e => {
+		function onPaymentInputChange( e ) {
 			const t = e.target;
 			if (
 				t.classList.contains( 'wpzf-payment-item-qty' ) ||
 				t.classList.contains( 'wpzf-payment-option' ) ||
+				t.classList.contains( 'wpzf-payment-amount' ) ||
 				( t.tagName === 'SELECT' && t.classList.contains( 'wpzf-payment-options' ) )
 			) {
 				totalCents = calculateTotal( form );
 				updateTotalDisplay( form, totalCents );
 				elements.update( { amount: totalCents } );
 			}
-		} );
+		}
+		form.addEventListener( 'change', onPaymentInputChange );
+		form.addEventListener( 'input',  onPaymentInputChange );
 
 		// Set initial display.
 		updateTotalDisplay( form, totalCents );

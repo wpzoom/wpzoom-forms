@@ -91,8 +91,8 @@ var Edit = function Edit(props) {
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.__experimentalNumberControl, {
           label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Step', 'wpzoom-forms'),
           value: step,
-          min: 0.01,
-          step: 0.01,
+          min: 0.6,
+          step: 0.5,
           onChange: function onChange(value) {
             return setAttributes({
               step: parseFloat(value) || 1
@@ -102,8 +102,8 @@ var Edit = function Edit(props) {
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.__experimentalNumberControl, {
           label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Minimum (0 = no limit)', 'wpzoom-forms'),
           value: min,
-          min: 0,
-          step: 0.01,
+          min: 0.5,
+          step: 0.5,
           onChange: function onChange(value) {
             return setAttributes({
               min: parseFloat(value) || 0
@@ -144,7 +144,6 @@ var Edit = function Edit(props) {
           });
         }
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
-        ref: ref,
         type: "number",
         className: (0,clsx__WEBPACK_IMPORTED_MODULE_1__["default"])('wpzf-payment-amount', colorProps.className, borderProps.className),
         style: _objectSpread(_objectSpread({}, borderProps.style), colorProps.style),
@@ -207,7 +206,7 @@ var Save = function Save(_ref) {
     className: (0,clsx__WEBPACK_IMPORTED_MODULE_1__["default"])('wpzf-payment-amount', colorProps.className, borderProps.className),
     style: _objectSpread(_objectSpread({}, borderProps.style), colorProps.style)
   };
-  if (min > 0) inputProps.min = min;
+  if (min > 0.5) inputProps.min = min;
   if (max > 0) inputProps.max = max;
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", _objectSpread(_objectSpread({}, blockProps), {}, {
     children: [showLabel && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("label", {
@@ -401,7 +400,7 @@ function r(e){var t,f,n="";if("string"==typeof e||"number"==typeof e)n+=e;else i
   \*********************************************/
 /***/ (function(module) {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"wpzoom-forms/payment-input","title":"Payment Number Input","category":"wpzoom-forms-payments","ancestor":["wpzoom-forms/form"],"description":"A number input field where users enter a custom payment amount (e.g. donation).","keywords":["wpzoom","form","payment","number","input","amount","donation"],"version":"1.0.0","textdomain":"wpzoom-forms","attributes":{"id":{"type":"string","default":""},"label":{"type":"string","default":"Amount"},"showLabel":{"type":"boolean","default":true},"placeholder":{"type":"string","default":"0.00"},"min":{"type":"number","default":0},"max":{"type":"number","default":0},"step":{"type":"number","default":1},"required":{"type":"boolean","default":false}},"supports":{"align":true,"html":false,"shadow":true,"color":{"background":true,"gradients":true,"text":true},"typography":{"fontSize":true,"lineHeight":true,"__experimentalFontFamily":true,"__experimentalFontWeight":true,"__experimentalFontStyle":true,"__experimentalTextTransform":true,"__experimentalTextDecoration":true,"__experimentalLetterSpacing":true,"__experimentalDefaultControls":{"fontSize":true}},"dimensions":{"minHeight":true},"spacing":{"margin":true,"padding":true,"__experimentalDefaultControls":{"padding":true}},"__experimentalBorder":{"radius":true,"__experimentalSkipSerialization":true,"__experimentalDefaultControls":{"radius":true}}},"styles":[{"name":"modern","label":"Modern","isDefault":true},{"name":"classic","label":"Classic"}],"editorScript":"file:./index.js","editorStyle":"wpzoom-forms-css-backend-main","script":"wpzoom-forms-js-frontend-formblock","style":"wpzoom-forms-css-frontend-formblock"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"wpzoom-forms/payment-input","title":"Amount Input","category":"wpzoom-forms-payments","ancestor":["wpzoom-forms/form"],"description":"A number input field where users enter a custom payment amount (e.g. donation).","keywords":["wpzoom","form","payment","number","input","amount","donation"],"version":"1.0.0","textdomain":"wpzoom-forms","attributes":{"id":{"type":"string","default":""},"label":{"type":"string","default":"Amount"},"showLabel":{"type":"boolean","default":true},"placeholder":{"type":"string","default":"0.00"},"min":{"type":"number","default":0.6},"max":{"type":"number","default":0},"step":{"type":"number","default":1},"required":{"type":"boolean","default":false}},"supports":{"align":true,"html":false,"shadow":true,"color":{"background":true,"gradients":true,"text":true},"typography":{"fontSize":true,"lineHeight":true,"__experimentalFontFamily":true,"__experimentalFontWeight":true,"__experimentalFontStyle":true,"__experimentalTextTransform":true,"__experimentalTextDecoration":true,"__experimentalLetterSpacing":true,"__experimentalDefaultControls":{"fontSize":true}},"dimensions":{"minHeight":true},"spacing":{"margin":true,"padding":true,"__experimentalDefaultControls":{"padding":true}},"__experimentalBorder":{"radius":true,"__experimentalSkipSerialization":true,"__experimentalDefaultControls":{"radius":true}}},"styles":[{"name":"modern","label":"Modern","isDefault":true},{"name":"classic","label":"Classic"}],"editorScript":"file:./index.js","editorStyle":"wpzoom-forms-css-backend-main","script":"wpzoom-forms-js-frontend-formblock","style":"wpzoom-forms-css-frontend-formblock"}');
 
 /***/ })
 
@@ -506,7 +505,7 @@ var name = _block_json__WEBPACK_IMPORTED_MODULE_1__.name;
     viewBox: "0 -960 960 960",
     width: "24px",
     children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("path", {
-      d: "M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm47-308-57-57v-195q0-17-11.5-28.5T430-760q-17 0-28.5 11.5T390-720v211q0 8 3 15.5t9 13.5l65 65q12 12 28.5 12t28.5-12q12-12 12-28.5T527-468Z"
+      d: "M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-480H160v480Zm0 0v-480 480Zm240-160H280q-17 0-28.5 11.5T240-360q0 17 11.5 28.5T280-320h40q0 17 11.5 28.5T360-280q17 0 28.5-11.5T400-320h40q17 0 28.5-11.5T480-360v-120q0-17-11.5-28.5T440-520H320v-40h120q17 0 28.5-11.5T480-600q0-17-11.5-28.5T440-640h-40q0-17-11.5-28.5T360-680q-17 0-28.5 11.5T320-640h-40q-17 0-28.5 11.5T240-600v120q0 17 11.5 28.5T280-440h120v40Zm247 83 56-56q5-5 2.5-11t-9.5-6H584q-7 0-9.5 6t2.5 11l56 56q3 3 7 3t7-3Zm-63-243h112q7 0 9.5-6t-2.5-11l-56-56q-3-3-7-3t-7 3l-56 56q-5 5-2.5 11t9.5 6Z"
     })
   }),
   edit: _edit__WEBPACK_IMPORTED_MODULE_2__["default"],

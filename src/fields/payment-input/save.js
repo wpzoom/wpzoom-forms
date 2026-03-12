@@ -23,7 +23,7 @@ const Save = ( { attributes } ) => {
 		style:       { ...borderProps.style, ...colorProps.style },
 	};
 
-	if ( min > 0 ) inputProps.min = min;
+	if ( min > 0.5 ) inputProps.min = min;
 	if ( max > 0 ) inputProps.max = max;
 
 	return <div { ...blockProps }>

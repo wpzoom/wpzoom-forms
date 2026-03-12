@@ -54,8 +54,8 @@ const Edit = props => {
 				<NumberControl
 					label={ __( 'Step', 'wpzoom-forms' ) }
 					value={ step }
-					min={ 0.01 }
-					step={ 0.01 }
+					min={ 0.6 }
+					step={ 0.5 }
 					onChange={ value => setAttributes( { step: parseFloat( value ) || 1 } ) }
 					__next40pxDefaultSize
 				/>
@@ -63,8 +63,8 @@ const Edit = props => {
 				<NumberControl
 					label={ __( 'Minimum (0 = no limit)', 'wpzoom-forms' ) }
 					value={ min }
-					min={ 0 }
-					step={ 0.01 }
+					min={ 0.5 }
+					step={ 0.5 }
 					onChange={ value => setAttributes( { min: parseFloat( value ) || 0 } ) }
 					__next40pxDefaultSize
 				/>
@@ -97,7 +97,6 @@ const Edit = props => {
 			/> }
 
 			<input
-				ref={ ref }
 				type="number"
 				className={ clsx( 'wpzf-payment-amount', colorProps.className, borderProps.className ) }
 				style={ { ...borderProps.style, ...colorProps.style } }
