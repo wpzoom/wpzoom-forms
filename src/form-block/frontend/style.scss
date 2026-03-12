@@ -1,6 +1,31 @@
 
 @import '~@wordpress/base-styles/colors.native';
 
+.wpzf-payment-success {
+    text-align: center;
+    padding: 48px 24px;
+
+    .wpzf-payment-success-icon {
+        margin-bottom: 20px;
+
+        svg {
+            display: inline-block;
+        }
+    }
+
+    .wpzf-payment-success-title {
+        font-size: 1.6em;
+        font-weight: 700;
+        margin: 0 0 12px;
+        color: #1e1e1e;
+    }
+
+    .wpzf-payment-success-message {
+        font-size: 1em;
+        color: #555;
+        margin: 0;
+    }
+}
 
 .wpzoom-forms_form,
 .wp-block-wpzoom-forms-form {

@@ -381,6 +381,7 @@ class WPZOOM_Forms {
 			array( '_wpzf_stripe_customer_email',   'string',  '',         null ),
 			array( '_wpzf_stripe_customer_name',    'string',  '',         null ),
 			array( '_wpzf_stripe_recurring_period', 'string',  'month',  null ),
+		array( '_form_payment_success_title',   'string',  '',       null ),
 		) as [ $key, $type, $default, $sanitize ] ) {
 			$args = array(
 				'object_subtype' => 'wpzf-form',
@@ -2205,6 +2206,25 @@ class WPZOOM_Forms {
 		$style = sprintf( '<style>%s</style>',
 			$styleOutput
 		);
+
+		// For payment-enabled forms: show thank you view on successful submission.
+		$payment_enabled = (bool) get_post_meta( $form_id, '_wpzf_stripe_payment_enabled', true );
+		if ( $payment_enabled && isset( $_GET['success'] ) && '1' === $_GET['success'] ) {
+			$payment_success_title = get_post_meta( $form_id, '_form_payment_success_title', true );
+			if ( empty( $payment_success_title ) ) {
+				$payment_success_title = __( 'Thank you for your payment!', 'wpzoom-forms' );
+			}
+			return $style . sprintf(
+				'<div class="wpzf-payment-success" id="%1$s">
+					<div class="wpzf-payment-success-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#46b450"/><polyline points="18,33 28,43 46,23" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div>
+					<h2 class="wpzf-payment-success-title">%2$s</h2>
+					<p class="wpzf-payment-success-message">%3$s</p>
+				</div>',
+				esc_attr( $form_ID ),
+				esc_html( $payment_success_title ),
+				wp_kses_post( $form_success_message )
+			);
+		}
 
 		$content = $style . $content;
 

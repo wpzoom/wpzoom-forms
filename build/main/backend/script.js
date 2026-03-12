@@ -4645,6 +4645,7 @@ var insertFormField = function insertFormField(blockName, defaultAttributes, isD
     var paymentCustomerEmail = meta['_wpzf_stripe_customer_email'] || '';
     var paymentCustomerName = meta['_wpzf_stripe_customer_name'] || '';
     var paymentRecurringPeriod = meta['_wpzf_stripe_recurring_period'] || 'month';
+    var paymentSuccessTitle = meta['_form_payment_success_title'] || '';
 
     // Collect form field blocks for payment field dropdowns.
     var formFieldBlocks = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_7__.useSelect)(function (select) {
@@ -5161,6 +5162,17 @@ var insertFormField = function insertFormField(blockName, defaultAttributes, isD
               }));
             },
             help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('The name field used for the Stripe customer.', 'wpzoom-forms'),
+            __next40pxDefaultSize: true
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.TextControl, {
+            label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Thank You Title', 'wpzoom-forms'),
+            value: paymentSuccessTitle,
+            placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Thank you for your payment!', 'wpzoom-forms'),
+            onChange: function onChange(value) {
+              return setMeta(_objectSpread(_objectSpread({}, meta), {}, {
+                '_form_payment_success_title': value
+              }));
+            },
+            help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Heading shown on the success screen after payment.', 'wpzoom-forms'),
             __next40pxDefaultSize: true
           })]
         })]

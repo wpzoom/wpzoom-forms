@@ -146,6 +146,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 		const paymentCustomerEmail   = meta['_wpzf_stripe_customer_email']   || '';
 		const paymentCustomerName    = meta['_wpzf_stripe_customer_name']    || '';
 		const paymentRecurringPeriod = meta['_wpzf_stripe_recurring_period'] || 'month';
+		const paymentSuccessTitle    = meta['_form_payment_success_title']   || '';
 
 		// Collect form field blocks for payment field dropdowns.
 		const formFieldBlocks = useSelect( select => {
@@ -665,6 +666,15 @@ registerPlugin('wpzoom-forms-document-settings', {
 						options={fieldOptions}
 						onChange={value => setMeta({ ...meta, '_wpzf_stripe_customer_name': value })}
 						help={__('The name field used for the Stripe customer.', 'wpzoom-forms')}
+						__next40pxDefaultSize
+					/>
+
+					<TextControl
+						label={__('Thank You Title', 'wpzoom-forms')}
+						value={paymentSuccessTitle}
+						placeholder={__('Thank you for your payment!', 'wpzoom-forms')}
+						onChange={value => setMeta({ ...meta, '_form_payment_success_title': value })}
+						help={__('Heading shown on the success screen after payment.', 'wpzoom-forms')}
 						__next40pxDefaultSize
 					/>
 				</>}
