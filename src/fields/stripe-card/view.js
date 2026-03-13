@@ -33,7 +33,7 @@
 	const periodLabels = { day: '/ day', week: '/ week', month: '/ month', year: '/ year' };
 
 	/**
-	 * Calculates the order total by reading all .wpzf-payment-item elements
+	 * Calculates the order total by reading all .wp-block-wpzoom-forms-payment-item elements
 	 * (single items) and .wpzf-payment-options (checkbox/radio/dropdown)
 	 * inside the given form.
 	 *
@@ -44,7 +44,7 @@
 		let total = 0;
 
 		// Single payment items (price x quantity).
-		form.querySelectorAll( '.wpzf-payment-item' ).forEach( item => {
+		form.querySelectorAll( '.wp-block-wpzoom-forms-payment-item' ).forEach( item => {
 			const price    = parseFloat( item.dataset.price ) || 0;
 			const qtyInput = item.querySelector( '.wpzf-payment-item-qty, input[name$="_qty"]' );
 			const qty      = qtyInput ? ( parseInt( qtyInput.value, 10 ) || 1 ) : 1;
@@ -107,7 +107,7 @@
 		const items = [];
 
 		// Single payment items.
-		form.querySelectorAll( '.wpzf-payment-item' ).forEach( item => {
+		form.querySelectorAll( '.wp-block-wpzoom-forms-payment-item' ).forEach( item => {
 			const price    = parseFloat( item.dataset.price ) || 0;
 			const qtyInput = item.querySelector( '.wpzf-payment-item-qty, input[name$="_qty"]' );
 			const qty      = qtyInput ? ( parseInt( qtyInput.value, 10 ) || 1 ) : 1;

@@ -152,7 +152,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
   };
 
   /**
-   * Calculates the order total by reading all .wpzf-payment-item elements
+   * Calculates the order total by reading all .wp-block-wpzoom-forms-payment-item elements
    * (single items) and .wpzf-payment-options (checkbox/radio/dropdown)
    * inside the given form.
    *
@@ -163,7 +163,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
     var total = 0;
 
     // Single payment items (price x quantity).
-    form.querySelectorAll('.wpzf-payment-item').forEach(function (item) {
+    form.querySelectorAll('.wp-block-wpzoom-forms-payment-item').forEach(function (item) {
       var price = parseFloat(item.dataset.price) || 0;
       var qtyInput = item.querySelector('.wpzf-payment-item-qty, input[name$="_qty"]');
       var qty = qtyInput ? parseInt(qtyInput.value, 10) || 1 : 1;
@@ -224,7 +224,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
     var items = [];
 
     // Single payment items.
-    form.querySelectorAll('.wpzf-payment-item').forEach(function (item) {
+    form.querySelectorAll('.wp-block-wpzoom-forms-payment-item').forEach(function (item) {
       var price = parseFloat(item.dataset.price) || 0;
       var qtyInput = item.querySelector('.wpzf-payment-item-qty, input[name$="_qty"]');
       var qty = qtyInput ? parseInt(qtyInput.value, 10) || 1 : 1;
