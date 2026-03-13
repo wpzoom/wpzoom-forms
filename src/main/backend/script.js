@@ -203,7 +203,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 		} );
 
 		// Use dispatch to open panels by default
-		const { toggleEditorPanelOpened } = useDispatch('core/edit-post');
+		const { toggleEditorPanelOpened } = useDispatch('core/editor');
 		const { createNotice } = useDispatch('core/notices');
 		
 		useEffect(() => {
@@ -559,16 +559,20 @@ registerPlugin('wpzoom-forms-document-settings', {
 					]}
 					onChange={value => setMeta({ ...meta, '_form_method': value })}
 					help={__('Choose how form submissions are handled.', 'wpzoom-forms')}
+					__next40pxDefaultSize
 				/>
 
-				{(formMethod == 'email' || formMethod == 'combined') && <TextControl
-					type="email"
-					label={__('Send To', 'wpzoom-forms')}
-					value={formEmail}
-					placeholder={__('someone@somedomain.com', 'wpzoom-forms')}
-					onChange={value => setMeta({ ...meta, '_form_email': value })}
-					help={__('Email address where submissions will be sent.', 'wpzoom-forms')}
-				/>}
+				{(formMethod == 'email' || formMethod == 'combined') && 
+					<TextControl
+						type="email"
+						label={__('Send To', 'wpzoom-forms')}
+						value={formEmail}
+						placeholder={__('someone@somedomain.com', 'wpzoom-forms')}
+						onChange={value => setMeta({ ...meta, '_form_email': value })}
+						help={__('Email address where submissions will be sent.', 'wpzoom-forms')}
+						__next40pxDefaultSize
+					/>
+				}
 
 				<TextControl
 					type="text"
@@ -577,6 +581,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 					placeholder={__('New Form Submission', 'wpzoom-forms')}
 					onChange={value => setMeta({ ...meta, '_form_subject': value })}
 					disabled={isTextPlainFieldWithSubject} // Disable the field if the conditions are met
+					__next40pxDefaultSize
 				/>
 				{isTextPlainFieldWithSubject && (
 					<p class="description">{__('Your form already includes a field that is marked as the Subject. Uncheck its "Is Subject" option if you want to set a custom subject here.', 'wpzoom-forms')}</p>
@@ -589,6 +594,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 					placeholder={__('Thank you! Your message has been sent.', 'wpzoom-forms')}
 					onChange={value => setMeta({ ...meta, '_form_success_message': value })}
 					help={__('This message is shown when the form is submitted successfully.', 'wpzoom-forms')}
+					__next40pxDefaultSize
 				/>
 
 				<TextControl
@@ -598,9 +604,10 @@ registerPlugin('wpzoom-forms-document-settings', {
 					placeholder={__('Oops! Something went wrong. Please try again.', 'wpzoom-forms')}
 					onChange={value => setMeta({ ...meta, '_form_failure_message': value })}
 					help={__('This message is shown if the form fails to submit.', 'wpzoom-forms')}
+					__next40pxDefaultSize
 				/>
 				<Button
-					isPrimary
+					variant="primary"
 					disabled={true}
 					icon={
 						<svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -618,6 +625,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 						marginTop: '15px',
 						position: 'relative'
 					}}
+					__next40pxDefaultSize
 				>
 					{__('Customize Notification Email', 'wpzoom-forms')}
 					{<small class="pro-only">PRO</small>}
@@ -897,6 +905,84 @@ registerPlugin('wpzoom-forms-document-settings', {
 								defaultAttributes: {
 									name: __('Hidden Field', 'wpzoom-forms'),
 									defaultValue: ''
+								}
+							},
+							{
+								name: 'payment-item',
+								title: __('Payment Item', 'wpzoom-forms'),
+								icon: FormIcons.paymentItem,
+								defaultAttributes: {
+									itemName: __('Item', 'wpzoom-forms'),
+									price: 0,
+									description: '',
+									quantity: 1,
+									minQty: 1,
+									maxQty: 99,
+									showQty: false
+								}
+							},
+							{
+								name: 'payment-checkbox',
+								title: __('Checkbox Items', 'wpzoom-forms'),
+								icon: FormIcons.checkbox,
+								defaultAttributes: {
+									label: __('Select items', 'wpzoom-forms'),
+									showLabel: true,
+									required: false,
+									options: [{ label: __('Item #1', 'wpzoom-forms'), price: 10 }]
+								}
+							},
+							{
+								name: 'payment-multiple',
+								title: __('Multiple Items', 'wpzoom-forms'),
+								icon: FormIcons.radio,
+								defaultAttributes: {
+									label: __('Choose an option', 'wpzoom-forms'),
+									showLabel: true,
+									required: false,
+									options: [{ label: __('Item #1', 'wpzoom-forms'), price: 10 }]
+								}
+							},
+							{
+								name: 'payment-dropdown',
+								title: __('Dropdown Items', 'wpzoom-forms'),
+								icon: FormIcons.select,
+								defaultAttributes: {
+									label: __('Select an option', 'wpzoom-forms'),
+									showLabel: true,
+									required: false,
+									options: [{ label: __('Item #1', 'wpzoom-forms'), price: 10 }]
+								}
+							},
+							{
+								name: 'payment-input',
+								title: __('Amount Input', 'wpzoom-forms'),
+								icon: FormIcons.amount,
+								defaultAttributes: {
+									label: __('Amount', 'wpzoom-forms'),
+									showLabel: true,
+									placeholder: '0.00',
+									min: 0.6,
+									max: 0,
+									step: 1,
+									required: false
+								}
+							},
+							{
+								name: 'payment-total',
+								title: __('Payment Total', 'wpzoom-forms'),
+								icon: FormIcons.total,
+								defaultAttributes: {
+									label: __('Total', 'wpzoom-forms')
+								}
+							},
+							{
+								name: 'stripe-card',
+								title: __('Stripe Card', 'wpzoom-forms'),
+								icon: FormIcons.card,
+								defaultAttributes: {
+									label: __('Card Details', 'wpzoom-forms'),
+									showLabel: true
 								}
 							}
 						].map((block) => {
@@ -1460,6 +1546,84 @@ registerBlockType('wpzoom-forms/form', {
 									name: __('Hidden Field', 'wpzoom-forms'),
 									defaultValue: ''
 								}
+							},
+							{
+								name: 'payment-item',
+								title: __('Payment Item', 'wpzoom-forms'),
+								icon: FormIcons.paymentItem,
+								defaultAttributes: {
+									itemName: __('Item', 'wpzoom-forms'),
+									price: 0,
+									description: '',
+									quantity: 1,
+									minQty: 1,
+									maxQty: 99,
+									showQty: false
+								}
+							},
+							{
+								name: 'payment-checkbox',
+								title: __('Checkbox Items', 'wpzoom-forms'),
+								icon: FormIcons.checkbox,
+								defaultAttributes: {
+									label: __('Select items', 'wpzoom-forms'),
+									showLabel: true,
+									required: false,
+									options: [{ label: __('Item #1', 'wpzoom-forms'), price: 10 }]
+								}
+							},
+							{
+								name: 'payment-multiple',
+								title: __('Multiple Items', 'wpzoom-forms'),
+								icon: FormIcons.radio,
+								defaultAttributes: {
+									label: __('Choose an option', 'wpzoom-forms'),
+									showLabel: true,
+									required: false,
+									options: [{ label: __('Item #1', 'wpzoom-forms'), price: 10 }]
+								}
+							},
+							{
+								name: 'payment-dropdown',
+								title: __('Dropdown Items', 'wpzoom-forms'),
+								icon: FormIcons.select,
+								defaultAttributes: {
+									label: __('Select an option', 'wpzoom-forms'),
+									showLabel: true,
+									required: false,
+									options: [{ label: __('Item #1', 'wpzoom-forms'), price: 10 }]
+								}
+							},
+							{
+								name: 'payment-input',
+								title: __('Amount Input', 'wpzoom-forms'),
+								icon: FormIcons.amount,
+								defaultAttributes: {
+									label: __('Amount', 'wpzoom-forms'),
+									showLabel: true,
+									placeholder: '0.00',
+									min: 0.6,
+									max: 0,
+									step: 1,
+									required: false
+								}
+							},
+							{
+								name: 'payment-total',
+								title: __('Payment Total', 'wpzoom-forms'),
+								icon: FormIcons.total,
+								defaultAttributes: {
+									label: __('Total', 'wpzoom-forms')
+								}
+							},
+							{
+								name: 'stripe-card',
+								title: __('Stripe Card', 'wpzoom-forms'),
+								icon: FormIcons.card,
+								defaultAttributes: {
+									label: __('Card Details', 'wpzoom-forms'),
+									showLabel: true
+								}
 							}
 						].map((block) => {
 							const isDisabled = uniqueFieldsExist[block.name] || false || block.isPro;
@@ -1527,6 +1691,13 @@ registerBlockType('wpzoom-forms/form', {
 					'wpzoom-forms/label-field',
 					'wpzoom-forms/submit-field',
 					'wpzoom-forms/datepicker-field',
+					'wpzoom-forms/payment-item',
+					'wpzoom-forms/payment-checkbox',
+					'wpzoom-forms/payment-multiple',
+					'wpzoom-forms/payment-dropdown',
+					'wpzoom-forms/payment-input',
+					'wpzoom-forms/payment-total',
+					'wpzoom-forms/stripe-card',
                     'core/group',
                     'core/columns',
                     'core/column',

@@ -270,6 +270,10 @@ var Edit = function Edit(props) {
             return setAttributes({
               label: value
             });
+          },
+          style: {
+            marginBottom: '12px',
+            display: 'block'
           }
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
           className: "wpzf-stripe-payment-preview",

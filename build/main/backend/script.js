@@ -151,7 +151,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__);
 
+
 // Custom SVG icons for form fields
+
 var FormIcons = {
   multiCheckbox: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("svg", {
     width: "24",
@@ -562,6 +564,43 @@ var FormIcons = {
       d: "M19.5599 10.7954C19.0455 9.78685 18.3733 8.88296 17.5759 8.11269L18.6331 7.05235C19.586 8.00061 20.3825 9.11308 20.9497 10.3496C21.3167 11.1062 21.3167 11.992 20.9497 12.7487C19.1996 16.3654 15.8185 18.7491 12 18.7491C11.1831 18.7491 10.3871 18.6439 9.62505 18.4483L10.9236 17.1458C11.2742 17.2064 11.6336 17.2491 12 17.2491C15.1256 17.2491 17.9309 15.307 19.5599 12.1037C19.68 11.8663 19.68 11.532 19.5599 11.2946L19.5599 10.7954Z",
       fill: "black"
     })]
+  }),
+  card: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    height: "24px",
+    viewBox: "0 -960 960 960",
+    width: "24px",
+    fill: "currentColor",
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("path", {
+      d: "M880-720v480q0 33-23.5 56.5T800-160H160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720Zm-720 80h640v-80H160v80Zm0 160v240h640v-240H160Zm0 240v-480 480Z"
+    })
+  }),
+  amount: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    height: "24px",
+    viewBox: "0 -960 960 960",
+    width: "24px",
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("path", {
+      d: "M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-480H160v480Zm0 0v-480 480Zm240-160H280q-17 0-28.5 11.5T240-360q0 17 11.5 28.5T280-320h40q0 17 11.5 28.5T360-280q17 0 28.5-11.5T400-320h40q17 0 28.5-11.5T480-360v-120q0-17-11.5-28.5T440-520H320v-40h120q17 0 28.5-11.5T480-600q0-17-11.5-28.5T440-640h-40q0-17-11.5-28.5T360-680q-17 0-28.5 11.5T320-640h-40q-17 0-28.5 11.5T240-600v120q0 17 11.5 28.5T280-440h120v40Zm247 83 56-56q5-5 2.5-11t-9.5-6H584q-7 0-9.5 6t2.5 11l56 56q3 3 7 3t7-3Zm-63-243h112q7 0 9.5-6t-2.5-11l-56-56q-3-3-7-3t-7 3l-56 56q-5 5-2.5 11t9.5 6Z"
+    })
+  }),
+  total: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    height: "24px",
+    viewBox: "0 -960 960 960",
+    width: "24px",
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("path", {
+      d: "M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Zm23.5 269.5Q514-221 514-235v-15q50-9 86-39t36-89q0-42-24-77t-96-61q-60-20-83-35t-23-41q0-26 18.5-41t53.5-15q20 0 35 7t25 19q10 12 22.5 16.5t23.5-.5q15-6 20.5-20.5T606-653q-16-23-39.5-39T516-710v-15q0-14-10.5-24.5T481-760q-14 0-24.5 10.5T446-725v15q-50 11-78 44t-28 74q0 47 27.5 76t86.5 50q63 23 87.5 41t24.5 47q0 33-23.5 48.5T486-314q-26 0-47-12.5T404-364q-8-14-21-19t-26 0q-14 5-20.5 19t-.5 27q16 34 43 55.5t65 29.5v17q0 14 10.5 24.5T479-200q14 0 24.5-10.5Z"
+    })
+  }),
+  paymentItem: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("svg", {
+    xmlns: "http://www.w3.org/2000/svg",
+    height: "24px",
+    viewBox: "0 -960 960 960",
+    width: "24px",
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)("path", {
+      d: "M446-80q-15 0-30-6t-27-18L103-390q-12-12-17.5-26.5T80-446q0-15 5.5-30t17.5-27l352-353q11-11 26-17.5t31-6.5h287q33 0 56.5 23.5T879-800v287q0 16-6 30.5T856-457L503-104q-12 12-27 18t-30 6Zm0-80 353-354v-286H513L160-446l286 286Zm253-480q25 0 42.5-17.5T759-700q0-25-17.5-42.5T699-760q-25 0-42.5 17.5T639-700q0 25 17.5 42.5T699-640ZM480-480Z"
+    })
   })
 };
 /* harmony default export */ __webpack_exports__["default"] = (FormIcons);
@@ -4705,7 +4744,7 @@ var insertFormField = function insertFormField(blockName, defaultAttributes, isD
     });
 
     // Use dispatch to open panels by default
-    var _useDispatch = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_7__.useDispatch)('core/edit-post'),
+    var _useDispatch = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_7__.useDispatch)('core/editor'),
       toggleEditorPanelOpened = _useDispatch.toggleEditorPanelOpened;
     var _useDispatch2 = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_7__.useDispatch)('core/notices'),
       createNotice = _useDispatch2.createNotice;
@@ -5023,7 +5062,8 @@ var insertFormField = function insertFormField(blockName, defaultAttributes, isD
               '_form_method': value
             }));
           },
-          help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Choose how form submissions are handled.', 'wpzoom-forms')
+          help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Choose how form submissions are handled.', 'wpzoom-forms'),
+          __next40pxDefaultSize: true
         }), (formMethod == 'email' || formMethod == 'combined') && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.TextControl, {
           type: "email",
           label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Send To', 'wpzoom-forms'),
@@ -5034,7 +5074,8 @@ var insertFormField = function insertFormField(blockName, defaultAttributes, isD
               '_form_email': value
             }));
           },
-          help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Email address where submissions will be sent.', 'wpzoom-forms')
+          help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Email address where submissions will be sent.', 'wpzoom-forms'),
+          __next40pxDefaultSize: true
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.TextControl, {
           type: "text",
           label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Email Subject', 'wpzoom-forms'),
@@ -5046,6 +5087,8 @@ var insertFormField = function insertFormField(blockName, defaultAttributes, isD
             }));
           },
           disabled: isTextPlainFieldWithSubject // Disable the field if the conditions are met
+          ,
+          __next40pxDefaultSize: true
         }), isTextPlainFieldWithSubject && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("p", {
           class: "description",
           children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Your form already includes a field that is marked as the Subject. Uncheck its "Is Subject" option if you want to set a custom subject here.', 'wpzoom-forms')
@@ -5059,7 +5102,8 @@ var insertFormField = function insertFormField(blockName, defaultAttributes, isD
               '_form_success_message': value
             }));
           },
-          help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('This message is shown when the form is submitted successfully.', 'wpzoom-forms')
+          help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('This message is shown when the form is submitted successfully.', 'wpzoom-forms'),
+          __next40pxDefaultSize: true
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.TextControl, {
           type: "text",
           label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Failure Message', 'wpzoom-forms'),
@@ -5070,9 +5114,10 @@ var insertFormField = function insertFormField(blockName, defaultAttributes, isD
               '_form_failure_message': value
             }));
           },
-          help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('This message is shown if the form fails to submit.', 'wpzoom-forms')
+          help: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('This message is shown if the form fails to submit.', 'wpzoom-forms'),
+          __next40pxDefaultSize: true
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.Button, {
-          isPrimary: true,
+          variant: "primary",
           disabled: true,
           icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("svg", {
             width: "20",
@@ -5094,6 +5139,7 @@ var insertFormField = function insertFormField(blockName, defaultAttributes, isD
             marginTop: '15px',
             position: 'relative'
           },
+          __next40pxDefaultSize: true,
           children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Customize Notification Email', 'wpzoom-forms'), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)("small", {
             class: "pro-only",
             children: "PRO"
@@ -5373,6 +5419,86 @@ var insertFormField = function insertFormField(blockName, defaultAttributes, isD
               defaultAttributes: {
                 name: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Hidden Field', 'wpzoom-forms'),
                 defaultValue: ''
+              }
+            }, {
+              name: 'payment-item',
+              title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Payment Item', 'wpzoom-forms'),
+              icon: _icons__WEBPACK_IMPORTED_MODULE_15__["default"].paymentItem,
+              defaultAttributes: {
+                itemName: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Item', 'wpzoom-forms'),
+                price: 0,
+                description: '',
+                quantity: 1,
+                minQty: 1,
+                maxQty: 99,
+                showQty: false
+              }
+            }, {
+              name: 'payment-checkbox',
+              title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Checkbox Items', 'wpzoom-forms'),
+              icon: _icons__WEBPACK_IMPORTED_MODULE_15__["default"].checkbox,
+              defaultAttributes: {
+                label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Select items', 'wpzoom-forms'),
+                showLabel: true,
+                required: false,
+                options: [{
+                  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Item #1', 'wpzoom-forms'),
+                  price: 10
+                }]
+              }
+            }, {
+              name: 'payment-multiple',
+              title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Multiple Items', 'wpzoom-forms'),
+              icon: _icons__WEBPACK_IMPORTED_MODULE_15__["default"].radio,
+              defaultAttributes: {
+                label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Choose an option', 'wpzoom-forms'),
+                showLabel: true,
+                required: false,
+                options: [{
+                  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Item #1', 'wpzoom-forms'),
+                  price: 10
+                }]
+              }
+            }, {
+              name: 'payment-dropdown',
+              title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Dropdown Items', 'wpzoom-forms'),
+              icon: _icons__WEBPACK_IMPORTED_MODULE_15__["default"].select,
+              defaultAttributes: {
+                label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Select an option', 'wpzoom-forms'),
+                showLabel: true,
+                required: false,
+                options: [{
+                  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Item #1', 'wpzoom-forms'),
+                  price: 10
+                }]
+              }
+            }, {
+              name: 'payment-input',
+              title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Amount Input', 'wpzoom-forms'),
+              icon: _icons__WEBPACK_IMPORTED_MODULE_15__["default"].amount,
+              defaultAttributes: {
+                label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Amount', 'wpzoom-forms'),
+                showLabel: true,
+                placeholder: '0.00',
+                min: 0.6,
+                max: 0,
+                step: 1,
+                required: false
+              }
+            }, {
+              name: 'payment-total',
+              title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Payment Total', 'wpzoom-forms'),
+              icon: _icons__WEBPACK_IMPORTED_MODULE_15__["default"].total,
+              defaultAttributes: {
+                label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Total', 'wpzoom-forms')
+              }
+            }, {
+              name: 'stripe-card',
+              title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Stripe Card', 'wpzoom-forms'),
+              icon: _icons__WEBPACK_IMPORTED_MODULE_15__["default"].card,
+              defaultAttributes: {
+                label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Card Details', 'wpzoom-forms'),
+                showLabel: true
               }
             }].map(function (block) {
               var isDisabled = uniqueFieldsExist[block.name] || false || block.isPro;
@@ -5924,6 +6050,86 @@ var SortableList = (0,react_sortable_hoc__WEBPACK_IMPORTED_MODULE_13__.SortableC
                   name: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Hidden Field', 'wpzoom-forms'),
                   defaultValue: ''
                 }
+              }, {
+                name: 'payment-item',
+                title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Payment Item', 'wpzoom-forms'),
+                icon: _icons__WEBPACK_IMPORTED_MODULE_15__["default"].paymentItem,
+                defaultAttributes: {
+                  itemName: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Item', 'wpzoom-forms'),
+                  price: 0,
+                  description: '',
+                  quantity: 1,
+                  minQty: 1,
+                  maxQty: 99,
+                  showQty: false
+                }
+              }, {
+                name: 'payment-checkbox',
+                title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Checkbox Items', 'wpzoom-forms'),
+                icon: _icons__WEBPACK_IMPORTED_MODULE_15__["default"].checkbox,
+                defaultAttributes: {
+                  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Select items', 'wpzoom-forms'),
+                  showLabel: true,
+                  required: false,
+                  options: [{
+                    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Item #1', 'wpzoom-forms'),
+                    price: 10
+                  }]
+                }
+              }, {
+                name: 'payment-multiple',
+                title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Multiple Items', 'wpzoom-forms'),
+                icon: _icons__WEBPACK_IMPORTED_MODULE_15__["default"].radio,
+                defaultAttributes: {
+                  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Choose an option', 'wpzoom-forms'),
+                  showLabel: true,
+                  required: false,
+                  options: [{
+                    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Item #1', 'wpzoom-forms'),
+                    price: 10
+                  }]
+                }
+              }, {
+                name: 'payment-dropdown',
+                title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Dropdown Items', 'wpzoom-forms'),
+                icon: _icons__WEBPACK_IMPORTED_MODULE_15__["default"].select,
+                defaultAttributes: {
+                  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Select an option', 'wpzoom-forms'),
+                  showLabel: true,
+                  required: false,
+                  options: [{
+                    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Item #1', 'wpzoom-forms'),
+                    price: 10
+                  }]
+                }
+              }, {
+                name: 'payment-input',
+                title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Amount Input', 'wpzoom-forms'),
+                icon: _icons__WEBPACK_IMPORTED_MODULE_15__["default"].amount,
+                defaultAttributes: {
+                  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Amount', 'wpzoom-forms'),
+                  showLabel: true,
+                  placeholder: '0.00',
+                  min: 0.6,
+                  max: 0,
+                  step: 1,
+                  required: false
+                }
+              }, {
+                name: 'payment-total',
+                title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Payment Total', 'wpzoom-forms'),
+                icon: _icons__WEBPACK_IMPORTED_MODULE_15__["default"].total,
+                defaultAttributes: {
+                  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Total', 'wpzoom-forms')
+                }
+              }, {
+                name: 'stripe-card',
+                title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Stripe Card', 'wpzoom-forms'),
+                icon: _icons__WEBPACK_IMPORTED_MODULE_15__["default"].card,
+                defaultAttributes: {
+                  label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_10__.__)('Card Details', 'wpzoom-forms'),
+                  showLabel: true
+                }
               }].map(function (block) {
                 var isDisabled = uniqueFieldsExist[block.name] || false || block.isPro;
                 var isPro = block.isPro;
@@ -5969,7 +6175,7 @@ var SortableList = (0,react_sortable_hoc__WEBPACK_IMPORTED_MODULE_13__.SortableC
           })
         })
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_17__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__.InnerBlocks, {
-        allowedBlocks: ['wpzoom-forms/text-plain-field', 'wpzoom-forms/text-name-field', 'wpzoom-forms/text-email-field', 'wpzoom-forms/text-website-field', 'wpzoom-forms/text-phone-field', 'wpzoom-forms/textarea-field', 'wpzoom-forms/select-field', 'wpzoom-forms/multi-checkbox-field', 'wpzoom-forms/checkbox-field', 'wpzoom-forms/radio-field', 'wpzoom-forms/label-field', 'wpzoom-forms/submit-field', 'wpzoom-forms/datepicker-field', 'core/group', 'core/columns', 'core/column', 'core/paragraph', 'core/heading', 'core/spacer', 'core/separator', 'core/html'],
+        allowedBlocks: ['wpzoom-forms/text-plain-field', 'wpzoom-forms/text-name-field', 'wpzoom-forms/text-email-field', 'wpzoom-forms/text-website-field', 'wpzoom-forms/text-phone-field', 'wpzoom-forms/textarea-field', 'wpzoom-forms/select-field', 'wpzoom-forms/multi-checkbox-field', 'wpzoom-forms/checkbox-field', 'wpzoom-forms/radio-field', 'wpzoom-forms/label-field', 'wpzoom-forms/submit-field', 'wpzoom-forms/datepicker-field', 'wpzoom-forms/payment-item', 'wpzoom-forms/payment-checkbox', 'wpzoom-forms/payment-multiple', 'wpzoom-forms/payment-dropdown', 'wpzoom-forms/payment-input', 'wpzoom-forms/payment-total', 'wpzoom-forms/stripe-card', 'core/group', 'core/columns', 'core/column', 'core/paragraph', 'core/heading', 'core/spacer', 'core/separator', 'core/html'],
         template: [['core/group', {
           'tagName': 'div'
         }, [['core/columns', {

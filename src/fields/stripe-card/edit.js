@@ -151,6 +151,7 @@ const Edit = props => {
 						placeholder={ __( 'Payment Details', 'wpzoom-forms' ) }
 						value={ label }
 						onChange={ value => setAttributes( { label: value } ) }
+						style={ {marginBottom: '12px', display:	'block'} }
 					/>
 				) }
 

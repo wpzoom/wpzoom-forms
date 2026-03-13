@@ -1078,7 +1078,7 @@ class WPZOOM_Forms {
 			wp_enqueue_script( 'wpzoom-forms-js-frontend-datepicker' );
 		}
 
-		if ( self::has_block( 'wpzoom-forms/stripe-card' ) ) {
+		if ( ! is_admin() && self::has_block( 'wpzoom-forms/stripe-card' ) ) {
 			$stripe = WPZOOM_Forms_Stripe::instance();
 			if ( $stripe->is_connected() ) {
 				// Resolve the form ID to read payment meta.
