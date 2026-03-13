@@ -148,8 +148,8 @@ class WPZOOM_Forms_Payments_Analytics {
 			$refund += (int) get_post_meta( $id, '_wpzf_txn_amount', true );
 		}
 
-		// Build daily chart data (succeeded only).
-		$chart = $this->build_chart_data( $succeeded_ids, $from, $to );
+		// Build daily chart data (sales + refund per day).
+		$chart = $this->build_chart_data( $succeeded_ids, $refunded_ids, $from, $to );
 
 		return array(
 			'count'  => count( $succeeded_ids ),
@@ -160,34 +160,44 @@ class WPZOOM_Forms_Payments_Analytics {
 	}
 
 	/**
-	 * Builds an array of { date, value } points grouped by day.
+	 * Builds an array of { date, sales, refund, count } points grouped by day.
 	 *
-	 * @param int[] $post_ids  Array of succeeded payment post IDs.
-	 * @param int   $from      Period start (Unix timestamp).
-	 * @param int   $to        Period end (Unix timestamp).
+	 * @param int[] $succeeded_ids  Array of paid payment post IDs.
+	 * @param int[] $refunded_ids   Array of refunded payment post IDs.
+	 * @param int   $from           Period start (Unix timestamp).
+	 * @param int   $to             Period end (Unix timestamp).
 	 * @return array
 	 */
-	private function build_chart_data( $post_ids, $from, $to ) {
-		$amounts_by_day = array();
+	private function build_chart_data( $succeeded_ids, $refunded_ids, $from, $to ) {
+		$sales_by_day   = array();
 		$counts_by_day  = array();
+		$refund_by_day  = array();
 
-		foreach ( $post_ids as $id ) {
+		foreach ( $succeeded_ids as $id ) {
 			$date   = get_the_date( 'Y-m-d', $id );
 			$amount = (int) get_post_meta( $id, '_wpzf_txn_amount', true );
 
-			$amounts_by_day[ $date ] = ( $amounts_by_day[ $date ] ?? 0 ) + $amount;
-			$counts_by_day[ $date ]  = ( $counts_by_day[ $date ] ?? 0 ) + 1;
+			$sales_by_day[ $date ]  = ( $sales_by_day[ $date ] ?? 0 ) + $amount;
+			$counts_by_day[ $date ] = ( $counts_by_day[ $date ] ?? 0 ) + 1;
 		}
 
-		$points   = array();
-		$day      = strtotime( date( 'Y-m-d', $from ) );
-		$end_day  = strtotime( date( 'Y-m-d', $to ) );
+		foreach ( $refunded_ids as $id ) {
+			$date   = get_the_date( 'Y-m-d', $id );
+			$amount = (int) get_post_meta( $id, '_wpzf_txn_amount', true );
+
+			$refund_by_day[ $date ] = ( $refund_by_day[ $date ] ?? 0 ) + $amount;
+		}
+
+		$points  = array();
+		$day     = strtotime( date( 'Y-m-d', $from ) );
+		$end_day = strtotime( date( 'Y-m-d', $to ) );
 		while ( $day <= $end_day ) {
-			$key       = date( 'Y-m-d', $day );
-			$points[]  = array(
-				'date'  => date( 'M j', $day ),
-				'value' => $amounts_by_day[ $key ] ?? 0,
-				'count' => $counts_by_day[ $key ] ?? 0,
+			$key      = date( 'Y-m-d', $day );
+			$points[] = array(
+				'date'   => date( 'M j', $day ),
+				'sales'  => $sales_by_day[ $key ]  ?? 0,
+				'refund' => $refund_by_day[ $key ]  ?? 0,
+				'count'  => $counts_by_day[ $key ]  ?? 0,
 			);
 			$day += DAY_IN_SECONDS;
 		}

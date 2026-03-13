@@ -15874,7 +15874,23 @@ function AnalyticsChart(_ref3) {
     if (chartInstance.current) {
       chartInstance.current.destroy();
     }
-    var isMoney = activeMetric !== 'payments';
+    var METRIC_FIELD = {
+      payments: function payments(p) {
+        return p.count;
+      },
+      sales: function sales(p) {
+        return p.sales;
+      },
+      refund: function refund(p) {
+        return p.refund;
+      },
+      coupons: function coupons(p) {
+        var _p$coupons;
+        return (_p$coupons = p.coupons) !== null && _p$coupons !== void 0 ? _p$coupons : 0;
+      }
+    };
+    var getMetricValue = METRIC_FIELD[activeMetric] || METRIC_FIELD.sales;
+    var isMoney = activeMetric !== 'payments' && activeMetric !== 'coupons';
     var METRIC_COLORS = {
       payments: {
         line: '#2271b1',
@@ -15902,7 +15918,7 @@ function AnalyticsChart(_ref3) {
         }),
         datasets: [{
           data: chartData.map(function (p) {
-            return isMoney ? p.value : p.count;
+            return getMetricValue(p);
           }),
           borderColor: colors.line,
           backgroundColor: colors.fill,

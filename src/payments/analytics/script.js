@@ -100,7 +100,14 @@ function AnalyticsChart( { chartData, activeMetric, currency } ) {
 			chartInstance.current.destroy();
 		}
 
-		const isMoney = activeMetric !== 'payments';
+		const METRIC_FIELD = {
+			payments: p => p.count,
+			sales:    p => p.sales,
+			refund:   p => p.refund,
+			coupons:  p => p.coupons ?? 0,
+		};
+		const getMetricValue = METRIC_FIELD[ activeMetric ] || METRIC_FIELD.sales;
+		const isMoney = activeMetric !== 'payments' && activeMetric !== 'coupons';
 
 		const METRIC_COLORS = {
 			payments: { line: '#2271b1', fill: 'rgba(34,113,177,0.12)' },
@@ -115,7 +122,7 @@ function AnalyticsChart( { chartData, activeMetric, currency } ) {
 			data: {
 				labels:   chartData.map( p => p.date ),
 				datasets: [ {
-					data:                 chartData.map( p => isMoney ? p.value : p.count ),
+					data:                 chartData.map( p => getMetricValue( p ) ),
 					borderColor:          colors.line,
 					backgroundColor:      colors.fill,
 					borderWidth:          2,
