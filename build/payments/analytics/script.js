@@ -15841,6 +15841,7 @@ function StatCard(_ref2) {
         align: "center",
         gap: 2,
         justify: "left",
+        wrap: true,
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("div", {
           className: "wpzf-analytics__stat-value",
           children: value
@@ -16145,7 +16146,7 @@ function PaymentsSummary() {
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.Flex, {
         className: "wpzf-analytics__stats",
         gap: 3,
-        wrap: true,
+        direction: ["column", "row"],
         children: stats.map(function (s) {
           return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.FlexBlock, {
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(StatCard, {

@@ -72,7 +72,7 @@ function StatCard( { icon, label, value, trend, active, onClick } ) {
 				</div>
 				<div className="wpzf-analytics__stat-content">
 					<span className="wpzf-analytics__stat-label">{ label }</span>
-					<Flex align="center" gap={ 2 } justify="left">
+					<Flex align="center" gap={ 2 } justify="left" wrap>
 						<div className="wpzf-analytics__stat-value">{ value }</div>
 						<div className="wpzf-analytics__stat-trend">
 							<TrendBadge value={ trend } />
@@ -322,7 +322,16 @@ function PaymentsSummary() {
 				{ /* Data */ }
 				{ ! loading && ! error && data && (
 					<>
-						<Flex className="wpzf-analytics__stats" gap={ 3 } wrap>
+						<Flex 
+							className="wpzf-analytics__stats" 
+							gap={ 3 } 
+							direction={
+								[
+									"column",
+									"row"
+								]
+							}
+						>
 							{ stats.map( s => (
 								<FlexBlock key={ s.key }>
 									<StatCard
