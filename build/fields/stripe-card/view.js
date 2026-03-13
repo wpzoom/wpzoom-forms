@@ -362,18 +362,40 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
     var theme = getStripeTheme(wrapper);
     var totalCents = calculateTotal(form);
 
-    // Deferred-intent mode: mount the Payment Element without a clientSecret.
-    // The intent is created on submit so the amount can be dynamic.
-    var elements = stripe.elements({
-      mode: mode,
-      amount: totalCents,
-      currency: currency,
-      appearance: {
-        theme: theme
-      }
-    });
-    var paymentElement = elements.create('payment');
-    paymentElement.mount(paymentContainer);
+    // When the initial total is 0 (e.g. nothing checked yet), we cannot call
+    // stripe.elements() because Stripe requires amount > 0. Instead we show a
+    // prompt and mount the Payment Element the first time the total becomes > 0.
+    var elements = null;
+    var paymentElement = null;
+    var mounted = false;
+
+    // Placeholder shown while total is still 0.
+    var placeholder = document.createElement('p');
+    placeholder.className = 'wpzf-payment-placeholder';
+    placeholder.style.cssText = 'margin:0;padding:12px 0;color:#555;font-size:14px;';
+    placeholder.textContent = 'Please select a payment option to continue.';
+    function mountPaymentElement() {
+      if (mounted) return;
+      mounted = true;
+      if (placeholder.parentNode) placeholder.remove();
+      paymentContainer.style.display = '';
+      elements = stripe.elements({
+        mode: mode,
+        amount: totalCents,
+        currency: currency,
+        appearance: {
+          theme: theme
+        }
+      });
+      paymentElement = elements.create('payment');
+      paymentElement.mount(paymentContainer);
+    }
+    if (totalCents > 0) {
+      mountPaymentElement();
+    } else {
+      paymentContainer.style.display = 'none';
+      paymentContainer.parentNode.insertBefore(placeholder, paymentContainer);
+    }
 
     // Keep the element's amount in sync when payment inputs change.
     function onPaymentInputChange(e) {
@@ -381,9 +403,13 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
       if (t.classList.contains('wpzf-payment-item-qty') || t.classList.contains('wpzf-payment-option') || t.classList.contains('wpzf-payment-amount') || t.tagName === 'SELECT' && t.classList.contains('wpzf-payment-options')) {
         totalCents = calculateTotal(form);
         updateTotalDisplay(form, totalCents);
-        elements.update({
-          amount: totalCents
-        });
+        if (!mounted && totalCents > 0) {
+          mountPaymentElement();
+        } else if (mounted) {
+          elements.update({
+            amount: totalCents
+          });
+        }
       }
     }
     form.addEventListener('change', onPaymentInputChange);
@@ -405,7 +431,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
               setOverlay(form, true);
               totalCents = calculateTotal(form);
               updateTotalDisplay(form, totalCents);
-              elements.update({
+              if (mounted) elements.update({
                 amount: totalCents
               });
               if (!(totalCents < 50)) {
@@ -417,21 +443,30 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
               setOverlay(form, false);
               return _context.a(2);
             case 1:
-              _context.n = 2;
-              return elements.submit();
+              if (mounted) {
+                _context.n = 2;
+                break;
+              }
+              showError(form, 'Please select a payment option before submitting.');
+              if (submitBtn) submitBtn.disabled = false;
+              setOverlay(form, false);
+              return _context.a(2);
             case 2:
+              _context.n = 3;
+              return elements.submit();
+            case 3:
               _yield$elements$submi = _context.v;
               submitError = _yield$elements$submi.error;
               if (!submitError) {
-                _context.n = 3;
+                _context.n = 4;
                 break;
               }
               showError(form, submitError.message);
               if (submitBtn) submitBtn.disabled = false;
               setOverlay(form, false);
               return _context.a(2);
-            case 3:
-              _context.p = 3;
+            case 4:
+              _context.p = 4;
               // Step 2 — create the PaymentIntent / Subscription on the server.
               emailField = form.querySelector('input[type="email"]');
               nameField = form.querySelector('.wpzoom-forms_text-name-field input');
@@ -441,7 +476,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
                 customer_email: emailField ? emailField.value : '',
                 customer_name: nameField ? nameField.value : ''
               };
-              _context.n = 4;
+              _context.n = 5;
               return fetch(wpzfStripeData.createIntentUrl, {
                 method: 'POST',
                 credentials: 'same-origin',
@@ -450,34 +485,34 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
                 },
                 body: JSON.stringify(payload)
               });
-            case 4:
-              intentResponse = _context.v;
-              _context.n = 5;
-              return intentResponse.json();
             case 5:
+              intentResponse = _context.v;
+              _context.n = 6;
+              return intentResponse.json();
+            case 6:
               intentData = _context.v;
               if (!(!intentResponse.ok || intentData.code)) {
-                _context.n = 6;
+                _context.n = 7;
                 break;
               }
               showError(form, intentData.message || 'Payment setup failed. Please try again.');
               if (submitBtn) submitBtn.disabled = false;
               setOverlay(form, false);
               return _context.a(2);
-            case 6:
+            case 7:
               client_secret = intentData.client_secret, payment_intent_id = intentData.payment_intent_id;
               if (client_secret) {
-                _context.n = 7;
+                _context.n = 8;
                 break;
               }
               showError(form, 'Payment setup failed: no client secret returned.');
               if (submitBtn) submitBtn.disabled = false;
               setOverlay(form, false);
               return _context.a(2);
-            case 7:
+            case 8:
               // Step 3 — confirm the payment (or setup for free-trial subscriptions).
               confirmFn = intentData.setup_intent ? stripe.confirmSetup.bind(stripe) : stripe.confirmPayment.bind(stripe);
-              _context.n = 8;
+              _context.n = 9;
               return confirmFn({
                 elements: elements,
                 clientSecret: client_secret,
@@ -486,18 +521,18 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
                 },
                 redirect: 'if_required'
               });
-            case 8:
+            case 9:
               _yield$confirmFn = _context.v;
               confirmError = _yield$confirmFn.error;
               if (!confirmError) {
-                _context.n = 9;
+                _context.n = 10;
                 break;
               }
               showError(form, confirmError.message);
               if (submitBtn) submitBtn.disabled = false;
               setOverlay(form, false);
               return _context.a(2);
-            case 9:
+            case 10:
               // Step 4 — payment confirmed: populate hidden fields then re-submit.
               intentInput = form.querySelector('input[name="wpzf_payment_intent_id"]');
               if (intentInput) {
@@ -509,19 +544,19 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
               setHiddenInput(form, 'wpzf_payment_items', JSON.stringify(collectPaymentItems(form)));
               form.removeEventListener('submit', _handleSubmit);
               form.submit();
-              _context.n = 11;
+              _context.n = 12;
               break;
-            case 10:
-              _context.p = 10;
+            case 11:
+              _context.p = 11;
               _t = _context.v;
               console.error('[wpzf-stripe] Unexpected error:', _t);
               showError(form, 'An unexpected error occurred. Please try again.');
               if (submitBtn) submitBtn.disabled = false;
               setOverlay(form, false);
-            case 11:
+            case 12:
               return _context.a(2);
           }
-        }, _callee, null, [[3, 10]]);
+        }, _callee, null, [[4, 11]]);
       }));
       return function handleSubmit(_x) {
         return _ref.apply(this, arguments);

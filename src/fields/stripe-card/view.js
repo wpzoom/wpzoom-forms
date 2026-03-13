@@ -250,17 +250,43 @@
 
 		let totalCents = calculateTotal( form );
 
-		// Deferred-intent mode: mount the Payment Element without a clientSecret.
-		// The intent is created on submit so the amount can be dynamic.
-		const elements = stripe.elements( {
-			mode,
-			amount:   totalCents,
-			currency,
-			appearance: { theme },
-		} );
+		// When the initial total is 0 (e.g. nothing checked yet), we cannot call
+		// stripe.elements() because Stripe requires amount > 0. Instead we show a
+		// prompt and mount the Payment Element the first time the total becomes > 0.
+		let elements       = null;
+		let paymentElement = null;
+		let mounted        = false;
 
-		const paymentElement = elements.create( 'payment' );
-		paymentElement.mount( paymentContainer );
+		// Placeholder shown while total is still 0.
+		const placeholder = document.createElement( 'p' );
+		placeholder.className = 'wpzf-payment-placeholder';
+		placeholder.style.cssText = 'margin:0;padding:12px 0;color:#555;font-size:14px;';
+		placeholder.textContent = 'Please select a payment option to continue.';
+
+		function mountPaymentElement() {
+			if ( mounted ) return;
+			mounted = true;
+
+			if ( placeholder.parentNode ) placeholder.remove();
+			paymentContainer.style.display = '';
+
+			elements = stripe.elements( {
+				mode,
+				amount: totalCents,
+				currency,
+				appearance: { theme },
+			} );
+
+			paymentElement = elements.create( 'payment' );
+			paymentElement.mount( paymentContainer );
+		}
+
+		if ( totalCents > 0 ) {
+			mountPaymentElement();
+		} else {
+			paymentContainer.style.display = 'none';
+			paymentContainer.parentNode.insertBefore( placeholder, paymentContainer );
+		}
 
 		// Keep the element's amount in sync when payment inputs change.
 		function onPaymentInputChange( e ) {
@@ -273,7 +299,12 @@
 			) {
 				totalCents = calculateTotal( form );
 				updateTotalDisplay( form, totalCents );
-				elements.update( { amount: totalCents } );
+
+				if ( ! mounted && totalCents > 0 ) {
+					mountPaymentElement();
+				} else if ( mounted ) {
+					elements.update( { amount: totalCents } );
+				}
 			}
 		}
 		form.addEventListener( 'change', onPaymentInputChange );
@@ -292,10 +323,18 @@
 
 			totalCents = calculateTotal( form );
 			updateTotalDisplay( form, totalCents );
-			elements.update( { amount: totalCents } );
+			if ( mounted ) elements.update( { amount: totalCents } );
 
 			if ( totalCents < 50 ) {
 				showError( form, 'Order total must be at least $0.50.' );
+				if ( submitBtn ) submitBtn.disabled = false;
+				setOverlay( form, false );
+				return;
+			}
+
+			// Guard: payment element must be mounted before we can proceed.
+			if ( ! mounted ) {
+				showError( form, 'Please select a payment option before submitting.' );
 				if ( submitBtn ) submitBtn.disabled = false;
 				setOverlay( form, false );
 				return;
