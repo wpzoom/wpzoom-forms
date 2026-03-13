@@ -300,10 +300,21 @@
 				totalCents = calculateTotal( form );
 				updateTotalDisplay( form, totalCents );
 
-				if ( ! mounted && totalCents > 0 ) {
-					mountPaymentElement();
+				if ( totalCents > 0 ) {
+					if ( ! mounted ) {
+						mountPaymentElement();
+					} else {
+						// Restore visibility if it was hidden.
+						if ( placeholder.parentNode ) placeholder.remove();
+						paymentContainer.style.display = '';
+						elements.update( { amount: totalCents } );
+					}
 				} else if ( mounted ) {
-					elements.update( { amount: totalCents } );
+					// Total dropped to 0 — hide the element and show the prompt again.
+					paymentContainer.style.display = 'none';
+					if ( ! placeholder.parentNode ) {
+						paymentContainer.parentNode.insertBefore( placeholder, paymentContainer );
+					}
 				}
 			}
 		}
@@ -323,10 +334,10 @@
 
 			totalCents = calculateTotal( form );
 			updateTotalDisplay( form, totalCents );
-			if ( mounted ) elements.update( { amount: totalCents } );
+			if ( mounted && totalCents > 0 ) elements.update( { amount: totalCents } );
 
 			if ( totalCents < 50 ) {
-				showError( form, 'Order total must be at least $0.50.' );
+				showError( form, 'Order total must be at least $0.60.' );
 				if ( submitBtn ) submitBtn.disabled = false;
 				setOverlay( form, false );
 				return;
