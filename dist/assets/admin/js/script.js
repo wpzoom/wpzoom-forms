@@ -1,5 +1,6 @@
 jQuery(document).ready(function () {
 	(function ($, Settings) {
+
 		$('.wp-tab-bar a').click(function (event) {
 			event.preventDefault();
 

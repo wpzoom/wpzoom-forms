@@ -2994,7 +2994,8 @@
 .predefined-lists p {
   margin: 0;
 }
-.post-php.post-type-wpzf-submission.wpzoom-new-admin #wpfooter {
+.post-php.post-type-wpzf-submission.wpzoom-new-admin #wpfooter,
+.wpzf-form_page_wpzf-settings.wpzoom-new-admin #wpfooter {
   position: relative !important;
   bottom: 0 !important;
 }

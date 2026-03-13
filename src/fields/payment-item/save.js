@@ -28,7 +28,7 @@ const Save = ( { attributes } ) => {
 						className={ clsx( 'wpzf-payment-item-qty', colorProps.className, borderProps.className ) }
 						style={ { ...borderProps.style, ...colorProps.style } }
 						name={ `${ id }_qty` }
-						defaultValue={ quantity }
+						value={quantity}
 						min={ minQty }
 						max={ maxQty }
 					/>

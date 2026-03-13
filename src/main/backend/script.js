@@ -167,8 +167,8 @@ registerPlugin('wpzoom-forms-document-settings', {
 			const collectFields = ( blocks ) => {
 				let fields = [];
 				for ( const block of blocks ) {
-					if ( fieldBlockTypes.includes( block.name ) && block.attributes.name ) {
-						fields.push( { label: block.attributes.label || block.attributes.name, value: block.attributes.name } );
+					if ( fieldBlockTypes.includes( block.name ) && block.attributes.id ) {
+						fields.push( { label: block.attributes.label || block.attributes.id, value: block.attributes.id } );
 					}
 					if ( block.innerBlocks && block.innerBlocks.length ) {
 						fields = fields.concat( collectFields( block.innerBlocks ) );

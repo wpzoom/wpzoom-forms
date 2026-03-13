@@ -6,6 +6,7 @@
 	border:1px solid rgba(221, 221, 221, 1);
 	background:#fff;
 	line-height: 22px;
+	width: calc(100% - 436px);
 }
 .wpzf-form_page_wpzf-settings ul.wp-tab-bar li {
 	color: #50575e;

@@ -578,6 +578,7 @@ class WPZOOM_Forms_Settings {
 	 */
 	public function register_setting( $setting ) {
 		$setting['sanitize_callback'] = isset( $setting['sanitize_callback'] ) ? $setting['sanitize_callback'] : array();
+
 		register_setting( $setting['option_group'], $setting['option_name'], $setting['sanitize_callback'] );
 
 		if ( isset( $setting['sections'] ) && is_array( $setting['sections'] ) ) {
@@ -627,6 +628,8 @@ class WPZOOM_Forms_Settings {
 				</div>
 			<?php endif; ?>
 
+			<?php WPZOOM_Forms_Sidebar::render(); ?>
+
 			<form id="wpzf-settings" action="options.php" method="post">
 				<ul class="wp-tab-bar">
 					<?php foreach ( self::$settings as $setting ) : ?>
@@ -637,8 +640,6 @@ class WPZOOM_Forms_Settings {
 						<?php endif ?>
 					<?php endforeach ?>
 				</ul>
-
-			<?php $this->upsell_banner(); ?>
 
 			<?php foreach ( self::$settings as $setting ) :
 				$is_active = ( self::$active_tab === $setting['tab_id'] );
@@ -678,14 +679,6 @@ class WPZOOM_Forms_Settings {
 			</form>
 		</div>
 		<?php
-	}
-
-
-	/**
-	 * Upsell banner
-	 */
-	public function upsell_banner() {
-		WPZOOM_Forms_Sidebar::render();
 	}
 
 	/**

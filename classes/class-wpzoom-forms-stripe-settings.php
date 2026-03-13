@@ -155,6 +155,10 @@ class WPZOOM_Forms_Stripe_Settings {
 			$existing = array();
 		}
 
+		if ( is_array( $input ) ) {
+			$existing = array_merge( $existing, $input );
+		}
+
 		if ( isset( $input['wpzf_stripe_test_mode'] ) ) {
 			$existing['wpzf_stripe_test_mode'] = '1';
 			update_option( 'wpzf_stripe_test_mode', '1', false );
