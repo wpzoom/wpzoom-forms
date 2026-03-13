@@ -150,6 +150,45 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
     month: '/ month',
     year: '/ year'
   };
+  var currencyFormatter = new Intl.NumberFormat([], {
+    style: 'currency',
+    currency: (wpzfStripeData.currency || 'usd').toUpperCase(),
+    minimumFractionDigits: 2
+  });
+  function formatCurrency(cents) {
+    return currencyFormatter.format(cents / 100);
+  }
+
+  /**
+   * Replaces hardcoded '$' price displays with the configured currency symbol.
+   * Called once per form on DOMContentLoaded.
+   *
+   * @param {HTMLElement} form
+   */
+  function reformatPriceDisplay(form) {
+    // Payment-item price spans — read the raw price from the sibling hidden input.
+    form.querySelectorAll('.wp-block-wpzoom-forms-payment-item').forEach(function (item) {
+      var priceInput = item.querySelector('input[name$="_price"]');
+      var priceSpan = item.querySelector('.wpzf-payment-item-price');
+      if (priceInput && priceSpan) {
+        priceSpan.textContent = currencyFormatter.format(parseFloat(priceInput.value) || 0);
+      }
+    });
+
+    // Payment-option (checkbox / radio / select) labels — read data-price from the input.
+    form.querySelectorAll('input.wpzf-payment-option[data-price]').forEach(function (input) {
+      var label = input.closest('label');
+      if (!label) return;
+      var formatted = currencyFormatter.format(parseFloat(input.dataset.price) || 0);
+      for (var i = label.childNodes.length - 1; i >= 0; i--) {
+        var node = label.childNodes[i];
+        if (node.nodeType === Node.TEXT_NODE && /\$[\d.,]+/.test(node.textContent)) {
+          node.textContent = node.textContent.replace(/\$[\d.,]+/, formatted);
+          break;
+        }
+      }
+    });
+  }
 
   /**
    * Calculates the order total by reading all .wp-block-wpzoom-forms-payment-item elements
@@ -200,9 +239,8 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
   function updateTotalDisplay(form, totalCents) {
     var amountEl = form.querySelector('.wpzf-payment-total-amount');
     var hiddenEl = form.querySelector('input[name="wpzf_payment_total"]');
-    var dollars = (totalCents / 100).toFixed(2);
     if (amountEl) {
-      var display = '$' + dollars;
+      var display = formatCurrency(totalCents);
       if (wpzfStripeData.paymentType === 'recurring') {
         var period = wpzfStripeData.recurringPeriod || 'month';
         display += ' ' + (periodLabels[period] || '/ ' + period);
@@ -482,7 +520,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
               _context.p = 4;
               // Step 2 — create the PaymentIntent / Subscription on the server.
               emailField = form.querySelector('input[type="email"]');
-              nameField = form.querySelector('.wpzoom-forms_text-name-field input');
+              nameField = form.querySelector('input.wp-block-wpzoom-forms-text-name-field');
               payload = {
                 amount: totalCents,
                 form_id: parseInt(formIdInput.value, 10),
@@ -583,6 +621,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
     document.querySelectorAll('.wpzf-stripe-card-wrapper').forEach(function (wrapper) {
       var form = wrapper.closest('form');
       if (form) {
+        reformatPriceDisplay(form);
         initFormPayment(form, wrapper);
       }
     });

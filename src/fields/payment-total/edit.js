@@ -17,6 +17,9 @@ const Edit = props => {
 	const paymentType     = meta?.['_wpzf_stripe_payment_type']     || 'one-time';
 	const recurringPeriod = meta?.['_wpzf_stripe_recurring_period'] || 'month';
 
+	const currency     = ( window.wpzf_formblock?.currency || 'usd' ).toUpperCase();
+	const zeroDisplay  = new Intl.NumberFormat( [], { style: 'currency', currency, minimumFractionDigits: 2 } ).format( 0 );
+
 	const periodSuffix = paymentType === 'recurring'
 		? ' ' + ( periodLabels[ recurringPeriod ] || '/ ' + recurringPeriod )
 		: '';
@@ -35,7 +38,7 @@ const Edit = props => {
 
 		<div { ...blockProps }>
 			<div className="wpzf-payment-total-label">{ label || __( 'Total', 'wpzoom-forms' ) }</div>
-			<div className="wpzf-payment-total-amount">$0.00{ periodSuffix }</div>
+			<div className="wpzf-payment-total-amount">{ zeroDisplay }{ periodSuffix }</div>
 		</div>
 	</>;
 };

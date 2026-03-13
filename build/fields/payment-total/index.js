@@ -40,6 +40,7 @@ var periodLabels = {
   year: '/ year'
 };
 var Edit = function Edit(props) {
+  var _window$wpzf_formbloc;
   var blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.useBlockProps)();
   var attributes = props.attributes,
     setAttributes = props.setAttributes;
@@ -52,6 +53,12 @@ var Edit = function Edit(props) {
     meta = _useEntityProp2[0];
   var paymentType = (meta === null || meta === void 0 ? void 0 : meta['_wpzf_stripe_payment_type']) || 'one-time';
   var recurringPeriod = (meta === null || meta === void 0 ? void 0 : meta['_wpzf_stripe_recurring_period']) || 'month';
+  var currency = (((_window$wpzf_formbloc = window.wpzf_formblock) === null || _window$wpzf_formbloc === void 0 ? void 0 : _window$wpzf_formbloc.currency) || 'usd').toUpperCase();
+  var zeroDisplay = new Intl.NumberFormat([], {
+    style: 'currency',
+    currency: currency,
+    minimumFractionDigits: 2
+  }).format(0);
   var periodSuffix = paymentType === 'recurring' ? ' ' + (periodLabels[recurringPeriod] || '/ ' + recurringPeriod) : '';
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.Fragment, {
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.InspectorControls, {
@@ -74,7 +81,7 @@ var Edit = function Edit(props) {
         children: label || (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)('Total', 'wpzoom-forms')
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
         className: "wpzf-payment-total-amount",
-        children: ["$0.00", periodSuffix]
+        children: [zeroDisplay, periodSuffix]
       })]
     }))]
   });

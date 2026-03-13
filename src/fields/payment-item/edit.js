@@ -27,7 +27,8 @@ const Edit = props => {
 		}
 	}, [] );
 
-	const formattedPrice = Number( price ).toFixed( 2 );
+	const currency       = ( window.wpzf_formblock?.currency || 'usd' ).toUpperCase();
+	const formattedPrice = new Intl.NumberFormat( [], { style: 'currency', currency, minimumFractionDigits: 2 } ).format( Number( price ) || 0 );
 
 	return <>
 		<InspectorControls>
@@ -102,7 +103,7 @@ const Edit = props => {
 				) }
 			</div>
 			<div className="wpzf-payment-item-right">
-				<span className="wpzf-payment-item-price">${ formattedPrice }</span>
+				<span className="wpzf-payment-item-price">{ formattedPrice }</span>
 				{ showQty && (
 					<input
 						className={ clsx( 'wpzf-payment-item-qty', colorProps.className, borderProps.className ) }

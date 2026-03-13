@@ -899,7 +899,8 @@ class WPZOOM_Forms {
 				'wpzf_formblock',
 				array(
 					'admin_url'   => trailingslashit( admin_url() ),
-					'admin_email' => '' . get_site_option( 'admin_email', '' )
+					'admin_email' => '' . get_site_option( 'admin_email', '' ),
+					'currency'    => strtolower( get_option( 'wpzf_payment_currency', 'usd' ) ),
 				)
 			);
 
@@ -923,7 +924,8 @@ class WPZOOM_Forms {
 				'wpzf_formblock',
 				array(
 					'admin_url'   => trailingslashit( admin_url() ),
-					'admin_email' => '' . get_site_option( 'admin_email', '' )
+					'admin_email' => '' . get_site_option( 'admin_email', '' ),
+					'currency'    => strtolower( get_option( 'wpzf_payment_currency', 'usd' ) ),
 				)
 			);
 

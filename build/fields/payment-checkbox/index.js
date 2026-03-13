@@ -43,6 +43,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
 
 var Edit = function Edit(props) {
+  var _window$wpzf_formbloc;
   var blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__.useBlockProps)();
   var attributes = props.attributes,
     setAttributes = props.setAttributes,
@@ -56,6 +57,12 @@ var Edit = function Edit(props) {
   var ref = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_5__.useRef)();
   var borderProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__.__experimentalUseBorderProps)(attributes);
   var colorProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__.__experimentalUseColorProps)(attributes);
+  var currency = (((_window$wpzf_formbloc = window.wpzf_formblock) === null || _window$wpzf_formbloc === void 0 ? void 0 : _window$wpzf_formbloc.currency) || 'usd').toUpperCase();
+  var priceFormatter = new Intl.NumberFormat([], {
+    style: 'currency',
+    currency: currency,
+    minimumFractionDigits: 2
+  });
   if (ref.current) {
     ref.current.focus();
   }
@@ -233,7 +240,7 @@ var Edit = function Edit(props) {
                   className: "wpzf-payment-option",
                   onChange: function onChange(e) {},
                   required: !!required
-                }), option.label, " \u2014 $", Number(option.price).toFixed(2)]
+                }), option.label, " \u2014 ", priceFormatter.format(Number(option.price) || 0)]
               })
             }, index);
           })

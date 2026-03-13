@@ -308,6 +308,26 @@ class WPZOOM_Forms_Stripe {
 			) );
 			if ( is_object( $pi_expanded->latest_charge ) ) {
 				$this->store_card_meta_from_charge( $pi->id, $pi_expanded->latest_charge );
+
+				// Update the Stripe Customer's address from the billing details on the charge.
+				$customer_id     = is_string( $pi_expanded->customer ) ? $pi_expanded->customer : null;
+				$billing_details = $pi_expanded->latest_charge->billing_details ?? null;
+				if ( $customer_id && is_object( $billing_details ) && is_object( $billing_details->address ) ) {
+					$addr        = $billing_details->address;
+					$update_args = array(
+						'address' => array_filter( array(
+							'country'     => $addr->country     ?: null,
+							'postal_code' => $addr->postal_code ?: null,
+							'city'        => $addr->city        ?: null,
+							'line1'       => $addr->line1       ?: null,
+							'line2'       => $addr->line2       ?: null,
+							'state'       => $addr->state       ?: null,
+						) ),
+					);
+					if ( ! empty( $update_args['address'] ) ) {
+						\Stripe\Customer::update( $customer_id, $update_args );
+					}
+				}
 			}
 		} catch ( \Exception $e ) {
 			// Non-fatal: card details just won't be stored.
@@ -459,10 +479,24 @@ class WPZOOM_Forms_Stripe {
 				return $this->create_subscription_intent( $request, $form_post, $amount, $currency );
 			}
 
+			$customer_email = sanitize_email( $request->get_param( 'customer_email' ) ?: '' );
+			$customer_name  = sanitize_text_field( $request->get_param( 'customer_name' ) ?: '' );
+
+			$customer_args = array( 'metadata' => array( 'wpzf_form_id' => $form_id ) );
+			if ( $customer_email ) {
+				$customer_args['email'] = $customer_email;
+			}
+			if ( $customer_name ) {
+				$customer_args['name'] = $customer_name;
+			}
+			$customer = \Stripe\Customer::create( $customer_args );
+
 			$intent_params = array(
 				'amount'                    => $amount,
 				'currency'                  => $currency,
 				'automatic_payment_methods' => array( 'enabled' => true ),
+				'customer'                  => $customer->id,
+				'receipt_email'             => $customer_email ?: null,
 				'description'               => get_post_meta( $form_id, '_wpzf_stripe_payment_description', true ) ?: '',
 				'metadata'                  => array( 'wpzf_form_id' => $form_id ),
 			);
@@ -479,7 +513,7 @@ class WPZOOM_Forms_Stripe {
 				$intent->id,
 				$amount,
 				$currency,
-				sanitize_email( $request->get_param( 'customer_email' ) ?: '' )
+				$customer_email
 			);
 
 			return new WP_REST_Response(

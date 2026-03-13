@@ -32,6 +32,7 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 
 
 var Edit = function Edit(props) {
+  var _window$wpzf_formbloc;
   var blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.useBlockProps)();
   var attributes = props.attributes,
     setAttributes = props.setAttributes,
@@ -57,7 +58,12 @@ var Edit = function Edit(props) {
       });
     }
   }, []);
-  var formattedPrice = Number(price).toFixed(2);
+  var currency = (((_window$wpzf_formbloc = window.wpzf_formblock) === null || _window$wpzf_formbloc === void 0 ? void 0 : _window$wpzf_formbloc.currency) || 'usd').toUpperCase();
+  var formattedPrice = new Intl.NumberFormat([], {
+    style: 'currency',
+    currency: currency,
+    minimumFractionDigits: 2
+  }).format(Number(price) || 0);
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.Fragment, {
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.InspectorControls, {
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.PanelBody, {
@@ -151,9 +157,9 @@ var Edit = function Edit(props) {
         })]
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("div", {
         className: "wpzf-payment-item-right",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)("span", {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("span", {
           className: "wpzf-payment-item-price",
-          children: ["$", formattedPrice]
+          children: formattedPrice
         }), showQty && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)("input", {
           className: (0,clsx__WEBPACK_IMPORTED_MODULE_1__["default"])('wpzf-payment-item-qty', colorProps.className, borderProps.className),
           style: _objectSpread(_objectSpread(_objectSpread({}, borderProps.style), colorProps.style), {}, {
@@ -231,7 +237,7 @@ var Save = function Save(_ref) {
         className: (0,clsx__WEBPACK_IMPORTED_MODULE_1__["default"])('wpzf-payment-item-qty', colorProps.className, borderProps.className),
         style: _objectSpread(_objectSpread({}, borderProps.style), colorProps.style),
         name: "".concat(id, "_qty"),
-        defaultValue: quantity,
+        value: quantity,
         min: minQty,
         max: maxQty
       }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("input", {

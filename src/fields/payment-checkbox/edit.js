@@ -32,8 +32,10 @@ const Edit = props => {
 	const { id, name, options, label, showLabel, required } = attributes;
 	const ref = useRef();
 
-	const borderProps = useBorderProps( attributes );
-	const colorProps  = useColorProps( attributes );
+	const borderProps    = useBorderProps( attributes );
+	const colorProps     = useColorProps( attributes );
+	const currency       = ( window.wpzf_formblock?.currency || 'usd' ).toUpperCase();
+	const priceFormatter = new Intl.NumberFormat( [], { style: 'currency', currency, minimumFractionDigits: 2 } );
 
 	if ( ref.current ) {
 		ref.current.focus();
@@ -191,7 +193,7 @@ const Edit = props => {
 									onChange={ e => {} }
 									required={ !! required }
 								/>
-								{ option.label } — ${ Number( option.price ).toFixed( 2 ) }
+								{ option.label } — { priceFormatter.format( Number( option.price ) || 0 ) }
 							</label>
 						</li>
 					) }
