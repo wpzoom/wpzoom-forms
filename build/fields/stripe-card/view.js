@@ -164,7 +164,8 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
 
     // Single payment items (price x quantity).
     form.querySelectorAll('.wp-block-wpzoom-forms-payment-item').forEach(function (item) {
-      var price = parseFloat(item.dataset.price) || 0;
+      var priceInput = item.querySelector('input[name$="_price"]');
+      var price = priceInput ? parseFloat(priceInput.value) || 0 : 0;
       var qtyInput = item.querySelector('.wpzf-payment-item-qty, input[name$="_qty"]');
       var qty = qtyInput ? parseInt(qtyInput.value, 10) || 1 : 1;
       total += price * qty;
@@ -225,7 +226,8 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
 
     // Single payment items.
     form.querySelectorAll('.wp-block-wpzoom-forms-payment-item').forEach(function (item) {
-      var price = parseFloat(item.dataset.price) || 0;
+      var priceInput = item.querySelector('input[name$="_price"]');
+      var price = priceInput ? parseFloat(priceInput.value) || 0 : 0;
       var qtyInput = item.querySelector('.wpzf-payment-item-qty, input[name$="_qty"]');
       var qty = qtyInput ? parseInt(qtyInput.value, 10) || 1 : 1;
       var nameEl = item.querySelector('.wpzf-payment-item-name');

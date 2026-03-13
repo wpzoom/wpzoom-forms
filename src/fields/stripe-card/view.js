@@ -45,9 +45,10 @@
 
 		// Single payment items (price x quantity).
 		form.querySelectorAll( '.wp-block-wpzoom-forms-payment-item' ).forEach( item => {
-			const price    = parseFloat( item.dataset.price ) || 0;
-			const qtyInput = item.querySelector( '.wpzf-payment-item-qty, input[name$="_qty"]' );
-			const qty      = qtyInput ? ( parseInt( qtyInput.value, 10 ) || 1 ) : 1;
+			const priceInput = item.querySelector( 'input[name$="_price"]' );
+			const price      = priceInput ? ( parseFloat( priceInput.value ) || 0 ) : 0;
+			const qtyInput   = item.querySelector( '.wpzf-payment-item-qty, input[name$="_qty"]' );
+			const qty        = qtyInput ? ( parseInt( qtyInput.value, 10 ) || 1 ) : 1;
 			total += price * qty;
 		} );
 
@@ -108,10 +109,11 @@
 
 		// Single payment items.
 		form.querySelectorAll( '.wp-block-wpzoom-forms-payment-item' ).forEach( item => {
-			const price    = parseFloat( item.dataset.price ) || 0;
-			const qtyInput = item.querySelector( '.wpzf-payment-item-qty, input[name$="_qty"]' );
-			const qty      = qtyInput ? ( parseInt( qtyInput.value, 10 ) || 1 ) : 1;
-			const nameEl   = item.querySelector( '.wpzf-payment-item-name' );
+			const priceInput = item.querySelector( 'input[name$="_price"]' );
+			const price      = priceInput ? ( parseFloat( priceInput.value ) || 0 ) : 0;
+			const qtyInput   = item.querySelector( '.wpzf-payment-item-qty, input[name$="_qty"]' );
+			const qty        = qtyInput ? ( parseInt( qtyInput.value, 10 ) || 1 ) : 1;
+			const nameEl     = item.querySelector( '.wpzf-payment-item-name' );
 			items.push( {
 				name:     nameEl ? nameEl.textContent.trim() : 'Item',
 				price,

@@ -12,7 +12,8 @@ const Save = ( { attributes } ) => {
 	const colorProps  = getColorClassesAndStyles( attributes );
 
 	return (
-		<div { ...blockProps } data-price={ price } data-id={ id }>
+		<div { ...blockProps }>
+			<input type="hidden" name={ `${ id }_price` } value={ price } />
 			<div className="wpzf-payment-item-info">
 				<div className="wpzf-payment-item-name">{ itemName }</div>
 				{ description && (
@@ -28,7 +29,6 @@ const Save = ( { attributes } ) => {
 						style={ { ...borderProps.style, ...colorProps.style } }
 						name={ `${ id }_qty` }
 						defaultValue={ quantity }
-						value={ minQty }
 						min={ minQty }
 						max={ maxQty }
 					/>
