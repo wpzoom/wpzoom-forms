@@ -895,6 +895,57 @@ class WPZOOM_Forms {
 	}
 
 	/**
+	 * Get normalized spam protection settings and whether the selected method is fully configured.
+	 *
+	 * @access private
+	 * @return array
+	 * @since  1.3.7
+	 */
+	private function get_spam_protection_config() {
+		$service = sanitize_text_field( (string) WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' ) );
+		$type    = sanitize_text_field( (string) WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) );
+
+		if ( ! in_array( $service, array( 'none', 'recaptcha', 'turnstile' ), true ) ) {
+			$service = 'none';
+		}
+
+		if ( ! in_array( $type, array( 'v2', 'v3' ), true ) ) {
+			$type = 'v2';
+		}
+
+		$recaptcha_v2_site_key   = trim( sanitize_text_field( (string) WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key' ) ) );
+		$recaptcha_v2_secret_key = trim( sanitize_text_field( (string) WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_secret_key' ) ) );
+		$recaptcha_v3_site_key   = trim( sanitize_text_field( (string) WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key_v3' ) ) );
+		$recaptcha_v3_secret_key = trim( sanitize_text_field( (string) WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_secret_key_v3' ) ) );
+		$turnstile_site_key      = trim( sanitize_text_field( (string) WPZOOM_Forms_Settings::get( 'wpzf_global_turnstile_site_key' ) ) );
+		$turnstile_secret_key    = trim( sanitize_text_field( (string) WPZOOM_Forms_Settings::get( 'wpzf_global_turnstile_secret_key' ) ) );
+
+		$active_service = 'none';
+
+		if ( 'recaptcha' === $service ) {
+			if ( 'v3' === $type && ! empty( $recaptcha_v3_site_key ) && ! empty( $recaptcha_v3_secret_key ) ) {
+				$active_service = 'recaptcha';
+			} elseif ( 'v2' === $type && ! empty( $recaptcha_v2_site_key ) && ! empty( $recaptcha_v2_secret_key ) ) {
+				$active_service = 'recaptcha';
+			}
+		} elseif ( 'turnstile' === $service && ! empty( $turnstile_site_key ) && ! empty( $turnstile_secret_key ) ) {
+			$active_service = 'turnstile';
+		}
+
+		return array(
+			'service'                 => $service,
+			'type'                    => $type,
+			'active_service'          => $active_service,
+			'recaptcha_v2_site_key'   => $recaptcha_v2_site_key,
+			'recaptcha_v2_secret_key' => $recaptcha_v2_secret_key,
+			'recaptcha_v3_site_key'   => $recaptcha_v3_site_key,
+			'recaptcha_v3_secret_key' => $recaptcha_v3_secret_key,
+			'turnstile_site_key'      => $turnstile_site_key,
+			'turnstile_secret_key'    => $turnstile_secret_key,
+		);
+	}
+
+	/**
 	 * Registers needed scripts and styles for use on the frontend.
 	 *
 	 * @access public
@@ -903,14 +954,15 @@ class WPZOOM_Forms {
 	 */
 	public function register_frontend_assets() {
 
-		$depends         = array( 'jquery' );
-		$enableRecaptcha = WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' );
-		$recaptchaType   = ! empty( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) ) ? WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) : 'v2';
-		$site_key        = ! empty( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key' ) ) ? esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key' ) ) ) : '';
+		$depends       = array( 'jquery' );
+		$captcha       = $this->get_spam_protection_config();
+		$captcha_type  = $captcha['type'];
+		$active_method = $captcha['active_service'];
 
-		if ( 'recaptcha' == $enableRecaptcha ) {
+		if ( 'recaptcha' === $active_method ) {
+			$site_key = ( 'v3' === $captcha_type ) ? $captcha['recaptcha_v3_site_key'] : $captcha['recaptcha_v2_site_key'];
 
-			if( 'v2' == $recaptchaType ) {
+			if ( 'v2' === $captcha_type ) {
 				wp_register_script(
 					'google-recaptcha',
 					'https://www.google.com/recaptcha/api.js',
@@ -919,7 +971,7 @@ class WPZOOM_Forms {
 					true
 				);
 			}
-			elseif( 'v3' == $recaptchaType ) {
+			elseif ( 'v3' === $captcha_type ) {
 				wp_register_script(
 					'google-recaptcha',
 					"https://www.google.com/recaptcha/api.js?render={$site_key}",
@@ -930,7 +982,7 @@ class WPZOOM_Forms {
 			}
 
 			$depends[] = 'google-recaptcha';
-		} elseif ( 'turnstile' == $enableRecaptcha ) {
+		} elseif ( 'turnstile' === $active_method ) {
 			wp_register_script(
 				'turnstile-recaptcha',
 				'https://challenges.cloudflare.com/turnstile/v0/api.js',
@@ -1947,23 +1999,22 @@ class WPZOOM_Forms {
 			$content = preg_replace( '/<\/form>/is', '<input type="hidden" name="wpzf_subject" value="' . $match2[1] . '" /></form>', $content );
 		}
 
-		$captchaMethod            = WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' );
-		$recaptchaType            = WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) ?? 'v2';
-		$recaptcha_v2_site_key    = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key' ) ) );
-		$recaptcha_v3_site_key    = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key_v3' ) ) );
+		$captcha_config           = $this->get_spam_protection_config();
+		$captcha_method           = $captcha_config['active_service'];
+		$recaptcha_type           = $captcha_config['type'];
 		$recaptcha_badge_location = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_recaptcha_badge_location' ) ) );
-		$turnstile_site_key       = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_turnstile_site_key' ) ) );
+		$turnstile_site_key       = esc_attr( $captcha_config['turnstile_site_key'] );
 		$turnstile_widget_theme   = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_turnstile_widget_theme' ) ) ); 
 
-		if( 'recaptcha' == $captchaMethod ) {
-			$recaptcha_site_key = ( 'v3' == $recaptchaType && !empty($recaptcha_v3_site_key) ) ? $recaptcha_v3_site_key : $recaptcha_v2_site_key;
+		if ( 'recaptcha' === $captcha_method ) {
+			$recaptcha_site_key = ( 'v3' === $recaptcha_type ) ? $captcha_config['recaptcha_v3_site_key'] : $captcha_config['recaptcha_v2_site_key'];
 			$data_badge_location = '';
-			if( ! empty( $recaptcha_badge_location ) ) {
+			if ( ! empty( $recaptcha_badge_location ) ) {
 				$data_badge_location = 'data-badge="' . $recaptcha_badge_location . '"';
 			}
 
 			$content = preg_replace( '/<input([^>]*)type="submit"([^>]*)class="([^"]+)"/i', '<input $1 type="submit" data-sitekey="' . $recaptcha_site_key . '" data-callback="wpzf_submit" data-action="submit" ' . $data_badge_location . ' $2 class="$3 g-recaptcha"', $content );
-		} elseif ( 'turnstile' == $captchaMethod ) {
+		} elseif ( 'turnstile' === $captcha_method ) {
 			$turnstile_widget = '<div class="cf-turnstile" data-theme="' . $turnstile_widget_theme . '" data-sitekey="' . $turnstile_site_key . '"></div>';
 			$content = preg_replace( '/<input([^>]*)type="submit"([^>]*)class="([^"]+)".*>/i', '<input $1 type="submit" data-callback="wpzf_submit" data-action="submit" $2 class="$3 cf-captcha">' . $turnstile_widget, $content );
 		}
@@ -2762,15 +2813,18 @@ class WPZOOM_Forms {
 		$success = false;
 		$url     = isset( $_POST['_wp_http_referer'] ) ? sanitize_text_field( wp_unslash( $_POST['_wp_http_referer'] ) ) : home_url();
 		$form_id = -1;
+		$captcha_check_passed = true;
 
 		if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'wpzf_submit' ) ) {
 			$form_id = isset( $_POST['form_id'] ) ? intval( $_POST['form_id'] ) : -1;
 			$blocks  = parse_blocks( $form_id > -1 ? get_post_field( 'post_content', $form_id, 'raw' ) : '' );
 
-			//Check if recaptcha is enabled and the form passes it's check
-			if ( 'recaptcha' == WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' ) ) {
+			// Check if spam protection is fully configured and validate only then.
+			$captcha_config = $this->get_spam_protection_config();
+			if ( 'recaptcha' === $captcha_config['active_service'] ) {
+				$captcha_check_passed = false;
 				$captcha = false;
-				$recaptchaType = WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' );
+				$recaptchaType = $captcha_config['type'];
 
 				if ( isset( $_POST['g-recaptcha-response'] ) ) {
 					$captcha = trim( sanitize_text_field( $_POST['g-recaptcha-response'] ) );
@@ -2782,13 +2836,11 @@ class WPZOOM_Forms {
 				
 
 				if ( ! empty( $captcha ) ) {
-					$recaptcha_v2_secret_key = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_secret_key' ) ) );
-					$recaptcha_v3_secret_key = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_secret_key_v3' ) ) );
 					$secret = false;
-					if( 'v3' == $recaptchaType && ! empty( $recaptcha_v3_secret_key ) ) {
-						$secret = trim($recaptcha_v3_secret_key);
+					if ( 'v3' === $recaptchaType && ! empty( $captcha_config['recaptcha_v3_secret_key'] ) ) {
+						$secret = trim( $captcha_config['recaptcha_v3_secret_key'] );
 					} else {
-						$secret = trim($recaptcha_v2_secret_key);
+						$secret = trim( $captcha_config['recaptcha_v2_secret_key'] );
 					}
 
 					if ( ! empty( $secret ) ) {
@@ -2818,12 +2870,12 @@ class WPZOOM_Forms {
 						}
 					}
 				}
-			} elseif ('turnstile' == WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' ) ) {
+			} elseif ( 'turnstile' === $captcha_config['active_service'] ) {
 				$captcha_check_passed = false;
 				
-				$captcha = $_POST['cf-turnstile-response'];
-				if(!empty($captcha)){
-					$secret = trim( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_turnstile_secret_key' ) ) );
+				$captcha = isset( $_POST['cf-turnstile-response'] ) ? sanitize_text_field( wp_unslash( $_POST['cf-turnstile-response'] ) ) : '';
+				if ( ! empty( $captcha ) ) {
+					$secret = trim( $captcha_config['turnstile_secret_key'] );
 					$ip = $_SERVER['REMOTE_ADDR'];
 
 					$url_path = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
@@ -2843,14 +2895,12 @@ class WPZOOM_Forms {
 					$result = file_get_contents($url_path, false, $stream);
 					$result = json_decode($result, true);
 
-					if(intval($result['success']) !== 1){
+					if ( intval( $result['success'] ) !== 1 ) {
 						$captcha_check_passed = false;
 					} else {
 						$captcha_check_passed = true;
 					}
 				}
-			} else {
-				$captcha_check_passed = true;
 			}
 
 			if ( $captcha_check_passed && count( $blocks ) > 0 ) {
