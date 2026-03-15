@@ -3226,6 +3226,7 @@ class WPZOOM_Forms {
 		$content .= '<ul>';
 		$content .= '<li><strong>' . esc_html__( 'AI Form Generator', 'wpzoom-forms' ) . '</strong> &mdash; ' . esc_html__( 'Describe your form in simple words and let AI create it for you!', 'wpzoom-forms' ) . '</li>';
 		$content .= '<li><strong>' . esc_html__( '30+ Pre-built Templates', 'wpzoom-forms' ) . '</strong> &mdash; ' . esc_html__( 'Healthcare, education, real estate, restaurant, HR, and more categories.', 'wpzoom-forms' ) . '</li>';
+		$content .= '<li><strong>' . esc_html__( 'Conditional Logic', 'wpzoom-forms' ) . '</strong> &mdash; ' . esc_html__( 'Show or hide fields dynamically based on user selections.', 'wpzoom-forms' ) . '</li>';
 		$content .= '<li><strong>' . esc_html__( 'Mailchimp Integration', 'wpzoom-forms' ) . '</strong> &mdash; ' . esc_html__( 'Automatically add subscribers to your Mailchimp audiences.', 'wpzoom-forms' ) . '</li>';
 		$content .= '<li><strong>' . esc_html__( 'Import/Export Forms', 'wpzoom-forms' ) . '</strong> &mdash; ' . esc_html__( 'Easily transfer forms between sites or back up your work.', 'wpzoom-forms' ) . '</li>';
 		$content .= '<li><strong>' . esc_html__( 'Export Submissions to CSV', 'wpzoom-forms' ) . '</strong> &mdash; ' . esc_html__( 'Download form submissions as CSV files for reporting.', 'wpzoom-forms' ) . '</li>';
