@@ -1886,6 +1886,7 @@ class WPZOOM_Forms {
 		$btnBgColor     = isset( $attributes['btnBgColor'] ) ? $attributes['btnBgColor'] : '';
 
 		$form_ID = 'wpzf-' . intval( $attributes['formId'] );
+		$form_notice_id = $form_ID . '-notice';
 		$form_success_message = get_post_meta( intval( $attributes['formId'] ), '_form_success_message', true );
 		$form_failure_message = get_post_meta( intval( $attributes['formId'] ), '_form_failure_message', true );
 
@@ -1909,6 +1910,9 @@ class WPZOOM_Forms {
 			$form_content
 		);
 
+		$submitted_form_id = isset( $_GET['wpzf_submitted_form'] ) ? intval( $_GET['wpzf_submitted_form'] ) : -1;
+		$show_notice = isset( $_GET['success'] ) && ( -1 === $submitted_form_id || $submitted_form_id === intval( $attributes['formId'] ) );
+
 		$content = sprintf(
 			'<!-- ZOOM Forms Start -->
 			<form id="wpzf-%2$s" method="post" action="%1$s" class="wpzoom-forms_form%6$s">
@@ -1922,8 +1926,8 @@ class WPZOOM_Forms {
 			admin_url( 'admin-post.php' ),
 			intval( $attributes['formId'] ),
 			wp_nonce_field( 'wpzf_submit', '_wpnonce', true, false ),
-			( isset( $_GET['success'] )
-				? '<div class="notice ' . ( '1' == $_GET['success'] ? 'success' : 'error' ) . '"><p>' .
+			( $show_notice
+				? '<div id="' . esc_attr( $form_notice_id ) . '" class="notice ' . ( '1' == $_GET['success'] ? 'success' : 'error' ) . '" tabindex="-1"><p>' .
 				  ( '1' == $_GET['success'] ? wp_kses_post($form_success_message) : wp_kses_post($form_failure_message) ) .
 				  '</p></div>'
 				: ''
@@ -2017,6 +2021,7 @@ class WPZOOM_Forms {
 		$styleOutput .= sprintf( '#%s + .notice.success { background-color: #e7f7ed; color: #227045; border-left: 4px solid #46b450; }', $form_ID );
 		$styleOutput .= sprintf( '#%s + .notice.error { background-color: #fde8e8; color: #8a1f11; border-left: 4px solid #cc0000; }', $form_ID );
 		$styleOutput .= sprintf( '#%s + .notice p { margin: 0; }', $form_ID );
+		$styleOutput .= sprintf( '#%s { scroll-margin-top: 24px; }', $form_notice_id );
 
 		$style = sprintf( '<style>%s</style>',
 			$styleOutput
@@ -3071,9 +3076,18 @@ class WPZOOM_Forms {
 			}
 		}
 
+		$redirect_url = urldecode(
+			add_query_arg(
+				array(
+					'success'             => ( $success ? '1' : '0' ),
+					'wpzf_submitted_form' => $form_id,
+				),
+				$url
+			)
+		);
+
 		wp_safe_redirect(
-			urldecode( add_query_arg( 'success', ( $success ? '1' : '0' ), $url ) ) .
-			( $form_id > -1 ? '#wpzf-' . $form_id : '' )
+			$redirect_url . ( $form_id > -1 ? '#wpzf-' . $form_id . '-notice' : '' )
 		);
 
 		exit;
