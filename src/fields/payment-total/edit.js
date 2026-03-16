@@ -18,7 +18,7 @@ const Edit = props => {
 	const recurringPeriod = meta?.['_wpzf_stripe_recurring_period'] || 'month';
 
 	const currency     = ( window.wpzf_formblock?.currency || 'usd' ).toUpperCase();
-	const zeroDisplay  = new Intl.NumberFormat( [], { style: 'currency', currency, minimumFractionDigits: 2 } ).format( 0 );
+	const zeroDisplay  = new Intl.NumberFormat( [], { style: 'currency', currency } ).format( 0 );
 
 	const periodSuffix = paymentType === 'recurring'
 		? ' ' + ( periodLabels[ recurringPeriod ] || '/ ' + recurringPeriod )

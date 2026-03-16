@@ -32,14 +32,44 @@
 
 	const periodLabels = { day: '/ day', week: '/ week', month: '/ month', year: '/ year' };
 
+	const ZERO_DECIMAL_CURRENCIES = new Set( [
+		'bif', 'clp', 'djf', 'gnf', 'jpy', 'kmf', 'krw', 'mga', 'pyg', 'rwf', 'ugx', 'vnd', 'vuv', 'xaf', 'xof', 'xpf',
+	] );
+
+	/**
+	 * Returns 1 for zero-decimal currencies (JPY, KRW, …) and 100 for all others.
+	 * Use this multiplier when converting a major-unit price to the integer amount
+	 * Stripe expects.
+	 */
+	function getStripeMultiplier( currencyCode ) {
+		return ZERO_DECIMAL_CURRENCIES.has( ( currencyCode || 'usd' ).toLowerCase() ) ? 1 : 100;
+	}
+
+	const stripeMultiplier = getStripeMultiplier( wpzfStripeData.currency );
+
+	// Minimum charge amounts per currency, in major units (dollars, euros, etc.).
+	// Source: https://docs.stripe.com/currencies#minimum-and-maximum-charge-amounts
+	const CURRENCY_MINIMUMS = {
+		usd: 0.50, aed: 2.00, ars: 0.50, aud: 0.50, brl: 0.50, cad: 0.50,
+		chf: 0.50, cop: 0.50, czk: 15.00, dkk: 2.50, eur: 0.50, gbp: 0.30,
+		hkd: 4.00, huf: 175.00, idr: 0.50, ils: 0.50, inr: 0.50, jpy: 50,
+		krw: 50, mxn: 10, myr: 2.00, nok: 3.00, nzd: 0.50, php: 0.50,
+		pln: 2.00, ron: 2.00, rub: 0.50, sek: 3.00, sgd: 0.50, thb: 10, zar: 0.50,
+	};
+
+	function getMinimumStripeAmount() {
+		const currencyCode = ( wpzfStripeData.currency || 'usd' ).toLowerCase();
+		const minMajor     = CURRENCY_MINIMUMS[ currencyCode ] ?? 0.50;
+		return Math.round( minMajor * stripeMultiplier );
+	}
+
 	const currencyFormatter = new Intl.NumberFormat( [], {
-		style:                 'currency',
-		currency:              ( wpzfStripeData.currency || 'usd' ).toUpperCase(),
-		minimumFractionDigits: 2,
+		style:    'currency',
+		currency: ( wpzfStripeData.currency || 'usd' ).toUpperCase(),
 	} );
 
-	function formatCurrency( cents ) {
-		return currencyFormatter.format( cents / 100 );
+	function formatCurrency( stripeAmount ) {
+		return currencyFormatter.format( stripeAmount / stripeMultiplier );
 	}
 
 	/**
@@ -79,7 +109,7 @@
 	 * inside the given form.
 	 *
 	 * @param {HTMLElement} form
-	 * @returns {number} Total in cents (integer >= 0).
+	 * @returns {number} Total in Stripe smallest-unit amount (cents for USD, whole units for JPY, etc.).
 	 */
 	function calculateTotal( form ) {
 		let total = 0;
@@ -111,7 +141,7 @@
 			total += parseFloat( input.value ) || 0;
 		} );
 
-		return Math.round( total * 100 );
+		return Math.round( total * stripeMultiplier );
 	}
 
 	/**
@@ -315,6 +345,7 @@
 				mode,
 				amount: totalCents,
 				currency,
+				setupFutureUsage: mode === 'payment' ? 'off_session' : undefined,
 				appearance: { theme },
 			} );
 
@@ -377,8 +408,10 @@
 			updateTotalDisplay( form, totalCents );
 			if ( mounted && totalCents > 0 ) elements.update( { amount: totalCents } );
 
-			if ( totalCents < 50 ) {
-				showError( form, 'Order total must be at least $0.60.' );
+			const minAmount = getMinimumStripeAmount();
+			console.log(minAmount, totalCents);
+			if ( totalCents < minAmount ) {
+				showError( form, 'Order total must be at least ' + formatCurrency( minAmount ) + '.' );
 				if ( submitBtn ) submitBtn.disabled = false;
 				setOverlay( form, false );
 				return;

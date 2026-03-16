@@ -31,11 +31,17 @@ dispatch( 'core' ).addEntities( [
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
+const ZERO_DECIMAL_CURRENCIES = new Set( [ 'bif', 'clp', 'djf', 'gnf', 'jpy', 'kmf', 'krw', 'mga', 'pyg', 'rwf', 'ugx', 'vnd', 'vuv', 'xaf', 'xof', 'xpf' ] );
+
+function getStripeMultiplier( currency ) {
+	return ZERO_DECIMAL_CURRENCIES.has( ( currency || 'usd' ).toLowerCase() ) ? 1 : 100;
+}
+
 function formatMoney( cents, currency ) {
 	return new Intl.NumberFormat( 'en-US', {
 		style:    'currency',
 		currency: currency || 'USD',
-	} ).format( cents / 100 );
+	} ).format( cents / getStripeMultiplier( currency ) );
 }
 
 function TrendBadge( { value } ) {

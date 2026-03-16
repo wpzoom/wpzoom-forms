@@ -1870,10 +1870,11 @@ class WPZOOM_Forms {
 			return;
 		}
 
-		$type   = get_post_meta( $post_id, '_wpzf_payment_type', true );
-		$method = get_post_meta( $post_id, '_wpzf_payment_method', true );
-		$status = get_post_meta( $post_id, '_wpzf_payment_status', true );
-		$items  = get_post_meta( $post_id, '_wpzf_payment_items', true );
+		$type     = get_post_meta( $post_id, '_wpzf_payment_type',     true );
+		$method   = get_post_meta( $post_id, '_wpzf_payment_method',   true );
+		$status   = get_post_meta( $post_id, '_wpzf_payment_status',   true );
+		$items    = get_post_meta( $post_id, '_wpzf_payment_items',    true );
+		$currency = get_post_meta( $post_id, '_wpzf_payment_currency', true ) ?: get_option( 'wpzf_payment_currency', 'usd' );
 
 		$status_colors = array(
 			'processing' => '#996800',
@@ -1924,9 +1925,9 @@ class WPZOOM_Forms {
 					<?php foreach ( $items as $item ) : ?>
 					<tr>
 						<td><?php echo esc_html( $item['name'] ?? '' ); ?></td>
-						<td style="text-align:right;">$<?php echo esc_html( number_format( floatval( $item['price'] ?? 0 ), 2 ) ); ?></td>
+					<td style="text-align:right;"><?php echo esc_html( wpzf_format_price( $item['price'] ?? 0, $currency ) ); ?></td>
 						<td style="text-align:right;"><?php echo esc_html( absint( $item['qty'] ?? 1 ) ); ?></td>
-						<td style="text-align:right;">$<?php echo esc_html( number_format( floatval( $item['subtotal'] ?? 0 ), 2 ) ); ?></td>
+					<td style="text-align:right;"><?php echo esc_html( wpzf_format_price( $item['subtotal'] ?? 0, $currency ) ); ?></td>
 					</tr>
 					<?php endforeach; ?>
 				</tbody>
@@ -1950,7 +1951,7 @@ class WPZOOM_Forms {
 				printf(
 					/* translators: %s: formatted total amount */
 					esc_html__( 'Total: %s', 'wpzoom-forms' ),
-					'$' . esc_html( number_format( intval( $payment_total ) / 100, 2 ) ) . esc_html( $period_suffix )
+				esc_html( wpzf_format_price( intval( $payment_total ), $currency, true ) ) . esc_html( $period_suffix )
 				);
 				?>
 			</div>
@@ -3320,10 +3321,11 @@ class WPZOOM_Forms {
 	 * @return string HTML fragment.
 	 */
 	private function build_payment_email_section( $form_id = 0 ) {
-		$total   = isset( $_POST['wpzf_payment_total'] )  ? absint( $_POST['wpzf_payment_total'] )                              : 0;
-		$type    = isset( $_POST['wpzf_payment_type'] )    ? sanitize_text_field( wp_unslash( $_POST['wpzf_payment_type'] ) )     : '';
-		$method  = isset( $_POST['wpzf_payment_method'] )  ? sanitize_text_field( wp_unslash( $_POST['wpzf_payment_method'] ) )   : '';
-		$status  = isset( $_POST['wpzf_payment_status'] )  ? sanitize_text_field( wp_unslash( $_POST['wpzf_payment_status'] ) )   : '';
+		$total    = isset( $_POST['wpzf_payment_total'] )   ? absint( $_POST['wpzf_payment_total'] )                              : 0;
+		$type     = isset( $_POST['wpzf_payment_type'] )    ? sanitize_text_field( wp_unslash( $_POST['wpzf_payment_type'] ) )     : '';
+		$method   = isset( $_POST['wpzf_payment_method'] )  ? sanitize_text_field( wp_unslash( $_POST['wpzf_payment_method'] ) )   : '';
+		$status   = isset( $_POST['wpzf_payment_status'] )  ? sanitize_text_field( wp_unslash( $_POST['wpzf_payment_status'] ) )   : '';
+		$currency = strtoupper( get_option( 'wpzf_payment_currency', 'usd' ) );
 
 		$html  = '<hr/><br/>';
 		$html .= '<strong>' . esc_html__( 'Payment Details', 'wpzoom-forms' ) . '</strong><br/><br/>';
@@ -3350,9 +3352,9 @@ class WPZOOM_Forms {
 
 					$html .= '<tr style="border-bottom:1px solid #eee;">';
 					$html .= '<td style="padding:4px 8px;">'                    . esc_html( $name ) . '</td>';
-					$html .= '<td style="text-align:right;padding:4px 8px;">$'  . esc_html( number_format( $price, 2 ) ) . '</td>';
+				$html .= '<td style="text-align:right;padding:4px 8px;">'  . esc_html( wpzf_format_price( $price, $currency ) ) . '</td>';
 					$html .= '<td style="text-align:right;padding:4px 8px;">'   . esc_html( $qty ) . '</td>';
-					$html .= '<td style="text-align:right;padding:4px 8px;">$'  . esc_html( number_format( $subtotal, 2 ) ) . '</td>';
+				$html .= '<td style="text-align:right;padding:4px 8px;">'  . esc_html( wpzf_format_price( $subtotal, $currency ) ) . '</td>';
 					$html .= '</tr>';
 				}
 
@@ -3372,7 +3374,7 @@ class WPZOOM_Forms {
 			);
 			$period_suffix = ' ' . ( $period_labels[ $period ] ?? '/ ' . $period );
 		}
-		$formatted_total = '$' . number_format( $total / 100, 2 );
+	$formatted_total = wpzf_format_price( $total, $currency, true );
 		$html .= '<strong>' . esc_html__( 'Total:', 'wpzoom-forms' ) . '</strong> ' . esc_html( $formatted_total . $period_suffix ) . '<br/><br/>';
 		return $html;
 	}
@@ -3410,6 +3412,7 @@ class WPZOOM_Forms {
 		update_post_meta( $submission_post_id, '_wpzf_payment_type',   $type );
 		update_post_meta( $submission_post_id, '_wpzf_payment_method', $method );
 		update_post_meta( $submission_post_id, '_wpzf_payment_status', $status );
+		update_post_meta( $submission_post_id, '_wpzf_payment_currency', strtoupper( get_option( 'wpzf_payment_currency', 'usd' ) ) );
 		update_post_meta( $submission_post_id, '_wpzf_payment_items',  $items );
 	}
 
@@ -3672,6 +3675,45 @@ if( ! function_exists ( 'wpzoom_forms_load_files' ) ) {
 
 	}
 	add_action( 'plugin_loaded', 'wpzoom_forms_load_files' );
+}
+
+/**
+ * Formats a payment amount with the correct currency symbol and decimal precision.
+ *
+ * @param float|int   $amount         Amount value.
+ * @param string|null $currency       ISO 4217 currency code. Defaults to the plugin setting.
+ * @param bool        $in_stripe_unit Pass true when $amount is already in Stripe smallest
+ *                                    unit (cents for USD, whole units for JPY, etc.).
+ * @return string Formatted string, e.g. "$3.00" or "¥50".
+ */
+function wpzf_format_price( $amount, $currency = null, $in_stripe_unit = false ) {
+	if ( null === $currency || '' === $currency ) {
+		$currency = get_option( 'wpzf_payment_currency', 'usd' );
+	}
+	$currency = strtoupper( trim( (string) $currency ) );
+
+	$zero_decimal = array( 'BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'UGX', 'VND', 'VUV', 'XAF', 'XOF', 'XPF' );
+	$is_zero      = in_array( $currency, $zero_decimal, true );
+	$multiplier   = $is_zero ? 1 : 100;
+
+	$major    = $in_stripe_unit ? ( $amount / $multiplier ) : floatval( $amount );
+	$decimals = $is_zero ? 0 : 2;
+
+	$symbols = array(
+		'USD' => '$',    'EUR' => "\xe2\x82\xac", 'GBP' => "\xc2\xa3",   'JPY' => "\xc2\xa5",
+		'KRW' => "\xe2\x82\xa9", 'INR' => "\xe2\x82\xb9", 'RUB' => "\xe2\x82\xbd",
+		'BRL' => 'R$',   'MXN' => 'MX$', 'CAD' => 'CA$', 'AUD' => 'A$',
+		'HKD' => 'HK$',  'SGD' => 'S$',  'NZD' => 'NZ$', 'CNY' => "\xc2\xa5",
+		'SEK' => 'kr',   'NOK' => 'kr',  'DKK' => 'kr',  'CHF' => 'Fr',
+		'PLN' => "z\xc5\x82", 'CZK' => "K\xc4\x8d", 'HUF' => 'Ft',
+		'RON' => 'lei',  'IDR' => 'Rp',  'MYR' => 'RM',  'THB' => "\xe0\xb8\xbf",
+		'PHP' => "\xe2\x82\xb1", 'ILS' => "\xe2\x82\xaa", 'AED' => 'AED',
+		'ZAR' => 'R',    'COP' => 'COP$', 'ARS' => 'AR$',
+	);
+
+	$symbol = $symbols[ $currency ] ?? ( $currency . "\xc2\xa0" );
+
+	return $symbol . number_format( $major, $decimals );
 }
 
 if ( ! function_exists( 'wpzoom_forms_plugin_action_links' ) ) {

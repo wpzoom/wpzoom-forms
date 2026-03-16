@@ -309,23 +309,41 @@ class WPZOOM_Forms_Stripe {
 			if ( is_object( $pi_expanded->latest_charge ) ) {
 				$this->store_card_meta_from_charge( $pi->id, $pi_expanded->latest_charge );
 
-				// Update the Stripe Customer's address from the billing details on the charge.
 				$customer_id     = is_string( $pi_expanded->customer ) ? $pi_expanded->customer : null;
 				$billing_details = $pi_expanded->latest_charge->billing_details ?? null;
-				if ( $customer_id && is_object( $billing_details ) && is_object( $billing_details->address ) ) {
-					$addr        = $billing_details->address;
-					$update_args = array(
-						'address' => array_filter( array(
+				$pm_id           = is_string( $pi_expanded->latest_charge->payment_method )
+					? $pi_expanded->latest_charge->payment_method
+					: null;
+
+				if ( $customer_id ) {
+					$customer_update = array();
+
+					// Set the payment method as the customer's primary (setup_future_usage on the
+					// PaymentIntent already attached it automatically — we only need to set default).
+					if ( $pm_id ) {
+						$customer_update['invoice_settings'] = array( 'default_payment_method' => $pm_id );
+					}
+
+					// Copy the billing address from the charge onto the Customer object so it
+					// shows on the Customer page in the Stripe dashboard (billing_details on the
+					// PaymentMethod does not propagate to Customer.address automatically).
+					if ( is_object( $billing_details ) && is_object( $billing_details->address ) ) {
+						$addr    = $billing_details->address;
+						$address = array_filter( array(
 							'country'     => $addr->country     ?: null,
 							'postal_code' => $addr->postal_code ?: null,
 							'city'        => $addr->city        ?: null,
 							'line1'       => $addr->line1       ?: null,
 							'line2'       => $addr->line2       ?: null,
 							'state'       => $addr->state       ?: null,
-						) ),
-					);
-					if ( ! empty( $update_args['address'] ) ) {
-						\Stripe\Customer::update( $customer_id, $update_args );
+						) );
+						if ( ! empty( $address ) ) {
+							$customer_update['address'] = $address;
+						}
+					}
+
+					if ( ! empty( $customer_update ) ) {
+						\Stripe\Customer::update( $customer_id, $customer_update );
 					}
 				}
 			}
@@ -497,6 +515,7 @@ class WPZOOM_Forms_Stripe {
 				'automatic_payment_methods' => array( 'enabled' => true ),
 				'customer'                  => $customer->id,
 				'receipt_email'             => $customer_email ?: null,
+				'setup_future_usage'        => 'off_session',
 				'description'               => get_post_meta( $form_id, '_wpzf_stripe_payment_description', true ) ?: '',
 				'metadata'                  => array( 'wpzf_form_id' => $form_id ),
 			);
@@ -1103,7 +1122,7 @@ class WPZOOM_Forms_Stripe {
 			case 'wpzf_txn_amount':
 				$amount   = (int) get_post_meta( $post_id, '_wpzf_txn_amount', true );
 				$currency = strtoupper( (string) get_post_meta( $post_id, '_wpzf_txn_currency', true ) );
-				echo esc_html( number_format( $amount / 100, 2 ) . ' ' . $currency );
+				echo esc_html( wpzf_format_price( $amount, $currency, true ) );
 				break;
 
 			case 'wpzf_txn_status':

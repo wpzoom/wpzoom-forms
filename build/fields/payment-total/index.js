@@ -56,8 +56,7 @@ var Edit = function Edit(props) {
   var currency = (((_window$wpzf_formbloc = window.wpzf_formblock) === null || _window$wpzf_formbloc === void 0 ? void 0 : _window$wpzf_formbloc.currency) || 'usd').toUpperCase();
   var zeroDisplay = new Intl.NumberFormat([], {
     style: 'currency',
-    currency: currency,
-    minimumFractionDigits: 2
+    currency: currency
   }).format(0);
   var periodSuffix = paymentType === 'recurring' ? ' ' + (periodLabels[recurringPeriod] || '/ ' + recurringPeriod) : '';
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.Fragment, {

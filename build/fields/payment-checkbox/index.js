@@ -60,8 +60,7 @@ var Edit = function Edit(props) {
   var currency = (((_window$wpzf_formbloc = window.wpzf_formblock) === null || _window$wpzf_formbloc === void 0 ? void 0 : _window$wpzf_formbloc.currency) || 'usd').toUpperCase();
   var priceFormatter = new Intl.NumberFormat([], {
     style: 'currency',
-    currency: currency,
-    minimumFractionDigits: 2
+    currency: currency
   });
   if (ref.current) {
     ref.current.focus();

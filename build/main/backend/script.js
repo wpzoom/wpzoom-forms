@@ -4697,10 +4697,10 @@ var insertFormField = function insertFormField(blockName, defaultAttributes, isD
         try {
           for (_iterator.s(); !(_step = _iterator.n()).done;) {
             var block = _step.value;
-            if (fieldBlockTypes.includes(block.name) && block.attributes.name) {
+            if (fieldBlockTypes.includes(block.name) && block.attributes.id) {
               fields.push({
-                label: block.attributes.label || block.attributes.name,
-                value: block.attributes.name
+                label: block.attributes.label || block.attributes.id,
+                value: block.attributes.id
               });
             }
             if (block.innerBlocks && block.innerBlocks.length) {

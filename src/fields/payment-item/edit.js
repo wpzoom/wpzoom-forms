@@ -28,7 +28,7 @@ const Edit = props => {
 	}, [] );
 
 	const currency       = ( window.wpzf_formblock?.currency || 'usd' ).toUpperCase();
-	const formattedPrice = new Intl.NumberFormat( [], { style: 'currency', currency, minimumFractionDigits: 2 } ).format( Number( price ) || 0 );
+	const formattedPrice = new Intl.NumberFormat( [], { style: 'currency', currency } ).format( Number( price ) || 0 );
 
 	return <>
 		<InspectorControls>

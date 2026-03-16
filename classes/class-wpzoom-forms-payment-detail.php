@@ -178,7 +178,7 @@ class WPZOOM_Forms_Payment_Detail {
 			? __( 'Recurring', 'wpzoom-forms' )
 			: __( 'One-time', 'wpzoom-forms' );
 
-		$amount_fmt    = '$' . number_format( $amount / 100, 2 );
+		$amount_fmt    = wpzf_format_price( $amount, $currency, true );
 
 		$method_label  = 'N/A';
 		if ( $method && $last4 ) {

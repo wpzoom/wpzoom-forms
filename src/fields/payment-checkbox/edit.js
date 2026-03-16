@@ -35,7 +35,7 @@ const Edit = props => {
 	const borderProps    = useBorderProps( attributes );
 	const colorProps     = useColorProps( attributes );
 	const currency       = ( window.wpzf_formblock?.currency || 'usd' ).toUpperCase();
-	const priceFormatter = new Intl.NumberFormat( [], { style: 'currency', currency, minimumFractionDigits: 2 } );
+	const priceFormatter = new Intl.NumberFormat( [], { style: 'currency', currency } );
 
 	if ( ref.current ) {
 		ref.current.focus();

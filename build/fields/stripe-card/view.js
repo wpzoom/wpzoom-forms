@@ -150,13 +150,65 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
     month: '/ month',
     year: '/ year'
   };
+  var ZERO_DECIMAL_CURRENCIES = new Set(['bif', 'clp', 'djf', 'gnf', 'jpy', 'kmf', 'krw', 'mga', 'pyg', 'rwf', 'ugx', 'vnd', 'vuv', 'xaf', 'xof', 'xpf']);
+
+  /**
+   * Returns 1 for zero-decimal currencies (JPY, KRW, …) and 100 for all others.
+   * Use this multiplier when converting a major-unit price to the integer amount
+   * Stripe expects.
+   */
+  function getStripeMultiplier(currencyCode) {
+    return ZERO_DECIMAL_CURRENCIES.has((currencyCode || 'usd').toLowerCase()) ? 1 : 100;
+  }
+  var stripeMultiplier = getStripeMultiplier(wpzfStripeData.currency);
+
+  // Minimum charge amounts per currency, in major units (dollars, euros, etc.).
+  // Source: https://docs.stripe.com/currencies#minimum-and-maximum-charge-amounts
+  var CURRENCY_MINIMUMS = {
+    usd: 0.50,
+    aed: 2.00,
+    ars: 0.50,
+    aud: 0.50,
+    brl: 0.50,
+    cad: 0.50,
+    chf: 0.50,
+    cop: 0.50,
+    czk: 15.00,
+    dkk: 2.50,
+    eur: 0.50,
+    gbp: 0.30,
+    hkd: 4.00,
+    huf: 175.00,
+    idr: 0.50,
+    ils: 0.50,
+    inr: 0.50,
+    jpy: 50,
+    krw: 50,
+    mxn: 10,
+    myr: 2.00,
+    nok: 3.00,
+    nzd: 0.50,
+    php: 0.50,
+    pln: 2.00,
+    ron: 2.00,
+    rub: 0.50,
+    sek: 3.00,
+    sgd: 0.50,
+    thb: 10,
+    zar: 0.50
+  };
+  function getMinimumStripeAmount() {
+    var _CURRENCY_MINIMUMS$cu;
+    var currencyCode = (wpzfStripeData.currency || 'usd').toLowerCase();
+    var minMajor = (_CURRENCY_MINIMUMS$cu = CURRENCY_MINIMUMS[currencyCode]) !== null && _CURRENCY_MINIMUMS$cu !== void 0 ? _CURRENCY_MINIMUMS$cu : 0.50;
+    return Math.round(minMajor * stripeMultiplier);
+  }
   var currencyFormatter = new Intl.NumberFormat([], {
     style: 'currency',
-    currency: (wpzfStripeData.currency || 'usd').toUpperCase(),
-    minimumFractionDigits: 2
+    currency: (wpzfStripeData.currency || 'usd').toUpperCase()
   });
-  function formatCurrency(cents) {
-    return currencyFormatter.format(cents / 100);
+  function formatCurrency(stripeAmount) {
+    return currencyFormatter.format(stripeAmount / stripeMultiplier);
   }
 
   /**
@@ -196,7 +248,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
    * inside the given form.
    *
    * @param {HTMLElement} form
-   * @returns {number} Total in cents (integer >= 0).
+   * @returns {number} Total in Stripe smallest-unit amount (cents for USD, whole units for JPY, etc.).
    */
   function calculateTotal(form) {
     var total = 0;
@@ -227,7 +279,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
     form.querySelectorAll('input.wpzf-payment-amount').forEach(function (input) {
       total += parseFloat(input.value) || 0;
     });
-    return Math.round(total * 100);
+    return Math.round(total * stripeMultiplier);
   }
 
   /**
@@ -423,6 +475,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
         mode: mode,
         amount: totalCents,
         currency: currency,
+        setupFutureUsage: mode === 'payment' ? 'off_session' : undefined,
         appearance: {
           theme: theme
         }
@@ -472,7 +525,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
     // Intercept form submission.
     var _handleSubmit = /*#__PURE__*/function () {
       var _ref = (0,_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_0__["default"])(/*#__PURE__*/_regenerator().m(function _callee(e) {
-        var submitBtn, _yield$elements$submi, submitError, emailField, nameField, payload, intentResponse, intentData, client_secret, payment_intent_id, confirmFn, _yield$confirmFn, confirmError, intentInput, _t;
+        var submitBtn, minAmount, _yield$elements$submi, submitError, emailField, nameField, payload, intentResponse, intentData, client_secret, payment_intent_id, confirmFn, _yield$confirmFn, confirmError, intentInput, _t;
         return _regenerator().w(function (_context) {
           while (1) switch (_context.p = _context.n) {
             case 0:
@@ -485,11 +538,13 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
               if (mounted && totalCents > 0) elements.update({
                 amount: totalCents
               });
-              if (!(totalCents < 50)) {
+              minAmount = getMinimumStripeAmount();
+              console.log(minAmount, totalCents);
+              if (!(totalCents < minAmount)) {
                 _context.n = 1;
                 break;
               }
-              showError(form, 'Order total must be at least $0.60.');
+              showError(form, 'Order total must be at least ' + formatCurrency(minAmount) + '.');
               if (submitBtn) submitBtn.disabled = false;
               setOverlay(form, false);
               return _context.a(2);
