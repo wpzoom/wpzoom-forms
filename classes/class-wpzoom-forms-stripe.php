@@ -1073,7 +1073,7 @@ class WPZOOM_Forms_Stripe {
 			wp_kses(
 				sprintf(
 					/* translators: %s: URL to the Payments settings tab */
-					__( '<strong>Stripe webhooks are not configured.</strong> Payment statuses will remain "Pending" until you add your webhook secret in <a href="%s">Payments Settings</a>.', 'wpzoom-forms' ),
+					__( '<strong>Stripe webhooks are not configured.</strong> Payment statuses will remain "Incomplete" until you add your webhook secret in <a href="%s">Payments Settings</a>.', 'wpzoom-forms' ),
 					esc_url( $settings_url )
 				),
 				array(
@@ -1128,14 +1128,15 @@ class WPZOOM_Forms_Stripe {
 			case 'wpzf_txn_status':
 				$status = (string) get_post_meta( $post_id, '_wpzf_txn_status', true );
 				$labels = array(
-					'paid'     => array( 'label' => __( 'Paid', 'wpzoom-forms' ),     'color' => '#1a7f37' ),
-					'pending'  => array( 'label' => __( 'Pending', 'wpzoom-forms' ),  'color' => '#9a6700' ),
-					'failed'   => array( 'label' => __( 'Failed', 'wpzoom-forms' ),   'color' => '#cf222e' ),
-					'refunded' => array( 'label' => __( 'Refunded', 'wpzoom-forms' ), 'color' => '#6e7781' ),
+					'paid'     => array( 'label' => __( 'Processed', 'wpzoom-forms' ), 'bg' => '#d1fae5', 'color' => '#065f46' ),
+					'pending'  => array( 'label' => __( 'Incomplete', 'wpzoom-forms' ), 'bg' => '#fef3c7', 'color' => '#92400e', ),
+					'failed'   => array( 'label' => __( 'Failed',    'wpzoom-forms' ), 'bg' => '#fee2e2', 'color' => '#991b1b', ),
+					'refunded' => array( 'label' => __( 'Refunded',  'wpzoom-forms' ), 'bg' => '#f3f4f6', 'color' => '#374151', ),
 				);
 				$info = isset( $labels[ $status ] ) ? $labels[ $status ] : array( 'label' => ucfirst( $status ), 'color' => '#6e7781' );
 				printf(
-					'<span style="background:%s;color:#fff;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;">%s</span>',
+					'<span style="background-color:%s;color:%s;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;">%s</span>',
+					esc_attr( $info['bg'] ),
 					esc_attr( $info['color'] ),
 					esc_html( $info['label'] )
 				);
