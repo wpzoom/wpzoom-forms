@@ -43,13 +43,13 @@ class WPZOOM_Forms_Stripe {
 	 * Stripe redirects the user HERE after they authorise — never directly
 	 * back to the user's site.
 	 */
-	const PROXY_CALLBACK_URL = 'https://patterns.blocklayouts.com/stripe-test/wp-json/wpzoom-stripe-proxy/v1/callback'; // TODO: Change to the actual callback URL
+	const PROXY_CALLBACK_URL = 'https://zoomforms.co/wp-json/wpzoom-stripe-proxy/v1/callback'; // TODO: Change to the actual callback URL
 
 	/**
 	 * URL of the WPZOOM OAuth Proxy deauthorize endpoint.
 	 * Called when the user disconnects their Stripe account.
 	 */
-	const PROXY_DEAUTH_URL = 'https://patterns.blocklayouts.com/stripe-test/wp-json/wpzoom-stripe-proxy/v1/deauthorize'; // TODO: Change to the actual deauthorize URL
+	const PROXY_DEAUTH_URL = 'https://zoomforms.co/wp-json/wpzoom-stripe-proxy/v1/deauthorize'; // TODO: Change to the actual deauthorize URL
 
 	/**
 	 * Singleton instance.
