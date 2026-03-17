@@ -254,9 +254,10 @@ class WPZOOM_Forms_Payments_Analytics {
 			'wpzoom-forms-payments-analytics',
 			'wpzfAnalyticsData',
 			array(
-				'isTestMode'  => (bool) get_option( 'wpzf_stripe_test_mode', false ),
-				'currency'    => strtoupper( get_option( 'wpzf_payment_currency', 'usd' ) ),
-				'settingsUrl' => admin_url( 'edit.php?post_type=wpzf-form&page=wpzf-settings&tab=tab-payments' ),
+				'isTestMode'   => (bool) get_option( 'wpzf_stripe_test_mode', false ),
+				'currency'     => strtoupper( get_option( 'wpzf_payment_currency', 'usd' ) ),
+				'settingsUrl'  => admin_url( 'edit.php?post_type=wpzf-form&page=wpzf-settings&tab=tab-payments' ),
+				'upgradeUrl'   => 'https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=coupons-analytics-upsell',
 			)
 		);
 	}

@@ -16059,7 +16059,8 @@ function PaymentsSummary() {
   var _wpzfAnalyticsData = wpzfAnalyticsData,
     isTestMode = _wpzfAnalyticsData.isTestMode,
     currency = _wpzfAnalyticsData.currency,
-    settingsUrl = _wpzfAnalyticsData.settingsUrl;
+    settingsUrl = _wpzfAnalyticsData.settingsUrl,
+    upgradeUrl = _wpzfAnalyticsData.upgradeUrl;
   var _useState7 = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)('30'),
     _useState8 = (0,_babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0__["default"])(_useState7, 2),
     period = _useState8[0],
@@ -16181,7 +16182,26 @@ function PaymentsSummary() {
             })
           }, s.key);
         })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(AnalyticsChart, {
+      }), activeMetric === 'coupons' ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("div", {
+        className: "wpzf-analytics__chart-upsell",
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsxs)("div", {
+          className: "wpzf-analytics__chart-upsell-content",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("h3", {
+            className: "wpzf-analytics__chart-upsell-title",
+            children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)('Track Coupons Redeemed', 'wpzoom-forms')
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)("p", {
+            className: "wpzf-analytics__chart-upsell-text",
+            children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)('Upgrade to WPZOOM Forms PRO to add coupon codes to your payment forms and see how many coupons were redeemed right here in your analytics.', 'wpzoom-forms')
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.Button, {
+            href: upgradeUrl,
+            variant: "primary",
+            target: "_blank",
+            rel: "noopener noreferrer",
+            className: "wpzf-analytics__chart-upsell-cta",
+            children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)('Upgrade to PRO', 'wpzoom-forms')
+          })]
+        })
+      }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_16__.jsx)(AnalyticsChart, {
         chartData: data.chart_data,
         activeMetric: activeMetric,
         currency: currency

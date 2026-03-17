@@ -230,7 +230,7 @@ function useAnalytics( period, testMode ) {
 // ── PaymentsSummary component ─────────────────────────────────────────────────
 
 function PaymentsSummary() {
-	const { isTestMode, currency, settingsUrl } = wpzfAnalyticsData;
+	const { isTestMode, currency, settingsUrl, upgradeUrl } = wpzfAnalyticsData;
 
 	const [ period,       setPeriod       ] = useState( '30' );
 	const [ testMode,     setTestMode     ] = useState( isTestMode );
@@ -359,11 +359,33 @@ function PaymentsSummary() {
 							) ) }
 						</Flex>
 
-						<AnalyticsChart
-							chartData={ data.chart_data }
-							activeMetric={ activeMetric }
-							currency={ currency }
-						/>
+						{ activeMetric === 'coupons' ? (
+							<div className="wpzf-analytics__chart-upsell">
+								<div className="wpzf-analytics__chart-upsell-content">
+									<h3 className="wpzf-analytics__chart-upsell-title">
+										{ __( 'Track Coupons Redeemed', 'wpzoom-forms' ) }
+									</h3>
+									<p className="wpzf-analytics__chart-upsell-text">
+										{ __( 'Upgrade to WPZOOM Forms PRO to add coupon codes to your payment forms and see how many coupons were redeemed right here in your analytics.', 'wpzoom-forms' ) }
+									</p>
+									<Button
+										href={ upgradeUrl }
+										variant="primary"
+										target="_blank"
+										rel="noopener noreferrer"
+										className="wpzf-analytics__chart-upsell-cta"
+									>
+										{ __( 'Upgrade to PRO', 'wpzoom-forms' ) }
+									</Button>
+								</div>
+							</div>
+						) : (
+							<AnalyticsChart
+								chartData={ data.chart_data }
+								activeMetric={ activeMetric }
+								currency={ currency }
+							/>
+						) }
 					</>
 				) }
 		</div>
