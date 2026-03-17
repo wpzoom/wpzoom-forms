@@ -23,8 +23,26 @@ class WPZOOM_Forms_Sidebar {
 		<div class="wpzf-sidebar">
 
 			<div class="wpzf-sidebar-card wpzf-sidebar-card--upsell">
-				<a href="https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=upsell-banner-right-sidebar" target="_blank">
-					<img src="<?php echo esc_url( WPZOOM_FORMS_URL ); ?>/dist/assets/admin/images/pro2.png" alt="<?php esc_attr_e( 'Upgrade to WPZOOM Forms Pro', 'wpzoom-forms' ); ?>">
+				<?php
+				$upsell_url = 'https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=upsell-banner-right-sidebar';
+				$images_url = esc_url( WPZOOM_FORMS_URL ) . '/dist/assets/admin/images/';
+				?>
+				<a href="<?php echo esc_url( $upsell_url ); ?>" target="_blank" rel="noopener noreferrer" class="wpzf-upsell-banner">
+					<div class="wpzf-upsell-banner__bg" style="background-image: url('<?php echo esc_url( WPZOOM_FORMS_URL ); ?>/dist/assets/admin/images/blue-bg.png');"></div>
+					<div class="wpzf-upsell-banner__inner">
+						<div class="wpzf-upsell-banner__logo">
+							<img src="<?php echo esc_url( $images_url ); ?>wpz-forms-pro.svg" alt="" class="wpzf-upsell-banner__icon">
+						</div>
+						<h3 class="wpzf-upsell-banner__heading"><?php esc_html_e( 'NEW PRO FEATURES', 'wpzoom-forms' ); ?></h3>
+						<ul class="wpzf-upsell-banner__features">
+							<li><img src="<?php echo esc_url( $images_url ); ?>pixel-ckeck.svg" alt="" width="16" height="16"> <?php esc_html_e( 'Conditional Logic', 'wpzoom-forms' ); ?></li>
+							<li><img src="<?php echo esc_url( $images_url ); ?>pixel-ckeck.svg" alt="" width="16" height="16"> <?php esc_html_e( 'Mailchimp Integration', 'wpzoom-forms' ); ?></li>
+							<li><img src="<?php echo esc_url( $images_url ); ?>pixel-ckeck.svg" alt="" width="16" height="16"> <?php esc_html_e( 'File Uploads', 'wpzoom-forms' ); ?></li>
+							<li><img src="<?php echo esc_url( $images_url ); ?>pixel-ckeck.svg" alt="" width="16" height="16"> <?php esc_html_e( '30+ Pre-built Templates', 'wpzoom-forms' ); ?></li>
+							<li><img src="<?php echo esc_url( $images_url ); ?>pixel-ckeck.svg" alt="" width="16" height="16"> <?php esc_html_e( 'Generate Forms with AI', 'wpzoom-forms' ); ?></li>
+						</ul>
+						<div class="wpzf-upsell-banner__cta"><span><?php esc_html_e( 'Upgrade to PRO', 'wpzoom-forms' ); ?></span></div>
+					</div>
 				</a>
 			</div>
 
