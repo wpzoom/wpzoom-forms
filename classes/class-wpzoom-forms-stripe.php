@@ -1128,7 +1128,7 @@ class WPZOOM_Forms_Stripe {
 			case 'wpzf_txn_status':
 				$status = (string) get_post_meta( $post_id, '_wpzf_txn_status', true );
 				$labels = array(
-					'paid'     => array( 'label' => __( 'Processed', 'wpzoom-forms' ), 'bg' => '#d1fae5', 'color' => '#065f46' ),
+					'paid'     => array( 'label' => __( 'Processed', 'wpzoom-forms' ), 'bg' => '#e2f3d2', 'color' => '#678C23' ),
 					'pending'  => array( 'label' => __( 'Incomplete', 'wpzoom-forms' ), 'bg' => '#fef3c7', 'color' => '#92400e', ),
 					'failed'   => array( 'label' => __( 'Failed',    'wpzoom-forms' ), 'bg' => '#fee2e2', 'color' => '#991b1b', ),
 					'refunded' => array( 'label' => __( 'Refunded',  'wpzoom-forms' ), 'bg' => '#f3f4f6', 'color' => '#374151', ),

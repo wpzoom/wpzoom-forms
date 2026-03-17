@@ -25,15 +25,15 @@
 }
 .wpzf-form_page_wpzf-settings ul.wp-tab-bar .wpzf-tab-badge {
 	background-color: #3496fe;
-	color: #fff;
-	margin-left: 3px;
-	font-size: 9px;
-	min-height: 14px;
-	border-radius: 3px;
-	display: inline-block;
-	font-weight: 600;
-	line-height: 1.4;
-	padding: 2px 6px;
+    color: #fff;
+    margin-left: 3px;
+    font-size: 11px;
+    min-height: 15px;
+    border-radius: 3px;
+    display: inline-block;
+    font-weight: 600;
+    line-height: 1.4;
+    padding: 3px 6px;
 }
 .wpzf-form_page_wpzf-settings ul.wp-tab-bar li a:hover {
 	color: #3496ff !important;
@@ -850,6 +850,25 @@ div.wp-tab-panel-inactive {
 	width: 100%;
 	height: auto;
 	border-radius: 4px;
+}
+
+/* Webhook endpoint URL: input + copy button */
+.wpzf-webhook-endpoint-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.wpzf-webhook-endpoint-wrap .wpzf-copy-endpoint {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.wpzf-webhook-endpoint-wrap .wpzf-copy-endpoint .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
 }
 
 @media (max-width: 1100px) {

@@ -188,7 +188,7 @@ class WPZOOM_Forms_Payment_Detail {
 		}
 
 		$status_map = array(
-			'paid'     => array( 'label' => __( 'Processed', 'wpzoom-forms' ), 'bg' => '#d1fae5', 'text' => '#065f46', 'dot' => '#10b981' ),
+			'paid'     => array( 'label' => __( 'Processed', 'wpzoom-forms' ), 'bg' => '#e2f3d2', 'text' => '#678C23', 'dot' => '#10b981' ),
 			'pending'  => array( 'label' => __( 'Incomplete', 'wpzoom-forms' ), 'bg' => '#fef3c7', 'text' => '#92400e', 'dot' => '#f59e0b' ),
 			'failed'   => array( 'label' => __( 'Failed',    'wpzoom-forms' ), 'bg' => '#fee2e2', 'text' => '#991b1b', 'dot' => '#ef4444' ),
 			'refunded' => array( 'label' => __( 'Refunded',  'wpzoom-forms' ), 'bg' => '#f3f4f6', 'text' => '#374151', 'dot' => '#9ca3af' ),

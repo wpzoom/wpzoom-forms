@@ -603,23 +603,21 @@ class WPZOOM_Forms_Stripe_Settings {
 	public function field_webhook_endpoint_cb() {
 		$endpoint_url = rest_url( 'wpzoom-forms/v1/stripe/webhook' );
 		?>
-		<div style="display:inline-flex;align-items:center;gap:0;">
+		<div class="wpzf-webhook-endpoint-wrap">
 			<input
 				type="text"
 				value="<?php echo esc_url( $endpoint_url ); ?>"
 				class="regular-text"
 				readonly
-				style="border-top-right-radius:0;border-bottom-right-radius:0;background:#f0f0f1;color:#50575e;"
 				onfocus="this.select();"
 			/>
 			<button
 				type="button"
 				class="button wpzf-copy-endpoint"
 				data-clipboard-text="<?php echo esc_url( $endpoint_url ); ?>"
-				style="border-top-left-radius:0;border-bottom-left-radius:0;margin-left:-1px;height:30px;display:inline-flex;align-items:center;gap:4px;"
 				title="<?php esc_attr_e( 'Copy to clipboard', 'wpzoom-forms' ); ?>"
 			>
-				<span class="dashicons dashicons-clipboard" style="font-size:16px;width:16px;height:16px;line-height:16px;"></span>
+				<span class="dashicons dashicons-clipboard"></span>
 				<span class="wpzf-copy-label"><?php esc_html_e( 'Copy', 'wpzoom-forms' ); ?></span>
 			</button>
 		</div>
