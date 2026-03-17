@@ -279,3 +279,38 @@
     padding: 16px 0;
   }
 }
+.wpzf-analytics__chart-upsell {
+  min-height: 180px;
+  margin-top: 14px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  background: #f6f7f7;
+  border-radius: 4px;
+}
+.wpzf-analytics__chart-upsell-content {
+  text-align: center;
+  padding: 46px 24px;
+  max-width: 360px;
+}
+.wpzf-analytics__chart-upsell-title {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1d2327;
+}
+.wpzf-analytics__chart-upsell-text {
+  margin: 0 0 20px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #50575e;
+}
+.wpzf-analytics__chart-upsell-cta {
+  text-decoration: none;
+}

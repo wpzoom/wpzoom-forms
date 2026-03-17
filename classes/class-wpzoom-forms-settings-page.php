@@ -447,7 +447,8 @@ class WPZOOM_Forms_Settings {
 			),
 			'ajax_settings' => array(
 				'tab_id'       => 'tab-ajax',
-				'tab_title'    => __( 'AJAX [PRO]', 'wpzoom-forms' ),
+				'tab_title'    => __( 'AJAX', 'wpzoom-forms' ),
+				'tab_badge'    => 'PRO',
 				'option_group' => 'wpzf-ajax-settings',
 				'option_name'  => self::$option,
 				'sections'     => array(
@@ -517,7 +518,8 @@ class WPZOOM_Forms_Settings {
 			),
 			'integrations_settings' => array(
 				'tab_id'       => 'tab-integrations',
-				'tab_title'    => __( 'Integrations [PRO]', 'wpzoom-forms' ),
+				'tab_title'    => __( 'Integrations', 'wpzoom-forms' ),
+				'tab_badge'    => 'PRO',
 				'option_group' => 'wpzf-integrations-settings',
 				'option_name'  => self::$option,
 				'sections'     => array(
@@ -634,9 +636,9 @@ class WPZOOM_Forms_Settings {
 				<ul class="wp-tab-bar">
 					<?php foreach ( self::$settings as $setting ) : ?>
 						<?php if ( self::$active_tab === $setting['tab_id'] ) : ?>
-							<li class="wp-tab-active" data-tab-id="<?php echo esc_attr( $setting['tab_id'] ); ?>"><a href="?post_type=wpzf-form&page=wpzf-settings&tab=<?php echo esc_attr( $setting['tab_id'] ); ?>"><?php if ( $setting['tab_id'] === 'tab-integrations' ) { echo self::get_mailchimp_icon(); } ?><?php echo esc_html( $setting['tab_title'] ); ?></a></li>
+							<li class="wp-tab-active" data-tab-id="<?php echo esc_attr( $setting['tab_id'] ); ?>"><a href="?post_type=wpzf-form&page=wpzf-settings&tab=<?php echo esc_attr( $setting['tab_id'] ); ?>"><?php if ( $setting['tab_id'] === 'tab-integrations' ) { echo self::get_mailchimp_icon(); } ?><?php echo esc_html( $setting['tab_title'] ); ?><?php if ( ! empty( $setting['tab_badge'] ) ) { ?> <span class="wpzf-pro-badge wpzf-tab-badge"><?php echo esc_html( $setting['tab_badge'] ); ?></span><?php } ?></a></li>
 						<?php else : ?>
-							<li data-tab-id="<?php echo esc_attr( $setting['tab_id'] ); ?>"><a href="?post_type=wpzf-form&page=wpzf-settings&tab=<?php echo esc_attr( $setting['tab_id'] ); ?>"><?php if ( $setting['tab_id'] === 'tab-integrations' ) { echo self::get_mailchimp_icon(); } ?><?php echo esc_html( $setting['tab_title'] ); ?></a></li>
+							<li data-tab-id="<?php echo esc_attr( $setting['tab_id'] ); ?>"><a href="?post_type=wpzf-form&page=wpzf-settings&tab=<?php echo esc_attr( $setting['tab_id'] ); ?>"><?php if ( $setting['tab_id'] === 'tab-integrations' ) { echo self::get_mailchimp_icon(); } ?><?php echo esc_html( $setting['tab_title'] ); ?><?php if ( ! empty( $setting['tab_badge'] ) ) { ?> <span class="wpzf-pro-badge wpzf-tab-badge"><?php echo esc_html( $setting['tab_badge'] ); ?></span><?php } ?></a></li>
 						<?php endif ?>
 					<?php endforeach ?>
 				</ul>
