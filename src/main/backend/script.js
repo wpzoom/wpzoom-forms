@@ -984,6 +984,13 @@ registerPlugin('wpzoom-forms-document-settings', {
 									label: __('Card Details', 'wpzoom-forms'),
 									showLabel: true
 								}
+							},
+							{
+								name: 'payment-coupon',
+								title: __('Coupon', 'wpzoom-forms'),
+								icon: FormIcons.coupon,
+								isPro: true,
+								defaultAttributes: {}
 							}
 						].map((block) => {
 							const isDisabled = uniqueFieldsExist[block.name] || false || block.isPro;
@@ -1624,6 +1631,13 @@ registerBlockType('wpzoom-forms/form', {
 									label: __('Card Details', 'wpzoom-forms'),
 									showLabel: true
 								}
+							},
+							{
+								name: 'payment-coupon',
+								title: __('Coupon', 'wpzoom-forms'),
+								icon: FormIcons.coupon,
+								isPro: true,
+								defaultAttributes: {}
 							}
 						].map((block) => {
 							const isDisabled = uniqueFieldsExist[block.name] || false || block.isPro;
