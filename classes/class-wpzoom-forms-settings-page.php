@@ -90,6 +90,16 @@ class WPZOOM_Forms_Settings {
 	}
 
 	/**
+	 * Returns upsell banner HTML for use in the template manager modal.
+	 * Can be overridden or filtered for custom content.
+	 *
+	 * @return string Upsell banner markup or empty string.
+	 */
+	public function upsell_banner() {
+		return '';
+	}
+
+	/**
 	 * Set default values for setting options.
 	 */
 	public function set_defaults() {

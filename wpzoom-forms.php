@@ -1313,7 +1313,7 @@ class WPZOOM_Forms {
 		// Check if we are on the posts list page
 		if ( isset( $_GET['post_type'] ) && $_GET['post_type'] == 'wpzf-submission' ) {
 
-			$form_id_filter_selected = isset( $_GET['form_id_filter'] ) ? $_GET['form_id_filter'] : '';
+			$form_id_filter_selected = isset( $_GET['form_id_filter'] ) ? absint( $_GET['form_id_filter'] ) : 0;
 
 			// Fetch unique form IDs and their corresponding titles from your database
 			$form_ids_query = $wpdb->get_results("SELECT ID AS form_id, post_title 
@@ -1339,7 +1339,7 @@ class WPZOOM_Forms {
 								$form_ids[] = $result->form_id;
 								
 								// Output the option with form ID as value and post title as option name
-								echo '<option '. selected( $result->form_id, $form_id_filter_selected, true ) .' value="' . $result->form_id . '">' . $result->post_title . '</option>';
+								echo '<option ' . selected( absint( $result->form_id ), $form_id_filter_selected, true ) . ' value="' . absint( $result->form_id ) . '">' . esc_html( $result->post_title ) . '</option>';
 							}
 						}
 					?>
@@ -1360,7 +1360,7 @@ class WPZOOM_Forms {
 		if ( is_admin() && $pagenow == 'edit.php' && isset( $_GET['form_id_filter'] ) && $_GET['form_id_filter'] != '' ) {
 			
 			$query->query_vars['meta_key'] = '_wpzf_form_id';
-			$query->query_vars['meta_value'] = $_GET['form_id_filter'];
+			$query->query_vars['meta_value'] = absint( $_GET['form_id_filter'] );
 		
 		}
 	}
@@ -3006,14 +3006,19 @@ class WPZOOM_Forms {
 					}
 
 					if ( ! empty( $secret ) ) {
-						$response = file_get_contents(
-							sprintf(
-								'https://www.google.com/recaptcha/api/siteverify?secret=%1$s&response=%2$s&remoteip=%3$s',
-								$secret,
-								$captcha,
-								$_SERVER['REMOTE_ADDR']
-							)
+						$remote_ip   = isset( $_SERVER['REMOTE_ADDR'] ) ? filter_var( wp_unslash( $_SERVER['REMOTE_ADDR'] ), FILTER_VALIDATE_IP ) : '';
+						$wp_response = wp_remote_get(
+							add_query_arg(
+								array(
+									'secret'   => $secret,
+									'response' => $captcha,
+									'remoteip' => $remote_ip,
+								),
+								'https://www.google.com/recaptcha/api/siteverify'
+							),
+							array( 'timeout' => 5 )
 						);
+						$response = ( ! is_wp_error( $wp_response ) ) ? wp_remote_retrieve_body( $wp_response ) : false;
 
 						if ( false !== $response && ! empty( $response ) ) {
 							$json = json_decode( $response );
@@ -3038,24 +3043,20 @@ class WPZOOM_Forms {
 				$captcha = $_POST['cf-turnstile-response'];
 				if(!empty($captcha)){
 					$secret = trim( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_turnstile_secret_key' ) ) );
-					$ip = $_SERVER['REMOTE_ADDR'];
+					$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? filter_var( wp_unslash( $_SERVER['REMOTE_ADDR'] ), FILTER_VALIDATE_IP ) : '';
 
-					$url_path = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
-					$data = array(
-						'secret' => $secret,
-						'response' => $captcha,
-						'remoteip' => $ip
-					);
-
-					$options = array(
-						'http' => array(
-							'method' => 'POST',
-							'content' => http_build_query($data)
+					$ts_response = wp_remote_post(
+						'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+						array(
+							'timeout' => 5,
+							'body'    => array(
+								'secret'   => $secret,
+								'response' => $captcha,
+								'remoteip' => $ip,
+							),
 						)
 					);
-					$stream = stream_context_create($options);
-					$result = file_get_contents($url_path, false, $stream);
-					$result = json_decode($result, true);
+					$result = ( ! is_wp_error( $ts_response ) ) ? json_decode( wp_remote_retrieve_body( $ts_response ), true ) : array();
 
 					if(intval($result['success']) !== 1){
 						$captcha_check_passed = false;
