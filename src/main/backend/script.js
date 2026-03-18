@@ -272,13 +272,32 @@ registerPlugin('wpzoom-forms-document-settings', {
 		// Use dispatch to open panels by default
 		const { toggleEditorPanelOpened } = useDispatch('core/editor');
 		const { createNotice } = useDispatch('core/notices');
-		
+		const { openGeneralSidebar } = useDispatch('core/edit-post');
+
+		const openPaymentSettingsPanel = () => {
+			openGeneralSidebar('edit-post/document');
+			setTimeout(() => {
+				const panel = document.querySelector('.wpzoom-forms-payment-settings');
+				if (panel) panel.scrollIntoView({ behavior: 'smooth' });
+			}, 100);
+		};
+
 		useEffect(() => {
 			if ( hasPaymentBlocks && ! paymentEnabled ) {
 				createNotice(
 					'warning',
 					__( 'Payment fields detected, but payments are not enabled for this form. Enable them in Payment Settings to collect payments.', 'wpzoom-forms' ),
-					{ isDismissible: true }
+					{
+						isDismissible: true,
+						actions: [
+							{
+								variant: 'outline',
+								size: 'small',
+								label: __( 'Open Payment Settings', 'wpzoom-forms' ),
+								onClick: openPaymentSettingsPanel,
+							},
+						],
+					}
 				);
 			}
 		}, [ hasPaymentBlocks ] );
