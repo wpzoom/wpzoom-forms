@@ -47,10 +47,12 @@ class WPZOOM_Forms_Sidebar {
 			</div>
 
 			<div class="wpzf-sidebar-card wpzf-sidebar-card--docs">
-				<h2>
-					<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 1 0 20A10 10 0 0 1 12 2zm0 9v5m0-8v1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+				<svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0 1 20.25 6v12A2.25 2.25 0 0 1 18 20.25H6A2.25 2.25 0 0 1 3.75 18V6A2.25 2.25 0 0 1 6 3.75h1.5m9 0h-9" />
+				</svg>
+				<h3>
 					<?php esc_html_e( 'Read documentation', 'wpzoom-forms' ); ?>
-				</h2>
+				</h3>
 				<p><?php esc_html_e( 'Documentation is the place where you\'ll find the information needed to setup the plugin quickly and configure all its features.', 'wpzoom-forms' ); ?></p>
 				<a href="https://www.wpzoom.com/documentation/wpzoom-forms/" target="_blank" rel="noopener noreferrer" class="button button-primary">
 					<?php esc_html_e( 'Read documentation', 'wpzoom-forms' ); ?>
@@ -58,10 +60,12 @@ class WPZOOM_Forms_Sidebar {
 			</div>
 
 			<div class="wpzf-sidebar-card wpzf-sidebar-card--support">
-				<h2>
-					<svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3m.08 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+				<svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+				</svg>
+				<h3>
 					<?php esc_html_e( 'Need assistance?', 'wpzoom-forms' ); ?>
-				</h2>
+				</h3>
 				<p><?php esc_html_e( 'Need help setting up the plugin or have a question? Get in touch with our Support Team.', 'wpzoom-forms' ); ?></p>
 				<a href="https://www.wpzoom.com/support/" target="_blank" rel="noopener noreferrer" class="button button-secondary">
 					<?php esc_html_e( 'Open Support Desk', 'wpzoom-forms' ); ?>
@@ -74,10 +78,12 @@ class WPZOOM_Forms_Sidebar {
 				<div class="ml-form-embedWrapper embedForm">
 				<div class="ml-form-embedBody ml-form-embedBodyDefault row-form">
 				<div class="ml-form-embedContent">
-					<h4>
-						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.386 8.357C7.031 8.144 6.57 8.259 6.357 8.614c-.213.355-.098.816.257 1.029L11.614 12.643c.238.143.535.143.772 0l5-3c.355-.213.47-.674.257-1.029-.213-.355-.674-.47-1.029-.257L12 11.126 7.386 8.357z" fill="#242628"/><path fill-rule="evenodd" clip-rule="evenodd" d="M5 19.732H19c1.519 0 2.75-1.231 2.75-2.75V7.02C21.75 5.5 20.519 4.27 19 4.27H5C3.481 4.27 2.25 5.5 2.25 7.02v9.962C2.25 18.501 3.481 19.732 5 19.732zM3.75 7.02C3.75 6.329 4.309 5.77 5 5.77h14c.691 0 1.25.559 1.25 1.25v9.962c0 .69-.559 1.25-1.25 1.25H5c-.691 0-1.25-.55-1.25-1.25V7.02z" fill="#242628"/></svg>
+					<svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+					</svg>
+					<h3>
 						<?php esc_html_e( 'Stay Updated on WPZOOM Forms', 'wpzoom-forms' ); ?>
-					</h4>
+					</h3>
 					<p><?php esc_html_e( 'Subscribe to get notified about new plugin updates and features. We\'ll also send you useful tips, tutorials, and limited-time promotions.', 'wpzoom-forms' ); ?></p>
 				</div>
 				<form class="ml-block-form" action="https://static.mailerlite.com/webforms/submit/p0c0n3" data-code="p0c0n3" method="post" target="_blank">
