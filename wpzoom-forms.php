@@ -13,7 +13,7 @@
  * Description: Simple, user-friendly contact form plugin for WordPress that utilizes Gutenberg blocks for easy form building and customization.
  * Author:      WPZOOM
  * Author URI:  https://www.wpzoom.com
- * Version:     1.3.6
+ * Version:     1.3.7
  * License:     GPL2+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
@@ -232,9 +232,9 @@ class WPZOOM_Forms {
 					'show_in_rest'        => true,
 					'menu_position'       => 30,
 					'menu_icon'           => 'data:image/svg+xml;base64,' . base64_encode('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M7.33333 2H20.6667V22H4V5.33333H7.33333V2ZM17.3333 5.33333H10.6667V8.66667H7.33333V18.6667H10.6667V15.3333H14V12H10.6667V8.66667H17.3333V5.33333Z" fill="#a7aaad"/></svg>'),
-					'supports'            => array( 'title', 'editor', 'custom-fields' )
-				)
-			);
+						'supports'            => array( 'title', 'editor', 'custom-fields', 'revisions' )
+					)
+				);
 			
 			register_post_type(
 				'wpzf-submission',
@@ -939,6 +939,57 @@ class WPZOOM_Forms {
 	}
 
 	/**
+	 * Get normalized spam protection settings and whether the selected method is fully configured.
+	 *
+	 * @access private
+	 * @return array
+	 * @since  1.3.7
+	 */
+	private function get_spam_protection_config() {
+		$service = sanitize_text_field( (string) WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' ) );
+		$type    = sanitize_text_field( (string) WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) );
+
+		if ( ! in_array( $service, array( 'none', 'recaptcha', 'turnstile' ), true ) ) {
+			$service = 'none';
+		}
+
+		if ( ! in_array( $type, array( 'v2', 'v3' ), true ) ) {
+			$type = 'v2';
+		}
+
+		$recaptcha_v2_site_key   = trim( sanitize_text_field( (string) WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key' ) ) );
+		$recaptcha_v2_secret_key = trim( sanitize_text_field( (string) WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_secret_key' ) ) );
+		$recaptcha_v3_site_key   = trim( sanitize_text_field( (string) WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key_v3' ) ) );
+		$recaptcha_v3_secret_key = trim( sanitize_text_field( (string) WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_secret_key_v3' ) ) );
+		$turnstile_site_key      = trim( sanitize_text_field( (string) WPZOOM_Forms_Settings::get( 'wpzf_global_turnstile_site_key' ) ) );
+		$turnstile_secret_key    = trim( sanitize_text_field( (string) WPZOOM_Forms_Settings::get( 'wpzf_global_turnstile_secret_key' ) ) );
+
+		$active_service = 'none';
+
+		if ( 'recaptcha' === $service ) {
+			if ( 'v3' === $type && ! empty( $recaptcha_v3_site_key ) && ! empty( $recaptcha_v3_secret_key ) ) {
+				$active_service = 'recaptcha';
+			} elseif ( 'v2' === $type && ! empty( $recaptcha_v2_site_key ) && ! empty( $recaptcha_v2_secret_key ) ) {
+				$active_service = 'recaptcha';
+			}
+		} elseif ( 'turnstile' === $service && ! empty( $turnstile_site_key ) && ! empty( $turnstile_secret_key ) ) {
+			$active_service = 'turnstile';
+		}
+
+		return array(
+			'service'                 => $service,
+			'type'                    => $type,
+			'active_service'          => $active_service,
+			'recaptcha_v2_site_key'   => $recaptcha_v2_site_key,
+			'recaptcha_v2_secret_key' => $recaptcha_v2_secret_key,
+			'recaptcha_v3_site_key'   => $recaptcha_v3_site_key,
+			'recaptcha_v3_secret_key' => $recaptcha_v3_secret_key,
+			'turnstile_site_key'      => $turnstile_site_key,
+			'turnstile_secret_key'    => $turnstile_secret_key,
+		);
+	}
+
+	/**
 	 * Registers needed scripts and styles for use on the frontend.
 	 *
 	 * @access public
@@ -947,14 +998,15 @@ class WPZOOM_Forms {
 	 */
 	public function register_frontend_assets() {
 
-		$depends         = array( 'jquery' );
-		$enableRecaptcha = WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' );
-		$recaptchaType   = ! empty( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) ) ? WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) : 'v2';
-		$site_key        = ! empty( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key' ) ) ? esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key' ) ) ) : '';
+		$depends       = array( 'jquery' );
+		$captcha       = $this->get_spam_protection_config();
+		$captcha_type  = $captcha['type'];
+		$active_method = $captcha['active_service'];
 
-		if ( 'recaptcha' == $enableRecaptcha ) {
+		if ( 'recaptcha' === $active_method ) {
+			$site_key = ( 'v3' === $captcha_type ) ? $captcha['recaptcha_v3_site_key'] : $captcha['recaptcha_v2_site_key'];
 
-			if( 'v2' == $recaptchaType ) {
+			if ( 'v2' === $captcha_type ) {
 				wp_register_script(
 					'google-recaptcha',
 					'https://www.google.com/recaptcha/api.js',
@@ -963,7 +1015,7 @@ class WPZOOM_Forms {
 					true
 				);
 			}
-			elseif( 'v3' == $recaptchaType ) {
+			elseif ( 'v3' === $captcha_type ) {
 				wp_register_script(
 					'google-recaptcha',
 					"https://www.google.com/recaptcha/api.js?render={$site_key}",
@@ -974,7 +1026,7 @@ class WPZOOM_Forms {
 			}
 
 			$depends[] = 'google-recaptcha';
-		} elseif ( 'turnstile' == $enableRecaptcha ) {
+		} elseif ( 'turnstile' === $active_method ) {
 			wp_register_script(
 				'turnstile-recaptcha',
 				'https://challenges.cloudflare.com/turnstile/v0/api.js',
@@ -2086,6 +2138,7 @@ class WPZOOM_Forms {
 		$btnBgColor     = isset( $attributes['btnBgColor'] ) ? $attributes['btnBgColor'] : '';
 
 		$form_ID = 'wpzf-' . intval( $attributes['formId'] );
+		$form_notice_id = $form_ID . '-notice';
 		$form_success_message = get_post_meta( intval( $attributes['formId'] ), '_form_success_message', true );
 		$form_failure_message = get_post_meta( intval( $attributes['formId'] ), '_form_failure_message', true );
 
@@ -2109,6 +2162,9 @@ class WPZOOM_Forms {
 			$form_content
 		);
 
+		$submitted_form_id = isset( $_GET['wpzf_submitted_form'] ) ? intval( $_GET['wpzf_submitted_form'] ) : -1;
+		$show_notice = isset( $_GET['success'] ) && ( -1 === $submitted_form_id || $submitted_form_id === intval( $attributes['formId'] ) );
+
 		$content = sprintf(
 			'<!-- ZOOM Forms Start -->
 			<form id="wpzf-%2$s" method="post" action="%1$s" class="wpzoom-forms_form%6$s">
@@ -2122,8 +2178,8 @@ class WPZOOM_Forms {
 			admin_url( 'admin-post.php' ),
 			intval( $attributes['formId'] ),
 			wp_nonce_field( 'wpzf_submit', '_wpnonce', true, false ),
-			( isset( $_GET['success'] )
-				? '<div class="notice ' . ( '1' == $_GET['success'] ? 'success' : 'error' ) . '"><p>' .
+			( $show_notice
+				? '<div id="' . esc_attr( $form_notice_id ) . '" class="notice ' . ( '1' == $_GET['success'] ? 'success' : 'error' ) . '" tabindex="-1"><p>' .
 				  ( '1' == $_GET['success'] ? wp_kses_post($form_success_message) : wp_kses_post($form_failure_message) ) .
 				  '</p></div>'
 				: ''
@@ -2143,23 +2199,22 @@ class WPZOOM_Forms {
 			$content = preg_replace( '/<\/form>/is', '<input type="hidden" name="wpzf_subject" value="' . $match2[1] . '" /></form>', $content );
 		}
 
-		$captchaMethod            = WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' );
-		$recaptchaType            = WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) ?? 'v2';
-		$recaptcha_v2_site_key    = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key' ) ) );
-		$recaptcha_v3_site_key    = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_site_key_v3' ) ) );
+		$captcha_config           = $this->get_spam_protection_config();
+		$captcha_method           = $captcha_config['active_service'];
+		$recaptcha_type           = $captcha_config['type'];
 		$recaptcha_badge_location = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_recaptcha_badge_location' ) ) );
-		$turnstile_site_key       = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_turnstile_site_key' ) ) );
+		$turnstile_site_key       = esc_attr( $captcha_config['turnstile_site_key'] );
 		$turnstile_widget_theme   = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_turnstile_widget_theme' ) ) ); 
 
-		if( 'recaptcha' == $captchaMethod ) {
-			$recaptcha_site_key = ( 'v3' == $recaptchaType && !empty($recaptcha_v3_site_key) ) ? $recaptcha_v3_site_key : $recaptcha_v2_site_key;
+		if ( 'recaptcha' === $captcha_method ) {
+			$recaptcha_site_key = ( 'v3' === $recaptcha_type ) ? $captcha_config['recaptcha_v3_site_key'] : $captcha_config['recaptcha_v2_site_key'];
 			$data_badge_location = '';
-			if( ! empty( $recaptcha_badge_location ) ) {
+			if ( ! empty( $recaptcha_badge_location ) ) {
 				$data_badge_location = 'data-badge="' . $recaptcha_badge_location . '"';
 			}
 
 			$content = preg_replace( '/<input([^>]*)type="submit"([^>]*)class="([^"]+)"/i', '<input $1 type="submit" data-sitekey="' . $recaptcha_site_key . '" data-callback="wpzf_submit" data-action="submit" ' . $data_badge_location . ' $2 class="$3 g-recaptcha"', $content );
-		} elseif ( 'turnstile' == $captchaMethod ) {
+		} elseif ( 'turnstile' === $captcha_method ) {
 			$turnstile_widget = '<div class="cf-turnstile" data-theme="' . $turnstile_widget_theme . '" data-sitekey="' . $turnstile_site_key . '"></div>';
 			$content = preg_replace( '/<input([^>]*)type="submit"([^>]*)class="([^"]+)".*>/i', '<input $1 type="submit" data-callback="wpzf_submit" data-action="submit" $2 class="$3 cf-captcha">' . $turnstile_widget, $content );
 		}
@@ -2217,6 +2272,7 @@ class WPZOOM_Forms {
 		$styleOutput .= sprintf( '#%s + .notice.success { background-color: #e7f7ed; color: #227045; border-left: 4px solid #46b450; }', $form_ID );
 		$styleOutput .= sprintf( '#%s + .notice.error { background-color: #fde8e8; color: #8a1f11; border-left: 4px solid #cc0000; }', $form_ID );
 		$styleOutput .= sprintf( '#%s + .notice p { margin: 0; }', $form_ID );
+		$styleOutput .= sprintf( '#%s { scroll-margin-top: 24px; }', $form_notice_id );
 
 		$style = sprintf( '<style>%s</style>',
 			$styleOutput
@@ -2976,15 +3032,18 @@ class WPZOOM_Forms {
 		$success = false;
 		$url     = isset( $_POST['_wp_http_referer'] ) ? sanitize_text_field( wp_unslash( $_POST['_wp_http_referer'] ) ) : home_url();
 		$form_id = -1;
+		$captcha_check_passed = true;
 
 		if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'wpzf_submit' ) ) {
 			$form_id = isset( $_POST['form_id'] ) ? intval( $_POST['form_id'] ) : -1;
 			$blocks  = parse_blocks( $form_id > -1 ? get_post_field( 'post_content', $form_id, 'raw' ) : '' );
 
-			//Check if recaptcha is enabled and the form passes it's check
-			if ( 'recaptcha' == WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' ) ) {
+			// Check if spam protection is fully configured and validate only then.
+			$captcha_config = $this->get_spam_protection_config();
+			if ( 'recaptcha' === $captcha_config['active_service'] ) {
+				$captcha_check_passed = false;
 				$captcha = false;
-				$recaptchaType = WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' );
+				$recaptchaType = $captcha_config['type'];
 
 				if ( isset( $_POST['g-recaptcha-response'] ) ) {
 					$captcha = trim( sanitize_text_field( $_POST['g-recaptcha-response'] ) );
@@ -2996,13 +3055,11 @@ class WPZOOM_Forms {
 				
 
 				if ( ! empty( $captcha ) ) {
-					$recaptcha_v2_secret_key = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_secret_key' ) ) );
-					$recaptcha_v3_secret_key = esc_attr( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_secret_key_v3' ) ) );
 					$secret = false;
-					if( 'v3' == $recaptchaType && ! empty( $recaptcha_v3_secret_key ) ) {
-						$secret = trim($recaptcha_v3_secret_key);
+					if ( 'v3' === $recaptchaType && ! empty( $captcha_config['recaptcha_v3_secret_key'] ) ) {
+						$secret = trim( $captcha_config['recaptcha_v3_secret_key'] );
 					} else {
-						$secret = trim($recaptcha_v2_secret_key);
+						$secret = trim( $captcha_config['recaptcha_v2_secret_key'] );
 					}
 
 					if ( ! empty( $secret ) ) {
@@ -3037,12 +3094,12 @@ class WPZOOM_Forms {
 						}
 					}
 				}
-			} elseif ('turnstile' == WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' ) ) {
+			} elseif ( 'turnstile' === $captcha_config['active_service'] ) {
 				$captcha_check_passed = false;
-				
-				$captcha = $_POST['cf-turnstile-response'];
-				if(!empty($captcha)){
-					$secret = trim( sanitize_text_field( WPZOOM_Forms_Settings::get( 'wpzf_global_turnstile_secret_key' ) ) );
+
+				$captcha = isset( $_POST['cf-turnstile-response'] ) ? sanitize_text_field( wp_unslash( $_POST['cf-turnstile-response'] ) ) : '';
+				if ( ! empty( $captcha ) ) {
+					$secret = trim( $captcha_config['turnstile_secret_key'] );
 					$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? filter_var( wp_unslash( $_SERVER['REMOTE_ADDR'] ), FILTER_VALIDATE_IP ) : '';
 
 					$ts_response = wp_remote_post(
@@ -3058,14 +3115,12 @@ class WPZOOM_Forms {
 					);
 					$result = ( ! is_wp_error( $ts_response ) ) ? json_decode( wp_remote_retrieve_body( $ts_response ), true ) : array();
 
-					if(intval($result['success']) !== 1){
+					if ( intval( $result['success'] ) !== 1 ) {
 						$captcha_check_passed = false;
 					} else {
 						$captcha_check_passed = true;
 					}
 				}
-			} else {
-				$captcha_check_passed = true;
 			}
 
 			if ( $captcha_check_passed && count( $blocks ) > 0 ) {
@@ -3308,9 +3363,18 @@ class WPZOOM_Forms {
 			}
 		}
 
+		$redirect_url = urldecode(
+			add_query_arg(
+				array(
+					'success'             => ( $success ? '1' : '0' ),
+					'wpzf_submitted_form' => $form_id,
+				),
+				$url
+			)
+		);
+
 		wp_safe_redirect(
-			urldecode( add_query_arg( 'success', ( $success ? '1' : '0' ), $url ) ) .
-			( $form_id > -1 ? '#wpzf-' . $form_id : '' )
+			$redirect_url . ( $form_id > -1 ? '#wpzf-' . $form_id . '-notice' : '' )
 		);
 
 		exit;
@@ -3615,6 +3679,7 @@ class WPZOOM_Forms {
 		$content .= '<ul>';
 		$content .= '<li><strong>' . esc_html__( 'AI Form Generator', 'wpzoom-forms' ) . '</strong> &mdash; ' . esc_html__( 'Describe your form in simple words and let AI create it for you!', 'wpzoom-forms' ) . '</li>';
 		$content .= '<li><strong>' . esc_html__( '30+ Pre-built Templates', 'wpzoom-forms' ) . '</strong> &mdash; ' . esc_html__( 'Healthcare, education, real estate, restaurant, HR, and more categories.', 'wpzoom-forms' ) . '</li>';
+		$content .= '<li><strong>' . esc_html__( 'Conditional Logic', 'wpzoom-forms' ) . '</strong> &mdash; ' . esc_html__( 'Show or hide fields dynamically based on user selections.', 'wpzoom-forms' ) . '</li>';
 		$content .= '<li><strong>' . esc_html__( 'Mailchimp Integration', 'wpzoom-forms' ) . '</strong> &mdash; ' . esc_html__( 'Automatically add subscribers to your Mailchimp audiences.', 'wpzoom-forms' ) . '</li>';
 		$content .= '<li><strong>' . esc_html__( 'Import/Export Forms', 'wpzoom-forms' ) . '</strong> &mdash; ' . esc_html__( 'Easily transfer forms between sites or back up your work.', 'wpzoom-forms' ) . '</li>';
 		$content .= '<li><strong>' . esc_html__( 'Export Submissions to CSV', 'wpzoom-forms' ) . '</strong> &mdash; ' . esc_html__( 'Download form submissions as CSV files for reporting.', 'wpzoom-forms' ) . '</li>';
