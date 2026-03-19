@@ -177,7 +177,7 @@ updateCategory('wpzoom-forms', {
 });
 
 registerPlugin('wpzoom-forms-document-settings', {
-	icon: '',
+	icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 2C0 0.895431 0.895431 0 2 0H14C15.1046 0 16 0.895431 16 2V14C16 15.1046 15.1046 16 14 16H2C0.895431 16 0 15.1046 0 14V2Z" fill="#164777" /><path d="M5.276 12.084H6.032L8.156 7.224L10.268 12.084H11.024L13.148 5.316H13.988V4.104H10.628V5.316H11.708L10.508 9.468L8.552 4.872H7.832L5.876 9.468L4.592 5.316H5.636V4.104H2.276V5.316H3.116L5.276 12.084Z" fill="white" /></svg>,
 	render: props => {
 		const postID = useSelect(select => select('core/editor').getCurrentPostId(), []);
 		const postType = useSelect(select => select('core/editor').getCurrentPostType(), []);
@@ -315,15 +315,19 @@ registerPlugin('wpzoom-forms-document-settings', {
 		const copyBtnStyle = { minHeight: '30px', height: 'auto', minWidth: 'fit-content', margin: '0px 0px 8px 0px' };
 		const blockPatternsStyle = {};
 
-		// Add styles to head
-		useEffect(() => {
-			// No need to add inline styles anymore as they will be in style.scss
-			
-					// Add drop handler to the editor
-		const handleDrop = (event) => {
-			// Remove any existing drop indicators
-			document.querySelectorAll('.wpzoom-forms-drop-indicator').forEach(el => el.remove());
+	// Add styles to head
+	useEffect(() => {
+		// No need to add inline styles anymore as they will be in style.scss
 
+		const getEditorDoc = () => {
+			const iframe = document.querySelector( 'iframe[name="editor-canvas"]' );
+			return ( iframe && iframe.contentDocument && iframe.contentDocument.readyState === 'complete' )
+				? iframe.contentDocument
+				: document;
+		};
+
+		// Add drop handler to the editor
+		const handleDrop = (event) => {
 			// Check if we've already handled this drop
 			if (event.handled) {
 				return;
@@ -335,252 +339,141 @@ registerPlugin('wpzoom-forms-document-settings', {
 				
 				const { type, attributes } = JSON.parse(data);
 				if (!type || !type.startsWith('wpzoom-forms/')) {
-					// This is not a WPZOOM form field drag, let WordPress handle it
 					return;
 				}
 
-				// Only prevent default and stop propagation for WPZOOM form fields
 				event.preventDefault();
 				event.stopPropagation();
 				event.handled = true;
 					
-					const { createBlock } = wp.blocks;
-					const { insertBlock } = wp.data.dispatch('core/block-editor');
-					const selectors = wp.data.select('core/block-editor');
-					const { getBlockRootClientId, getBlockIndex } = selectors;
-					const newBlock = createBlock(type, attributes);
-					const insertionContext = getFormInsertionContext(selectors);
+				const { createBlock } = wp.blocks;
+				const { insertBlock } = wp.data.dispatch('core/block-editor');
+				const selectors = wp.data.select('core/block-editor');
+				const { getBlockRootClientId, getBlockIndex } = selectors;
+				const newBlock = createBlock(type, attributes);
+				const insertionContext = getFormInsertionContext(selectors);
 
-					if (!insertionContext) {
+				if (!insertionContext) {
+					wp.data.dispatch('core/notices').createNotice(
+						'warning',
+						__('Could not find a Contact Form block to insert this field.', 'wpzoom-forms'),
+						{
+							type: 'snackbar',
+							isDismissible: true,
+						}
+					);
+					return;
+				}
+				
+				const dropPoint = {
+					x: event.clientX,
+					y: event.clientY
+				};
+				
+				const blockElements = getEditorDoc().querySelectorAll('[data-block]');
+				let closestBlock = null;
+				let closestDistance = Infinity;
+				let insertAfter = false;
+
+				blockElements.forEach(block => {
+					const rect = block.getBoundingClientRect();
+					const blockCenter = {
+						x: rect.left + rect.width / 2,
+						y: rect.top + rect.height / 2
+					};
+					
+					const distance = Math.sqrt(
+						Math.pow(dropPoint.x - blockCenter.x, 2) + 
+						Math.pow(dropPoint.y - blockCenter.y, 2)
+					);
+					
+					if (distance < closestDistance) {
+						closestDistance = distance;
+						closestBlock = block;
+						insertAfter = dropPoint.y > blockCenter.y;
+					}
+				});
+				
+				if (closestBlock) {
+					const targetClientId = closestBlock.getAttribute('data-block');
+					const rootClientId = getBlockRootClientId(targetClientId);
+					const targetIndex = getBlockIndex(targetClientId);
+					const targetInsideForm = isClientIdInsideForm(selectors, targetClientId);
+					const canInsertNearTarget = targetInsideForm && typeof targetIndex === 'number' && targetIndex >= 0;
+
+					if (canInsertNearTarget) {
+						insertBlock(
+							newBlock,
+							insertAfter ? targetIndex + 1 : targetIndex,
+							rootClientId,
+							false
+						);
+					} else {
+						insertBlock(newBlock, undefined, insertionContext.defaultRootClientId, false);
 						wp.data.dispatch('core/notices').createNotice(
-							'warning',
-							__('Could not find a Contact Form block to insert this field.', 'wpzoom-forms'),
+							'info',
+							__('Field added to your Contact Form. Drop over the form to place it more precisely.', 'wpzoom-forms'),
 							{
 								type: 'snackbar',
 								isDismissible: true,
 							}
 						);
-						return;
 					}
-					
-					// Get the closest block element from the drop point
-					const dropPoint = {
-						x: event.clientX,
-						y: event.clientY
-					};
-					
-					// Find all block elements and get the closest one
-					const blockElements = document.querySelectorAll('[data-block]');
-					let closestBlock = null;
-					let closestDistance = Infinity;
-					let insertAfter = false;
-
-					blockElements.forEach(block => {
-						const rect = block.getBoundingClientRect();
-						const blockCenter = {
-							x: rect.left + rect.width / 2,
-							y: rect.top + rect.height / 2
-						};
-						
-						const distance = Math.sqrt(
-							Math.pow(dropPoint.x - blockCenter.x, 2) + 
-							Math.pow(dropPoint.y - blockCenter.y, 2)
-						);
-						
-						if (distance < closestDistance) {
-							closestDistance = distance;
-							closestBlock = block;
-							insertAfter = dropPoint.y > blockCenter.y;
-						}
-					});
-					
-					if (closestBlock) {
-						const targetClientId = closestBlock.getAttribute('data-block');
-						const rootClientId = getBlockRootClientId(targetClientId);
-						const targetIndex = getBlockIndex(targetClientId);
-						const targetInsideForm = isClientIdInsideForm(selectors, targetClientId);
-						const canInsertNearTarget = targetInsideForm && typeof targetIndex === 'number' && targetIndex >= 0;
-
-						if (canInsertNearTarget) {
-							insertBlock(
-								newBlock,
-								insertAfter ? targetIndex + 1 : targetIndex,
-								rootClientId,
-								false
-							);
-						} else {
-							insertBlock(newBlock, undefined, insertionContext.defaultRootClientId, false);
-							wp.data.dispatch('core/notices').createNotice(
-								'info',
-								__('Field added to your Contact Form. Drop over the form to place it more precisely.', 'wpzoom-forms'),
-								{
-									type: 'snackbar',
-									isDismissible: true,
-								}
-							);
-						}
-					} else {
-						insertBlock(newBlock, undefined, insertionContext.defaultRootClientId, false);
-					}
-				} catch (error) {
-					console.error('Error handling block drop:', error);
-				}
-			};
-
-					const handleDragOver = (event) => {
-			// Check if this is a WPZOOM form field drag first
-			try {
-				const data = event.dataTransfer.getData('text');
-				if (data) {
-					const { type } = JSON.parse(data);
-					if (!type || !type.startsWith('wpzoom-forms/')) {
-						// This is not a WPZOOM form field drag, let WordPress handle it
-						return;
-					}
+				} else {
+					insertBlock(newBlock, undefined, insertionContext.defaultRootClientId, false);
 				}
 			} catch (error) {
-				// If we can't parse the data, let WordPress handle it
-				return;
+				console.error('Error handling block drop:', error);
 			}
+		};
 
-			// Only prevent default and stop propagation for WPZOOM form fields
+		const handleDragOver = (event) => {
 			event.preventDefault();
 			event.stopPropagation();
+		};
 
-			// Throttle the drag over handler
-			if (handleDragOver.timeout) {
-				return;
-			}
-				
-				handleDragOver.timeout = setTimeout(() => {
-					handleDragOver.timeout = null;
-					
-					// Get all block elements
-					const blockElements = document.querySelectorAll('[data-block]');
-					let closestBlock = null;
-					let closestDistance = Infinity;
-					let insertAfter = false;
-					
-					const dropPoint = {
-						x: event.clientX,
-						y: event.clientY
-					};
-					
-					blockElements.forEach(block => {
-						const rect = block.getBoundingClientRect();
-						const blockCenter = {
-							x: rect.left + rect.width / 2,
-							y: rect.top + rect.height / 2
-						};
-						
-						const distance = Math.sqrt(
-							Math.pow(dropPoint.x - blockCenter.x, 2) + 
-							Math.pow(dropPoint.y - blockCenter.y, 2)
-						);
-						
-						if (distance < closestDistance) {
-							closestDistance = distance;
-							closestBlock = block;
-							insertAfter = dropPoint.y > (rect.top + rect.height / 2);
-						}
-					});
-					
-					// Remove existing indicators
-					document.querySelectorAll('.wpzoom-forms-drop-indicator').forEach(el => el.remove());
-					
-					if (closestBlock) {
-						const rect = closestBlock.getBoundingClientRect();
-						const indicator = document.createElement('div');
-						indicator.className = 'wpzoom-forms-drop-indicator';
-						
-						Object.assign(indicator.style, {
-							position: 'absolute',
-							left: rect.left + 'px',
-							right: (window.innerWidth - rect.right) + 'px',
-							height: '2px',
-							background: '#007cba',
-							pointerEvents: 'none',
-							zIndex: '9999',
-							transition: 'transform 0.1s ease',
-							top: insertAfter ? rect.bottom + 'px' : rect.top + 'px'
-						});
-						
-						document.body.appendChild(indicator);
-					}
-				}, 50);
-			};
+		const handleDragEnd = () => {};
 
-			const handleDragEnd = () => {
-				if (handleDragOver.timeout) {
-					clearTimeout(handleDragOver.timeout);
-					handleDragOver.timeout = null;
-				}
-				document.querySelectorAll('.wpzoom-forms-drop-indicator').forEach(el => el.remove());
-			};
+		// Add event listeners to the editor
+		const attachEditorListeners = () => {
+			const editorDoc = getEditorDoc();
+			const editor = editorDoc.querySelector('.block-editor-block-list__layout');
+			if (!editor) return false;
+			// Remove any existing event listeners first
+			editor.removeEventListener('drop', handleDrop);
+			editor.removeEventListener('dragover', handleDragOver);
+			editor.removeEventListener('dragleave', handleDragEnd);
+			editor.removeEventListener('dragend', handleDragEnd);
+			editor.removeEventListener('mouseup', handleDragEnd);
+			window.removeEventListener('blur', handleDragEnd);
+			// Add new event listeners
+			editor.addEventListener('drop', handleDrop);
+			editor.addEventListener('dragover', handleDragOver);
+			editor.addEventListener('dragleave', handleDragEnd);
+			editor.addEventListener('dragend', handleDragEnd);
+			editor.addEventListener('mouseup', handleDragEnd);
+			window.addEventListener('blur', handleDragEnd);
+			return true;
+		};
+		if (!attachEditorListeners()) {
+			const retryTimer = setTimeout(attachEditorListeners, 800);
+			return () => clearTimeout(retryTimer);
+		}
 
-			// Add event listeners to the editor
-			const editor = document.querySelector('.block-editor-block-list__layout');
+		// Cleanup
+		return () => {
+			const editorDoc = getEditorDoc();
+			const editor = editorDoc.querySelector('.block-editor-block-list__layout');
 			if (editor) {
-				// Remove any existing event listeners first
 				editor.removeEventListener('drop', handleDrop);
 				editor.removeEventListener('dragover', handleDragOver);
 				editor.removeEventListener('dragleave', handleDragEnd);
 				editor.removeEventListener('dragend', handleDragEnd);
 				editor.removeEventListener('mouseup', handleDragEnd);
 				window.removeEventListener('blur', handleDragEnd);
-				
-				// Add new event listeners
-				editor.addEventListener('drop', handleDrop);
-				editor.addEventListener('dragover', handleDragOver);
-				editor.addEventListener('dragleave', handleDragEnd);
-				editor.addEventListener('dragend', handleDragEnd);
-				editor.addEventListener('mouseup', handleDragEnd);
-				window.addEventListener('blur', handleDragEnd);
 			}
-
-			// Add styles for drop indicator
-			const style = document.createElement('style');
-			style.textContent = `
-				.wpzoom-forms-drop-indicator {
-					position: absolute;
-					left: 0;
-					right: 0;
-					height: 2px;
-					background: #007cba;
-					pointer-events: none;
-					z-index: 9999;
-					transition: transform 0.1s ease;
-				}
-				.wpzoom-forms-drop-indicator::before {
-					content: '';
-					position: absolute;
-					left: 0;
-					top: -4px;
-					width: 8px;
-					height: 8px;
-					background: #007cba;
-					border-radius: 50%;
-				}
-			`;
-			document.head.appendChild(style);
-
-			// Cleanup
-			return () => {
-				if (handleDragOver.timeout) {
-					clearTimeout(handleDragOver.timeout);
-				}
-				const editor = document.querySelector('.block-editor-block-list__layout');
-				if (editor) {
-					editor.removeEventListener('drop', handleDrop);
-					editor.removeEventListener('dragover', handleDragOver);
-					editor.removeEventListener('dragleave', handleDragEnd);
-					editor.removeEventListener('dragend', handleDragEnd);
-					editor.removeEventListener('mouseup', handleDragEnd);
-					window.removeEventListener('blur', handleDragEnd);
-				}
-				document.querySelectorAll('.wpzoom-forms-drop-indicator').forEach(el => el.remove());
-			};
-		}, []);
+		};
+	}, []);
 
 		if (hasCopiedShortcode) {
 			copyBtnStyle.backgroundColor = 'green';
@@ -1229,6 +1122,8 @@ const SortableList = SortableContainer(({ items, changeCallback, removeCallback 
 </div>);
 
 registerBlockType('wpzoom-forms/form', {
+	$schema:      'https://schemas.wp.org/trunk/block.json',
+	apiVersion:   3,
 	title: __('Contact Form', 'wpzoom-blocks'),
 	description: __('Add a simple contact form', 'wpzoom-blocks'),
 	icon: (<svg width="40" height="40" viewBox="0 0 250 300" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1272,225 +1167,135 @@ registerBlockType('wpzoom-forms/form', {
 
 		const blockPatternsStyle = {};
 
-		// Add styles to head
-		useEffect(() => {
-			// No need to add inline styles anymore as they will be in style.scss
+	// Add styles to head
+	useEffect(() => {
+		// No need to add inline styles anymore as they will be in style.scss
+
+		const getEditorDoc = () => {
+			const iframe = document.querySelector( 'iframe[name="editor-canvas"]' );
+			return ( iframe && iframe.contentDocument && iframe.contentDocument.readyState === 'complete' )
+				? iframe.contentDocument
+				: document;
+		};
+
+		// Add drop handler to the editor
+		const handleDrop = (event) => {
+			// Check if we've already handled this drop
+			if (event.handled) {
+				return;
+			}
 			
-			// Add drop handler to the editor
-			const handleDrop = (event) => {
+			try {
+				const data = event.dataTransfer.getData('text');
+				if (!data) return;
+				
+				const { type, attributes } = JSON.parse(data);
+				if (!type || !type.startsWith('wpzoom-forms/')) return;
+
 				event.preventDefault();
 				event.stopPropagation();
-				
-				// Remove any existing drop indicators
-				document.querySelectorAll('.wpzoom-forms-drop-indicator').forEach(el => el.remove());
-				
-				// Check if we've already handled this drop
-				if (event.handled) {
-					return;
-				}
 				event.handled = true;
 				
-				try {
-					const data = event.dataTransfer.getData('text');
-					if (!data) return;
-					
-					const { type, attributes } = JSON.parse(data);
-					if (!type || !type.startsWith('wpzoom-forms/')) return;
-					
-					const { createBlock } = wp.blocks;
-					const { insertBlock, getBlockInsertionPoint } = wp.data.dispatch('core/block-editor');
-					const { getBlockRootClientId, getBlockIndex } = wp.data.select('core/block-editor');
-					const newBlock = createBlock(type, attributes);
-					
-					// Get the closest block element from the drop point
-					const dropPoint = {
-						x: event.clientX,
-						y: event.clientY
+				const { createBlock } = wp.blocks;
+				const { insertBlock, getBlockInsertionPoint } = wp.data.dispatch('core/block-editor');
+				const { getBlockRootClientId, getBlockIndex } = wp.data.select('core/block-editor');
+				const newBlock = createBlock(type, attributes);
+				
+				const dropPoint = {
+					x: event.clientX,
+					y: event.clientY
+				};
+				
+				const blockElements = getEditorDoc().querySelectorAll('[data-block]');
+				let closestBlock = null;
+				let closestDistance = Infinity;
+				let insertAfter = false;
+
+				blockElements.forEach(block => {
+					const rect = block.getBoundingClientRect();
+					const blockCenter = {
+						x: rect.left + rect.width / 2,
+						y: rect.top + rect.height / 2
 					};
 					
-					// Find all block elements and get the closest one
-					const blockElements = document.querySelectorAll('[data-block]');
-					let closestBlock = null;
-					let closestDistance = Infinity;
-					let insertAfter = false;
-
-					blockElements.forEach(block => {
-						const rect = block.getBoundingClientRect();
-						const blockCenter = {
-							x: rect.left + rect.width / 2,
-							y: rect.top + rect.height / 2
-						};
-						
-						const distance = Math.sqrt(
-							Math.pow(dropPoint.x - blockCenter.x, 2) + 
-							Math.pow(dropPoint.y - blockCenter.y, 2)
-						);
-						
-						if (distance < closestDistance) {
-							closestDistance = distance;
-							closestBlock = block;
-							insertAfter = dropPoint.y > blockCenter.y;
-						}
-					});
+					const distance = Math.sqrt(
+						Math.pow(dropPoint.x - blockCenter.x, 2) + 
+						Math.pow(dropPoint.y - blockCenter.y, 2)
+					);
 					
-					if (closestBlock) {
-						const targetClientId = closestBlock.getAttribute('data-block');
-						const rootClientId = getBlockRootClientId(targetClientId);
-						const targetIndex = getBlockIndex(targetClientId);
-						
-						insertBlock(
-							newBlock,
-							insertAfter ? targetIndex + 1 : targetIndex,
-							rootClientId,
-							false
-						);
-					} else {
-						// If no target found, insert at the end
-						insertBlock(newBlock);
+					if (distance < closestDistance) {
+						closestDistance = distance;
+						closestBlock = block;
+						insertAfter = dropPoint.y > blockCenter.y;
 					}
-				} catch (error) {
-					console.error('Error handling block drop:', error);
-				}
-			};
-
-			const handleDragOver = (event) => {
-				event.preventDefault();
-				event.stopPropagation();
+				});
 				
-				// Throttle the drag over handler
-				if (handleDragOver.timeout) {
-					return;
+				if (closestBlock) {
+					const targetClientId = closestBlock.getAttribute('data-block');
+					const rootClientId = getBlockRootClientId(targetClientId);
+					const targetIndex = getBlockIndex(targetClientId);
+					
+					insertBlock(
+						newBlock,
+						insertAfter ? targetIndex + 1 : targetIndex,
+						rootClientId,
+						false
+					);
+				} else {
+					insertBlock(newBlock);
 				}
-				
-				handleDragOver.timeout = setTimeout(() => {
-					handleDragOver.timeout = null;
-					
-					// Get all block elements
-					const blockElements = document.querySelectorAll('[data-block]');
-					let closestBlock = null;
-					let closestDistance = Infinity;
-					let insertAfter = false;
-					
-					const dropPoint = {
-						x: event.clientX,
-						y: event.clientY
-					};
-					
-					blockElements.forEach(block => {
-						const rect = block.getBoundingClientRect();
-						const blockCenter = {
-							x: rect.left + rect.width / 2,
-							y: rect.top + rect.height / 2
-						};
-						
-						const distance = Math.sqrt(
-							Math.pow(dropPoint.x - blockCenter.x, 2) + 
-							Math.pow(dropPoint.y - blockCenter.y, 2)
-						);
-						
-						if (distance < closestDistance) {
-							closestDistance = distance;
-							closestBlock = block;
-							insertAfter = dropPoint.y > (rect.top + rect.height / 2);
-						}
-					});
-					
-					// Remove existing indicators
-					document.querySelectorAll('.wpzoom-forms-drop-indicator').forEach(el => el.remove());
-					
-					if (closestBlock) {
-						const rect = closestBlock.getBoundingClientRect();
-						const indicator = document.createElement('div');
-						indicator.className = 'wpzoom-forms-drop-indicator';
-						
-						Object.assign(indicator.style, {
-							position: 'absolute',
-							left: rect.left + 'px',
-							right: (window.innerWidth - rect.right) + 'px',
-							height: '2px',
-							background: '#007cba',
-							pointerEvents: 'none',
-							zIndex: '9999',
-							transition: 'transform 0.1s ease',
-							top: insertAfter ? rect.bottom + 'px' : rect.top + 'px'
-						});
-						
-						document.body.appendChild(indicator);
-					}
-				}, 50);
-			};
+			} catch (error) {
+				console.error('Error handling block drop:', error);
+			}
+		};
 
-			const handleDragEnd = () => {
-				if (handleDragOver.timeout) {
-					clearTimeout(handleDragOver.timeout);
-					handleDragOver.timeout = null;
-				}
-				document.querySelectorAll('.wpzoom-forms-drop-indicator').forEach(el => el.remove());
-			};
+		const handleDragOver = (event) => {
+			event.preventDefault();
+			event.stopPropagation();
+		};
 
-			// Add event listeners to the editor
-			const editor = document.querySelector('.block-editor-block-list__layout');
+		const handleDragEnd = () => {};
+
+		// Add event listeners to the editor
+		const attachEditorListeners = () => {
+			const editorDoc = getEditorDoc();
+			const editor = editorDoc.querySelector('.block-editor-block-list__layout');
+			if (!editor) return false;
+			// Remove any existing event listeners first
+			editor.removeEventListener('drop', handleDrop);
+			editor.removeEventListener('dragover', handleDragOver);
+			editor.removeEventListener('dragleave', handleDragEnd);
+			editor.removeEventListener('dragend', handleDragEnd);
+			editor.removeEventListener('mouseup', handleDragEnd);
+			window.removeEventListener('blur', handleDragEnd);
+			// Add new event listeners
+			editor.addEventListener('drop', handleDrop);
+			editor.addEventListener('dragover', handleDragOver);
+			editor.addEventListener('dragleave', handleDragEnd);
+			editor.addEventListener('dragend', handleDragEnd);
+			editor.addEventListener('mouseup', handleDragEnd);
+			window.addEventListener('blur', handleDragEnd);
+			return true;
+		};
+		if (!attachEditorListeners()) {
+			const retryTimer = setTimeout(attachEditorListeners, 800);
+			return () => clearTimeout(retryTimer);
+		}
+
+		// Cleanup
+		return () => {
+			const editorDoc = getEditorDoc();
+			const editor = editorDoc.querySelector('.block-editor-block-list__layout');
 			if (editor) {
-				// Remove any existing event listeners first
 				editor.removeEventListener('drop', handleDrop);
 				editor.removeEventListener('dragover', handleDragOver);
 				editor.removeEventListener('dragleave', handleDragEnd);
 				editor.removeEventListener('dragend', handleDragEnd);
 				editor.removeEventListener('mouseup', handleDragEnd);
 				window.removeEventListener('blur', handleDragEnd);
-				
-				// Add new event listeners
-				editor.addEventListener('drop', handleDrop);
-				editor.addEventListener('dragover', handleDragOver);
-				editor.addEventListener('dragleave', handleDragEnd);
-				editor.addEventListener('dragend', handleDragEnd);
-				editor.addEventListener('mouseup', handleDragEnd);
-				window.addEventListener('blur', handleDragEnd);
 			}
-
-			// Add styles for drop indicator
-			const style = document.createElement('style');
-			style.textContent = `
-				.wpzoom-forms-drop-indicator {
-					position: absolute;
-					left: 0;
-					right: 0;
-					height: 2px;
-					background: #007cba;
-					pointer-events: none;
-					z-index: 9999;
-					transition: transform 0.1s ease;
-				}
-				.wpzoom-forms-drop-indicator::before {
-					content: '';
-					position: absolute;
-					left: 0;
-					top: -4px;
-					width: 8px;
-					height: 8px;
-					background: #007cba;
-					border-radius: 50%;
-				}
-			`;
-			document.head.appendChild(style);
-
-			// Cleanup
-			return () => {
-				if (handleDragOver.timeout) {
-					clearTimeout(handleDragOver.timeout);
-				}
-				const editor = document.querySelector('.block-editor-block-list__layout');
-				if (editor) {
-					editor.removeEventListener('drop', handleDrop);
-					editor.removeEventListener('dragover', handleDragOver);
-					editor.removeEventListener('dragleave', handleDragEnd);
-					editor.removeEventListener('dragend', handleDragEnd);
-					editor.removeEventListener('mouseup', handleDragEnd);
-					window.removeEventListener('blur', handleDragEnd);
-				}
-				document.querySelectorAll('.wpzoom-forms-drop-indicator').forEach(el => el.remove());
-			};
-		}, []);
+		};
+	}, []);
 
 		return <div {...blockProps}>
 			<InspectorControls>
