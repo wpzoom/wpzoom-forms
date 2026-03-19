@@ -28,6 +28,16 @@
 		return;
 	}
 
+	if ( ! wpzfStripeData.publishableKey ) {
+		document.querySelectorAll( '.wp-block-wpzoom-forms-stripe-card' ).forEach( function ( el ) {
+			var notice = document.createElement( 'p' );
+			notice.style.cssText = 'padding:10px 14px;background:#fff3cd;border:1px solid #ffc107;border-radius:4px;color:#856404;margin:0;font-size:14px;';
+			notice.textContent = 'Credit Card field is disabled, Stripe keys are missing.';
+			el.replaceChildren( notice );
+		} );
+		return;
+	}
+
 	const stripe = Stripe( wpzfStripeData.publishableKey );
 
 	const periodLabels = { day: '/ day', week: '/ week', month: '/ month', year: '/ year' };
