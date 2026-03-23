@@ -3740,7 +3740,7 @@ if( ! function_exists ( 'wpzoom_forms_load_files' ) ) {
 		new WPZOOM_Forms_Payments_Analytics();
 
 	}
-	add_action( 'plugin_loaded', 'wpzoom_forms_load_files' );
+	add_action( 'plugins_loaded', 'wpzoom_forms_load_files' );
 }
 
 /**
