@@ -52,6 +52,18 @@ class WPZOOM_Forms_Stripe {
 	const PROXY_DEAUTH_URL = 'https://zoomforms.co/wp-json/wpzoom-stripe-proxy/v1/deauthorize'; // TODO: Change to the actual deauthorize URL
 
 	/**
+	 * URL of the WPZOOM proxy register-webhook endpoint.
+	 * Called after OAuth connect to create a Connect webhook on the platform account.
+	 */
+	const PROXY_REGISTER_WEBHOOK_URL = 'https://zoomforms.co/wp-json/wpzoom-stripe-proxy/v1/register-webhook'; // TODO: change this
+
+	/**
+	 * URL of the WPZOOM proxy delete-webhook endpoint.
+	 * Called when disconnecting to remove the Connect webhook from the platform account.
+	 */
+	const PROXY_DELETE_WEBHOOK_URL = 'https://zoomforms.co/wp-json/wpzoom-stripe-proxy/v1/delete-webhook'; // TODO: change this
+
+	/**
 	 * Singleton instance.
 	 *
 	 * @var self|null
@@ -78,6 +90,8 @@ class WPZOOM_Forms_Stripe {
 		add_action( 'rest_api_init',                           array( $this, 'register_rest_routes' ) );
 		add_action( 'admin_init',                              array( $this, 'handle_disconnect' ) );
 		add_action( 'wp_ajax_wpzf_stripe_save_connection',    array( $this, 'ajax_save_connection' ) );
+		add_action( 'wp_ajax_wpzf_stripe_setup_webhook',      array( $this, 'ajax_setup_webhook' ) );
+		add_action( 'wp_ajax_wpzf_stripe_delete_webhook',     array( $this, 'ajax_delete_webhook' ) );
 
 		// Payment admin list columns.
 		add_filter( 'manage_edit-wpzf-payment_columns',          array( $this, 'payment_list_columns' ) );
@@ -740,7 +754,9 @@ class WPZOOM_Forms_Stripe {
 		update_option( 'wpzf_stripe_account_name',    $account_name,    false );
 		update_option( 'wpzf_stripe_account_email',   $account_email,   false );
 
-		return new WP_REST_Response( array( 'connected' => true ), 200 );
+		$webhook_result = $this->auto_register_webhook( $access_token, $is_test );
+
+		return new WP_REST_Response( array( 'connected' => true, 'webhook_auto_setup' => $webhook_result ), 200 );
 	}
 
 	/**
@@ -787,7 +803,9 @@ class WPZOOM_Forms_Stripe {
 		update_option( 'wpzf_stripe_account_name',    $account_name,    false );
 		update_option( 'wpzf_stripe_account_email',   $account_email,   false );
 
-		wp_send_json_success( array( 'connected' => true ) );
+		$webhook_result = $this->auto_register_webhook( $access_token, $is_test );
+
+		wp_send_json_success( array( 'connected' => true, 'webhook_auto_setup' => $webhook_result ) );
 	}
 
 	/**
@@ -859,8 +877,20 @@ class WPZOOM_Forms_Stripe {
 			// since the user is entitled to disconnect their local credentials.
 		}
 
+		// Delete any auto-registered webhook endpoints before clearing credentials.
+		$live_token = (string) get_option( 'wpzf_stripe_access_token', '' );
+		if ( ! empty( $live_token ) ) {
+			$this->delete_webhook_endpoint( $live_token, false );
+		}
+		$test_token = (string) get_option( 'wpzf_stripe_test_access_token', '' );
+		if ( ! empty( $test_token ) ) {
+			$this->delete_webhook_endpoint( $test_token, true );
+		}
+
 		delete_option( 'wpzf_stripe_access_token' );
+		delete_option( 'wpzf_stripe_test_access_token' );
 		delete_option( 'wpzf_stripe_publishable_key' );
+		delete_option( 'wpzf_stripe_test_publishable_key' );
 		delete_option( 'wpzf_stripe_account_id' );
 		delete_option( 'wpzf_stripe_account_name' );
 		delete_option( 'wpzf_stripe_account_email' );
@@ -1164,6 +1194,173 @@ class WPZOOM_Forms_Stripe {
 	public function remove_payment_bulk_actions( $actions ) {
 		unset( $actions['edit'] );
 		return $actions;
+	}
+
+	// -------------------------------------------------------------------------
+	// Webhook Auto-Registration
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Automatically registers a Stripe webhook endpoint for this site.
+	 *
+	 * Calls the WPZOOM proxy, which creates a Connect webhook on the platform
+	 * account pointing at this site's REST endpoint. Stores the endpoint ID and
+	 * signing secret returned by the proxy.
+	 *
+	 * @param string $access_token Unused — kept for API compatibility.
+	 * @param bool   $is_test      True when registering for test mode.
+	 * @return array {success: bool, endpoint_id?: string, error?: string}
+	 */
+	public function auto_register_webhook( $access_token, $is_test ) {
+		$webhook_url = rest_url( 'wpzoom-forms/v1/stripe/webhook' );
+		$account_id  = (string) get_option( 'wpzf_stripe_account_id', '' );
+		$sig         = hash_hmac( 'sha256', $webhook_url . '|' . $account_id, self::STRIPE_CLIENT_ID );
+
+		$response = wp_remote_post( self::PROXY_REGISTER_WEBHOOK_URL, array(
+			'timeout' => 20,
+			'headers' => array( 'Content-Type' => 'application/x-www-form-urlencoded' ),
+			'body'    => array(
+				'webhook_url' => $webhook_url,
+				'account_id'  => $account_id,
+				'sig'         => $sig,
+				'is_test'     => $is_test ? 1 : 0,
+			),
+		) );
+
+		if ( is_wp_error( $response ) ) {
+			return array( 'success' => false, 'error' => $response->get_error_message() );
+		}
+
+		$body = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		if ( ! empty( $body['error'] ) ) {
+			return array( 'success' => false, 'error' => $body['error'] );
+		}
+
+		if ( empty( $body['endpoint_id'] ) ) {
+			return array( 'success' => false, 'error' => 'Proxy request failed.' );
+		}
+
+		$endpoint_id_option = $is_test ? 'wpzf_stripe_test_webhook_endpoint_id' : 'wpzf_stripe_webhook_endpoint_id';
+		$secret_option      = $is_test ? 'wpzf_stripe_test_webhook_secret'       : 'wpzf_stripe_webhook_secret';
+
+		update_option( $endpoint_id_option, $body['endpoint_id'], false );
+		update_option( $secret_option,      $body['secret'] ?? '', false );
+
+		return array( 'success' => true, 'endpoint_id' => $body['endpoint_id'] );
+	}
+
+	/**
+	 * Deletes a previously auto-registered Stripe webhook endpoint.
+	 *
+	 * Calls the WPZOOM proxy to delete the Connect webhook from the platform
+	 * account. Silently ignores errors (the endpoint may have already been
+	 * deleted from the Stripe Dashboard). Always clears the stored options.
+	 *
+	 * @param string $access_token Unused — kept for API compatibility.
+	 * @param bool   $is_test      True when deleting the test-mode endpoint.
+	 */
+	public function delete_webhook_endpoint( $access_token, $is_test ) {
+		$endpoint_id_option = $is_test ? 'wpzf_stripe_test_webhook_endpoint_id' : 'wpzf_stripe_webhook_endpoint_id';
+		$secret_option      = $is_test ? 'wpzf_stripe_test_webhook_secret'       : 'wpzf_stripe_webhook_secret';
+
+		$endpoint_id = (string) get_option( $endpoint_id_option, '' );
+
+		if ( ! empty( $endpoint_id ) ) {
+			$sig = hash_hmac( 'sha256', 'delete-webhook|' . $endpoint_id, self::STRIPE_CLIENT_ID );
+
+			wp_remote_post( self::PROXY_DELETE_WEBHOOK_URL, array(
+				'timeout' => 15,
+				'headers' => array( 'Content-Type' => 'application/x-www-form-urlencoded' ),
+				'body'    => array(
+					'endpoint_id' => $endpoint_id,
+					'sig'         => $sig,
+				),
+			) );
+			// Silently ignore any errors — endpoint may already be gone.
+		}
+
+		delete_option( $endpoint_id_option );
+		delete_option( $secret_option );
+	}
+
+	/**
+	 * AJAX handler: manually trigger auto webhook setup.
+	 *
+	 * Checks nonce (wpzf_stripe_connect) and manage_options capability,
+	 * detects current mode, reads the right access token, and calls
+	 * auto_register_webhook().
+	 */
+	public function ajax_setup_webhook() {
+		check_ajax_referer( 'wpzf_stripe_connect', 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Permission denied.', 403 );
+		}
+
+		$live_token = (string) get_option( 'wpzf_stripe_access_token', '' );
+		$test_token = (string) get_option( 'wpzf_stripe_test_access_token', '' );
+
+		if ( empty( $live_token ) && empty( $test_token ) ) {
+			wp_send_json_error( 'No access token available. Please connect your Stripe account first.' );
+		}
+
+		$results     = array();
+		$any_success = false;
+		$last_error  = '';
+
+		if ( ! empty( $live_token ) ) {
+			$r               = $this->auto_register_webhook( $live_token, false );
+			$results['live'] = $r;
+			if ( $r['success'] ) {
+				$any_success = true;
+			} else {
+				$last_error = $r['error'] ?? 'Unknown error.';
+			}
+		}
+
+		if ( ! empty( $test_token ) ) {
+			$r               = $this->auto_register_webhook( $test_token, true );
+			$results['test'] = $r;
+			if ( $r['success'] ) {
+				$any_success = true;
+			} else {
+				$last_error = $r['error'] ?? 'Unknown error.';
+			}
+		}
+
+		if ( $any_success ) {
+			wp_send_json_success( $results );
+		} else {
+			wp_send_json_error( $last_error );
+		}
+	}
+
+	/**
+	 * AJAX handler: delete the auto-registered webhook endpoint.
+	 *
+	 * Checks nonce (wpzf_stripe_connect) and manage_options capability,
+	 * detects current mode, reads the right access token, and calls
+	 * delete_webhook_endpoint().
+	 */
+	public function ajax_delete_webhook() {
+		check_ajax_referer( 'wpzf_stripe_connect', 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( 'Permission denied.', 403 );
+		}
+
+		$live_token = (string) get_option( 'wpzf_stripe_access_token', '' );
+		$test_token = (string) get_option( 'wpzf_stripe_test_access_token', '' );
+
+		if ( ! empty( $live_token ) ) {
+			$this->delete_webhook_endpoint( $live_token, false );
+		}
+		if ( ! empty( $test_token ) ) {
+			$this->delete_webhook_endpoint( $test_token, true );
+		}
+
+		wp_send_json_success( array( 'deleted' => true ) );
 	}
 
 	// -------------------------------------------------------------------------

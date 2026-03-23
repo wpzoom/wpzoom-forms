@@ -79,29 +79,11 @@ class WPZOOM_Forms_Stripe_Settings {
 		$stripe = WPZOOM_Forms_Stripe::instance();
 		if ( $stripe->is_connected() ) {
 			add_settings_field(
-				'wpzf_stripe_webhook_endpoint',
-				esc_html__( 'Webhook Endpoint URL', 'wpzoom-forms' ),
-				array( $this, 'field_webhook_endpoint_cb' ),
+				'wpzf_stripe_webhooks',
+				esc_html__( 'Webhooks', 'wpzoom-forms' ),
+				array( $this, 'field_webhooks_cb' ),
 				self::OPTION_GROUP,
 				'wpzoom_section_payments'
-			);
-
-			add_settings_field(
-				'wpzf_stripe_test_webhook_secret',
-				esc_html__( 'Test Webhook Secret', 'wpzoom-forms' ),
-				array( $this, 'field_test_webhook_secret_cb' ),
-				self::OPTION_GROUP,
-				'wpzoom_section_payments',
-				array( 'label_for' => 'wpzf_stripe_test_webhook_secret' )
-			);
-
-			add_settings_field(
-				'wpzf_stripe_webhook_secret',
-				esc_html__( 'Live Webhook Secret', 'wpzoom-forms' ),
-				array( $this, 'field_live_webhook_secret_cb' ),
-				self::OPTION_GROUP,
-				'wpzoom_section_payments',
-				array( 'label_for' => 'wpzf_stripe_webhook_secret' )
 			);
 		}
 	}
@@ -117,9 +99,7 @@ class WPZOOM_Forms_Stripe_Settings {
 
 		$stripe = WPZOOM_Forms_Stripe::instance();
 		if ( $stripe->is_connected() ) {
-			$fields[] = array( 'id' => 'wpzf_stripe_webhook_endpoint' );
-			$fields[] = array( 'id' => 'wpzf_stripe_test_webhook_secret' );
-			$fields[] = array( 'id' => 'wpzf_stripe_webhook_secret' );
+			$fields[] = array( 'id' => 'wpzf_stripe_webhooks' );
 		}
 
 		WPZOOM_Forms_Settings::$settings['payments'] = array(
@@ -598,81 +578,225 @@ class WPZOOM_Forms_Stripe_Settings {
 	}
 
 	/**
-	 * Renders the Webhook Endpoint URL field (read-only, with copy button).
+	 * Renders the unified Webhooks field with two states:
+	 *
+	 * Shows an "auto-configured" badge + Remove button when a webhook endpoint
+	 * ID is stored, or a "Set Up Automatically" button otherwise.
+	 * Manual configuration fields are always visible below both states.
 	 */
-	public function field_webhook_endpoint_cb() {
+	public function field_webhooks_cb() {
+		$auto_configured = ! empty( get_option( 'wpzf_stripe_webhook_endpoint_id', '' ) )
+			|| ! empty( get_option( 'wpzf_stripe_test_webhook_endpoint_id', '' ) );
+
 		$endpoint_url = rest_url( 'wpzoom-forms/v1/stripe/webhook' );
+		$ajax_url     = admin_url( 'admin-ajax.php' );
+		$nonce        = wp_create_nonce( 'wpzf_stripe_connect' );
 		?>
-		<div class="wpzf-webhook-endpoint-wrap">
-			<input
-				type="text"
-				value="<?php echo esc_url( $endpoint_url ); ?>"
-				class="regular-text"
-				readonly
-				onfocus="this.select();"
-			/>
-			<button
-				type="button"
-				class="button wpzf-copy-endpoint"
-				data-clipboard-text="<?php echo esc_url( $endpoint_url ); ?>"
-				title="<?php esc_attr_e( 'Copy to clipboard', 'wpzoom-forms' ); ?>"
-			>
-				<span class="dashicons dashicons-clipboard"></span>
-				<span class="wpzf-copy-label"><?php esc_html_e( 'Copy', 'wpzoom-forms' ); ?></span>
+		<div id="wpzf-webhook-wrap" style="max-width:560px;">
+
+			<?php if ( $auto_configured ) : ?>
+			<div style="display:inline-flex;align-items:center;gap:8px;background:#edfaef;border:1px solid #1a7f37;border-radius:4px;padding:8px 14px;margin-bottom:10px;">
+				<svg width="16" height="16" viewBox="0 0 20 20" fill="#1a7f37" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414L8 12.586l7.293-7.293a1 1 0 0 1 1.414 0z" clip-rule="evenodd"/></svg>
+				<span style="color:#1a7f37;font-weight:600;"><?php esc_html_e( 'Webhooks configured automatically', 'wpzoom-forms' ); ?></span>
+			</div>
+			<br>
+			<button type="button" id="wpzf-webhook-remove-btn" class="button button-secondary" style="margin-bottom:20px;">
+				<?php esc_html_e( 'Remove & Reconfigure', 'wpzoom-forms' ); ?>
 			</button>
-		</div>
-		<p class="description"><?php esc_html_e( 'Use this URL when creating a webhook in your Stripe Dashboard.', 'wpzoom-forms' ); ?></p>
-		<?php $this->render_copy_script(); ?>
+			<?php else : ?>
+			<button type="button" id="wpzf-webhook-setup-btn" class="button button-primary" style="margin-bottom:6px;">
+				<?php esc_html_e( 'Set Up Webhooks Automatically', 'wpzoom-forms' ); ?>
+			</button>
+			<div id="wpzf-webhook-notice-area"></div>
+			<div style="margin-bottom:20px;"></div>
+			<?php endif; ?>
+
+			<p style="margin:0 0 10px;font-weight:600;font-size:13px;color:#1d2327;"><?php esc_html_e( 'Manual Configuration', 'wpzoom-forms' ); ?></p>
+			<?php $this->render_manual_webhook_fields( $endpoint_url ); ?>
+
+		</div><?php
+
+		?>
+		<script>
+		( function () {
+			var ajaxUrl = <?php echo wp_json_encode( $ajax_url ); ?>;
+			var nonce   = <?php echo wp_json_encode( $nonce ); ?>;
+
+			// ---- Copy-to-clipboard ----
+			document.addEventListener( 'click', function ( e ) {
+				var btn = e.target.closest( '.wpzf-copy-endpoint' );
+				if ( ! btn ) { return; }
+				var text  = btn.getAttribute( 'data-clipboard-text' );
+				var label = btn.querySelector( '.wpzf-copy-label' );
+				navigator.clipboard.writeText( text ).then( function () {
+					var original = label.textContent;
+					label.textContent = <?php echo wp_json_encode( __( 'Copied!', 'wpzoom-forms' ) ); ?>;
+					setTimeout( function () { label.textContent = original; }, 2000 );
+				} );
+			} );
+
+			// ---- Spinner keyframes (once) ----
+			if ( ! document.getElementById( 'wpzf-spinner-style' ) ) {
+				var style = document.createElement( 'style' );
+				style.id  = 'wpzf-spinner-style';
+				style.textContent = '@keyframes wpzf-spin { to { transform: rotate(360deg); } }';
+				document.head.appendChild( style );
+			}
+
+			function spinnerHtml( label ) {
+				return '<span style="display:inline-flex;align-items:center;gap:6px;">' +
+					'<svg width="14" height="14" viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" style="animation:wpzf-spin 0.8s linear infinite;">' +
+					'<g fill="none" fill-rule="evenodd"><g transform="translate(1 1)" stroke-width="2"><circle stroke-opacity=".3" cx="18" cy="18" r="18"/><path d="M36 18c0-9.94-8.06-18-18-18"/></g></g></svg>' +
+					label + '</span>';
+			}
+
+			// ---- Set Up Webhooks Automatically ----
+			var setupBtn = document.getElementById( 'wpzf-webhook-setup-btn' );
+			if ( setupBtn ) {
+				setupBtn.addEventListener( 'click', function () {
+					var originalHtml = setupBtn.innerHTML;
+					setupBtn.disabled = true;
+					setupBtn.innerHTML = spinnerHtml( <?php echo wp_json_encode( __( 'Working…', 'wpzoom-forms' ) ); ?> );
+
+					var body = new FormData();
+					body.append( 'action', 'wpzf_stripe_setup_webhook' );
+					body.append( 'nonce',  nonce );
+
+					fetch( ajaxUrl, { method: 'POST', body: body } )
+						.then( function ( r ) { return r.json(); } )
+						.then( function ( res ) {
+							if ( res.success ) {
+								window.location.reload();
+							} else {
+								setupBtn.disabled = false;
+								setupBtn.innerHTML = originalHtml;
+								var noticeArea = document.getElementById( 'wpzf-webhook-notice-area' );
+								var msg = ( typeof res.data === 'string' ? res.data : JSON.stringify( res.data ) ) || <?php echo wp_json_encode( __( 'Unknown error.', 'wpzoom-forms' ) ); ?>;
+								noticeArea.innerHTML = '<p style="color:#cf222e;margin:4px 0 8px;">' + msg + '</p>';
+							}
+						} )
+						.catch( function ( err ) {
+							setupBtn.disabled = false;
+							setupBtn.innerHTML = originalHtml;
+							var noticeArea = document.getElementById( 'wpzf-webhook-notice-area' );
+							noticeArea.innerHTML = '<p style="color:#cf222e;margin:4px 0 8px;">' + err.message + '</p>';
+						} );
+				} );
+			}
+
+			// ---- Remove & Reconfigure ----
+			function bindRemoveBtn() {
+				var removeBtn = document.getElementById( 'wpzf-webhook-remove-btn' );
+				if ( ! removeBtn ) { return; }
+				removeBtn.addEventListener( 'click', function () {
+					removeBtn.disabled = true;
+					removeBtn.innerHTML = spinnerHtml( <?php echo wp_json_encode( __( 'Removing…', 'wpzoom-forms' ) ); ?> );
+
+					var body = new FormData();
+					body.append( 'action', 'wpzf_stripe_delete_webhook' );
+					body.append( 'nonce',  nonce );
+
+					fetch( ajaxUrl, { method: 'POST', body: body } )
+						.then( function ( r ) { return r.json(); } )
+						.then( function () {
+							window.location.reload();
+						} )
+						.catch( function () {
+							window.location.reload();
+						} );
+				} );
+			}
+
+			bindRemoveBtn();
+		} )();
+		</script>
 		<?php
 	}
 
 	/**
-	 * Renders the Test Webhook Secret field.
-	 */
-	public function field_test_webhook_secret_cb() {
-		$this->render_webhook_field(
-			'wpzf_stripe_test_webhook_secret',
-			'password',
-			sprintf(
-				/* translators: %s: Stripe test webhooks URL */
-				__( 'Signing secret from your <a href="%s" target="_blank">Stripe Test Dashboard → Webhooks</a>.', 'wpzoom-forms' ),
-				'https://dashboard.stripe.com/test/webhooks'
-			)
-		);
-	}
-
-	/**
-	 * Renders the Live Webhook Secret field.
-	 */
-	public function field_live_webhook_secret_cb() {
-		$this->render_webhook_field(
-			'wpzf_stripe_webhook_secret',
-			'password',
-			sprintf(
-				/* translators: %s: Stripe live webhooks URL */
-				__( 'Signing secret from your <a href="%s" target="_blank">Stripe Live Dashboard → Webhooks</a>.', 'wpzoom-forms' ),
-				'https://dashboard.stripe.com/webhooks'
-			)
-		);
-	}
-
-	/**
-	 * Shared renderer for a single webhook text/password field.
+	 * Renders the manual webhook configuration fields (URL + secrets).
 	 *
-	 * @param string $option_key  WordPress option name and input id/name suffix.
-	 * @param string $type        Input type: 'text' or 'password'.
-	 * @param string $description Already-escaped HTML description string.
+	 * @param string $endpoint_url The webhook endpoint URL.
 	 */
-	private function render_webhook_field( $option_key, $type, $description ) {
+	private function render_manual_webhook_fields( $endpoint_url ) {
+		?>
+		<table class="form-table" style="margin:0;">
+			<tbody>
+				<tr>
+					<th scope="row" style="padding-left:0;"><?php esc_html_e( 'Endpoint URL', 'wpzoom-forms' ); ?></th>
+					<td style="padding-left:0;">
+						<div class="wpzf-webhook-endpoint-wrap">
+							<input
+								type="text"
+								value="<?php echo esc_url( $endpoint_url ); ?>"
+								class="regular-text"
+								readonly
+								onfocus="this.select();"
+							/>
+							<button
+								type="button"
+								class="button wpzf-copy-endpoint"
+								data-clipboard-text="<?php echo esc_url( $endpoint_url ); ?>"
+								title="<?php esc_attr_e( 'Copy to clipboard', 'wpzoom-forms' ); ?>"
+							>
+								<span class="dashicons dashicons-clipboard"></span>
+								<span class="wpzf-copy-label"><?php esc_html_e( 'Copy', 'wpzoom-forms' ); ?></span>
+							</button>
+						</div>
+						<p class="description"><?php esc_html_e( 'Use this URL when creating a webhook in your Stripe Dashboard.', 'wpzoom-forms' ); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row" style="padding-left:0;"><?php esc_html_e( 'Test Webhook Secret', 'wpzoom-forms' ); ?></th>
+					<td style="padding-left:0;">
+						<?php
+						$this->render_webhook_secret_field(
+							'wpzf_stripe_test_webhook_secret',
+							sprintf(
+								/* translators: %s: Stripe test webhooks URL */
+								__( 'Signing secret from your <a href="%s" target="_blank">Stripe Test Dashboard &rarr; Webhooks</a>.', 'wpzoom-forms' ),
+								'https://dashboard.stripe.com/test/webhooks'
+							)
+						);
+						?>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row" style="padding-left:0;"><?php esc_html_e( 'Live Webhook Secret', 'wpzoom-forms' ); ?></th>
+					<td style="padding-left:0;">
+						<?php
+						$this->render_webhook_secret_field(
+							'wpzf_stripe_webhook_secret',
+							sprintf(
+								/* translators: %s: Stripe live webhooks URL */
+								__( 'Signing secret from your <a href="%s" target="_blank">Stripe Live Dashboard &rarr; Webhooks</a>.', 'wpzoom-forms' ),
+								'https://dashboard.stripe.com/webhooks'
+							)
+						);
+						?>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<?php
+	}
+
+	/**
+	 * Renders a single webhook secret password input with description.
+	 *
+	 * @param string $option_key  WordPress option name.
+	 * @param string $description HTML description (already partially escaped by caller).
+	 */
+	private function render_webhook_secret_field( $option_key, $description ) {
 		$value = (string) get_option( $option_key, '' );
 		?>
 		<input
-			type="<?php echo esc_attr( $type ); ?>"
+			type="password"
 			id="<?php echo esc_attr( $option_key ); ?>"
 			name="<?php echo esc_attr( WPZOOM_Forms_Settings::$option ); ?>[<?php echo esc_attr( $option_key ); ?>]"
 			value="<?php echo esc_attr( $value ); ?>"
 			class="regular-text"
-			<?php echo 'password' === $type ? 'autocomplete="new-password"' : ''; ?>
+			autocomplete="new-password"
 		/>
 		<p class="description">
 			<?php
@@ -685,29 +809,6 @@ class WPZOOM_Forms_Stripe_Settings {
 			);
 			?>
 		</p>
-		<?php
-	}
-
-	/**
-	 * Outputs the inline JS for the copy-to-clipboard buttons (once per page).
-	 */
-	private function render_copy_script() {
-		?>
-		<script>
-		document.addEventListener( 'click', function( e ) {
-			var btn = e.target.closest( '.wpzf-copy-endpoint' );
-			if ( ! btn ) return;
-
-			var text  = btn.getAttribute( 'data-clipboard-text' );
-			var label = btn.querySelector( '.wpzf-copy-label' );
-
-			navigator.clipboard.writeText( text ).then( function() {
-				var original = label.textContent;
-				label.textContent = <?php echo wp_json_encode( __( 'Copied!', 'wpzoom-forms' ) ); ?>;
-				setTimeout( function() { label.textContent = original; }, 2000 );
-			} );
-		} );
-		</script>
 		<?php
 	}
 }
