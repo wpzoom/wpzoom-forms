@@ -1,9 +1,9 @@
 import { useBlockProps, InspectorControls, InnerBlocks, RichText } from '@wordpress/block-editor';
 import { registerBlockType, updateCategory } from '@wordpress/blocks';
-import { Card, CardBody, CardHeader, Disabled, Flex, FlexBlock, FlexItem, IconButton, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl, ClipboardButton, Button, Icon, __experimentalHStack as HStack } from '@wordpress/components';
+import { Card, CardBody, CardHeader, Disabled, Flex, FlexBlock, FlexItem, IconButton, Modal, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl, ClipboardButton, Button, Icon, __experimentalHStack as HStack } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { Fragment, useEffect, useState } from '@wordpress/element';
+import { Fragment, useEffect, useState, useRef } from '@wordpress/element';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
 import { __, setLocaleData, sprintf } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
@@ -282,25 +282,16 @@ registerPlugin('wpzoom-forms-document-settings', {
 			}, 100);
 		};
 
-		useEffect(() => {
-			if ( hasPaymentBlocks && ! paymentEnabled ) {
-				createNotice(
-					'warning',
-					__( 'Payment fields detected, but payments are not enabled for this form. Enable them in Payment Settings to collect payments.', 'wpzoom-forms' ),
-					{
-						isDismissible: true,
-						actions: [
-							{
-								variant: 'outline',
-								size: 'small',
-								label: __( 'Open Payment Settings', 'wpzoom-forms' ),
-								onClick: openPaymentSettingsPanel,
-							},
-						],
-					}
-				);
+		// --- Payment heads-up modal when a payment block is first added ---
+		const [ showPaymentModal, setShowPaymentModal ] = useState( false );
+		const hadPaymentBlocks = useRef( hasPaymentBlocks );
+
+		useEffect( () => {
+			if ( hasPaymentBlocks && ! hadPaymentBlocks.current && ! paymentEnabled ) {
+				setShowPaymentModal( true );
 			}
-		}, [ hasPaymentBlocks ] );
+			hadPaymentBlocks.current = hasPaymentBlocks;
+		}, [ hasPaymentBlocks, paymentEnabled ] );
 
 		useEffect(() => {
 			// Open the Form Settings panel by default
@@ -538,6 +529,24 @@ registerPlugin('wpzoom-forms-document-settings', {
 		}, []);
 
 		return <>
+			{ showPaymentModal && (
+				<Modal
+					title={ __( 'Heads Up!', 'wpzoom-forms' ) }
+					onRequestClose={ () => setShowPaymentModal( false ) }
+					isDismissible={ true }
+					size="small"
+				>
+					<p style={ { fontSize: '14px', lineHeight: '1.6', margin: '0 0 20px' } }>
+						{ __( 'This form has payment fields but payments are not enabled. Enable them in Payment Settings so visitors can complete payments.', 'wpzoom-forms' ) }
+					</p>
+					<Flex justify="flex-end">
+						<Button variant="primary" onClick={ () => { setShowPaymentModal( false ); openPaymentSettingsPanel(); } }>
+							{ __( 'Okay!', 'wpzoom-forms' ) }
+						</Button>
+					</Flex>
+				</Modal>
+			) }
+
 			<WelcomeGuide />
 
 			<PluginDocumentSettingPanel
