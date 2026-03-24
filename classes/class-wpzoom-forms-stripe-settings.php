@@ -595,14 +595,15 @@ class WPZOOM_Forms_Stripe_Settings {
 		<div id="wpzf-webhook-wrap" style="max-width:560px;">
 
 			<?php if ( $auto_configured ) : ?>
-			<div style="display:inline-flex;align-items:center;gap:8px;background:#edfaef;border:1px solid #1a7f37;border-radius:4px;padding:8px 14px;margin-bottom:10px;">
-				<svg width="16" height="16" viewBox="0 0 20 20" fill="#1a7f37" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414L8 12.586l7.293-7.293a1 1 0 0 1 1.414 0z" clip-rule="evenodd"/></svg>
-				<span style="color:#1a7f37;font-weight:600;"><?php esc_html_e( 'Webhooks configured automatically', 'wpzoom-forms' ); ?></span>
-			</div>
-			<br>
-			<button type="button" id="wpzf-webhook-remove-btn" class="button button-secondary" style="margin-bottom:20px;">
+			
+			<button type="button" id="wpzf-webhook-remove-btn" class="button button-secondary" style="margin-bottom:10px;">
 				<?php esc_html_e( 'Remove & Reconfigure', 'wpzoom-forms' ); ?>
 			</button>
+			<br>
+			<div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:10px;">
+				<svg width="16" height="16" viewBox="0 0 20 20" fill="#1a7f37" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414L8 12.586l7.293-7.293a1 1 0 0 1 1.414 0z" clip-rule="evenodd"/></svg>
+				<span style="color:#1a7f37;"><?php esc_html_e( 'Webhooks configured automatically', 'wpzoom-forms' ); ?></span>
+			</div>
 			<?php else : ?>
 			<button type="button" id="wpzf-webhook-setup-btn" class="button button-primary" style="margin-bottom:6px;">
 				<?php esc_html_e( 'Set Up Webhooks Automatically', 'wpzoom-forms' ); ?>
@@ -610,8 +611,7 @@ class WPZOOM_Forms_Stripe_Settings {
 			<div id="wpzf-webhook-notice-area"></div>
 			<div style="margin-bottom:20px;"></div>
 			<?php endif; ?>
-
-			<p style="margin:0 0 10px;font-weight:600;font-size:13px;color:#1d2327;"><?php esc_html_e( 'Manual Configuration', 'wpzoom-forms' ); ?></p>
+			
 			<?php $this->render_manual_webhook_fields( $endpoint_url ); ?>
 
 		</div><?php
