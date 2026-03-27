@@ -3503,11 +3503,51 @@
 }
 
 /*
- * Payment detail page (admin.php?page=wpzf-payment-detail)
+ * Payment detail page
  */
-.wpzf-payment-detail {
+ 
+.wpzf-payment-detail-page {
 	.page-title-action {
 		display: none;
+	}
+
+	.wpzf-payment-detail-back {
+		margin-top: 16px;
+
+		.wpzf-back-to-payments {
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+		}
+
+		.dashicons {
+			font-size: 16px;
+			width: 16px;
+			height: 16px;
+			line-height: 1;
+		}
+	}
+
+	#side-sortables{
+		margin-top: 20px;
+	}
+
+	#wpzf-payment-details {
+		padding: 0;
+
+		.postbox-header {
+			display: none;
+		}
+
+		.wpzf-payment-details__heading {
+			border-bottom: 1px solid #eee;
+    		font-weight: 600;
+    		padding: 12px 20px;
+		}
+
+		.wpzf-payment-detail {
+			padding: 20px;
+		}
 	}
 
 	.wpzf-payment-breadcrumb {
@@ -3541,6 +3581,7 @@
 			flex: 1;
 		}
 	}
+	
 
 	.wpzf-card {
 		background: #fff;
