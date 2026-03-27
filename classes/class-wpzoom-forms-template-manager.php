@@ -232,7 +232,7 @@ if ( ! class_exists( 'WPZOOM_Forms_Template_Manager' ) ) {
 
 				<script type="text/javascript">
 					jQuery(document).ready(function($) {
-						$('.wpzoom-forms-settings-upsell-container').insertAfter('#posts-filter');
+						$('.wpzf-sidebar').insertAfter('#posts-filter');
 					});
 					</script>
 				<?php

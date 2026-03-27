@@ -1,59 +1,31 @@
 jQuery(document).ready(function () {
 	(function ($, Settings) {
+
 		$('.wp-tab-bar a').click(function (event) {
 			event.preventDefault();
 
 			var href = $(this).attr('href');
-			var query_args = getUrlVars(href);
-			var context = $(this).closest('.wp-tab-bar').parent(); // Limit effect to the container element.
+			var tabId = $(this).closest('li').data('tab-id');
+			var context = $(this).closest('.wp-tab-bar').parent();
 
 			$('.wp-tab-bar li', context).removeClass('wp-tab-active');
 			$(this).closest('li').addClass('wp-tab-active');
-			$('.wp-tab-panel', context).hide();
-			$('#' + query_args['tab'], context).show();
+			$('#' + tabId).css('display', 'inline-block');
+			$('#' + tabId).siblings(".wp-tab-panel").hide();
 
-			// Change url depending by active tab
 			window.history.pushState('', '', href);
-
-			// Show/hide promo banners based on active tab
-			const tab = query_args['tab'];
-			if (tab === 'tab-ajax') {
-				$('.wpzoom-forms-settings-ajax-promo-container').css('display', 'inline-block');
-				$('.wpzoom-forms-settings-integrations-promo-container').hide();
-			} else if (tab === 'tab-integrations') {
-				$('.wpzoom-forms-settings-integrations-promo-container').css('display', 'inline-block');
-				$('.wpzoom-forms-settings-ajax-promo-container').hide();
-			} else {
-				$('.wpzoom-forms-settings-ajax-promo-container').hide();
-				$('.wpzoom-forms-settings-integrations-promo-container').hide();
-			}
 		});
 
-		// Make setting wp-tab-active optional.
+		// Activate the current tab on page load.
 		$('.wp-tab-bar').each(function () {
 			if ($('.wp-tab-active', this).length) {
-				$('.wp-tab-active', this).click();
+				$('.wp-tab-active a', this).first().click();
 			} else {
 				$('a', this).first().click();
 			}
-			
-			// Check initial tab on page load
-			const url = window.location.href;
-			const urlParams = new URLSearchParams(url);
-			const tab = urlParams.get('tab');
-			if (tab === 'tab-ajax') {
-				$('.wpzoom-forms-settings-ajax-promo-container').css('display', 'inline-block');
-				$('.wpzoom-forms-settings-integrations-promo-container').hide();
-			} else if (tab === 'tab-integrations') {
-				$('.wpzoom-forms-settings-integrations-promo-container').css('display', 'inline-block');
-				$('.wpzoom-forms-settings-ajax-promo-container').hide();
-			} else {
-				$('.wpzoom-forms-settings-ajax-promo-container').hide();
-				$('.wpzoom-forms-settings-integrations-promo-container').hide();
-			}
 		});
 
-		// reset settings to defaults
+		// Reset settings to defaults.
 		$('#wpzoom_forms_reset_settings').click(function () {
 			var data = {
 				security: Settings.ajax_nonce,
@@ -88,7 +60,7 @@ jQuery(document).ready(function () {
 			return vars;
 		}
 
-		// setting field preview
+		// Setting field preview.
 		$('.wpzoom-forms-field-preview').each(function () {
 			var $this = $(this),
 				$field = $(this).parents('fieldset');
@@ -123,30 +95,13 @@ jQuery(document).ready(function () {
 
 		});
 
-		// Add Color Picker to all inputs that have 'color-field' class
+		// Add Color Picker to all inputs that have 'color-field' class.
 		$('.wpzoom-forms-color-picker').wpColorPicker({
 			change: function (event, ui) {
 				var $this = $(this);
 				setTimeout(function () {
-					$this.val(ui.color.toString().toUpperCase()) // uppercase color value
+					$this.val(ui.color.toString().toUpperCase())
 				}, 1);
-			}
-		});
-
-		$('.wp-tab-bar a').on('click', function() {
-			$this = $(this);
-			const url = window.location.href;
-			const urlParams = new URLSearchParams(url);
-			const tab = urlParams.get('tab');
-			if (tab === 'tab-ajax') {
-				$('.wpzoom-forms-settings-ajax-promo-container').css('display', 'inline-block');
-				$('.wpzoom-forms-settings-integrations-promo-container').hide();
-			} else if (tab === 'tab-integrations') {
-				$('.wpzoom-forms-settings-integrations-promo-container').css('display', 'inline-block');
-				$('.wpzoom-forms-settings-ajax-promo-container').hide();
-			} else {
-				$('.wpzoom-forms-settings-ajax-promo-container').hide();
-				$('.wpzoom-forms-settings-integrations-promo-container').hide();
 			}
 		});
 
@@ -173,7 +128,6 @@ jQuery(document).ready(function () {
 
 		showCaptchaOptions();
 
-		//Show reCaptcha options only when it is selected
 		$('input[name="wpzf-settings[wpzf_global_captcha_service]"]').on('change', showCaptchaOptions);
 		$('input[name="wpzf-settings[wpzf_global_captcha_type]"]').on('change', showCaptchaOptions);
 

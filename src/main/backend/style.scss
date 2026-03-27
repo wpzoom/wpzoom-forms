@@ -146,8 +146,7 @@
 			background: $light-color;
 			padding: 15px 30px 0;
 			border: 1px solid $light-grey-color;
-			border-radius: 3px;
-			box-shadow: 1px 1px 2px rgba($dark-color, 0.1);
+			// box-shadow: 1px 1px 2px rgba($dark-color, 0.1);
 			margin: 3em 20px 3em 0;
 
 			#major-publishing-actions {
@@ -307,8 +306,7 @@
 								right: 0;
 								bottom: 0;
 								background: $primary-color;
-								height: 6px;
-								border-radius: 2px 2px 0 0;
+								height: 4px;
 								transform: translateY(100%);
 								transition: all 0.2s ease;
 							}
@@ -2453,8 +2451,6 @@
 		background: $light-color;
 		padding: 25px 30px;
 		border: 1px solid $light-grey-color;
-		border-radius: 3px;
-		box-shadow: 1px 1px 2px rgba($dark-color, 0.1);
 		margin: 20px 0;
 
 		.wpzoom-new-admin_settings-footer-logo {
@@ -2701,7 +2697,8 @@
 	margin: 0;
 }
 
-.post-php.post-type-wpzf-submission.wpzoom-new-admin #wpfooter {
+.post-php.post-type-wpzf-submission.wpzoom-new-admin #wpfooter,
+.wpzf-form_page_wpzf-settings.wpzoom-new-admin #wpfooter {
 	position: relative !important;
 	bottom: 0 !important;
 }
@@ -2742,25 +2739,169 @@
 	width: calc(100% - 374px);
 	float:left;
 }
-.wpzoom-forms-settings-upsell-container {
-	display:block;
-	height:auto !important;
-	width:340px;
-	z-index:1000;
-	float:right;
+.wpzf-sidebar {
+	display: block;
+	width: 340px;
+	float: right;
 }
-.wpzoom-forms-settings-upsell-container a {
-	display:block;
-	width:100%;
-	height:100%;
-	text-decoration:none;
+
+// ── Payment list page sidebar layout ─────────────────────────────────────────
+
+.post-type-wpzf-payment {
+	.subsubsub {
+		float: none;
+		margin-bottom: -40px;
+	}
+
+	#posts-filter {
+		width: calc(100% - 374px);
+		float: left;
+	}
 }
-.wpzoom-forms-settings-upsell-container img {
-	display:block;
-	width:100%;
-	height:100%;
-	object-fit:cover;
-	object-position:center;
+
+// ── Shared .wpzf-card / .wpzf-sidebar styles ──────────────────────────────────
+
+.wpzf-card {
+	background: #fff;
+	border: 1px solid #dcdde0;
+	border-radius: 4px;
+	padding: 24px;
+	margin-bottom: 20px;
+
+	h2 {
+		margin: 0 0 20px;
+		font-size: 15px;
+		font-weight: 600;
+		color: #1d2327;
+		border-bottom: 1px solid #f0f0f0;
+		padding-bottom: 14px;
+	}
+}
+
+.wpzf-sidebar-card {
+	background: #fff;
+	border: 1px solid #dcdde0;
+	padding: 20px;
+	margin-bottom: 20px;
+
+	h2 {
+		font-size: 14px;
+		font-weight: 600;
+		color: #1d2327;
+		margin: 0 0 10px;
+		padding-bottom: 0;
+		border-bottom: none;
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	p {
+		font-size: 13px;
+		color: #50575e;
+		margin: 0 0 14px;
+		line-height: 1.6;
+	}
+
+	.button { font-size: 13px; }
+}
+
+.wpzf-sidebar-card--upsell {
+	padding: 0;
+	border: none;
+	background: transparent;
+
+	.wpzf-upsell-banner {
+		display: block;
+		text-decoration: none;
+		position: relative;
+		overflow: hidden;
+		background-color: #12448a;
+
+		&:focus {
+			outline: 1px solid #2ee378;
+			outline-offset: 2px;
+		}
+	}
+
+	.wpzf-upsell-banner__bg {
+		position: absolute;
+		inset: 0;
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		pointer-events: none;
+	}
+
+	.wpzf-upsell-banner__inner {
+		position: relative;
+		padding: 40px 20px;
+		z-index: 1;
+	}
+
+	.wpzf-upsell-banner__logo {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-bottom: 28px;
+		img {
+			height: 40px;
+		}
+	}
+
+	.wpzf-upsell-banner__heading {
+		font-weight: 600;
+		color: #2ee378;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		margin: 0 0 16px;
+		line-height: 1.3;
+	}
+
+	.wpzf-upsell-banner__features {
+		list-style: none;
+		margin: 0 0 28px;
+		padding: 0;
+		font-size: 16px;
+		font-weight: 500;
+		color: #fff;
+		line-height: 1.5;
+
+		li {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			margin-bottom: 12px;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+
+			img {
+				display: block;
+				width: 20px;
+				height: 20px;
+				flex-shrink: 0;
+			}
+		}
+	}
+
+	.wpzf-upsell-banner__cta {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		span {
+			text-align: center;
+			background: #1fde91;
+			color: #083ea7;
+			font-size: 13px;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+			padding: 14px 16px;
+			line-height: 1.2;
+		}
+	}
 }
 
 @media (max-width: 1240px) {
@@ -2774,13 +2915,19 @@
 }
 
 @media (max-width: 1024px) {
+	.post-type-wpzf-payment #posts-filter {
+		float: none;
+		width: 100%;
+	}
+
 	.post-type-wpzf-form #posts-filter {
 		float:none;
 		width:100%;
 	}
-	.wpzoom-forms-settings-upsell-container {
-		float:none;
-		margin:20px auto;
+	.wpzf-sidebar {
+		float: none;
+		width: 100%;
+		margin: 20px auto;
 	}
 	#wpzf-settings {
 		display:flex;
@@ -2807,11 +2954,7 @@
 	.wpzf-spam-protection-service th {
 		order: 1;
 	}
-	.wpzoom-forms-settings-upsell-container {
-		margin:20px auto;
-		float:none;
-		order:1;
-	}
+	.wpzoom-forms-settings-promo-banner,
 	.wpzoom-forms-settings-ajax-promo-container,
 	.wpzoom-forms-settings-integrations-promo-container {
 		width: auto;
@@ -2949,6 +3092,162 @@
 	.wpzoom-new-admin #wpbody-content > .wrap #wpzf_global_captcha_type_v3 + label.radio-field {
 		margin-right:100px !important;
 	}
+}
+
+/*
+ * Shared upsell box layout – use on settings promo banners, Akismet upsell, etc.
+ */
+.wpzf-upsell-box {
+	background: linear-gradient(135deg, #f8f9ff 0%, #fff 100%);
+	border: 1px solid #c3c4c7;
+	border-left: 4px solid #3496ff;
+	padding: 20px;
+	margin: 20px 0 30px;
+	max-width: 800px;
+	border-radius: 4px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.wpzf-upsell-box__header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 15px;
+	flex-wrap: wrap;
+
+	.wpzf-status-label {
+		font-weight: 600;
+		color: #1d2327;
+		margin-left: auto;
+	}
+}
+
+.wpzf-upsell-box__content {
+	> a:first-of-type {
+		color: #3496ff !important;
+		font-size: 13px;
+		font-weight: 500;
+		text-decoration: none;
+		display: inline-block;
+		margin-bottom: 15px;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+	h2, h4 {
+		margin: 0 0 10px;
+		font-size: 15px;
+		color: #1d2327;
+		font-weight: 600;
+		line-height: 1.4;
+	}
+
+	h4 {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.wpzf-pro-badge {
+		background: #3496ff;
+		color: #fff;
+		font-size: 10px;
+		font-weight: 600;
+		padding: 2px 6px;
+		border-radius: 3px;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+	}
+
+	p {
+		margin: 0 0 15px;
+		color: #50575e;
+		font-size: 13px;
+		line-height: 1.6;
+		a {
+			color: #3496ff;
+			text-decoration: none;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	ul {
+		margin: 0 0 20px;
+		padding: 0;
+		list-style: none;
+	}
+
+	ul li {
+		position: relative;
+		padding-left: 20px;
+		margin-bottom: 8px;
+		color: #50575e;
+		font-size: 13px;
+		&::before {
+			content: '';
+			position: absolute;
+			left: 0;
+			top: 5px;
+			width: 12px;
+			height: 12px;
+			background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2346b450'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E") no-repeat center;
+			background-size: contain;
+		}
+	}
+}
+
+/* Upgrade to PRO – style button.button-primary in upsell contexts */
+.wpzf-upsell-box__content .button.button-primary,
+.wpzoom-forms-settings-ajax-promo-container-inner .button.button-primary,
+.wpzoom-forms-settings-upsell-page-container-header .button.button-primary,
+.features-table .t-footer .button.button-primary {
+	background: #3496ff !important;
+	border: none !important;
+	border-color: #3496ff !important;
+	border-radius: 4px;
+	padding: 12px 20px;
+	color: #fff !important;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1.4;
+	text-decoration: none !important;
+	display: inline-block;
+	outline: none !important;
+	&:hover {
+		background: #2271b1 !important;
+		border-color: #2271b1 !important;
+		color: #fff !important;
+	}
+}
+
+.wpzf-status-badge {
+	display: inline-block;
+	padding: 4px 10px;
+	border-radius: 3px;
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.wpzf-status-inactive {
+	background: #f6f7f7;
+	color: #646970;
+	border: 1px solid #dcdcde;
+}
+
+.wpzf-status-warning {
+	background: #fcf9e8;
+	color: #996800;
+	border: 1px solid #dba617;
+}
+
+.wpzf-status-upgrade {
+	background: #e8f4fc;
+	color: #2271b1;
+	border: 1px solid #3496ff;
+	font-weight: 600;
 }
 
 /*
@@ -3114,14 +3413,13 @@
 	margin-top: 20px;
 	margin-bottom: 0px;
 }
+.wpzf-sidebar-card--newsletter,
 .wpzoom-forms-settings-subscribe-form {
     background: #fff;
     overflow: hidden;
-    border-radius: 5px;
     padding: 25px 20px;
-    margin: 25px 0;
+    margin-bottom: 20px;
     border: 1px solid #ddd;
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 
     input[type="email"] {
         padding: 5px 8px;
@@ -3201,5 +3499,295 @@
 	}
 	.features-table li:not(.t-footer) div:first-child {
 		width: 130px;
+	}
+}
+
+/*
+ * Payment detail page
+ */
+ 
+.wpzf-payment-detail-page {
+	.page-title-action {
+		display: none;
+	}
+
+	.wpzf-payment-detail-back {
+		margin-top: 16px;
+
+		.wpzf-back-to-payments {
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+		}
+
+		.dashicons {
+			font-size: 16px;
+			width: 16px;
+			height: 16px;
+			line-height: 1;
+		}
+	}
+
+	#side-sortables{
+		margin-top: 20px;
+	}
+
+	#wpzf-payment-details {
+		padding: 0;
+
+		.postbox-header {
+			display: none;
+		}
+
+		.wpzf-payment-details__heading {
+			border-bottom: 1px solid #eee;
+    		font-weight: 600;
+    		padding: 12px 20px;
+		}
+
+		.wpzf-payment-detail {
+			padding: 20px;
+		}
+	}
+
+	.wpzf-payment-breadcrumb {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		margin-bottom: 4px;
+		color: #999;
+		font-size: 13px;
+	}
+
+	.wpzf-back-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+		margin: 8px 0 20px;
+	}
+
+	.wpzf-view-submission-link {
+		font-size: 12px;
+		font-weight: 400;
+		margin-left: 10px;
+	}
+
+	.wpzf-layout {
+		display: flex;
+		gap: 20px;
+		align-items: start;
+
+		.wpzf-main {
+			flex: 1;
+		}
+	}
+	
+
+	.wpzf-card {
+		background: #fff;
+		border: 1px solid #dcdde0;
+		border-radius: 4px;
+		padding: 24px;
+		margin-bottom: 20px;
+
+		h2 {
+			margin: 0 0 20px;
+			font-size: 15px;
+			font-weight: 600;
+			color: #1d2327;
+			border-bottom: 1px solid #f0f0f0;
+			padding-bottom: 14px;
+		}
+	}
+
+	.wpzf-stats-row {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 14px;
+		margin-bottom: 22px;
+
+		@media (max-width: 900px) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	.wpzf-stat-box {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		border: 1px solid #e2e4e7;
+		border-radius: 4px;
+		padding: 14px 16px;
+	}
+
+	.wpzf-stat-icon {
+		width: 38px;
+		height: 38px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: #f6f7f7;
+		border-radius: 4px;
+		flex-shrink: 0;
+		color: #50575e;
+	}
+
+	.wpzf-stat-label {
+		font-size: 11px;
+		color: #787c82;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		margin-bottom: 3px;
+	}
+
+	.wpzf-stat-value {
+		font-size: 17px;
+		font-weight: 600;
+		color: #1d2327;
+		line-height: 1.2;
+	}
+
+	.wpzf-status-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding-top: 4px;
+	}
+
+	.wpzf-status-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 14px;
+		font-weight: 500;
+		color: #3c434a;
+	}
+
+	.wpzf-status-pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 3px 12px;
+		border-radius: 20px;
+		font-size: 13px;
+		font-weight: 600;
+	}
+
+	.wpzf-status-dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		flex-shrink: 0;
+	}
+
+	.wpzf-btns {
+		display: flex;
+		gap: 10px;
+	}
+
+	.wpzf-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 6px 14px;
+		border-radius: 3px;
+		font-size: 13px;
+		font-weight: 500;
+		text-decoration: none;
+		cursor: pointer;
+		border: 1px solid;
+		line-height: 1.6;
+	}
+
+	.wpzf-btn-outline {
+		background: #fff;
+		border-color: #c3c4c7;
+		color: #3c434a;
+
+		&:hover {
+			border-color: #0071a1;
+			color: #0071a1;
+		}
+	}
+
+	.wpzf-btn-danger {
+		background: #fff;
+		border-color: #d63638;
+		color: #d63638;
+
+		&:hover {
+			background: #d63638;
+			color: #fff;
+		}
+	}
+
+	.wpzf-entry-table {
+		width: 100%;
+		border-collapse: collapse;
+
+		tr {
+			border-bottom: 1px solid #f0f0f1;
+
+			&:last-child {
+				border-bottom: none;
+			}
+		}
+
+		th {
+			width: 28%;
+			font-size: 13px;
+			font-weight: 600;
+			color: #3c434a;
+			text-align: left;
+			padding: 10px 0;
+			vertical-align: top;
+		}
+
+		td {
+			font-size: 13px;
+			color: #50575e;
+			padding: 10px 0 10px 16px;
+		}
+	}
+
+	.wpzf-empty {
+		color: #787c82;
+		font-style: italic;
+		font-size: 13px;
+	}
+
+	.wpzf-sidebar .wpzf-sidebar-card {
+		padding: 20px;
+
+		h2 {
+			font-size: 14px;
+			margin-bottom: 10px;
+			padding-bottom: 0;
+			border-bottom: none;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		p {
+			font-size: 13px;
+			color: #50575e;
+			margin: 0 0 14px;
+			line-height: 1.6;
+		}
+
+		.button {
+			font-size: 13px;
+		}
+	}
+
+	.wpzf-sidebar-card--upsell {
+		padding: 0 !important;
+	}
+
+	@media (max-width: 1100px) {
+		.wpzf-layout {
+			flex-direction: column;
+		}
 	}
 }

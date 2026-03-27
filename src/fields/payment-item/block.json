@@ -1,0 +1,93 @@
+{
+	"$schema":      "https://schemas.wp.org/trunk/block.json",
+	"apiVersion":   3,
+	"name":         "wpzoom-forms/payment-item",
+	"title":        "Payment Item",
+	"category":     "wpzoom-forms-payments",
+	"ancestor":     [ "wpzoom-forms/form" ],
+	"description":  "A single purchasable item with a name, price, optional description, and optional quantity selector.",
+	"keywords":     [ "wpzoom", "form", "payment", "item", "product", "price" ],
+	"version":      "1.0.0",
+	"textdomain":   "wpzoom-forms",
+	"attributes":   {
+		"id":            {
+			"type":      "string",
+			"default":   ""
+		},
+		"itemName":      {
+			"type":      "string",
+			"default":   "Item"
+		},
+		"price":         {
+			"type":      "number",
+			"default":   0
+		},
+		"description":   {
+			"type":      "string",
+			"default":   ""
+		},
+		"quantity":      {
+			"type":      "number",
+			"default":   1
+		},
+		"minQty":        {
+			"type":      "number",
+			"default":   1
+		},
+		"maxQty":        {
+			"type":      "number",
+			"default":   99
+		},
+		"showQty":       {
+			"type":      "boolean",
+			"default":   false
+		}
+	},
+	"supports":     {
+		"align":         true,
+		"html":          false,
+		"shadow":        true,
+		"color":         {
+			"background": true,
+			"gradients":  true,
+			"text":       true
+		},
+		"typography":    {
+			"fontSize":   true,
+			"lineHeight": true,
+			"__experimentalFontFamily": true,
+			"__experimentalFontWeight": true,
+			"__experimentalFontStyle": true,
+			"__experimentalTextTransform": true,
+			"__experimentalTextDecoration": true,
+			"__experimentalLetterSpacing": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true
+			}
+		},
+		"dimensions":    {
+			"minHeight":  true
+		},
+		"spacing":       {
+			"margin":     true,
+			"padding":    true,
+			"__experimentalDefaultControls": {
+				"padding": true
+			}
+		},
+		"__experimentalBorder": {
+			"radius":     true,
+			"__experimentalSkipSerialization": true,
+			"__experimentalDefaultControls": {
+				"radius": true
+			}
+		}
+	},
+	"styles": [
+		{ "name": "inline", "label": "Inline" }
+	],
+	"editorScript": "file:./index.js",
+	"editorStyle":  "wpzoom-forms-css-backend-main",
+	"script":       "wpzoom-forms-js-frontend-formblock",
+	"style":        "wpzoom-forms-css-frontend-formblock"
+}
