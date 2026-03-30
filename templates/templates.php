@@ -454,6 +454,68 @@ $templates = array(
 <!-- /wp:wpzoom-forms/form -->'
 	),
 	array(
+		'id'       => 'restaurant-callback-request',
+		'name'     => 'Restaurant Callback',
+		'category' => 'restaurant',
+		'icon'     => '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M290-595.38V-840q0-12.75 8.63-21.37 8.63-8.63 21.38-8.63 12.76 0 21.37 8.63Q350-852.75 350-840v244.62h55.39V-840q0-12.75 8.62-21.37 8.63-8.63 21.39-8.63 12.75 0 21.37 8.63 8.61 8.62 8.61 21.37v244.62q0 53.69-33.34 92.42-33.35 38.73-82.04 49.27V-120q0 12.75-8.63 21.37Q332.74-90 319.99-90q-12.76 0-21.37-8.63Q290-107.25 290-120v-333.69q-48.69-10.54-82.04-49.27-33.34-38.73-33.34-92.42V-840q0-12.75 8.63-21.37 8.62-8.63 21.38-8.63 12.75 0 21.37 8.63 8.61 8.62 8.61 21.37v244.62H290ZM674.61-410h-73.02q-15.51 0-25.86-10.39-10.34-10.4-10.34-25.76V-680q0-75.39 43.61-132.69Q652.61-870 697.61-870q16.85 0 26.93 12.08 10.07 12.07 10.07 30.31V-120q0 12.75-8.63 21.37Q717.36-90 704.6-90q-12.75 0-21.37-8.63-8.62-8.62-8.62-21.37v-290Z"/></svg>',
+		'desc'     => 'Take table callback requests with party size, date, and special requests.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Name","required":true,"id":"input_f18b1404","name":"Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"id":"input_09327d6e","name":"Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/text-phone-field {"label":"Phone","required":true,"id":"input_95c1b0df","name":"Phone"} /-->
+
+<!-- wp:wpzoom-forms/datepicker-field {"label":"Preferred Date","required":true,"id":"input_d05391b2","name":"Preferred Date"} /-->
+
+<!-- wp:wpzoom-forms/select-field {"label":"Party Size","options":["1","2","3","4","5","6","7","8","9","10+"],"required":true,"id":"input_71f1887d","name":"Party Size","defaultValue":"1"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Special Requests","id":"input_e245b5a0","name":"Special Requests"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Request Callback","id":"input_submit","name":"Request Callback"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'partnership-contact-lite',
+		'name'     => 'Partnership Contact',
+		'category' => 'business',
+		'icon'     => '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M471.54-161.15q5.92 0 12.04-2.77 6.11-2.77 9.65-6.31l319.92-319.92q13.54-13.54 20.39-28.93 6.84-15.38 6.84-32.3 0-17.54-6.84-33.77-6.85-16.24-20.39-29.16l-160-160q-12.92-13.54-28-19.81-15.07-6.26-32.61-6.26-16.92 0-32.5 6.26-15.58 6.27-28.73 19.81l-22.93 22.93 74 74.61q13.46 12.85 19.89 29.31 6.42 16.46 6.42 34.15 0 36.62-24.46 61.08t-61.08 24.46q-17.69 0-34.27-5.85-16.57-5.84-29.42-18.69l-66.92-66.3q-3.46-3.47-8.85-3.47-5.38 0-8.84 3.47l-165 164.99q-4.54 4.54-6.81 10.16-2.27 5.61-2.27 11.54 0 11.07 7.54 18.92 7.54 7.85 18.61 7.85 5.93 0 12.04-2.77 6.12-2.77 9.66-6.31l110.3-110.31q8.31-8.31 20.58-8.81 12.27-.5 21.58 8.81 8.69 8.69 8.69 21.08 0 12.38-8.69 21.07l-109.7 110.31q-4.53 4.54-6.8 10.16-2.27 5.61-2.27 11.54 0 10.69 7.73 18.42 7.73 7.73 18.42 7.73 5.93 0 12.04-2.77 6.12-2.77 9.65-6.31l114.93-114.31q8.31-8.3 20.57-8.8 12.27-.5 21.58 8.8 8.69 8.7 8.69 21.08 0 12.38-8.69 21.08L372.92-290.54q-4.15 3.54-6.61 9.65-2.46 6.12-2.46 12.04 0 10.7 7.73 18.43t18.42 7.73q5.92 0 11.54-2.27 5.61-2.27 10.15-6.81l114.93-114.31q8.3-8.31 20.57-8.81t21.58 8.81q8.69 8.69 8.69 21.08 0 12.38-8.69 21.08L453.85-209q-4.54 4.54-6.81 10.54-2.27 6-2.27 11.54 0 11.07 8.23 18.42 8.23 7.35 18.54 7.35Zm-.62 59.99q-33.92 0-59.15-23.53-25.23-23.54-26.38-58.62-34-2.31-56.81-24.15-22.81-21.85-24.73-57.39-35.54-2.3-57.46-24.84-21.93-22.54-23.47-56.7-35.69-2.3-58.92-25.88-23.23-23.58-23.23-59.65 0-17.69 6.73-34.66 6.73-16.96 19.58-29.8l165.38-165.39q20.69-20.69 50.92-20.69 30.24 0 50.93 20.69l66.54 66.54q3.53 4.15 9.26 6.62 5.74 2.46 12.43 2.46 10.92 0 18.84-7.23 7.93-7.23 7.93-18.93 0-6.69-2.46-12.42-2.47-5.73-6.62-9.27L399.92-774.31q-12.92-13.54-28.19-19.81-15.27-6.26-32.81-6.26-16.92 0-32.11 6.26-15.2 6.27-28.73 19.81l-131.39 132q-17.46 17.46-23.46 42.04t1.23 47.81q2.62 12.38-4.5 22.5-7.11 10.11-19.5 12.11-12.38 2-22.69-4.8-10.31-6.81-12.31-19.2-9.46-38.38-.07-76.42 9.38-38.04 38.53-67.19l131-131q22.47-21.85 48.89-32.88 26.42-11.04 55.5-11.04 29.07 0 55.3 11.04 26.24 11.03 48.08 32.88l22.93 22.92 22.92-22.92q22.46-21.85 48.69-32.88 26.23-11.04 55.31-11.04 29.08 0 55.5 11.04 26.42 11.03 48.27 32.88l159 159q21.84 21.85 33.46 49.73 11.61 27.88 11.61 56.96 0 29.08-11.61 55.31-11.62 26.23-33.46 48.07L535.38-128.08q-13.23 13.23-29.8 20.08-16.58 6.84-34.66 6.84Zm-112.61-532.3Z"/></svg>',
+		'desc'     => 'Capture company, partnership type, and idea details from potential partners.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Name","required":true,"id":"input_0f9e9122","name":"Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Email","required":true,"id":"input_f3b6b8d0","name":"Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/text-plain-field {"label":"Company","placeholder":"Your Company Name","id":"input_eb6ac447","name":"Company"} /-->
+
+<!-- wp:wpzoom-forms/select-field {"label":"Partnership Type","options":["strategic","affiliate","joint_venture","other"],"required":true,"id":"input_748c46bc","name":"Partnership Type","defaultValue":"strategic"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Idea Details","placeholder":"Describe your partnership idea in detail","required":true,"id":"input_eeec6268","name":"Idea Details"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Submit Inquiry","id":"input_submit","name":"Submit Inquiry"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'product-feedback-lite',
+		'name'     => 'Product Feedback',
+		'category' => 'surveys',
+		'icon'     => '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="m384-334 96-74 96 74-36-122 90-64H518l-38-124-38 124H330l90 64-36 122Zm96 1.38L345.46-230q-8.69 6.69-18.42 6.19-9.73-.5-17.42-5.58-7.69-5.07-11.85-14.19-4.15-9.11-.31-19.65l51.62-168.46-130-93q-9.31-6.08-11.73-15.81t.81-18.42q3.23-8.69 10.73-14.89 7.5-6.19 18.04-6.19h161.69l52.61-173.54q3.85-10.53 11.66-16.3 7.8-5.77 17.11-5.77 9.31 0 17.11 5.77 7.81 5.77 11.66 16.3L561.38-580h161.69q10.54 0 18.04 6.19 7.5 6.2 10.73 14.89 3.23 8.69.81 18.42-2.42 9.73-11.73 15.81l-130 93 51.62 168.46q3.84 10.54-.31 19.65-4.16 9.12-11.85 14.19-7.69 5.08-17.42 5.58T614.54-230L480-332.62ZM480-489Z"/></svg>',
+		'desc'     => 'Gather overall rating, improvement areas, and open comments on your product.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Your Name","required":true,"id":"input_85833722","name":"Your Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Your Email","required":true,"id":"input_f1cd30f2","name":"Your Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/radio-field {"label":"Overall Rating","options":["Excellent","Good","Average","Poor"],"required":true,"id":"input_76ea7fe7","name":"Overall Rating","defaultValue":"Excellent"} /-->
+
+<!-- wp:wpzoom-forms/multi-checkbox-field {"label":"Areas for Improvement","options":["Usability","Features","Performance","Customer Support"],"id":"input_17757a75","name":"Areas for Improvement"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Comments","placeholder":"Please provide any additional comments or suggestions.","id":"input_2a7e455d","name":"Comments"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Submit Feedback","id":"input_submit","name":"Submit Feedback"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
 		'id'       => 'lead-capture',
 		'name'     => 'Lead Capture',
 		'category' => 'business',
@@ -569,26 +631,6 @@ $templates = array(
 <!-- wp:wpzoom-forms/textarea-field {"label":"Why do you want to join?","required":true,"id":"input_133d37f9","name":"Why do you want to join?"} /-->
 
 <!-- wp:wpzoom-forms/submit-field {"label":"Join Community","id":"input_submit","name":"Join Community"} /-->
-<!-- /wp:wpzoom-forms/form -->',
-	),
-	array(
-		'id'       => 'partnership-contact-lite',
-		'name'     => 'Partnership Contact',
-		'category' => 'business',
-		'icon'     => '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M471.54-161.15q5.92 0 12.04-2.77 6.11-2.77 9.65-6.31l319.92-319.92q13.54-13.54 20.39-28.93 6.84-15.38 6.84-32.3 0-17.54-6.84-33.77-6.85-16.24-20.39-29.16l-160-160q-12.92-13.54-28-19.81-15.07-6.26-32.61-6.26-16.92 0-32.5 6.26-15.58 6.27-28.73 19.81l-22.93 22.93 74 74.61q13.46 12.85 19.89 29.31 6.42 16.46 6.42 34.15 0 36.62-24.46 61.08t-61.08 24.46q-17.69 0-34.27-5.85-16.57-5.84-29.42-18.69l-66.92-66.3q-3.46-3.47-8.85-3.47-5.38 0-8.84 3.47l-165 164.99q-4.54 4.54-6.81 10.16-2.27 5.61-2.27 11.54 0 11.07 7.54 18.92 7.54 7.85 18.61 7.85 5.93 0 12.04-2.77 6.12-2.77 9.66-6.31l110.3-110.31q8.31-8.31 20.58-8.81 12.27-.5 21.58 8.81 8.69 8.69 8.69 21.08 0 12.38-8.69 21.07l-109.7 110.31q-4.53 4.54-6.8 10.16-2.27 5.61-2.27 11.54 0 10.69 7.73 18.42 7.73 7.73 18.42 7.73 5.93 0 12.04-2.77 6.12-2.77 9.65-6.31l114.93-114.31q8.31-8.3 20.57-8.8 12.27-.5 21.58 8.8 8.69 8.7 8.69 21.08 0 12.38-8.69 21.08L372.92-290.54q-4.15 3.54-6.61 9.65-2.46 6.12-2.46 12.04 0 10.7 7.73 18.43t18.42 7.73q5.92 0 11.54-2.27 5.61-2.27 10.15-6.81l114.93-114.31q8.3-8.31 20.57-8.81t21.58 8.81q8.69 8.69 8.69 21.08 0 12.38-8.69 21.08L453.85-209q-4.54 4.54-6.81 10.54-2.27 6-2.27 11.54 0 11.07 8.23 18.42 8.23 7.35 18.54 7.35Zm-.62 59.99q-33.92 0-59.15-23.53-25.23-23.54-26.38-58.62-34-2.31-56.81-24.15-22.81-21.85-24.73-57.39-35.54-2.3-57.46-24.84-21.93-22.54-23.47-56.7-35.69-2.3-58.92-25.88-23.23-23.58-23.23-59.65 0-17.69 6.73-34.66 6.73-16.96 19.58-29.8l165.38-165.39q20.69-20.69 50.92-20.69 30.24 0 50.93 20.69l66.54 66.54q3.53 4.15 9.26 6.62 5.74 2.46 12.43 2.46 10.92 0 18.84-7.23 7.93-7.23 7.93-18.93 0-6.69-2.46-12.42-2.47-5.73-6.62-9.27L399.92-774.31q-12.92-13.54-28.19-19.81-15.27-6.26-32.81-6.26-16.92 0-32.11 6.26-15.2 6.27-28.73 19.81l-131.39 132q-17.46 17.46-23.46 42.04t1.23 47.81q2.62 12.38-4.5 22.5-7.11 10.11-19.5 12.11-12.38 2-22.69-4.8-10.31-6.81-12.31-19.2-9.46-38.38-.07-76.42 9.38-38.04 38.53-67.19l131-131q22.47-21.85 48.89-32.88 26.42-11.04 55.5-11.04 29.07 0 55.3 11.04 26.24 11.03 48.08 32.88l22.93 22.92 22.92-22.92q22.46-21.85 48.69-32.88 26.23-11.04 55.31-11.04 29.08 0 55.5 11.04 26.42 11.03 48.27 32.88l159 159q21.84 21.85 33.46 49.73 11.61 27.88 11.61 56.96 0 29.08-11.61 55.31-11.62 26.23-33.46 48.07L535.38-128.08q-13.23 13.23-29.8 20.08-16.58 6.84-34.66 6.84Zm-112.61-532.3Z"/></svg>',
-		'desc'     => 'Capture company, partnership type, and idea details from potential partners.',
-		'content'  => '<!-- wp:wpzoom-forms/form -->
-<!-- wp:wpzoom-forms/text-name-field {"label":"Name","required":true,"id":"input_0f9e9122","name":"Name"} /-->
-
-<!-- wp:wpzoom-forms/text-email-field {"label":"Email","required":true,"id":"input_f3b6b8d0","name":"Email","replyto":true} /-->
-
-<!-- wp:wpzoom-forms/text-plain-field {"label":"Company","placeholder":"Your Company Name","id":"input_eb6ac447","name":"Company"} /-->
-
-<!-- wp:wpzoom-forms/select-field {"label":"Partnership Type","options":["strategic","affiliate","joint_venture","other"],"required":true,"id":"input_748c46bc","name":"Partnership Type","defaultValue":"strategic"} /-->
-
-<!-- wp:wpzoom-forms/textarea-field {"label":"Idea Details","placeholder":"Describe your partnership idea in detail","required":true,"id":"input_eeec6268","name":"Idea Details"} /-->
-
-<!-- wp:wpzoom-forms/submit-field {"label":"Submit Inquiry","id":"input_submit","name":"Submit Inquiry"} /-->
 <!-- /wp:wpzoom-forms/form -->',
 	),
 	array(
@@ -772,28 +814,6 @@ $templates = array(
 <!-- /wp:wpzoom-forms/form -->',
 	),
 	array(
-		'id'       => 'restaurant-callback-request',
-		'name'     => 'Restaurant Callback',
-		'category' => 'restaurant',
-		'icon'     => '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M290-595.38V-840q0-12.75 8.63-21.37 8.63-8.63 21.38-8.63 12.76 0 21.37 8.63Q350-852.75 350-840v244.62h55.39V-840q0-12.75 8.62-21.37 8.63-8.63 21.39-8.63 12.75 0 21.37 8.63 8.61 8.62 8.61 21.37v244.62q0 53.69-33.34 92.42-33.35 38.73-82.04 49.27V-120q0 12.75-8.63 21.37Q332.74-90 319.99-90q-12.76 0-21.37-8.63Q290-107.25 290-120v-333.69q-48.69-10.54-82.04-49.27-33.34-38.73-33.34-92.42V-840q0-12.75 8.63-21.37 8.62-8.63 21.38-8.63 12.75 0 21.37 8.63 8.61 8.62 8.61 21.37v244.62H290ZM674.61-410h-73.02q-15.51 0-25.86-10.39-10.34-10.4-10.34-25.76V-680q0-75.39 43.61-132.69Q652.61-870 697.61-870q16.85 0 26.93 12.08 10.07 12.07 10.07 30.31V-120q0 12.75-8.63 21.37Q717.36-90 704.6-90q-12.75 0-21.37-8.63-8.62-8.62-8.62-21.37v-290Z"/></svg>',
-		'desc'     => 'Take table callback requests with party size, date, and special requests.',
-		'content'  => '<!-- wp:wpzoom-forms/form -->
-<!-- wp:wpzoom-forms/text-name-field {"label":"Name","required":true,"id":"input_f18b1404","name":"Name"} /-->
-
-<!-- wp:wpzoom-forms/text-email-field {"id":"input_09327d6e","name":"Email","replyto":true} /-->
-
-<!-- wp:wpzoom-forms/text-phone-field {"label":"Phone","required":true,"id":"input_95c1b0df","name":"Phone"} /-->
-
-<!-- wp:wpzoom-forms/datepicker-field {"label":"Preferred Date","required":true,"id":"input_d05391b2","name":"Preferred Date"} /-->
-
-<!-- wp:wpzoom-forms/select-field {"label":"Party Size","options":["1","2","3","4","5","6","7","8","9","10+"],"required":true,"id":"input_71f1887d","name":"Party Size","defaultValue":"1"} /-->
-
-<!-- wp:wpzoom-forms/textarea-field {"label":"Special Requests","id":"input_e245b5a0","name":"Special Requests"} /-->
-
-<!-- wp:wpzoom-forms/submit-field {"label":"Request Callback","id":"input_submit","name":"Request Callback"} /-->
-<!-- /wp:wpzoom-forms/form -->',
-	),
-	array(
 		'id'       => 'customer-intake-short',
 		'name'     => 'Customer Intake',
 		'category' => 'support',
@@ -811,26 +831,6 @@ $templates = array(
 <!-- wp:wpzoom-forms/textarea-field {"label":"How can we help?","required":true,"id":"input_54d1ae04","name":"How can we help?"} /-->
 
 <!-- wp:wpzoom-forms/submit-field {"label":"Submit","id":"input_submit","name":"Submit"} /-->
-<!-- /wp:wpzoom-forms/form -->',
-	),
-	array(
-		'id'       => 'product-feedback-lite',
-		'name'     => 'Product Feedback',
-		'category' => 'surveys',
-		'icon'     => '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="m384-334 96-74 96 74-36-122 90-64H518l-38-124-38 124H330l90 64-36 122Zm96 1.38L345.46-230q-8.69 6.69-18.42 6.19-9.73-.5-17.42-5.58-7.69-5.07-11.85-14.19-4.15-9.11-.31-19.65l51.62-168.46-130-93q-9.31-6.08-11.73-15.81t.81-18.42q3.23-8.69 10.73-14.89 7.5-6.19 18.04-6.19h161.69l52.61-173.54q3.85-10.53 11.66-16.3 7.8-5.77 17.11-5.77 9.31 0 17.11 5.77 7.81 5.77 11.66 16.3L561.38-580h161.69q10.54 0 18.04 6.19 7.5 6.2 10.73 14.89 3.23 8.69.81 18.42-2.42 9.73-11.73 15.81l-130 93 51.62 168.46q3.84 10.54-.31 19.65-4.16 9.12-11.85 14.19-7.69 5.08-17.42 5.58T614.54-230L480-332.62ZM480-489Z"/></svg>',
-		'desc'     => 'Gather overall rating, improvement areas, and open comments on your product.',
-		'content'  => '<!-- wp:wpzoom-forms/form -->
-<!-- wp:wpzoom-forms/text-name-field {"label":"Your Name","required":true,"id":"input_85833722","name":"Your Name"} /-->
-
-<!-- wp:wpzoom-forms/text-email-field {"label":"Your Email","required":true,"id":"input_f1cd30f2","name":"Your Email","replyto":true} /-->
-
-<!-- wp:wpzoom-forms/radio-field {"label":"Overall Rating","options":["Excellent","Good","Average","Poor"],"required":true,"id":"input_76ea7fe7","name":"Overall Rating","defaultValue":"Excellent"} /-->
-
-<!-- wp:wpzoom-forms/multi-checkbox-field {"label":"Areas for Improvement","options":["Usability","Features","Performance","Customer Support"],"id":"input_17757a75","name":"Areas for Improvement"} /-->
-
-<!-- wp:wpzoom-forms/textarea-field {"label":"Comments","placeholder":"Please provide any additional comments or suggestions.","id":"input_2a7e455d","name":"Comments"} /-->
-
-<!-- wp:wpzoom-forms/submit-field {"label":"Submit Feedback","id":"input_submit","name":"Submit Feedback"} /-->
 <!-- /wp:wpzoom-forms/form -->',
 	),
 	array(
