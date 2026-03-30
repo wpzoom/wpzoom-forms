@@ -180,21 +180,35 @@ class WPZOOM_Forms_Stripe_Settings {
 		$stripe = WPZOOM_Forms_Stripe::instance();
 
 		?>
-		<p style="margin-top:16px;padding:10px 14px;background:#fff8e1;border-left:4px solid #f0b429;border-radius:0 4px 4px 0;font-size:13px;">
-			<?php
-			echo wp_kses(
-				sprintf(
-					/* translators: %s: link to PRO upgrade */
-					__( 'A <strong>3%% application fee</strong> applies per transaction. <a href="%s" target="_blank">Upgrade to WPZOOM Forms PRO</a> to remove this fee.', 'wpzoom-forms' ),
-					'https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=stripe-payments-tab'
-				),
-				array(
-					'strong' => array(),
-					'a'      => array( 'href' => array(), 'target' => array() ),
-				)
-			);
-			?>
-		</p>
+		<div class="wpzoom-forms-notice-info">
+			<div class="wpzoom-forms-notice-info__content">
+				<div class="wpzoom-forms-notice-info__icon" aria-hidden="true">
+					<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 -960 960 960" fill="#1f1f1f"><path d="M300-520q-58 0-99-41t-41-99q0-58 41-99t99-41q58 0 99 41t41 99q0 58-41 99t-99 41Zm0-80q25 0 42.5-17.5T360-660q0-25-17.5-42.5T300-720q-25 0-42.5 17.5T240-660q0 25 17.5 42.5T300-600Zm360 440q-58 0-99-41t-41-99q0-58 41-99t99-41q58 0 99 41t41 99q0 58-41 99t-99 41Zm42.5-97.5Q720-275 720-300t-17.5-42.5Q685-360 660-360t-42.5 17.5Q600-325 600-300t17.5 42.5Q635-240 660-240t42.5-17.5ZM177-216q0-17 11-28l528-528q11-11 28-11t28 11q11 11 11 28t-11 28L244-188q-11 11-28 11t-28-11q-11-11-11-28Z"/></svg>
+				</div>
+				<div class="wpzoom-forms-notice-info__text">
+					<h3><?php esc_html_e( 'Pay-as-you-go', 'wpzoom-forms' ); ?></h3>
+					<p>
+						<?php
+						echo wp_kses(
+							sprintf(
+								/* translators: %s: PRO upgrade URL */
+								__( 'A <strong>3%% application fee</strong> applies per transaction. <a href="%s" target="_blank" rel="noopener noreferrer">Upgrade to WPZOOM Forms PRO</a> to remove this fee.', 'wpzoom-forms' ),
+								'https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=stripe-payments-tab'
+							),
+							array(
+								'strong' => array(),
+								'a'      => array(
+									'href'   => array(),
+									'target' => array(),
+									'rel'    => array(),
+								),
+							)
+						);
+						?>
+					</p>
+				</div>
+			</div>
+		</div>
 		<table class="form-table">
 			<tbody>
 				<tr>
@@ -254,7 +268,7 @@ class WPZOOM_Forms_Stripe_Settings {
 		);
 		$switch_url = $stripe->get_oauth_url();
 		?>
-		<div class="wpzf-stripe-connected-box" style="background:#fff;border:1px solid #c3c4c7;border-radius:4px;padding:20px 24px;max-width:620px;">
+		<div class="wpzf-stripe-connected-box" style="background:#fff;border:1px solid #c3c4c7;border-radius:4px;padding:20px 24px;">
 			<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
 				<span style="display:inline-flex;align-items:center;justify-content:center;background:#d4edda;border-radius:50%;width:24px;height:24px;">
 					<svg width="14" height="14" viewBox="0 0 20 20" fill="#1a7f37" aria-hidden="true"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414L8 12.586l7.293-7.293a1 1 0 0 1 1.414 0z" clip-rule="evenodd"/></svg>
@@ -592,7 +606,7 @@ class WPZOOM_Forms_Stripe_Settings {
 		$ajax_url     = admin_url( 'admin-ajax.php' );
 		$nonce        = wp_create_nonce( 'wpzf_stripe_connect' );
 		?>
-		<div id="wpzf-webhook-wrap" style="max-width:560px;">
+		<div id="wpzf-webhook-wrap">
 
 			<?php if ( $auto_configured ) : ?>
 			
