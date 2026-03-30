@@ -43,7 +43,13 @@ Build contact forms, feedback forms, and email forms effortlessly. Simply drag f
 
 **Ready-to-Use Form Templates**
 
-Get started fast with professionally designed templates, including contact, advanced contact, quote request, and feedback forms, plus twenty new layouts for leads, waitlists, demos, audits, events, support, education, real estate, restaurants, and local services.
+Get started fast with professionally designed templates:
+- Simple contact form
+- Feedback form
+- Appointment booking form
+- Quote request form
+- Newsletter signup form
+- +20 additional free starter templates
 
 **🛡️ Advanced Spam Protection**
 
