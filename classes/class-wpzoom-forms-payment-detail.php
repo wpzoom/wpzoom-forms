@@ -413,22 +413,6 @@ class WPZOOM_Forms_Payment_Detail {
 			<strong><?php esc_html_e( 'Date:', 'wpzoom-forms' ); ?></strong>
 			<span><?php echo esc_html( (string) $post_date ); ?></span>
 		</div>
-		<div class="misc-pub-section">
-			<strong><?php esc_html_e( 'Status:', 'wpzoom-forms' ); ?></strong>
-			<span><?php echo esc_html( (string) $sc['label'] ); ?></span>
-		</div>
-		<div class="misc-pub-section">
-			<strong><?php esc_html_e( 'Amount:', 'wpzoom-forms' ); ?></strong>
-			<span><?php echo esc_html( (string) $amount_fmt ); ?></span>
-		</div>
-		<div class="misc-pub-section">
-			<strong><?php esc_html_e( 'Type:', 'wpzoom-forms' ); ?></strong>
-			<span><?php echo esc_html( (string) $type_label ); ?></span>
-		</div>
-		<div class="misc-pub-section">
-			<strong><?php esc_html_e( 'Method:', 'wpzoom-forms' ); ?></strong>
-			<span><?php echo esc_html( (string) $method_label ); ?></span>
-		</div>
 		<?php if ( $email ) : ?>
 			<div class="misc-pub-section">
 				<strong><?php esc_html_e( 'Customer:', 'wpzoom-forms' ); ?></strong>
