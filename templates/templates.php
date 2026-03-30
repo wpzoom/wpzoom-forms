@@ -1,5 +1,201 @@
 <?php
 
+$free_template_icon = '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M172.31-180Q142-180 121-201q-21-21-21-51.31v-455.38Q100-738 121-759q21-21 51.31-21h615.38Q818-780 839-759q21 21 21 51.31v455.38Q860-222 839-201q-21 21-51.31 21H172.31ZM800-662.31 499.46-469.92q-4.61 2.61-9.54 4.11-4.92 1.5-9.92 1.5t-9.92-1.5q-4.93-1.5-9.54-4.11L160-662.31v410q0 5.39 3.46 8.85t8.85 3.46h615.38q5.39 0 8.85-3.46t3.46-8.85v-410ZM480-520l313.85-200h-627.7L480-520ZM160-662.31v9.23-45.73 1.19V-720v22.38-1.27V-653.08v-9.23V-240v-422.31Z"/></svg>';
+
+if ( ! function_exists( 'wpzoom_forms_render_template_required' ) ) {
+	/**
+	 * Render required marker used by form fields.
+	 *
+	 * @param bool $required Required flag.
+	 * @return string
+	 */
+	function wpzoom_forms_render_template_required( $required ) {
+		return $required ? '<sup class="wp-block-wpzoom-forms-required">*</sup>' : '';
+	}
+}
+
+if ( ! function_exists( 'wpzoom_forms_render_template_label' ) ) {
+	/**
+	 * Render field label markup.
+	 *
+	 * @param string $id Field ID.
+	 * @param string $label Label text.
+	 * @param bool   $show_label Show label.
+	 * @param bool   $required Required flag.
+	 * @return string
+	 */
+	function wpzoom_forms_render_template_label( $id, $label, $show_label, $required ) {
+		if ( ! $show_label ) {
+			return '';
+		}
+
+		return '<label for="' . esc_attr( $id ) . '"><span>' . esc_html( $label ) . '</span>' . wpzoom_forms_render_template_required( $required ) . '</label>';
+	}
+}
+
+if ( ! function_exists( 'wpzoom_forms_render_template_field_html' ) ) {
+	/**
+	 * Render field HTML from block type and attributes.
+	 *
+	 * @param string $block_type Block type name.
+	 * @param array  $attrs Block attributes.
+	 * @return string
+	 */
+	function wpzoom_forms_render_template_field_html( $block_type, $attrs ) {
+		$id         = isset( $attrs['id'] ) ? $attrs['id'] : '';
+		$name       = isset( $attrs['name'] ) ? $attrs['name'] : '';
+		$label      = isset( $attrs['label'] ) && '' !== $attrs['label'] ? $attrs['label'] : $name;
+		$show_label = ! isset( $attrs['showLabel'] ) || (bool) $attrs['showLabel'];
+		$required   = ! empty( $attrs['required'] );
+		$placeholder = isset( $attrs['placeholder'] ) ? $attrs['placeholder'] : '';
+
+		switch ( $block_type ) {
+			case 'wpzoom-forms/text-name-field':
+				return wpzoom_forms_render_template_label( $id, $label, $show_label, $required ) .
+					'<input type="text" name="' . esc_attr( $id ) . '" id="' . esc_attr( $id ) . '" placeholder="' . esc_attr( $placeholder ) . '"' . ( $required ? ' required' : '' ) . ' class="wp-block-wpzoom-forms-text-name-field"/>';
+
+			case 'wpzoom-forms/text-email-field':
+				$replyto = ! empty( $attrs['replyto'] ) ? 'true' : 'false';
+				return wpzoom_forms_render_template_label( $id, $label, $show_label, $required ) .
+					'<input type="email" name="' . esc_attr( $id ) . '" id="' . esc_attr( $id ) . '" placeholder="' . esc_attr( $placeholder ) . '"' . ( $required ? ' required' : '' ) . ' data-replyto="' . esc_attr( $replyto ) . '" class="wp-block-wpzoom-forms-text-email-field"/>';
+
+			case 'wpzoom-forms/text-phone-field':
+				return wpzoom_forms_render_template_label( $id, $label, $show_label, $required ) .
+					'<input type="tel" name="' . esc_attr( $id ) . '" id="' . esc_attr( $id ) . '" placeholder="' . esc_attr( $placeholder ) . '"' . ( $required ? ' required' : '' ) . ' class="wp-block-wpzoom-forms-text-phone-field"/>';
+
+			case 'wpzoom-forms/text-plain-field':
+				$type    = isset( $attrs['type'] ) ? $attrs['type'] : 'text';
+				$subject = ! empty( $attrs['subject'] ) ? 'true' : 'false';
+				return wpzoom_forms_render_template_label( $id, $label, $show_label, $required ) .
+					'<input type="' . esc_attr( $type ) . '" name="' . esc_attr( $id ) . '" id="' . esc_attr( $id ) . '" placeholder="' . esc_attr( $placeholder ) . '"' . ( $required ? ' required' : '' ) . ' data-subject="' . esc_attr( $subject ) . '" class="wp-block-wpzoom-forms-text-plain-field"/>';
+
+			case 'wpzoom-forms/text-website-field':
+				return wpzoom_forms_render_template_label( $id, $label, $show_label, $required ) .
+					'<input type="url" name="' . esc_attr( $id ) . '" id="' . esc_attr( $id ) . '" placeholder="' . esc_attr( $placeholder ) . '"' . ( $required ? ' required' : '' ) . ' class="wp-block-wpzoom-forms-text-website-field"/>';
+
+			case 'wpzoom-forms/textarea-field':
+				$cols = isset( $attrs['cols'] ) ? $attrs['cols'] : '20';
+				$rows = isset( $attrs['rows'] ) ? $attrs['rows'] : '4';
+				return wpzoom_forms_render_template_label( $id, $label, $show_label, $required ) .
+					'<textarea name="' . esc_attr( $id ) . '" id="' . esc_attr( $id ) . '" cols="' . esc_attr( $cols ) . '" rows="' . esc_attr( $rows ) . '" placeholder="' . esc_attr( $placeholder ) . '"' . ( $required ? ' required' : '' ) . ' class="wp-block-wpzoom-forms-textarea-field"></textarea>';
+
+			case 'wpzoom-forms/select-field':
+				$options       = isset( $attrs['options'] ) && is_array( $attrs['options'] ) ? $attrs['options'] : array( 'Item #1' );
+				$default_value = isset( $attrs['defaultValue'] ) && in_array( $attrs['defaultValue'], $options, true ) ? $attrs['defaultValue'] : $options[0];
+				$multiple      = ! empty( $attrs['multiple'] );
+				$select_name   = $multiple ? $id . '[]' : $id;
+				$select_html   = '';
+				foreach ( $options as $option ) {
+					$select_html .= '<option value="' . esc_attr( $option ) . '">' . esc_html( $option ) . '</option>';
+				}
+
+				return wpzoom_forms_render_template_label( $id, $label, $show_label, $required ) .
+					'<select name="' . esc_attr( $select_name ) . '" id="' . esc_attr( $id ) . '"' . ( $required ? ' required' : '' ) . ( $multiple ? ' multiple' : '' ) . ' defaultvalue="' . esc_attr( $default_value ) . '" class="wp-block-wpzoom-forms-select-field">' . $select_html . '</select>';
+
+			case 'wpzoom-forms/radio-field':
+				$options      = isset( $attrs['options'] ) && is_array( $attrs['options'] ) ? $attrs['options'] : array( 'Item #1' );
+				$default      = isset( $attrs['defaultValue'] ) ? $attrs['defaultValue'] : '';
+				$field_name   = ! empty( $name ) ? $name : $id;
+				$radio_items  = '';
+				foreach ( $options as $index => $option ) {
+					$radio_items .= '<li><label><input type="radio" name="' . esc_attr( $field_name ) . '" id="' . esc_attr( $id . '-' . $index ) . '" value="' . esc_attr( $option ) . '"' . ( $option === $default ? ' checked' : '' ) . ( $required ? ' required' : '' ) . '/>' . esc_html( $option ) . '</label></li>';
+				}
+				return wpzoom_forms_render_template_label( $id, $label, $show_label, $required ) .
+					'<ul class="wp-block-wpzoom-forms-radio-field" id="' . esc_attr( $id ) . '">' . $radio_items . '</ul>';
+
+			case 'wpzoom-forms/multi-checkbox-field':
+				$options     = isset( $attrs['options'] ) && is_array( $attrs['options'] ) ? $attrs['options'] : array( 'Item #1' );
+				$default     = isset( $attrs['defaultValue'] ) ? $attrs['defaultValue'] : '';
+				$check_items = '';
+				foreach ( $options as $index => $option ) {
+					$check_items .= '<li><label><input type="checkbox" name="' . esc_attr( $id ) . '[]" id="' . esc_attr( $id . '-' . $index ) . '" value="' . esc_attr( $option ) . '"' . ( $option === $default ? ' checked' : '' ) . ( $required ? ' required' : '' ) . '/>' . esc_html( $option ) . '</label></li>';
+				}
+				return wpzoom_forms_render_template_label( $id, $label, $show_label, $required ) .
+					'<ul class="wp-block-wpzoom-forms-multi-checkbox-field" id="' . esc_attr( $id ) . '">' . $check_items . '</ul>';
+
+			case 'wpzoom-forms/checkbox-field':
+				$checked = ! empty( $attrs['defaultValue'] ) ? ' checked' : '';
+				$label_html = '';
+				if ( $show_label ) {
+					$label_html = '<label for="' . esc_attr( $id ) . '"><span>' . esc_html( $label ) . '</span>' . wpzoom_forms_render_template_required( $required ) . '</label>';
+				}
+				return '<div class="wp-block-wpzoom-forms-checkbox-field"><input type="checkbox" name="' . esc_attr( $id ) . '" id="' . esc_attr( $id ) . '"' . $checked . ( $required ? ' required' : '' ) . '/>' . $label_html . '</div>';
+
+			case 'wpzoom-forms/datepicker-field':
+				$format = isset( $attrs['format'] ) ? $attrs['format'] : 'Y-m-d';
+				$mode   = isset( $attrs['mode'] ) ? $attrs['mode'] : 'single';
+				return wpzoom_forms_render_template_label( $id, $label, $show_label, $required ) .
+					'<input data-datepicker="true" autocomplete="off" data-date-format="' . esc_attr( $format ) . '" data-mode="' . esc_attr( $mode ) . '" type="text" name="' . esc_attr( $id ) . '" id="' . esc_attr( $id ) . '" placeholder="' . esc_attr( $format ) . '"' . ( $required ? ' required' : '' ) . ' class="wp-block-wpzoom-forms-datepicker-field"/>';
+
+			case 'wpzoom-forms/submit-field':
+				$button_text = ! empty( $name ) ? $name : 'Submit';
+				return '<input type="submit" id="' . esc_attr( $id ) . '" value="' . esc_attr( $button_text ) . '" class="wp-block-wpzoom-forms-submit-field"/>';
+		}
+
+		return '';
+	}
+}
+
+if ( ! function_exists( 'wpzoom_forms_expand_template_shorthand' ) ) {
+	/**
+	 * Expand shorthand field comments into full block markup.
+	 *
+	 * @param string $content Template content.
+	 * @return string
+	 */
+	function wpzoom_forms_expand_template_shorthand( $content ) {
+		if ( ! is_string( $content ) || '' === $content ) {
+			return $content;
+		}
+
+		// Already in full markup format.
+		if ( strpos( $content, 'wp-block-wpzoom-forms-form' ) !== false ) {
+			return $content;
+		}
+
+		if ( strpos( $content, '<!-- wp:wpzoom-forms/form -->' ) === false ) {
+			return $content;
+		}
+
+		preg_match_all(
+			'/<!--\s*wp:(wpzoom-forms\/(?!form)[a-z-]+)(?:\s+(\{.*?\}))?\s*\/-->/s',
+			$content,
+			$matches,
+			PREG_SET_ORDER
+		);
+
+		if ( empty( $matches ) ) {
+			return $content;
+		}
+
+		$expanded = '<!-- wp:wpzoom-forms/form -->' . "\n";
+		$expanded .= '<div class="wp-block-wpzoom-forms-form">';
+
+		foreach ( $matches as $match ) {
+			$block_type = isset( $match[1] ) ? $match[1] : '';
+			$json_attrs = isset( $match[2] ) ? $match[2] : '{}';
+			$attrs      = json_decode( $json_attrs, true );
+			if ( ! is_array( $attrs ) ) {
+				continue;
+			}
+
+			$field_html = wpzoom_forms_render_template_field_html( $block_type, $attrs );
+			if ( '' === $field_html ) {
+				continue;
+			}
+
+			$expanded .= '<!-- wp:' . $block_type . ' ' . wp_json_encode( $attrs, JSON_UNESCAPED_SLASHES ) . ' -->' . "\n";
+			$expanded .= $field_html . "\n";
+			$expanded .= '<!-- /wp:' . $block_type . ' -->' . "\n\n";
+		}
+
+		$expanded = rtrim( $expanded ) . '</div>' . "\n";
+		$expanded .= '<!-- /wp:wpzoom-forms/form -->';
+
+		return $expanded;
+	}
+}
+
 $templates = array(
 	array(
 		'id'      => 'contact-form',
@@ -288,6 +484,408 @@ $templates = array(
 <!-- /wp:wpzoom-forms/form -->'
 	),
 	array(
+		'id'       => 'lead-capture',
+		'name'     => 'Lead Capture',
+		'category' => 'business',
+		'icon'     => $free_template_icon,
+		'desc'     => 'Collect contact info, service type, and project details from new leads.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Name","required":true,"id":"input_3aa738d3","name":"Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Email","required":true,"id":"input_93ea3142","name":"Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/text-phone-field {"label":"Phone","id":"input_c6eed50c","name":"Phone"} /-->
+
+<!-- wp:wpzoom-forms/select-field {"label":"Service Type","options":["web-design","web-development","seo","other"],"required":true,"id":"input_664d54b6","name":"Service Type","defaultValue":"web-design"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Project Details","required":true,"id":"input_ab0d0a21","name":"Project Details"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Submit","id":"input_submit","name":"Submit"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'waitlist-optin',
+		'name'     => 'Waitlist Signup',
+		'category' => 'newsletter',
+		'icon'     => $free_template_icon,
+		'desc'     => 'Sign up early interest with optional notes and consent for launch updates.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Name","required":true,"id":"input_1c0ba376","name":"Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Email","required":true,"id":"input_31012686","name":"Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/select-field {"label":"Interested In","options":["product-a","product-b","both"],"required":true,"id":"input_7fa818cd","name":"Interested In","defaultValue":"product-a"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Tell us more about what you\'re looking for (optional)","id":"input_31602111","name":"Tell us more about what you\'re looking for (optional)"} /-->
+
+<!-- wp:wpzoom-forms/checkbox-field {"label":"I consent to receiving email updates about the product launch.","required":true,"id":"input_6253c694","name":"I consent to receiving email updates about the product launch."} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Join the Waitlist","id":"input_submit","name":"Join the Waitlist"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'demo-booking-basic',
+		'name'     => 'Demo Request',
+		'category' => 'business',
+		'icon'     => $free_template_icon,
+		'desc'     => 'Book product demos with company, preferred date, and optional discussion topics.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Name","required":true,"id":"input_dbc395ef","name":"Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Business Email","required":true,"id":"input_02c3c928","name":"Business Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/text-plain-field {"label":"Company","placeholder":"Your Company Name","id":"input_4f1f9837","name":"Company"} /-->
+
+<!-- wp:wpzoom-forms/datepicker-field {"label":"Preferred Demo Date","required":true,"id":"input_df963471","name":"Preferred Demo Date"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Notes","placeholder":"Any specific topics you\'d like us to cover?","id":"input_cf9597fa","name":"Notes"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Request Demo","id":"input_submit","name":"Request Demo"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'website-audit-request',
+		'name'     => 'Website Audit Request',
+		'category' => 'business',
+		'icon'     => $free_template_icon,
+		'desc'     => 'Collect site URL, audit focus areas, and challenges before you begin.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Name","required":true,"id":"input_e9882525","name":"Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Email","required":true,"id":"input_5d24db31","name":"Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/text-website-field {"label":"Website URL","required":true,"id":"input_9bdeed34","name":"Website URL"} /-->
+
+<!-- wp:wpzoom-forms/multi-checkbox-field {"label":"Areas of Focus for Audit","options":["seo","performance","accessibility","ux"],"required":true,"id":"input_6f341a02","name":"Areas of Focus for Audit"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Tell us about your challenges","required":true,"id":"input_6e877ef8","name":"Tell us about your challenges"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Request Audit","id":"input_submit","name":"Request Audit"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'podcast-guest-pitch',
+		'name'     => 'Podcast Guest Pitch',
+		'category' => 'events',
+		'icon'     => $free_template_icon,
+		'desc'     => 'Receive guest pitches with topic, profile link, and a short expertise summary.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Your Name","required":true,"id":"input_018bfbfe","name":"Your Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Your Email","required":true,"id":"input_1e9ac516","name":"Your Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/text-plain-field {"label":"Proposed Podcast Topic","required":true,"id":"input_e020b878","name":"Proposed Podcast Topic"} /-->
+
+<!-- wp:wpzoom-forms/text-website-field {"label":"Your Profile URL","id":"input_b0b8cdf3","name":"Your Profile URL"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Brief Summary of Your Expertise and Why You\'d Be a Great Guest","required":true,"id":"input_e83de6cc","name":"Brief Summary of Your Expertise and Why You\'d Be a Great Guest"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Submit Pitch","id":"input_submit","name":"Submit Pitch"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'community-join-form',
+		'name'     => 'Community Join Form',
+		'category' => 'nonprofit',
+		'icon'     => $free_template_icon,
+		'desc'     => 'Ask for membership type and why someone wants to join your community.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Name","required":true,"id":"input_b5722f12","name":"Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Email","required":true,"id":"input_da279fba","name":"Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/radio-field {"label":"Membership Type","options":["basic","premium","vip"],"required":true,"id":"input_c34fd934","name":"Membership Type","defaultValue":"basic"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Why do you want to join?","required":true,"id":"input_133d37f9","name":"Why do you want to join?"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Join Community","id":"input_submit","name":"Join Community"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'partnership-contact-lite',
+		'name'     => 'Partnership Contact',
+		'category' => 'business',
+		'icon'     => $free_template_icon,
+		'desc'     => 'Capture company, partnership type, and idea details from potential partners.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Name","required":true,"id":"input_0f9e9122","name":"Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Email","required":true,"id":"input_f3b6b8d0","name":"Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/text-plain-field {"label":"Company","placeholder":"Your Company Name","id":"input_eb6ac447","name":"Company"} /-->
+
+<!-- wp:wpzoom-forms/select-field {"label":"Partnership Type","options":["strategic","affiliate","joint_venture","other"],"required":true,"id":"input_748c46bc","name":"Partnership Type","defaultValue":"strategic"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Idea Details","placeholder":"Describe your partnership idea in detail","required":true,"id":"input_eeec6268","name":"Idea Details"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Submit Inquiry","id":"input_submit","name":"Submit Inquiry"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'webinar-interest-form',
+		'name'     => 'Webinar Interest',
+		'category' => 'events',
+		'icon'     => $free_template_icon,
+		'desc'     => 'Let people pick webinar topics and a preferred date, plus an optional message.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Name","required":true,"id":"input_40ded0b3","name":"Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Email","required":true,"id":"input_ca17d021","name":"Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/multi-checkbox-field {"label":"Preferred Webinar Topics","options":["Topic 1","Topic 2","Topic 3"],"required":true,"id":"input_d1792bf3","name":"Preferred Webinar Topics"} /-->
+
+<!-- wp:wpzoom-forms/datepicker-field {"label":"Preferred Date","required":true,"id":"input_12f00fbd","name":"Preferred Date"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"id":"input_423ea896","name":"Message"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Submit","id":"input_submit","name":"Submit"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'beta-access-request',
+		'name'     => 'Beta Access Request',
+		'category' => 'support',
+		'icon'     => $free_template_icon,
+		'desc'     => 'Sign up beta testers with role, optional website, and a required use case.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Name","required":true,"id":"input_c71caa13","name":"Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Email","required":true,"id":"input_095728b8","name":"Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/select-field {"label":"Role","options":["Developer","Designer","Project Manager","Other"],"required":true,"id":"input_7d9a0813","name":"Role","defaultValue":"Developer"} /-->
+
+<!-- wp:wpzoom-forms/text-website-field {"label":"Website","id":"input_7438ad1d","name":"Website"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Use Case Details","required":true,"id":"input_af043c01","name":"Use Case Details"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Request Beta Access","id":"input_submit","name":"Request Beta Access"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'maintenance-request-basic',
+		'name'     => 'Maintenance Request',
+		'category' => 'support',
+		'icon'     => $free_template_icon,
+		'desc'     => 'Log maintenance requests with subject, priority level, and issue details.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Your Name","required":true,"id":"input_f0c0506a","name":"Your Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Your Email","required":true,"id":"input_474f2f70","name":"Your Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/text-plain-field {"label":"Subject","placeholder":"Enter Subject","required":true,"id":"input_b809f71f","name":"Subject","subject":true} /-->
+
+<!-- wp:wpzoom-forms/radio-field {"label":"Priority","options":["Low","Medium","High"],"required":true,"id":"input_819a194b","name":"Priority","defaultValue":"Low"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Issue Details","placeholder":"Describe the issue in detail","required":true,"id":"input_a50b70c2","name":"Issue Details"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Submit Request","id":"input_submit","name":"Submit Request"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'press-inquiry-form',
+		'name'     => 'Press Inquiry',
+		'category' => 'business',
+		'icon'     => $free_template_icon,
+		'desc'     => 'Collect publication, subject, and questions from press or media contacts.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Name","required":true,"id":"input_0362219e","name":"Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Email","required":true,"id":"input_1aa78781","name":"Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/text-plain-field {"label":"Publication","placeholder":"Name of Publication","id":"input_5043b9f2","name":"Publication"} /-->
+
+<!-- wp:wpzoom-forms/text-plain-field {"label":"Topic Subject","placeholder":"Subject of Inquiry","required":true,"id":"input_6a23ca9e","name":"Topic Subject","subject":true} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Questions","placeholder":"Your Questions","required":true,"id":"input_13b3e147","name":"Questions"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Submit Inquiry","id":"input_submit","name":"Submit Inquiry"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'content-brief-request',
+		'name'     => 'Content Brief Request',
+		'category' => 'business',
+		'icon'     => $free_template_icon,
+		'desc'     => 'Gather content type, topic, and brief details from clients or stakeholders.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Client Name","required":true,"id":"input_2e5ae16f","name":"Client Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Client Email","required":true,"id":"input_2f44772b","name":"Client Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/select-field {"label":"Content Type","options":["blog-post","website-copy","social-media-post","email-newsletter"],"required":true,"id":"input_e5bbb1c0","name":"Content Type","defaultValue":"blog-post"} /-->
+
+<!-- wp:wpzoom-forms/text-plain-field {"label":"Topic","required":true,"id":"input_6d3bede6","name":"Topic"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Brief Details","required":true,"id":"input_02c21ae1","name":"Brief Details"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Submit Request","id":"input_submit","name":"Submit Request"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'sponsorship-inquiry-lite',
+		'name'     => 'Sponsorship Inquiry',
+		'category' => 'events',
+		'icon'     => $free_template_icon,
+		'desc'     => 'Let sponsors share brand, tier, and goals for your event or program.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Contact Name","required":true,"id":"input_619ddb97","name":"Contact Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Contact Email","required":true,"id":"input_fe586e35","name":"Contact Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/text-plain-field {"label":"Brand","required":true,"id":"input_197feb9a","name":"Brand"} /-->
+
+<!-- wp:wpzoom-forms/select-field {"label":"Sponsorship Tier","options":["Bronze","Silver","Gold","Platinum"],"required":true,"id":"input_77ccf3d6","name":"Sponsorship Tier","defaultValue":"Bronze"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Goals","required":true,"id":"input_d0558510","name":"Goals"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Submit Inquiry","id":"input_submit","name":"Submit Inquiry"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'speaker-interest-form',
+		'name'     => 'Speaker Interest',
+		'category' => 'events',
+		'icon'     => $free_template_icon,
+		'desc'     => 'Collect talk title, summary, and profile link from prospective speakers.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Name","required":true,"id":"input_d7292b51","name":"Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Email","required":true,"id":"input_1c448dc1","name":"Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/text-plain-field {"label":"Talk Title","required":true,"id":"input_5263d4e3","name":"Talk Title"} /-->
+
+<!-- wp:wpzoom-forms/text-website-field {"label":"Profile URL","id":"input_cc47a0f4","name":"Profile URL"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Talk Summary","required":true,"id":"input_e63a4bbe","name":"Talk Summary"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Submit","id":"input_submit","name":"Submit"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'student-interest-form',
+		'name'     => 'Student Interest',
+		'category' => 'education',
+		'icon'     => $free_template_icon,
+		'desc'     => 'Capture program interest plus optional start date and learning goals.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Student Name","required":true,"id":"input_9e9a18d0","name":"Student Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Email Address","required":true,"id":"input_7ce80207","name":"Email Address","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/select-field {"label":"Program of Interest","options":["web-development","graphic-design","digital-marketing"],"required":true,"id":"input_97a7af65","name":"Program of Interest","defaultValue":"web-development"} /-->
+
+<!-- wp:wpzoom-forms/datepicker-field {"label":"Preferred Start Date","required":false,"id":"input_0f6808a2","name":"Preferred Start Date"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Learning Goals","required":false,"id":"input_9c305f5f","name":"Learning Goals"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Submit","id":"input_submit","name":"Submit"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'property-lead-basic',
+		'name'     => 'Property Lead',
+		'category' => 'real-estate',
+		'icon'     => $free_template_icon,
+		'desc'     => 'Capture property type, contact info, and requirements from interested buyers.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Name","required":true,"id":"input_cf28f17d","name":"Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Email","required":true,"id":"input_9ca41a44","name":"Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/text-phone-field {"label":"Phone","id":"input_90f131ab","name":"Phone"} /-->
+
+<!-- wp:wpzoom-forms/select-field {"label":"Property Type","options":["Apartment","House","Condo","Townhouse"],"required":true,"id":"input_2ac105c5","name":"Property Type","defaultValue":"Apartment"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Requirements","id":"input_6df58d20","name":"Requirements"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Submit","id":"input_submit","name":"Submit"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'restaurant-callback-request',
+		'name'     => 'Restaurant Callback',
+		'category' => 'restaurant',
+		'icon'     => $free_template_icon,
+		'desc'     => 'Take table callback requests with party size, date, and special requests.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Name","required":true,"id":"input_f18b1404","name":"Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"id":"input_09327d6e","name":"Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/text-phone-field {"label":"Phone","required":true,"id":"input_95c1b0df","name":"Phone"} /-->
+
+<!-- wp:wpzoom-forms/datepicker-field {"label":"Preferred Date","required":true,"id":"input_d05391b2","name":"Preferred Date"} /-->
+
+<!-- wp:wpzoom-forms/select-field {"label":"Party Size","options":["1","2","3","4","5","6","7","8","9","10+"],"required":true,"id":"input_71f1887d","name":"Party Size","defaultValue":"1"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Special Requests","id":"input_e245b5a0","name":"Special Requests"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Request Callback","id":"input_submit","name":"Request Callback"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'customer-intake-short',
+		'name'     => 'Customer Intake',
+		'category' => 'support',
+		'icon'     => $free_template_icon,
+		'desc'     => 'Quick intake for new or returning customers and what they need help with.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Full Name","required":true,"id":"input_b8d4fc29","name":"Full Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Email Address","required":true,"id":"input_9cb47fa5","name":"Email Address","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/text-phone-field {"label":"Phone Number","id":"input_ae6e6685","name":"Phone Number"} /-->
+
+<!-- wp:wpzoom-forms/radio-field {"label":"Customer Type","options":["new","existing"],"required":true,"id":"input_de8f680d","name":"Customer Type","defaultValue":"new"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"How can we help?","required":true,"id":"input_54d1ae04","name":"How can we help?"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Submit","id":"input_submit","name":"Submit"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'product-feedback-lite',
+		'name'     => 'Product Feedback',
+		'category' => 'surveys',
+		'icon'     => $free_template_icon,
+		'desc'     => 'Gather overall rating, improvement areas, and open comments on your product.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Your Name","required":true,"id":"input_85833722","name":"Your Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Your Email","required":true,"id":"input_f1cd30f2","name":"Your Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/radio-field {"label":"Overall Rating","options":["Excellent","Good","Average","Poor"],"required":true,"id":"input_76ea7fe7","name":"Overall Rating","defaultValue":"Excellent"} /-->
+
+<!-- wp:wpzoom-forms/multi-checkbox-field {"label":"Areas for Improvement","options":["Usability","Features","Performance","Customer Support"],"id":"input_17757a75","name":"Areas for Improvement"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Comments","placeholder":"Please provide any additional comments or suggestions.","id":"input_2a7e455d","name":"Comments"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Submit Feedback","id":"input_submit","name":"Submit Feedback"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'       => 'local-service-enquiry',
+		'name'     => 'Local Service Enquiry',
+		'category' => 'business',
+		'icon'     => $free_template_icon,
+		'desc'     => 'Collect location, preferred date, and job details for local service calls.',
+		'content'  => '<!-- wp:wpzoom-forms/form -->
+<!-- wp:wpzoom-forms/text-name-field {"label":"Name","required":true,"id":"input_98403d1d","name":"Name"} /-->
+
+<!-- wp:wpzoom-forms/text-email-field {"label":"Email","required":true,"id":"input_6f8d920a","name":"Email","replyto":true} /-->
+
+<!-- wp:wpzoom-forms/text-phone-field {"label":"Phone","id":"input_d9c2952e","name":"Phone"} /-->
+
+<!-- wp:wpzoom-forms/text-plain-field {"label":"Location","required":true,"id":"input_fa2ea51d","name":"Location"} /-->
+
+<!-- wp:wpzoom-forms/datepicker-field {"label":"Preferred Service Date","id":"input_376d4126","name":"Preferred Service Date"} /-->
+
+<!-- wp:wpzoom-forms/textarea-field {"label":"Details","required":true,"id":"input_c41010c4","name":"Details"} /-->
+
+<!-- wp:wpzoom-forms/submit-field {"label":"Submit","id":"input_submit","name":"Submit"} /-->
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
 		'id'      => 'registration-form',
 		'name'    => 'Event RSVP',
 		
@@ -377,6 +975,17 @@ $templates = array(
 		'is_pro'  => true,
 	),
 
+);
+
+$templates = array_map(
+	function( $template ) {
+		if ( isset( $template['content'] ) && is_string( $template['content'] ) ) {
+			$template['content'] = wpzoom_forms_expand_template_shorthand( $template['content'] );
+		}
+
+		return $template;
+	},
+	$templates
 );
 
 return $templates;
