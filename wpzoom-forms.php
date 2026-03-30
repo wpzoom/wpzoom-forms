@@ -1916,31 +1916,69 @@ class WPZOOM_Forms {
 	 * @param int $post_id The submission post ID.
 	 */
 	private function render_submission_payment_section( $post_id ) {
-		$payment_total = get_post_meta( $post_id, '_wpzf_payment_total', true );
+		// Payment post is the single source of truth — find it first.
+		$payments = get_posts( array(
+			'post_type'      => 'wpzf-payment',
+			'post_status'    => 'any',
+			'posts_per_page' => 1,
+			'meta_query'     => array(
+				array(
+					'key'   => '_wpzf_txn_submission_id',
+					'value' => absint( $post_id ),
+					'type'  => 'NUMERIC',
+				),
+			),
+			'fields'         => 'ids',
+		) );
 
-		if ( empty( $payment_total ) && '0' !== $payment_total ) {
+		if ( empty( $payments ) ) {
 			return;
 		}
 
-		$type     = get_post_meta( $post_id, '_wpzf_payment_type',     true );
-		$method   = get_post_meta( $post_id, '_wpzf_payment_method',   true );
-		$status   = get_post_meta( $post_id, '_wpzf_payment_status',   true );
-		$items    = get_post_meta( $post_id, '_wpzf_payment_items',    true );
-		$currency = get_post_meta( $post_id, '_wpzf_payment_currency', true ) ?: get_option( 'wpzf_payment_currency', 'usd' );
+		$payment_id   = (int) $payments[0];
+		$payment_link = get_edit_post_link( $payment_id );
 
-		$status_colors = array(
-			'processing' => '#996800',
-			'succeeded'  => '#00a32a',
-			'failed'     => '#d63638',
-			'refunded'   => '#646970',
+		// Read live financial data from the payment post (updated by webhooks).
+		$status       = get_post_meta( $payment_id, '_wpzf_txn_status',         true ) ?: 'pending';
+		$payment_total = (int) get_post_meta( $payment_id, '_wpzf_txn_amount',  true );
+		$currency      = strtoupper( get_post_meta( $payment_id, '_wpzf_txn_currency', true ) ?: get_option( 'wpzf_payment_currency', 'usd' ) );
+		$method        = get_post_meta( $payment_id, '_wpzf_txn_payment_method', true );
+		$form_id       = (int) get_post_meta( $payment_id, '_wpzf_txn_form_id',  true );
+
+		// Submission-specific data stays on the submission post.
+		$type  = get_post_meta( $post_id, '_wpzf_payment_type',  true );
+		$items = get_post_meta( $post_id, '_wpzf_payment_items', true );
+
+		$status_labels = array(
+			'paid'     => __( 'Processed',  'wpzoom-forms' ),
+			'pending'  => __( 'Incomplete', 'wpzoom-forms' ),
+			'failed'   => __( 'Failed',     'wpzoom-forms' ),
+			'refunded' => __( 'Refunded',   'wpzoom-forms' ),
 		);
-		$badge_color = $status_colors[ $status ] ?? '#646970';
+		$status_colors = array(
+			'paid'     => '#00a32a',
+			'pending'  => '#996800',
+			'failed'   => '#d63638',
+			'refunded' => '#646970',
+		);
+		$status_label = $status_labels[ $status ] ?? ucfirst( $status );
+		$badge_color  = $status_colors[ $status ] ?? '#646970';
 
 		?>
 		<div class="wpzf-payment-details" style="margin-top:20px;padding:16px;border:1px solid #ddd;border-radius:4px;background:#f9f9f9;">
-			<h3 style="margin:0 0 12px;font-size:14px;border-bottom:1px solid #ddd;padding-bottom:8px;">
-				<?php esc_html_e( 'Payment Details', 'wpzoom-forms' ); ?>
-			</h3>
+			<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px;border-bottom:1px solid #ddd;padding-bottom:8px;">
+				<h3 style="margin:0;font-size:14px;">
+					<?php esc_html_e( 'Payment Details', 'wpzoom-forms' ); ?>
+				</h3>
+				<?php if ( $payment_link ) : ?>
+					<a href="<?php echo esc_url( $payment_link ); ?>" class="button" style="white-space:nowrap;">
+						<?php
+						/* translators: %d: payment ID */
+						echo esc_html( sprintf( __( 'View Payment #%d', 'wpzoom-forms' ), $payment_id ) );
+						?>
+					</a>
+				<?php endif; ?>
+			</div>
 
 			<table class="widefat" style="border:0;background:transparent;margin-bottom:12px;">
 				<tbody>
@@ -1948,7 +1986,7 @@ class WPZOOM_Forms {
 						<td style="padding:6px 0;font-weight:600;width:120px;"><?php esc_html_e( 'Status', 'wpzoom-forms' ); ?></td>
 						<td style="padding:6px 0;">
 							<span style="display:inline-block;padding:2px 8px;border-radius:3px;font-size:12px;font-weight:600;color:#fff;background:<?php echo esc_attr( $badge_color ); ?>;">
-								<?php echo esc_html( ucfirst( $status ) ); ?>
+								<?php echo esc_html( $status_label ); ?>
 							</span>
 						</td>
 					</tr>
@@ -1990,8 +2028,7 @@ class WPZOOM_Forms {
 				<?php
 				$period_suffix = '';
 				if ( 'recurring' === $type ) {
-					$form_id       = intval( get_post_meta( $post_id, '_wpzf_form_id', true ) );
-					$period        = get_post_meta( $form_id, '_wpzf_stripe_recurring_period', true ) ?: 'month';
+					$period        = $form_id ? ( get_post_meta( $form_id, '_wpzf_stripe_recurring_period', true ) ?: 'month' ) : 'month';
 					$period_labels = array(
 						'day'   => __( '/ day',   'wpzoom-forms' ),
 						'week'  => __( '/ week',  'wpzoom-forms' ),

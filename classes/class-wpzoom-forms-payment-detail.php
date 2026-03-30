@@ -125,6 +125,48 @@ class WPZOOM_Forms_Payment_Detail {
 	}
 
 	/**
+	 * Prints a "View Payment" button above the form on the wpzf-submission edit screen.
+	 *
+	 * @param WP_Post $post Current post object.
+	 */
+	public function render_submission_payment_button( $post ) {
+		if ( ! $post || 'wpzf-submission' !== $post->post_type ) {
+			return;
+		}
+
+		$payments = get_posts( array(
+			'post_type'      => 'wpzf-payment',
+			'post_status'    => 'any',
+			'posts_per_page' => 1,
+			'meta_query'     => array(
+				array(
+					'key'   => '_wpzf_txn_submission_id',
+					'value' => absint( $post->ID ),
+					'type'  => 'NUMERIC',
+				),
+			),
+			'fields'         => 'ids',
+		) );
+
+		if ( empty( $payments ) ) {
+			return;
+		}
+
+		$payment_id   = $payments[0];
+		$payment_link = get_edit_post_link( $payment_id );
+		?>
+		<div class="wpzf-submission-payment-link">
+			<a href="<?php echo esc_url( $payment_link ); ?>" class="button">
+				<?php
+				/* translators: %d: payment ID */
+				echo esc_html( sprintf( __( 'View Payment #%d', 'wpzoom-forms' ), $payment_id ) );
+				?>
+			</a>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Registers the payment detail meta boxes on the wpzf-payment edit screen.
 	 */
 	public function register_meta_boxes() {
