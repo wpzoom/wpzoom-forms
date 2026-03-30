@@ -3359,7 +3359,7 @@ class WPZOOM_Forms {
 				}
 
 				// Create a payment record for any form method when payment blocks exist.
-				$this->maybe_create_payment_record( $form_id, $blocks, $input_blocks );
+				$this->maybe_create_payment_record( $form_id, $blocks, $input_blocks, $submission_post_id ?? 0 );
 			}
 		}
 
@@ -3490,7 +3490,7 @@ class WPZOOM_Forms {
 	 * @param array $blocks       Parsed blocks from the form content.
 	 * @param array $input_blocks Map of block IDs to names.
 	 */
-	private function maybe_create_payment_record( $form_id, $blocks, $input_blocks ) {
+	private function maybe_create_payment_record( $form_id, $blocks, $input_blocks, $submission_post_id = 0 ) {
 		if ( ! $this->form_has_payment_blocks( $blocks ) ) {
 			return;
 		}
@@ -3520,6 +3520,9 @@ class WPZOOM_Forms {
 			'fields'         => 'ids',
 		) );
 		if ( ! empty( $existing ) ) {
+			if ( $submission_post_id ) {
+				update_post_meta( $existing[0], '_wpzf_txn_submission_id', absint( $submission_post_id ) );
+			}
 			return;
 		}
 
@@ -3540,7 +3543,8 @@ class WPZOOM_Forms {
 			$payment_intent_id,
 			$payment_total,
 			$payment_currency,
-			$payment_email
+			$payment_email,
+			$submission_post_id
 		);
 	}
 

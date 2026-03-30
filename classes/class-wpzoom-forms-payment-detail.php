@@ -509,20 +509,14 @@ class WPZOOM_Forms_Payment_Detail {
 
 		$fields   = array();
 		$sub_link = '';
-		if ( $form_id ) {
-			$subs = get_posts( array(
-				'post_type'      => 'wpzf-submission',
-				'posts_per_page' => 1,
-				'meta_query'     => array(
-					array( 'key' => '_wpzf_form_id', 'value' => $form_id ),
-				),
-				'orderby'        => 'date',
-				'order'          => 'DESC',
-				'fields'         => 'ids',
-			) );
-			if ( ! empty( $subs ) ) {
-				$fields   = (array) ( get_post_meta( $subs[0], '_wpzf_fields', true ) ?: array() );
-				$sub_link = get_edit_post_link( $subs[0] );
+
+		// Use the submission directly linked to this payment (stored at creation time).
+		$submission_id = (int) get_post_meta( $payment_id, '_wpzf_txn_submission_id', true );
+		if ( $submission_id ) {
+			$sub = get_post( $submission_id );
+			if ( $sub && 'wpzf-submission' === $sub->post_type ) {
+				$fields   = (array) ( get_post_meta( $submission_id, '_wpzf_fields', true ) ?: array() );
+				$sub_link = get_edit_post_link( $submission_id );
 			}
 		}
 

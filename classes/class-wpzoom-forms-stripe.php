@@ -913,7 +913,7 @@ class WPZOOM_Forms_Stripe {
 	 * @param string $customer_email    Submitter email.
 	 * @return int|WP_Error The new post ID or WP_Error on failure.
 	 */
-	public function create_payment_post( $form_id, $payment_intent_id, $amount, $currency, $customer_email = '' ) {
+	public function create_payment_post( $form_id, $payment_intent_id, $amount, $currency, $customer_email = '', $submission_id = 0 ) {
 		$post_id = wp_insert_post( array(
 			'post_type'      => 'wpzf-payment',
 			'post_status'    => 'publish',
@@ -934,6 +934,7 @@ class WPZOOM_Forms_Stripe {
 				'_wpzf_txn_stripe_account_id' => sanitize_text_field( get_option( 'wpzf_stripe_account_id', '' ) ),
 				'_wpzf_txn_customer_email'    => sanitize_email( $customer_email ),
 				'_wpzf_txn_test_mode'         => $this->is_test_mode() ? '1' : '0',
+				'_wpzf_txn_submission_id'     => absint( $submission_id ),
 			),
 		), true );
 
