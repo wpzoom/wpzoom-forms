@@ -16,6 +16,7 @@ const Save = ( { attributes } ) => {
 		type:        'number',
 		id,
 		name:        id,
+		value:       min,
 		placeholder,
 		step:        step > 0 ? step : 1,
 		required:    !! required,
