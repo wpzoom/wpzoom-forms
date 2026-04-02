@@ -102,6 +102,22 @@
 	border-radius: 2px;
 	transform: translate(50%, -50%);
 }
+.wpzoom-forms-templates-list li .wpzoom-forms-template-list-badge {
+	position: absolute;
+	top: 0;
+	right: 20px;
+	z-index: 1;
+	line-height: 1.5;
+	color: #fff;
+	background: #3496FF;
+	padding: 2px 6px;
+	border-radius: 2px;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+	transform: translate(50%, -50%);
+}
 .wpzoom-forms-template-list-item-cta {
 	border: 2px solid #3496FF !important;
 	background: linear-gradient(135deg, rgba(52, 150, 255, 0.05) 0%, rgba(26, 95, 184, 0.05) 100%);
