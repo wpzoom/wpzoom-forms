@@ -418,8 +418,18 @@
 			updateTotalDisplay( form, totalCents );
 			if ( mounted && totalCents > 0 ) elements.update( { amount: totalCents } );
 
+			// If total is $0 (all items optional and none selected), skip Stripe
+			// and submit the form as a regular (free) submission.
+			if ( totalCents === 0 ) {
+				form.removeEventListener( 'submit', handleSubmit );
+				if ( submitBtn ) submitBtn.disabled = false;
+				setOverlay( form, false );
+				form.submit();
+				return;
+			}
+
 			const minAmount = getMinimumStripeAmount();
-			console.log(minAmount, totalCents);
+
 			if ( totalCents < minAmount ) {
 				showError( form, 'Order total must be at least ' + formatCurrency( minAmount ) + '.' );
 				if ( submitBtn ) submitBtn.disabled = false;
