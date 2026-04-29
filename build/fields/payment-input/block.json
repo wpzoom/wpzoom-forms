@@ -1,0 +1,111 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "wpzoom-forms/payment-input",
+  "title": "Amount Input",
+  "category": "wpzoom-forms-payments",
+  "ancestor": [
+    "wpzoom-forms/form"
+  ],
+  "description": "A number input field where users enter a custom payment amount (e.g. donation).",
+  "keywords": [
+    "wpzoom",
+    "form",
+    "payment",
+    "number",
+    "input",
+    "amount",
+    "donation"
+  ],
+  "version": "1.0.0",
+  "textdomain": "wpzoom-forms",
+  "attributes": {
+    "id": {
+      "type": "string",
+      "default": ""
+    },
+    "label": {
+      "type": "string",
+      "default": "Amount"
+    },
+    "showLabel": {
+      "type": "boolean",
+      "default": true
+    },
+    "placeholder": {
+      "type": "string",
+      "default": "0.00"
+    },
+    "min": {
+      "type": "number",
+      "default": 0.6
+    },
+    "max": {
+      "type": "number",
+      "default": 0
+    },
+    "step": {
+      "type": "number",
+      "default": 1
+    },
+    "required": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "supports": {
+    "align": true,
+    "html": false,
+    "shadow": true,
+    "color": {
+      "background": true,
+      "gradients": true,
+      "text": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "__experimentalFontFamily": true,
+      "__experimentalFontWeight": true,
+      "__experimentalFontStyle": true,
+      "__experimentalTextTransform": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true
+      }
+    },
+    "dimensions": {
+      "minHeight": true
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "__experimentalDefaultControls": {
+        "padding": true
+      }
+    },
+    "__experimentalBorder": {
+      "radius": true,
+      "__experimentalSkipSerialization": true,
+      "__experimentalDefaultControls": {
+        "radius": true
+      }
+    }
+  },
+  "styles": [
+    {
+      "name": "modern",
+      "label": "Modern",
+      "isDefault": true
+    },
+    {
+      "name": "classic",
+      "label": "Classic"
+    }
+  ],
+  "editorScript": "file:./index.js",
+  "editorStyle": "wpzoom-forms-css-backend-main",
+  "script": "wpzoom-forms-js-frontend-formblock",
+  "style": "wpzoom-forms-css-frontend-formblock"
+}

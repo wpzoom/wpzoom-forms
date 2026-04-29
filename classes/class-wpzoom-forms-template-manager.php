@@ -191,6 +191,9 @@ if ( ! class_exists( 'WPZOOM_Forms_Template_Manager' ) ) {
 									
 									?>
 									<li class="<?php echo $class; ?>">
+										<?php if ( ! empty( $template_data['badge'] ) ) : ?>
+											<span class="wpzoom-forms-template-list-badge"><?php echo esc_html( $template_data['badge'] ); ?></span>
+										<?php endif; ?>
 										<a href="#" data-template-id="<?php echo esc_attr( $template_data['id'] ) ?>">
 											<div class="wpzoom-forms-template-list-wrapper">
 												<span class="wpzoom-forms-icon-holder"><?php echo $template_data['icon'] ?></span>
@@ -230,7 +233,7 @@ if ( ! class_exists( 'WPZOOM_Forms_Template_Manager' ) ) {
 
 				<script type="text/javascript">
 					jQuery(document).ready(function($) {
-						$('.wpzoom-forms-settings-upsell-container').insertAfter('#posts-filter');
+						$('.wpzf-sidebar').insertAfter('#posts-filter');
 					});
 					</script>
 				<?php

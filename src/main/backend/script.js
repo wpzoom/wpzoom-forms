@@ -1,9 +1,9 @@
 import { useBlockProps, InspectorControls, InnerBlocks, RichText } from '@wordpress/block-editor';
 import { registerBlockType, updateCategory } from '@wordpress/blocks';
-import { Card, CardBody, CardHeader, Disabled, Flex, FlexBlock, FlexItem, IconButton, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl, ClipboardButton, Button, Icon, __experimentalHStack as HStack } from '@wordpress/components';
+import { Card, CardBody, CardHeader, Disabled, Flex, FlexBlock, FlexItem, IconButton, Modal, PanelBody, RangeControl, SelectControl, TextControl, ToggleControl, ClipboardButton, Button, Icon, __experimentalHStack as HStack } from '@wordpress/components';
 import { useEntityProp } from '@wordpress/core-data';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { Fragment, useEffect, useState } from '@wordpress/element';
+import { Fragment, useEffect, useState, useRef } from '@wordpress/element';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
 import { __, setLocaleData, sprintf } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
@@ -177,7 +177,7 @@ updateCategory('wpzoom-forms', {
 });
 
 registerPlugin('wpzoom-forms-document-settings', {
-	icon: '',
+	icon: <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 2C0 0.895431 0.895431 0 2 0H14C15.1046 0 16 0.895431 16 2V14C16 15.1046 15.1046 16 14 16H2C0.895431 16 0 15.1046 0 14V2Z" fill="#164777" /><path d="M5.276 12.084H6.032L8.156 7.224L10.268 12.084H11.024L13.148 5.316H13.988V4.104H10.628V5.316H11.708L10.508 9.468L8.552 4.872H7.832L5.876 9.468L4.592 5.316H5.636V4.104H2.276V5.316H3.116L5.276 12.084Z" fill="white" /></svg>,
 	render: props => {
 		const postID = useSelect(select => select('core/editor').getCurrentPostId(), []);
 		const postType = useSelect(select => select('core/editor').getCurrentPostType(), []);
@@ -205,10 +205,94 @@ registerPlugin('wpzoom-forms-document-settings', {
 		const formCustomSuccessRedirectTimeoutMessageHideTime = meta['_form_custom_success_redirect_timeout_message_hide_time'] || 0;
 		const formCustomSuccessRedirectTimeoutMessageHideEffect = meta['_form_custom_success_redirect_timeout_message_hide_effect'] || 'fade';
 		const formCustomSuccessRedirectTimeoutMessageShowEffect = meta['_form_custom_success_redirect_timeout_message_show_effect'] || 'fade';
-		
+
+		// Payment settings.
+		const paymentEnabled         = meta['_wpzf_stripe_payment_enabled']          || false;
+		const paymentType            = meta['_wpzf_stripe_payment_type']             || 'one-time';
+		const paymentDescription     = meta['_wpzf_stripe_payment_description']      || '';
+		const paymentCustomerEmail   = meta['_wpzf_stripe_customer_email']   || '';
+		const paymentCustomerName    = meta['_wpzf_stripe_customer_name']    || '';
+		const paymentRecurringPeriod = meta['_wpzf_stripe_recurring_period'] || 'month';
+		const paymentSuccessTitle    = meta['_form_payment_success_title']   || '';
+
+		// Collect form field blocks for payment field dropdowns.
+		const formFieldBlocks = useSelect( select => {
+			const allBlocks = select( 'core/block-editor' ).getBlocks();
+			const fieldBlockTypes = [
+				'wpzoom-forms/text-plain-field',
+				'wpzoom-forms/text-name-field',
+				'wpzoom-forms/text-email-field',
+				'wpzoom-forms/text-website-field',
+				'wpzoom-forms/text-phone-field',
+				'wpzoom-forms/textarea-field',
+				'wpzoom-forms/select-field',
+				'wpzoom-forms/multi-checkbox-field',
+				'wpzoom-forms/checkbox-field',
+				'wpzoom-forms/radio-field',
+				'wpzoom-forms/datepicker-field',
+			];
+			const collectFields = ( blocks ) => {
+				let fields = [];
+				for ( const block of blocks ) {
+					if ( fieldBlockTypes.includes( block.name ) && block.attributes.id ) {
+						fields.push( { label: block.attributes.label || block.attributes.id, value: block.attributes.id } );
+					}
+					if ( block.innerBlocks && block.innerBlocks.length ) {
+						fields = fields.concat( collectFields( block.innerBlocks ) );
+					}
+				}
+				return fields;
+			};
+			return collectFields( allBlocks );
+		}, [] );
+
+		const fieldOptions = [ { label: __( '— Select a field —', 'wpzoom-forms' ), value: '' }, ...formFieldBlocks ];
+
+		// Detect payment blocks in the editor.
+		const PAYMENT_BLOCK_TYPES = [
+			'wpzoom-forms/payment-item',
+			'wpzoom-forms/payment-checkbox',
+			'wpzoom-forms/payment-multiple',
+			'wpzoom-forms/payment-dropdown',
+			'wpzoom-forms/payment-input',
+			'wpzoom-forms/payment-total',
+			'wpzoom-forms/stripe-card',
+		];
+		const hasPaymentBlocks = useSelect( select => {
+			const checkBlocks = ( blocks ) => {
+				for ( const block of blocks ) {
+					if ( PAYMENT_BLOCK_TYPES.includes( block.name ) ) return true;
+					if ( block.innerBlocks && block.innerBlocks.length && checkBlocks( block.innerBlocks ) ) return true;
+				}
+				return false;
+			};
+			return checkBlocks( select( 'core/block-editor' ).getBlocks() );
+		} );
+
 		// Use dispatch to open panels by default
-		const { toggleEditorPanelOpened } = useDispatch('core/edit-post');
-		
+		const { toggleEditorPanelOpened } = useDispatch('core/editor');
+		const { createNotice } = useDispatch('core/notices');
+		const { openGeneralSidebar } = useDispatch('core/edit-post');
+
+		const openPaymentSettingsPanel = () => {
+			openGeneralSidebar('edit-post/document');
+			setTimeout(() => {
+				const panel = document.querySelector('.wpzoom-forms-payment-settings');
+				if (panel) panel.scrollIntoView({ behavior: 'smooth' });
+			}, 100);
+		};
+
+		// --- Payment heads-up modal when a payment block is first added ---
+		const [ showPaymentModal, setShowPaymentModal ] = useState( false );
+		const hadPaymentBlocks = useRef( hasPaymentBlocks );
+
+		useEffect( () => {
+			if ( hasPaymentBlocks && ! hadPaymentBlocks.current && ! paymentEnabled ) {
+				setShowPaymentModal( true );
+			}
+			hadPaymentBlocks.current = hasPaymentBlocks;
+		}, [ hasPaymentBlocks, paymentEnabled ] );
+
 		useEffect(() => {
 			// Open the Form Settings panel by default
 			toggleEditorPanelOpened('wpzoom-forms-document-settings/form-settings', true);
@@ -222,15 +306,19 @@ registerPlugin('wpzoom-forms-document-settings', {
 		const copyBtnStyle = { minHeight: '30px', height: 'auto', minWidth: 'fit-content', margin: '0px 0px 8px 0px' };
 		const blockPatternsStyle = {};
 
-		// Add styles to head
-		useEffect(() => {
-			// No need to add inline styles anymore as they will be in style.scss
-			
-					// Add drop handler to the editor
-		const handleDrop = (event) => {
-			// Remove any existing drop indicators
-			document.querySelectorAll('.wpzoom-forms-drop-indicator').forEach(el => el.remove());
+	// Add styles to head
+	useEffect(() => {
+		// No need to add inline styles anymore as they will be in style.scss
 
+		const getEditorDoc = () => {
+			const iframe = document.querySelector( 'iframe[name="editor-canvas"]' );
+			return ( iframe && iframe.contentDocument && iframe.contentDocument.readyState === 'complete' )
+				? iframe.contentDocument
+				: document;
+		};
+
+		// Add drop handler to the editor
+		const handleDrop = (event) => {
 			// Check if we've already handled this drop
 			if (event.handled) {
 				return;
@@ -242,252 +330,141 @@ registerPlugin('wpzoom-forms-document-settings', {
 				
 				const { type, attributes } = JSON.parse(data);
 				if (!type || !type.startsWith('wpzoom-forms/')) {
-					// This is not a WPZOOM form field drag, let WordPress handle it
 					return;
 				}
 
-				// Only prevent default and stop propagation for WPZOOM form fields
 				event.preventDefault();
 				event.stopPropagation();
 				event.handled = true;
 					
-					const { createBlock } = wp.blocks;
-					const { insertBlock } = wp.data.dispatch('core/block-editor');
-					const selectors = wp.data.select('core/block-editor');
-					const { getBlockRootClientId, getBlockIndex } = selectors;
-					const newBlock = createBlock(type, attributes);
-					const insertionContext = getFormInsertionContext(selectors);
+				const { createBlock } = wp.blocks;
+				const { insertBlock } = wp.data.dispatch('core/block-editor');
+				const selectors = wp.data.select('core/block-editor');
+				const { getBlockRootClientId, getBlockIndex } = selectors;
+				const newBlock = createBlock(type, attributes);
+				const insertionContext = getFormInsertionContext(selectors);
 
-					if (!insertionContext) {
+				if (!insertionContext) {
+					wp.data.dispatch('core/notices').createNotice(
+						'warning',
+						__('Could not find a Contact Form block to insert this field.', 'wpzoom-forms'),
+						{
+							type: 'snackbar',
+							isDismissible: true,
+						}
+					);
+					return;
+				}
+				
+				const dropPoint = {
+					x: event.clientX,
+					y: event.clientY
+				};
+				
+				const blockElements = getEditorDoc().querySelectorAll('[data-block]');
+				let closestBlock = null;
+				let closestDistance = Infinity;
+				let insertAfter = false;
+
+				blockElements.forEach(block => {
+					const rect = block.getBoundingClientRect();
+					const blockCenter = {
+						x: rect.left + rect.width / 2,
+						y: rect.top + rect.height / 2
+					};
+					
+					const distance = Math.sqrt(
+						Math.pow(dropPoint.x - blockCenter.x, 2) + 
+						Math.pow(dropPoint.y - blockCenter.y, 2)
+					);
+					
+					if (distance < closestDistance) {
+						closestDistance = distance;
+						closestBlock = block;
+						insertAfter = dropPoint.y > blockCenter.y;
+					}
+				});
+				
+				if (closestBlock) {
+					const targetClientId = closestBlock.getAttribute('data-block');
+					const rootClientId = getBlockRootClientId(targetClientId);
+					const targetIndex = getBlockIndex(targetClientId);
+					const targetInsideForm = isClientIdInsideForm(selectors, targetClientId);
+					const canInsertNearTarget = targetInsideForm && typeof targetIndex === 'number' && targetIndex >= 0;
+
+					if (canInsertNearTarget) {
+						insertBlock(
+							newBlock,
+							insertAfter ? targetIndex + 1 : targetIndex,
+							rootClientId,
+							false
+						);
+					} else {
+						insertBlock(newBlock, undefined, insertionContext.defaultRootClientId, false);
 						wp.data.dispatch('core/notices').createNotice(
-							'warning',
-							__('Could not find a Contact Form block to insert this field.', 'wpzoom-forms'),
+							'info',
+							__('Field added to your Contact Form. Drop over the form to place it more precisely.', 'wpzoom-forms'),
 							{
 								type: 'snackbar',
 								isDismissible: true,
 							}
 						);
-						return;
 					}
-					
-					// Get the closest block element from the drop point
-					const dropPoint = {
-						x: event.clientX,
-						y: event.clientY
-					};
-					
-					// Find all block elements and get the closest one
-					const blockElements = document.querySelectorAll('[data-block]');
-					let closestBlock = null;
-					let closestDistance = Infinity;
-					let insertAfter = false;
-
-					blockElements.forEach(block => {
-						const rect = block.getBoundingClientRect();
-						const blockCenter = {
-							x: rect.left + rect.width / 2,
-							y: rect.top + rect.height / 2
-						};
-						
-						const distance = Math.sqrt(
-							Math.pow(dropPoint.x - blockCenter.x, 2) + 
-							Math.pow(dropPoint.y - blockCenter.y, 2)
-						);
-						
-						if (distance < closestDistance) {
-							closestDistance = distance;
-							closestBlock = block;
-							insertAfter = dropPoint.y > blockCenter.y;
-						}
-					});
-					
-					if (closestBlock) {
-						const targetClientId = closestBlock.getAttribute('data-block');
-						const rootClientId = getBlockRootClientId(targetClientId);
-						const targetIndex = getBlockIndex(targetClientId);
-						const targetInsideForm = isClientIdInsideForm(selectors, targetClientId);
-						const canInsertNearTarget = targetInsideForm && typeof targetIndex === 'number' && targetIndex >= 0;
-
-						if (canInsertNearTarget) {
-							insertBlock(
-								newBlock,
-								insertAfter ? targetIndex + 1 : targetIndex,
-								rootClientId,
-								false
-							);
-						} else {
-							insertBlock(newBlock, undefined, insertionContext.defaultRootClientId, false);
-							wp.data.dispatch('core/notices').createNotice(
-								'info',
-								__('Field added to your Contact Form. Drop over the form to place it more precisely.', 'wpzoom-forms'),
-								{
-									type: 'snackbar',
-									isDismissible: true,
-								}
-							);
-						}
-					} else {
-						insertBlock(newBlock, undefined, insertionContext.defaultRootClientId, false);
-					}
-				} catch (error) {
-					console.error('Error handling block drop:', error);
-				}
-			};
-
-					const handleDragOver = (event) => {
-			// Check if this is a WPZOOM form field drag first
-			try {
-				const data = event.dataTransfer.getData('text');
-				if (data) {
-					const { type } = JSON.parse(data);
-					if (!type || !type.startsWith('wpzoom-forms/')) {
-						// This is not a WPZOOM form field drag, let WordPress handle it
-						return;
-					}
+				} else {
+					insertBlock(newBlock, undefined, insertionContext.defaultRootClientId, false);
 				}
 			} catch (error) {
-				// If we can't parse the data, let WordPress handle it
-				return;
+				console.error('Error handling block drop:', error);
 			}
+		};
 
-			// Only prevent default and stop propagation for WPZOOM form fields
+		const handleDragOver = (event) => {
 			event.preventDefault();
 			event.stopPropagation();
+		};
 
-			// Throttle the drag over handler
-			if (handleDragOver.timeout) {
-				return;
-			}
-				
-				handleDragOver.timeout = setTimeout(() => {
-					handleDragOver.timeout = null;
-					
-					// Get all block elements
-					const blockElements = document.querySelectorAll('[data-block]');
-					let closestBlock = null;
-					let closestDistance = Infinity;
-					let insertAfter = false;
-					
-					const dropPoint = {
-						x: event.clientX,
-						y: event.clientY
-					};
-					
-					blockElements.forEach(block => {
-						const rect = block.getBoundingClientRect();
-						const blockCenter = {
-							x: rect.left + rect.width / 2,
-							y: rect.top + rect.height / 2
-						};
-						
-						const distance = Math.sqrt(
-							Math.pow(dropPoint.x - blockCenter.x, 2) + 
-							Math.pow(dropPoint.y - blockCenter.y, 2)
-						);
-						
-						if (distance < closestDistance) {
-							closestDistance = distance;
-							closestBlock = block;
-							insertAfter = dropPoint.y > (rect.top + rect.height / 2);
-						}
-					});
-					
-					// Remove existing indicators
-					document.querySelectorAll('.wpzoom-forms-drop-indicator').forEach(el => el.remove());
-					
-					if (closestBlock) {
-						const rect = closestBlock.getBoundingClientRect();
-						const indicator = document.createElement('div');
-						indicator.className = 'wpzoom-forms-drop-indicator';
-						
-						Object.assign(indicator.style, {
-							position: 'absolute',
-							left: rect.left + 'px',
-							right: (window.innerWidth - rect.right) + 'px',
-							height: '2px',
-							background: '#007cba',
-							pointerEvents: 'none',
-							zIndex: '9999',
-							transition: 'transform 0.1s ease',
-							top: insertAfter ? rect.bottom + 'px' : rect.top + 'px'
-						});
-						
-						document.body.appendChild(indicator);
-					}
-				}, 50);
-			};
+		const handleDragEnd = () => {};
 
-			const handleDragEnd = () => {
-				if (handleDragOver.timeout) {
-					clearTimeout(handleDragOver.timeout);
-					handleDragOver.timeout = null;
-				}
-				document.querySelectorAll('.wpzoom-forms-drop-indicator').forEach(el => el.remove());
-			};
+		// Add event listeners to the editor
+		const attachEditorListeners = () => {
+			const editorDoc = getEditorDoc();
+			const editor = editorDoc.querySelector('.block-editor-block-list__layout');
+			if (!editor) return false;
+			// Remove any existing event listeners first
+			editor.removeEventListener('drop', handleDrop);
+			editor.removeEventListener('dragover', handleDragOver);
+			editor.removeEventListener('dragleave', handleDragEnd);
+			editor.removeEventListener('dragend', handleDragEnd);
+			editor.removeEventListener('mouseup', handleDragEnd);
+			window.removeEventListener('blur', handleDragEnd);
+			// Add new event listeners
+			editor.addEventListener('drop', handleDrop);
+			editor.addEventListener('dragover', handleDragOver);
+			editor.addEventListener('dragleave', handleDragEnd);
+			editor.addEventListener('dragend', handleDragEnd);
+			editor.addEventListener('mouseup', handleDragEnd);
+			window.addEventListener('blur', handleDragEnd);
+			return true;
+		};
+		if (!attachEditorListeners()) {
+			const retryTimer = setTimeout(attachEditorListeners, 800);
+			return () => clearTimeout(retryTimer);
+		}
 
-			// Add event listeners to the editor
-			const editor = document.querySelector('.block-editor-block-list__layout');
+		// Cleanup
+		return () => {
+			const editorDoc = getEditorDoc();
+			const editor = editorDoc.querySelector('.block-editor-block-list__layout');
 			if (editor) {
-				// Remove any existing event listeners first
 				editor.removeEventListener('drop', handleDrop);
 				editor.removeEventListener('dragover', handleDragOver);
 				editor.removeEventListener('dragleave', handleDragEnd);
 				editor.removeEventListener('dragend', handleDragEnd);
 				editor.removeEventListener('mouseup', handleDragEnd);
 				window.removeEventListener('blur', handleDragEnd);
-				
-				// Add new event listeners
-				editor.addEventListener('drop', handleDrop);
-				editor.addEventListener('dragover', handleDragOver);
-				editor.addEventListener('dragleave', handleDragEnd);
-				editor.addEventListener('dragend', handleDragEnd);
-				editor.addEventListener('mouseup', handleDragEnd);
-				window.addEventListener('blur', handleDragEnd);
 			}
-
-			// Add styles for drop indicator
-			const style = document.createElement('style');
-			style.textContent = `
-				.wpzoom-forms-drop-indicator {
-					position: absolute;
-					left: 0;
-					right: 0;
-					height: 2px;
-					background: #007cba;
-					pointer-events: none;
-					z-index: 9999;
-					transition: transform 0.1s ease;
-				}
-				.wpzoom-forms-drop-indicator::before {
-					content: '';
-					position: absolute;
-					left: 0;
-					top: -4px;
-					width: 8px;
-					height: 8px;
-					background: #007cba;
-					border-radius: 50%;
-				}
-			`;
-			document.head.appendChild(style);
-
-			// Cleanup
-			return () => {
-				if (handleDragOver.timeout) {
-					clearTimeout(handleDragOver.timeout);
-				}
-				const editor = document.querySelector('.block-editor-block-list__layout');
-				if (editor) {
-					editor.removeEventListener('drop', handleDrop);
-					editor.removeEventListener('dragover', handleDragOver);
-					editor.removeEventListener('dragleave', handleDragEnd);
-					editor.removeEventListener('dragend', handleDragEnd);
-					editor.removeEventListener('mouseup', handleDragEnd);
-					window.removeEventListener('blur', handleDragEnd);
-				}
-				document.querySelectorAll('.wpzoom-forms-drop-indicator').forEach(el => el.remove());
-			};
-		}, []);
+		};
+	}, []);
 
 		if (hasCopiedShortcode) {
 			copyBtnStyle.backgroundColor = 'green';
@@ -552,6 +529,24 @@ registerPlugin('wpzoom-forms-document-settings', {
 		}, []);
 
 		return <>
+			{ showPaymentModal && (
+				<Modal
+					title={ __( 'Heads Up!', 'wpzoom-forms' ) }
+					onRequestClose={ () => setShowPaymentModal( false ) }
+					isDismissible={ true }
+					size="small"
+				>
+					<p style={ { fontSize: '14px', lineHeight: '1.6', margin: '0 0 20px' } }>
+						{ __( 'This form has payment fields but payments are not enabled. Enable them in Payment Settings so visitors can complete payments.', 'wpzoom-forms' ) }
+					</p>
+					<Flex justify="flex-end">
+						<Button variant="primary" onClick={ () => { setShowPaymentModal( false ); openPaymentSettingsPanel(); } }>
+							{ __( 'Okay!', 'wpzoom-forms' ) }
+						</Button>
+					</Flex>
+				</Modal>
+			) }
+
 			<WelcomeGuide />
 
 			<PluginDocumentSettingPanel
@@ -579,16 +574,20 @@ registerPlugin('wpzoom-forms-document-settings', {
 					]}
 					onChange={value => setMeta({ ...meta, '_form_method': value })}
 					help={__('Choose how form submissions are handled.', 'wpzoom-forms')}
+					__next40pxDefaultSize
 				/>
 
-				{(formMethod == 'email' || formMethod == 'combined') && <TextControl
-					type="email"
-					label={__('Send To', 'wpzoom-forms')}
-					value={formEmail}
-					placeholder={__('someone@somedomain.com', 'wpzoom-forms')}
-					onChange={value => setMeta({ ...meta, '_form_email': value })}
-					help={__('Email address where submissions will be sent.', 'wpzoom-forms')}
-				/>}
+				{(formMethod == 'email' || formMethod == 'combined') && 
+					<TextControl
+						type="email"
+						label={__('Send To', 'wpzoom-forms')}
+						value={formEmail}
+						placeholder={__('someone@somedomain.com', 'wpzoom-forms')}
+						onChange={value => setMeta({ ...meta, '_form_email': value })}
+						help={__('Email address where submissions will be sent.', 'wpzoom-forms')}
+						__next40pxDefaultSize
+					/>
+				}
 
 				<TextControl
 					type="text"
@@ -597,6 +596,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 					placeholder={__('New Form Submission', 'wpzoom-forms')}
 					onChange={value => setMeta({ ...meta, '_form_subject': value })}
 					disabled={isTextPlainFieldWithSubject} // Disable the field if the conditions are met
+					__next40pxDefaultSize
 				/>
 				{isTextPlainFieldWithSubject && (
 					<p class="description">{__('Your form already includes a field that is marked as the Subject. Uncheck its "Is Subject" option if you want to set a custom subject here.', 'wpzoom-forms')}</p>
@@ -609,6 +609,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 					placeholder={__('Thank you! Your message has been sent.', 'wpzoom-forms')}
 					onChange={value => setMeta({ ...meta, '_form_success_message': value })}
 					help={__('This message is shown when the form is submitted successfully.', 'wpzoom-forms')}
+					__next40pxDefaultSize
 				/>
 
 				<TextControl
@@ -618,9 +619,10 @@ registerPlugin('wpzoom-forms-document-settings', {
 					placeholder={__('Oops! Something went wrong. Please try again.', 'wpzoom-forms')}
 					onChange={value => setMeta({ ...meta, '_form_failure_message': value })}
 					help={__('This message is shown if the form fails to submit.', 'wpzoom-forms')}
+					__next40pxDefaultSize
 				/>
 				<Button
-					isPrimary
+					variant="primary"
 					disabled={true}
 					icon={
 						<svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -638,6 +640,7 @@ registerPlugin('wpzoom-forms-document-settings', {
 						marginTop: '15px',
 						position: 'relative'
 					}}
+					__next40pxDefaultSize
 				>
 					{__('Customize Notification Email', 'wpzoom-forms')}
 					{<small class="pro-only">PRO</small>}
@@ -653,6 +656,83 @@ registerPlugin('wpzoom-forms-document-settings', {
 					{__('Edit the template for emails sent to you when a new form entry is submitted.', 'wpzoom-forms')}
 				</p>
 
+			</PluginDocumentSettingPanel>
+
+			<PluginDocumentSettingPanel
+				name="payment-settings"
+				className="wpzoom-forms-payment-settings"
+				title={__('Payment Settings', 'wpzoom-forms')}
+			>
+				<ToggleControl
+					label={__('Enable Stripe Payments', 'wpzoom-forms')}
+					checked={!!paymentEnabled}
+					onChange={value => setMeta({ ...meta, '_wpzf_stripe_payment_enabled': !!value })}
+					help={__('Collect payments through Stripe when this form is submitted.', 'wpzoom-forms')}
+					__next40pxDefaultSize
+				/>
+
+				{paymentEnabled && <>
+					<SelectControl
+						label={__('Payment Type', 'wpzoom-forms')}
+						value={paymentType}
+						options={[
+							{ label: __('One-time Payment', 'wpzoom-forms'), value: 'one-time' },
+							{ label: __('Recurring Subscription', 'wpzoom-forms'), value: 'recurring' },
+						]}
+						onChange={value => setMeta({ ...meta, '_wpzf_stripe_payment_type': value })}
+						__next40pxDefaultSize
+					/>
+
+					{paymentType === 'recurring' && <SelectControl
+						label={__('Billing Period', 'wpzoom-forms')}
+						value={paymentRecurringPeriod}
+						options={[
+							{ label: __('Daily', 'wpzoom-forms'),   value: 'day' },
+							{ label: __('Weekly', 'wpzoom-forms'),  value: 'week' },
+							{ label: __('Monthly', 'wpzoom-forms'), value: 'month' },
+							{ label: __('Yearly', 'wpzoom-forms'),  value: 'year' },
+						]}
+						onChange={value => setMeta({ ...meta, '_wpzf_stripe_recurring_period': value })}
+						__next40pxDefaultSize
+					/>}
+
+					<TextControl
+						type="text"
+						label={__('Payment Description', 'wpzoom-forms')}
+						value={paymentDescription}
+						placeholder={__('e.g. Conference Ticket', 'wpzoom-forms')}
+						onChange={value => setMeta({ ...meta, '_wpzf_stripe_payment_description': value })}
+						help={__('Shown on the Stripe receipt and in your dashboard.', 'wpzoom-forms')}
+						__next40pxDefaultSize
+					/>
+
+					<SelectControl
+						label={__('Customer Email Field', 'wpzoom-forms')}
+						value={paymentCustomerEmail}
+						options={fieldOptions}
+						onChange={value => setMeta({ ...meta, '_wpzf_stripe_customer_email': value })}
+						help={__('The email field used for the Stripe customer.', 'wpzoom-forms')}
+						__next40pxDefaultSize
+					/>
+
+					<SelectControl
+						label={__('Customer Name Field', 'wpzoom-forms')}
+						value={paymentCustomerName}
+						options={fieldOptions}
+						onChange={value => setMeta({ ...meta, '_wpzf_stripe_customer_name': value })}
+						help={__('The name field used for the Stripe customer.', 'wpzoom-forms')}
+						__next40pxDefaultSize
+					/>
+
+					<TextControl
+						label={__('Thank You Title', 'wpzoom-forms')}
+						value={paymentSuccessTitle}
+						placeholder={__('Thank you for your payment!', 'wpzoom-forms')}
+						onChange={value => setMeta({ ...meta, '_form_payment_success_title': value })}
+						help={__('Heading shown on the success screen after payment.', 'wpzoom-forms')}
+						__next40pxDefaultSize
+					/>
+				</>}
 			</PluginDocumentSettingPanel>
 
 			<PluginDocumentSettingPanel
@@ -841,6 +921,91 @@ registerPlugin('wpzoom-forms-document-settings', {
 									name: __('Hidden Field', 'wpzoom-forms'),
 									defaultValue: ''
 								}
+							},
+							{
+								name: 'payment-item',
+								title: __('Payment Item', 'wpzoom-forms'),
+								icon: FormIcons.paymentItem,
+								defaultAttributes: {
+									itemName: __('Item', 'wpzoom-forms'),
+									price: 0,
+									description: '',
+									quantity: 1,
+									minQty: 1,
+									maxQty: 99,
+									showQty: false
+								}
+							},
+							{
+								name: 'payment-checkbox',
+								title: __('Checkbox Items', 'wpzoom-forms'),
+								icon: FormIcons.checkbox,
+								defaultAttributes: {
+									label: __('Select items', 'wpzoom-forms'),
+									showLabel: true,
+									required: false,
+									options: [{ label: __('Item #1', 'wpzoom-forms'), price: 10 }]
+								}
+							},
+							{
+								name: 'payment-multiple',
+								title: __('Multiple Items', 'wpzoom-forms'),
+								icon: FormIcons.radio,
+								defaultAttributes: {
+									label: __('Choose an option', 'wpzoom-forms'),
+									showLabel: true,
+									required: false,
+									options: [{ label: __('Item #1', 'wpzoom-forms'), price: 10 }]
+								}
+							},
+							{
+								name: 'payment-dropdown',
+								title: __('Dropdown Items', 'wpzoom-forms'),
+								icon: FormIcons.select,
+								defaultAttributes: {
+									label: __('Select an option', 'wpzoom-forms'),
+									showLabel: true,
+									required: false,
+									options: [{ label: __('Item #1', 'wpzoom-forms'), price: 10 }]
+								}
+							},
+							{
+								name: 'payment-input',
+								title: __('Amount Input', 'wpzoom-forms'),
+								icon: FormIcons.amount,
+								defaultAttributes: {
+									label: __('Amount', 'wpzoom-forms'),
+									showLabel: true,
+									placeholder: '0.00',
+									min: 0.6,
+									max: 0,
+									step: 1,
+									required: false
+								}
+							},
+							{
+								name: 'payment-total',
+								title: __('Payment Total', 'wpzoom-forms'),
+								icon: FormIcons.total,
+								defaultAttributes: {
+									label: __('Total', 'wpzoom-forms')
+								}
+							},
+							{
+								name: 'stripe-card',
+								title: __('Stripe Card', 'wpzoom-forms'),
+								icon: FormIcons.card,
+								defaultAttributes: {
+									label: __('Card Details', 'wpzoom-forms'),
+									showLabel: true
+								}
+							},
+							{
+								name: 'payment-coupon',
+								title: __('Coupon', 'wpzoom-forms'),
+								icon: FormIcons.coupon,
+								isPro: true,
+								defaultAttributes: {}
 							}
 						].map((block) => {
 							const isDisabled = uniqueFieldsExist[block.name] || false || block.isPro;
@@ -966,6 +1131,8 @@ const SortableList = SortableContainer(({ items, changeCallback, removeCallback 
 </div>);
 
 registerBlockType('wpzoom-forms/form', {
+	$schema:      'https://schemas.wp.org/trunk/block.json',
+	apiVersion:   3,
 	title: __('Contact Form', 'wpzoom-blocks'),
 	description: __('Add a simple contact form', 'wpzoom-blocks'),
 	icon: (<svg width="40" height="40" viewBox="0 0 250 300" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1009,225 +1176,135 @@ registerBlockType('wpzoom-forms/form', {
 
 		const blockPatternsStyle = {};
 
-		// Add styles to head
-		useEffect(() => {
-			// No need to add inline styles anymore as they will be in style.scss
+	// Add styles to head
+	useEffect(() => {
+		// No need to add inline styles anymore as they will be in style.scss
+
+		const getEditorDoc = () => {
+			const iframe = document.querySelector( 'iframe[name="editor-canvas"]' );
+			return ( iframe && iframe.contentDocument && iframe.contentDocument.readyState === 'complete' )
+				? iframe.contentDocument
+				: document;
+		};
+
+		// Add drop handler to the editor
+		const handleDrop = (event) => {
+			// Check if we've already handled this drop
+			if (event.handled) {
+				return;
+			}
 			
-			// Add drop handler to the editor
-			const handleDrop = (event) => {
+			try {
+				const data = event.dataTransfer.getData('text');
+				if (!data) return;
+				
+				const { type, attributes } = JSON.parse(data);
+				if (!type || !type.startsWith('wpzoom-forms/')) return;
+
 				event.preventDefault();
 				event.stopPropagation();
-				
-				// Remove any existing drop indicators
-				document.querySelectorAll('.wpzoom-forms-drop-indicator').forEach(el => el.remove());
-				
-				// Check if we've already handled this drop
-				if (event.handled) {
-					return;
-				}
 				event.handled = true;
 				
-				try {
-					const data = event.dataTransfer.getData('text');
-					if (!data) return;
-					
-					const { type, attributes } = JSON.parse(data);
-					if (!type || !type.startsWith('wpzoom-forms/')) return;
-					
-					const { createBlock } = wp.blocks;
-					const { insertBlock, getBlockInsertionPoint } = wp.data.dispatch('core/block-editor');
-					const { getBlockRootClientId, getBlockIndex } = wp.data.select('core/block-editor');
-					const newBlock = createBlock(type, attributes);
-					
-					// Get the closest block element from the drop point
-					const dropPoint = {
-						x: event.clientX,
-						y: event.clientY
+				const { createBlock } = wp.blocks;
+				const { insertBlock, getBlockInsertionPoint } = wp.data.dispatch('core/block-editor');
+				const { getBlockRootClientId, getBlockIndex } = wp.data.select('core/block-editor');
+				const newBlock = createBlock(type, attributes);
+				
+				const dropPoint = {
+					x: event.clientX,
+					y: event.clientY
+				};
+				
+				const blockElements = getEditorDoc().querySelectorAll('[data-block]');
+				let closestBlock = null;
+				let closestDistance = Infinity;
+				let insertAfter = false;
+
+				blockElements.forEach(block => {
+					const rect = block.getBoundingClientRect();
+					const blockCenter = {
+						x: rect.left + rect.width / 2,
+						y: rect.top + rect.height / 2
 					};
 					
-					// Find all block elements and get the closest one
-					const blockElements = document.querySelectorAll('[data-block]');
-					let closestBlock = null;
-					let closestDistance = Infinity;
-					let insertAfter = false;
-
-					blockElements.forEach(block => {
-						const rect = block.getBoundingClientRect();
-						const blockCenter = {
-							x: rect.left + rect.width / 2,
-							y: rect.top + rect.height / 2
-						};
-						
-						const distance = Math.sqrt(
-							Math.pow(dropPoint.x - blockCenter.x, 2) + 
-							Math.pow(dropPoint.y - blockCenter.y, 2)
-						);
-						
-						if (distance < closestDistance) {
-							closestDistance = distance;
-							closestBlock = block;
-							insertAfter = dropPoint.y > blockCenter.y;
-						}
-					});
+					const distance = Math.sqrt(
+						Math.pow(dropPoint.x - blockCenter.x, 2) + 
+						Math.pow(dropPoint.y - blockCenter.y, 2)
+					);
 					
-					if (closestBlock) {
-						const targetClientId = closestBlock.getAttribute('data-block');
-						const rootClientId = getBlockRootClientId(targetClientId);
-						const targetIndex = getBlockIndex(targetClientId);
-						
-						insertBlock(
-							newBlock,
-							insertAfter ? targetIndex + 1 : targetIndex,
-							rootClientId,
-							false
-						);
-					} else {
-						// If no target found, insert at the end
-						insertBlock(newBlock);
+					if (distance < closestDistance) {
+						closestDistance = distance;
+						closestBlock = block;
+						insertAfter = dropPoint.y > blockCenter.y;
 					}
-				} catch (error) {
-					console.error('Error handling block drop:', error);
-				}
-			};
-
-			const handleDragOver = (event) => {
-				event.preventDefault();
-				event.stopPropagation();
+				});
 				
-				// Throttle the drag over handler
-				if (handleDragOver.timeout) {
-					return;
+				if (closestBlock) {
+					const targetClientId = closestBlock.getAttribute('data-block');
+					const rootClientId = getBlockRootClientId(targetClientId);
+					const targetIndex = getBlockIndex(targetClientId);
+					
+					insertBlock(
+						newBlock,
+						insertAfter ? targetIndex + 1 : targetIndex,
+						rootClientId,
+						false
+					);
+				} else {
+					insertBlock(newBlock);
 				}
-				
-				handleDragOver.timeout = setTimeout(() => {
-					handleDragOver.timeout = null;
-					
-					// Get all block elements
-					const blockElements = document.querySelectorAll('[data-block]');
-					let closestBlock = null;
-					let closestDistance = Infinity;
-					let insertAfter = false;
-					
-					const dropPoint = {
-						x: event.clientX,
-						y: event.clientY
-					};
-					
-					blockElements.forEach(block => {
-						const rect = block.getBoundingClientRect();
-						const blockCenter = {
-							x: rect.left + rect.width / 2,
-							y: rect.top + rect.height / 2
-						};
-						
-						const distance = Math.sqrt(
-							Math.pow(dropPoint.x - blockCenter.x, 2) + 
-							Math.pow(dropPoint.y - blockCenter.y, 2)
-						);
-						
-						if (distance < closestDistance) {
-							closestDistance = distance;
-							closestBlock = block;
-							insertAfter = dropPoint.y > (rect.top + rect.height / 2);
-						}
-					});
-					
-					// Remove existing indicators
-					document.querySelectorAll('.wpzoom-forms-drop-indicator').forEach(el => el.remove());
-					
-					if (closestBlock) {
-						const rect = closestBlock.getBoundingClientRect();
-						const indicator = document.createElement('div');
-						indicator.className = 'wpzoom-forms-drop-indicator';
-						
-						Object.assign(indicator.style, {
-							position: 'absolute',
-							left: rect.left + 'px',
-							right: (window.innerWidth - rect.right) + 'px',
-							height: '2px',
-							background: '#007cba',
-							pointerEvents: 'none',
-							zIndex: '9999',
-							transition: 'transform 0.1s ease',
-							top: insertAfter ? rect.bottom + 'px' : rect.top + 'px'
-						});
-						
-						document.body.appendChild(indicator);
-					}
-				}, 50);
-			};
+			} catch (error) {
+				console.error('Error handling block drop:', error);
+			}
+		};
 
-			const handleDragEnd = () => {
-				if (handleDragOver.timeout) {
-					clearTimeout(handleDragOver.timeout);
-					handleDragOver.timeout = null;
-				}
-				document.querySelectorAll('.wpzoom-forms-drop-indicator').forEach(el => el.remove());
-			};
+		const handleDragOver = (event) => {
+			event.preventDefault();
+			event.stopPropagation();
+		};
 
-			// Add event listeners to the editor
-			const editor = document.querySelector('.block-editor-block-list__layout');
+		const handleDragEnd = () => {};
+
+		// Add event listeners to the editor
+		const attachEditorListeners = () => {
+			const editorDoc = getEditorDoc();
+			const editor = editorDoc.querySelector('.block-editor-block-list__layout');
+			if (!editor) return false;
+			// Remove any existing event listeners first
+			editor.removeEventListener('drop', handleDrop);
+			editor.removeEventListener('dragover', handleDragOver);
+			editor.removeEventListener('dragleave', handleDragEnd);
+			editor.removeEventListener('dragend', handleDragEnd);
+			editor.removeEventListener('mouseup', handleDragEnd);
+			window.removeEventListener('blur', handleDragEnd);
+			// Add new event listeners
+			editor.addEventListener('drop', handleDrop);
+			editor.addEventListener('dragover', handleDragOver);
+			editor.addEventListener('dragleave', handleDragEnd);
+			editor.addEventListener('dragend', handleDragEnd);
+			editor.addEventListener('mouseup', handleDragEnd);
+			window.addEventListener('blur', handleDragEnd);
+			return true;
+		};
+		if (!attachEditorListeners()) {
+			const retryTimer = setTimeout(attachEditorListeners, 800);
+			return () => clearTimeout(retryTimer);
+		}
+
+		// Cleanup
+		return () => {
+			const editorDoc = getEditorDoc();
+			const editor = editorDoc.querySelector('.block-editor-block-list__layout');
 			if (editor) {
-				// Remove any existing event listeners first
 				editor.removeEventListener('drop', handleDrop);
 				editor.removeEventListener('dragover', handleDragOver);
 				editor.removeEventListener('dragleave', handleDragEnd);
 				editor.removeEventListener('dragend', handleDragEnd);
 				editor.removeEventListener('mouseup', handleDragEnd);
 				window.removeEventListener('blur', handleDragEnd);
-				
-				// Add new event listeners
-				editor.addEventListener('drop', handleDrop);
-				editor.addEventListener('dragover', handleDragOver);
-				editor.addEventListener('dragleave', handleDragEnd);
-				editor.addEventListener('dragend', handleDragEnd);
-				editor.addEventListener('mouseup', handleDragEnd);
-				window.addEventListener('blur', handleDragEnd);
 			}
-
-			// Add styles for drop indicator
-			const style = document.createElement('style');
-			style.textContent = `
-				.wpzoom-forms-drop-indicator {
-					position: absolute;
-					left: 0;
-					right: 0;
-					height: 2px;
-					background: #007cba;
-					pointer-events: none;
-					z-index: 9999;
-					transition: transform 0.1s ease;
-				}
-				.wpzoom-forms-drop-indicator::before {
-					content: '';
-					position: absolute;
-					left: 0;
-					top: -4px;
-					width: 8px;
-					height: 8px;
-					background: #007cba;
-					border-radius: 50%;
-				}
-			`;
-			document.head.appendChild(style);
-
-			// Cleanup
-			return () => {
-				if (handleDragOver.timeout) {
-					clearTimeout(handleDragOver.timeout);
-				}
-				const editor = document.querySelector('.block-editor-block-list__layout');
-				if (editor) {
-					editor.removeEventListener('drop', handleDrop);
-					editor.removeEventListener('dragover', handleDragOver);
-					editor.removeEventListener('dragleave', handleDragEnd);
-					editor.removeEventListener('dragend', handleDragEnd);
-					editor.removeEventListener('mouseup', handleDragEnd);
-					window.removeEventListener('blur', handleDragEnd);
-				}
-				document.querySelectorAll('.wpzoom-forms-drop-indicator').forEach(el => el.remove());
-			};
-		}, []);
+		};
+	}, []);
 
 		return <div {...blockProps}>
 			<InspectorControls>
@@ -1403,6 +1480,91 @@ registerBlockType('wpzoom-forms/form', {
 									name: __('Hidden Field', 'wpzoom-forms'),
 									defaultValue: ''
 								}
+							},
+							{
+								name: 'payment-item',
+								title: __('Payment Item', 'wpzoom-forms'),
+								icon: FormIcons.paymentItem,
+								defaultAttributes: {
+									itemName: __('Item', 'wpzoom-forms'),
+									price: 0,
+									description: '',
+									quantity: 1,
+									minQty: 1,
+									maxQty: 99,
+									showQty: false
+								}
+							},
+							{
+								name: 'payment-checkbox',
+								title: __('Checkbox Items', 'wpzoom-forms'),
+								icon: FormIcons.checkbox,
+								defaultAttributes: {
+									label: __('Select items', 'wpzoom-forms'),
+									showLabel: true,
+									required: false,
+									options: [{ label: __('Item #1', 'wpzoom-forms'), price: 10 }]
+								}
+							},
+							{
+								name: 'payment-multiple',
+								title: __('Multiple Items', 'wpzoom-forms'),
+								icon: FormIcons.radio,
+								defaultAttributes: {
+									label: __('Choose an option', 'wpzoom-forms'),
+									showLabel: true,
+									required: false,
+									options: [{ label: __('Item #1', 'wpzoom-forms'), price: 10 }]
+								}
+							},
+							{
+								name: 'payment-dropdown',
+								title: __('Dropdown Items', 'wpzoom-forms'),
+								icon: FormIcons.select,
+								defaultAttributes: {
+									label: __('Select an option', 'wpzoom-forms'),
+									showLabel: true,
+									required: false,
+									options: [{ label: __('Item #1', 'wpzoom-forms'), price: 10 }]
+								}
+							},
+							{
+								name: 'payment-input',
+								title: __('Amount Input', 'wpzoom-forms'),
+								icon: FormIcons.amount,
+								defaultAttributes: {
+									label: __('Amount', 'wpzoom-forms'),
+									showLabel: true,
+									placeholder: '0.00',
+									min: 0.6,
+									max: 0,
+									step: 1,
+									required: false
+								}
+							},
+							{
+								name: 'payment-total',
+								title: __('Payment Total', 'wpzoom-forms'),
+								icon: FormIcons.total,
+								defaultAttributes: {
+									label: __('Total', 'wpzoom-forms')
+								}
+							},
+							{
+								name: 'stripe-card',
+								title: __('Stripe Card', 'wpzoom-forms'),
+								icon: FormIcons.card,
+								defaultAttributes: {
+									label: __('Card Details', 'wpzoom-forms'),
+									showLabel: true
+								}
+							},
+							{
+								name: 'payment-coupon',
+								title: __('Coupon', 'wpzoom-forms'),
+								icon: FormIcons.coupon,
+								isPro: true,
+								defaultAttributes: {}
 							}
 						].map((block) => {
 							const isDisabled = uniqueFieldsExist[block.name] || false || block.isPro;
@@ -1470,6 +1632,13 @@ registerBlockType('wpzoom-forms/form', {
 					'wpzoom-forms/label-field',
 					'wpzoom-forms/submit-field',
 					'wpzoom-forms/datepicker-field',
+					'wpzoom-forms/payment-item',
+					'wpzoom-forms/payment-checkbox',
+					'wpzoom-forms/payment-multiple',
+					'wpzoom-forms/payment-dropdown',
+					'wpzoom-forms/payment-input',
+					'wpzoom-forms/payment-total',
+					'wpzoom-forms/stripe-card',
                     'core/group',
                     'core/columns',
                     'core/column',

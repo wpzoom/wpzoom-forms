@@ -258,6 +258,202 @@ $templates = array(
 <!-- /wp:wpzoom-forms/form -->'
 	),
 	array(
+		'id'      => 'payment-simple-sale',
+		'name'    => 'Simple Paid Booking',
+		'icon'    => '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M294.96-412.65q-10.34-10.35-10.34-25.04t10.34-25.04q10.35-10.35 25.04-10.35t25.04 10.35q10.34 10.35 10.34 25.04t-10.34 25.04q-10.35 10.34-25.04 10.34t-25.04-10.34Zm160 0q-10.34-10.35-10.34-25.04t10.34-25.04q10.35-10.35 25.04-10.35t25.04 10.35q10.34 10.35 10.34 25.04t-10.34 25.04q-10.35 10.34-25.04 10.34t-25.04-10.34Zm160 0q-10.34-10.35-10.34-25.04t10.34-25.04q10.35-10.35 25.04-10.35t25.04 10.35q10.34 10.35 10.34 25.04t-10.34 25.04q-10.35 10.34-25.04 10.34t-25.04-10.34ZM212.31-100Q182-100 161-121q-21-21-21-51.31v-535.38Q140-738 161-759q21-21 51.31-21h55.38v-53.85q0-13.15 8.81-21.96 8.81-8.8 21.96-8.8 13.16 0 21.96 8.8 8.81 8.81 8.81 21.96V-780h303.08v-54.61q0-12.77 8.61-21.39 8.62-8.61 21.39-8.61 12.77 0 21.38 8.61 8.62 8.62 8.62 21.39V-780h55.38Q778-780 799-759q21 21 21 51.31v535.38Q820-142 799-121q-21 21-51.31 21H212.31Zm0-60h535.38q4.62 0 8.46-3.85 3.85-3.84 3.85-8.46v-375.38H200v375.38q0 4.62 3.85 8.46 3.84 3.85 8.46 3.85ZM200-607.69h560v-100q0-4.62-3.85-8.46-3.84-3.85-8.46-3.85H212.31q-4.62 0-8.46 3.85-3.85 3.84-3.85 8.46v100Zm0 0V-720v112.31Z"/></svg>',
+		'desc'    => 'Name, email, one fixed-price line item, running total, and card payment.',
+		'badge'   => 'Stripe',
+		'content' => '<!-- wp:wpzoom-forms/form -->
+<div class="wp-block-wpzoom-forms-form"><!-- wp:wpzoom-forms/text-name-field {"id":"input_pay_nm_01","name":"Name"} -->
+<label for="input_pay_nm_01"><span>Name</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_pay_nm_01" id="input_pay_nm_01" placeholder="" required class="wp-block-wpzoom-forms-text-name-field"/>
+<!-- /wp:wpzoom-forms/text-name-field -->
+
+<!-- wp:wpzoom-forms/text-email-field {"id":"input_pay_em_01","name":"Email","replyto":true} -->
+<label for="input_pay_em_01"><span>Email</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="email" name="input_pay_em_01" id="input_pay_em_01" placeholder="" required data-replyto="true" class="wp-block-wpzoom-forms-text-email-field"/>
+<!-- /wp:wpzoom-forms/text-email-field -->
+
+<!-- wp:wpzoom-forms/payment-item {"id":"wpzf_pay_item_01","itemName":"Consultation fee","price":49,"className":"is-style-inline"} -->
+<div class="wp-block-wpzoom-forms-payment-item is-style-inline"><input type="hidden" name="wpzf_pay_item_01_price" value="49"/><div class="wpzf-payment-item-info"><div class="wpzf-payment-item-name">Consultation fee</div></div><div class="wpzf-payment-item-right"><span class="wpzf-payment-item-price">$49.00</span><input type="hidden" name="wpzf_pay_item_01_qty" value="1"/></div></div>
+<!-- /wp:wpzoom-forms/payment-item -->
+
+<!-- wp:separator {"className":"is-style-wide"} -->
+<hr class="wp-block-separator has-alpha-channel-opacity is-style-wide"/>
+<!-- /wp:separator -->
+
+<!-- wp:wpzoom-forms/payment-total {"label":"Order total","className":"is-style-inline"} -->
+<div class="wp-block-wpzoom-forms-payment-total is-style-inline"><label class="wpzf-payment-total-label" for="wpzf_payment_total">Order total</label><div class="wpzf-payment-total-amount">$0.00</div><input type="hidden" name="wpzf_payment_total" value="0"/></div>
+<!-- /wp:wpzoom-forms/payment-total -->
+
+<!-- wp:separator {"className":"is-style-wide"} -->
+<hr class="wp-block-separator has-alpha-channel-opacity is-style-wide"/>
+<!-- /wp:separator -->
+
+<!-- wp:wpzoom-forms/stripe-card {"className":"is-style-stripe"} -->
+<div class="wpzf-stripe-card-wrapper wp-block-wpzoom-forms-stripe-card is-style-stripe"><label class="wpzf-stripe-card-label"><span>Card Details</span></label><div id="wpzf-payment-element" class="wpzf-stripe-card-element"></div><div id="wpzf-card-errors" class="wpzf-stripe-card-errors" role="alert"></div><input type="hidden" name="wpzf_payment_intent_id" value=""/></div>
+<!-- /wp:wpzoom-forms/stripe-card -->
+
+<!-- wp:wpzoom-forms/submit-field {"id":"input_submit"} -->
+<input type="submit" id="input_submit" value="Pay now" class="wp-block-wpzoom-forms-submit-field"/>
+<!-- /wp:wpzoom-forms/submit-field --></div>
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'      => 'payment-donation',
+		'name'    => 'Donation',
+		'icon'    => '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M554.92-135.92q1.93.77 3.46.77 1.54 0 3.47-.77l235.3-72.85q-3.07-13.61-12.69-20.88t-21.77-7.27H566.8q-26.18 0-44.49-2-18.31-2-37.62-8.77l-62.77-20.54q-12.1-3.85-17.39-15.38-5.3-11.54-1.45-23.5 3.84-11.97 14.88-17.54 11.04-5.58 23.19-1.73l52 18.23q18.16 5.77 40.62 8.19 22.46 2.42 58.22 3.04h10.7q0-14.85-6.69-25.62-6.69-10.77-17.62-14.54l-232.07-85.23q-1.16-.38-2.12-.57-.96-.2-2.11-.2h-74v206.16l286.84 81Zm-15.61 58.77-271.23-77.77q-6.85 24.84-27.85 39.88-21 15.04-44.46 15.04h-55.38q-29.83 0-51.07-21.24-21.24-21.24-21.24-51.07v-238.46q0-29.82 21.24-51.06 21.24-21.24 51.07-21.24h201.24q6.29 0 12.75 1.38 6.47 1.39 12 3.23l233.08 85.85q27.23 10.07 45.23 35.65 18 25.58 18 60.04h100q43.08 0 70.19 27.81Q860-241.31 860-196.92q0 17-9 27.38-9 10.39-27.23 16.46L581.08-77.77q-9.85 3.23-20.7 3.42-10.84.2-21.07-2.8Zm-411.23-95.16q0 5.39 3.46 8.85t8.85 3.46h55.38q5.38 0 8.85-2.88 3.46-2.89 3.46-9.43v-250.77h-67.69q-5.39 0-8.85 3.47-3.46 3.46-3.46 8.84v238.46Zm479.3-313.46q-13-4.92-23.76-14.77L475.54-605.46q-28.69-27.69-48.27-61.65-19.58-33.96-19.58-73.97 0-49.55 34.69-84.23Q477.06-860 526.61-860q32.39 0 59.81 15.62 27.43 15.61 47.43 39.77 20-24.16 47.42-39.77Q708.69-860 741.08-860q49.55 0 84.23 34.69Q860-790.63 860-741.08q0 40.01-19.27 73.97t-47.96 61.65L684.08-500.54q-10.77 9.85-23.78 14.77-13 4.92-26.46 4.92t-26.46-4.92Zm34.93-58.15 105.92-102.77q20.15-19.77 35.96-43Q800-712.92 800-741.08q0-24.69-17.12-41.8Q765.77-800 741.08-800q-19 0-34.77 9.92-15.77 9.93-27.85 25.16l-17.85 21.54q-10.33 12.46-26.7 12.46-16.37 0-26.83-12.46l-17.85-21.54q-12.08-15.23-27.85-25.16-15.76-9.92-34.77-9.92-24.69 0-41.8 17.12-17.12 17.11-17.12 41.8 0 28.16 15.81 51.39t35.96 43l105.92 102.77q3.47 3.46 8.47 3.46t8.46-3.46Zm-8.46-166.7Z"/></svg>',
+		'desc'    => 'Collect a custom donation amount with total and Stripe checkout.',
+		'badge'   => 'Stripe',
+		'content' => '<!-- wp:wpzoom-forms/form -->
+<div class="wp-block-wpzoom-forms-form"><!-- wp:wpzoom-forms/text-name-field {"id":"input_pay_dn_nm","name":"Name"} -->
+<label for="input_pay_dn_nm"><span>Name</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_pay_dn_nm" id="input_pay_dn_nm" placeholder="" required class="wp-block-wpzoom-forms-text-name-field"/>
+<!-- /wp:wpzoom-forms/text-name-field -->
+
+<!-- wp:wpzoom-forms/text-email-field {"id":"input_pay_dn_em","name":"Email","replyto":true} -->
+<label for="input_pay_dn_em"><span>Email</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="email" name="input_pay_dn_em" id="input_pay_dn_em" placeholder="" required data-replyto="true" class="wp-block-wpzoom-forms-text-email-field"/>
+<!-- /wp:wpzoom-forms/text-email-field -->
+
+<!-- wp:wpzoom-forms/payment-input {"id":"input_pay_donate_01","label":"Donation amount","placeholder":"1","min":1,"required":true} -->
+<div class="wp-block-wpzoom-forms-payment-input"><label for="input_pay_donate_01"><span>Donation amount</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="number" id="input_pay_donate_01" name="input_pay_donate_01" value="1" placeholder="1" step="1" required class="wpzf-payment-amount" min="1"/></div>
+<!-- /wp:wpzoom-forms/payment-input -->
+
+<!-- wp:wpzoom-forms/payment-total {"className":"is-style-inline","style":{"color":{"background":"#e5e5e5"},"spacing":{"padding":{"top":"var:preset|spacing|30","bottom":"var:preset|spacing|30","left":"var:preset|spacing|30","right":"var:preset|spacing|30"}}}} -->
+<div class="wp-block-wpzoom-forms-payment-total is-style-inline has-background" style="background-color:#e5e5e5;padding-top:var(--wp--preset--spacing--30);padding-right:var(--wp--preset--spacing--30);padding-bottom:var(--wp--preset--spacing--30);padding-left:var(--wp--preset--spacing--30)"><label class="wpzf-payment-total-label" for="wpzf_payment_total">Total</label><div class="wpzf-payment-total-amount">$0.00</div><input type="hidden" name="wpzf_payment_total" value="0"/></div>
+<!-- /wp:wpzoom-forms/payment-total -->
+
+<!-- wp:wpzoom-forms/stripe-card {"className":"is-style-stripe"} -->
+<div class="wpzf-stripe-card-wrapper wp-block-wpzoom-forms-stripe-card is-style-stripe"><label class="wpzf-stripe-card-label"><span>Card Details</span></label><div id="wpzf-payment-element" class="wpzf-stripe-card-element"></div><div id="wpzf-card-errors" class="wpzf-stripe-card-errors" role="alert"></div><input type="hidden" name="wpzf_payment_intent_id" value=""/></div>
+<!-- /wp:wpzoom-forms/stripe-card -->
+
+<!-- wp:wpzoom-forms/submit-field {"id":"input_submit"} -->
+<input type="submit" id="input_submit" value="Donate" class="wp-block-wpzoom-forms-submit-field"/>
+<!-- /wp:wpzoom-forms/submit-field --></div>
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'      => 'payment-membership-tiers',
+		'name'    => 'Membership Tiers',
+		'icon'    => '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M200-238.31q54-53 125.5-83.5t154.5-30.5q83 0 154.5 30.5t125.5 83.5v-509.38q0-4.62-3.85-8.46-3.84-3.85-8.46-3.85H212.31q-4.62 0-8.46 3.85-3.85 3.84-3.85 8.46v509.38Zm372.08-238.07Q610-514.31 610-568.46t-37.92-92.08q-37.93-37.92-92.08-37.92t-92.08 37.92Q350-622.61 350-568.46t37.92 92.08q37.93 37.92 92.08 37.92t92.08-37.92ZM212.31-140Q182-140 161-161q-21-21-21-51.31v-535.38Q140-778 161-799q21-21 51.31-21h535.38Q778-820 799-799q21 21 21 51.31v535.38Q820-182 799-161q-21 21-51.31 21H212.31Zm34.77-60h465.84Q662-246.69 601.89-269.5 541.77-292.31 480-292.31q-61 0-122.12 22.81-61.11 22.81-110.8 69.5Zm183.5-319.04Q410-539.61 410-568.46t20.58-49.42q20.57-20.58 49.42-20.58t49.42 20.58Q550-597.31 550-568.46t-20.58 49.42q-20.57 20.58-49.42 20.58t-49.42-20.58ZM480-499.15Z"/></svg>',
+		'desc'    => 'Radio-priced plans, order total, and card field for subscriptions or one-time plans.',
+		'badge'   => 'Stripe',
+		'content' => '<!-- wp:wpzoom-forms/form -->
+<div class="wp-block-wpzoom-forms-form"><!-- wp:wpzoom-forms/text-name-field {"id":"input_pay_pl_nm","name":"Name"} -->
+<label for="input_pay_pl_nm"><span>Name</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_pay_pl_nm" id="input_pay_pl_nm" placeholder="" required class="wp-block-wpzoom-forms-text-name-field"/>
+<!-- /wp:wpzoom-forms/text-name-field -->
+
+<!-- wp:wpzoom-forms/text-email-field {"id":"input_pay_pl_em","name":"Email","replyto":true} -->
+<label for="input_pay_pl_em"><span>Email</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="email" name="input_pay_pl_em" id="input_pay_pl_em" placeholder="" required data-replyto="true" class="wp-block-wpzoom-forms-text-email-field"/>
+<!-- /wp:wpzoom-forms/text-email-field -->
+
+<!-- wp:wpzoom-forms/payment-multiple {"id":"input_pay_plan_01","name":"Membership tier","options":[{"label":"Starter","price":19},{"label":"Professional","price":49},{"label":"Agency","price":99}],"defaultValue":"Starter","label":"Choose your plan","required":true} -->
+<div class="wp-block-wpzoom-forms-payment-multiple"><fieldset class="wpzf-payment-options" id="input_pay_plan_01" data-payment-type="radio"><legend><span>Choose your plan</span><sup class="wp-block-wpzoom-forms-required">*</sup></legend><ul><li><label><input type="radio" name="input_pay_plan_01" id="input_pay_plan_01-0" value="Starter" data-price="19" class="wpzf-payment-option" checked required/>Starter — $19.00</label></li><li><label><input type="radio" name="input_pay_plan_01" id="input_pay_plan_01-1" value="Professional" data-price="49" class="wpzf-payment-option" required/>Professional — $49.00</label></li><li><label><input type="radio" name="input_pay_plan_01" id="input_pay_plan_01-2" value="Agency" data-price="99" class="wpzf-payment-option" required/>Agency — $99.00</label></li></ul></fieldset></div>
+<!-- /wp:wpzoom-forms/payment-multiple -->
+
+<!-- wp:separator {"className":"is-style-wide"} -->
+<hr class="wp-block-separator has-alpha-channel-opacity is-style-wide"/>
+<!-- /wp:separator -->
+
+<!-- wp:wpzoom-forms/payment-total {"label":"Due today","className":"is-style-inline"} -->
+<div class="wp-block-wpzoom-forms-payment-total is-style-inline"><label class="wpzf-payment-total-label" for="wpzf_payment_total">Due today</label><div class="wpzf-payment-total-amount">$0.00</div><input type="hidden" name="wpzf_payment_total" value="0"/></div>
+<!-- /wp:wpzoom-forms/payment-total -->
+
+<!-- wp:separator {"className":"is-style-wide"} -->
+<hr class="wp-block-separator has-alpha-channel-opacity is-style-wide"/>
+<!-- /wp:separator -->
+
+<!-- wp:wpzoom-forms/stripe-card {"label":"Payment method","showLabel":false,"className":"is-style-stripe"} -->
+<div class="wpzf-stripe-card-wrapper wp-block-wpzoom-forms-stripe-card is-style-stripe"><div id="wpzf-payment-element" class="wpzf-stripe-card-element"></div><div id="wpzf-card-errors" class="wpzf-stripe-card-errors" role="alert"></div><input type="hidden" name="wpzf_payment_intent_id" value=""/></div>
+<!-- /wp:wpzoom-forms/stripe-card -->
+
+<!-- wp:wpzoom-forms/submit-field {"id":"input_submit"} -->
+<input type="submit" id="input_submit" value="Continue" class="wp-block-wpzoom-forms-submit-field"/>
+<!-- /wp:wpzoom-forms/submit-field --></div>
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'      => 'payment-add-ons',
+		'name'    => 'Workshop Add-ons',
+		'icon'    => '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M720-180h-90q-12.75 0-21.38-8.63-8.62-8.63-8.62-21.38 0-12.76 8.62-21.37Q617.25-240 630-240h90v-90q0-12.75 8.63-21.38 8.63-8.62 21.38-8.62 12.76 0 21.37 8.62Q780-342.75 780-330v90h90q12.75 0 21.37 8.63 8.63 8.63 8.63 21.38 0 12.76-8.63 21.37Q882.75-180 870-180h-90v90q0 12.75-8.63 21.37Q762.74-60 749.99-60q-12.76 0-21.37-8.63Q720-77.25 720-90v-90Zm-579.23 10q-15.36 0-25.76-10.39-10.39-10.4-10.39-25.76V-410H92.23q-17.07 0-28.11-13.35-11.04-13.34-7.04-30.42l40-187.69q2.73-12.49 12.76-20.51 10.02-8.03 22.78-8.03h514.76q12.76 0 22.79 8.03 10.02 8.02 12.75 20.51l40 187.69q4 17.08-7.04 30.42Q704.85-410 687.77-410h-12.39v95.39q0 12.74-8.62 21.37-8.63 8.62-21.39 8.62-12.75 0-21.37-8.62-8.61-8.63-8.61-21.37V-410H444.62v203.85q0 15.36-10.4 25.76Q423.83-170 408.46-170H140.77Zm23.85-60h220v-180h-220v180Zm-43.39-240h537.54-537.54Zm11.85-260q-12.75 0-21.38-8.63-8.62-8.63-8.62-21.38 0-12.76 8.62-21.37 8.63-8.62 21.38-8.62h513.84q12.75 0 21.38 8.63 8.62 8.63 8.62 21.38 0 12.76-8.62 21.37-8.63 8.62-21.38 8.62H133.08Zm-11.85 260h537.54l-30.54-140H151.77l-30.54 140Z"/></svg>',
+		'desc'    => 'Optional priced checkboxes, total, and Stripe for event or course upsells.',
+		'badge'   => 'Stripe',
+		'content' => '<!-- wp:wpzoom-forms/form -->
+<div class="wp-block-wpzoom-forms-form"><!-- wp:wpzoom-forms/text-name-field {"id":"input_pay_ad_nm","name":"Name"} -->
+<label for="input_pay_ad_nm"><span>Name</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_pay_ad_nm" id="input_pay_ad_nm" placeholder="" required class="wp-block-wpzoom-forms-text-name-field"/>
+<!-- /wp:wpzoom-forms/text-name-field -->
+
+<!-- wp:wpzoom-forms/text-email-field {"id":"input_pay_ad_em","name":"Email","replyto":true} -->
+<label for="input_pay_ad_em"><span>Email</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="email" name="input_pay_ad_em" id="input_pay_ad_em" placeholder="" required data-replyto="true" class="wp-block-wpzoom-forms-text-email-field"/>
+<!-- /wp:wpzoom-forms/text-email-field -->
+
+<!-- wp:wpzoom-forms/payment-item {"id":"wpzf_pay_item_01","itemName":"Course fee","price":49,"className":"is-style-inline","style":{"spacing":{"padding":{"top":"var:preset|spacing|30","bottom":"var:preset|spacing|30"}}}} -->
+<div class="wp-block-wpzoom-forms-payment-item is-style-inline" style="padding-top:var(--wp--preset--spacing--30);padding-bottom:var(--wp--preset--spacing--30)"><input type="hidden" name="wpzf_pay_item_01_price" value="49"/><div class="wpzf-payment-item-info"><div class="wpzf-payment-item-name">Course fee</div></div><div class="wpzf-payment-item-right"><span class="wpzf-payment-item-price">$49.00</span><input type="hidden" name="wpzf_pay_item_01_qty" value="1"/></div></div>
+<!-- /wp:wpzoom-forms/payment-item -->
+
+<!-- wp:wpzoom-forms/payment-checkbox {"id":"input_pay_addon_01","name":"Workshop add-ons","options":[{"label":"Recording access","price":25},{"label":"Printed workbook","price":15},{"label":"1:1 coaching (30 min)","price":120}],"label":"Optional add-ons"} -->
+<div class="wp-block-wpzoom-forms-payment-checkbox"><fieldset class="wpzf-payment-options" id="input_pay_addon_01" data-payment-type="checkbox"><legend><span>Optional add-ons</span></legend><ul><li><label><input type="checkbox" name="input_pay_addon_01[]" id="input_pay_addon_01-0" value="Recording access" data-price="25" class="wpzf-payment-option"/>Recording access — $25.00</label></li><li><label><input type="checkbox" name="input_pay_addon_01[]" id="input_pay_addon_01-1" value="Printed workbook" data-price="15" class="wpzf-payment-option"/>Printed workbook — $15.00</label></li><li><label><input type="checkbox" name="input_pay_addon_01[]" id="input_pay_addon_01-2" value="1:1 coaching (30 min)" data-price="120" class="wpzf-payment-option"/>1:1 coaching (30 min) — $120.00</label></li></ul></fieldset></div>
+<!-- /wp:wpzoom-forms/payment-checkbox -->
+
+<!-- wp:separator {"className":"is-style-wide"} -->
+<hr class="wp-block-separator has-alpha-channel-opacity is-style-wide"/>
+<!-- /wp:separator -->
+
+<!-- wp:wpzoom-forms/payment-total {"className":"is-style-inline"} -->
+<div class="wp-block-wpzoom-forms-payment-total is-style-inline"><label class="wpzf-payment-total-label" for="wpzf_payment_total">Total</label><div class="wpzf-payment-total-amount">$0.00</div><input type="hidden" name="wpzf_payment_total" value="0"/></div>
+<!-- /wp:wpzoom-forms/payment-total -->
+
+<!-- wp:separator {"className":"is-style-wide"} -->
+<hr class="wp-block-separator has-alpha-channel-opacity is-style-wide"/>
+<!-- /wp:separator -->
+
+<!-- wp:wpzoom-forms/stripe-card {"className":"is-style-stripe"} -->
+<div class="wpzf-stripe-card-wrapper wp-block-wpzoom-forms-stripe-card is-style-stripe"><label class="wpzf-stripe-card-label"><span>Card Details</span></label><div id="wpzf-payment-element" class="wpzf-stripe-card-element"></div><div id="wpzf-card-errors" class="wpzf-stripe-card-errors" role="alert"></div><input type="hidden" name="wpzf_payment_intent_id" value=""/></div>
+<!-- /wp:wpzoom-forms/stripe-card -->
+
+<!-- wp:wpzoom-forms/submit-field {"id":"input_submit"} -->
+<input type="submit" id="input_submit" value="Complete purchase" class="wp-block-wpzoom-forms-submit-field"/>
+<!-- /wp:wpzoom-forms/submit-field --></div>
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
+		'id'      => 'payment-package-dropdown',
+		'name'    => 'Service Package',
+		'icon'    => '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M200-643.85h349.92H524.23h13.23H200Zm420 0h140-140Zm-404.38-59.99H744l-43.62-51.93q-1.92-1.92-4.42-3.08-2.5-1.15-5.19-1.15H268.85q-2.69 0-5.2 1.15-2.5 1.16-4.42 3.08l-43.61 51.93ZM400-445.77l80-40 80 40v-198.08H400v198.08ZM212.31-140q-29.83 0-51.07-21.24Q140-182.48 140-212.31v-467.46q0-12.65 4.12-24.4 4.11-11.75 12.34-21.6l56.16-67.92q9.84-12.7 24.61-19.5Q252-820 268.52-820h422.19q16.52 0 31.43 6.81 14.92 6.8 24.86 19.5L803.54-725q8.23 10.01 12.34 21.83 4.12 11.82 4.12 24.56v143.3q0 12.75-8.63 21.38-8.63 8.62-21.38 8.62-12.76 0-21.37-8.62-8.62-8.63-8.62-21.38v-108.54H620v179.54q-23.08 13.85-41.58 35.08-18.5 21.23-28.5 45.92L480-418.08l-87.77 43.69q-18.07 9.23-35.15-1.21Q340-386.04 340-406.92v-236.93H200v431.54q0 5.39 3.46 8.85t8.85 3.46h307.54q12.75 0 21.37 8.58 8.63 8.57 8.63 21.25 0 11.94-8.63 21.05-8.62 9.12-21.37 9.12H212.31Zm528.23 3.3q-8.62-8.63-8.62-21.38v-90h-90q-12.75 0-21.37-8.63-8.63-8.62-8.63-21.38t8.63-21.37q8.62-8.62 21.37-8.62h90v-90q0-12.75 8.63-21.37 8.63-8.63 21.39-8.63 12.75 0 21.37 8.63 8.61 8.62 8.61 21.37v90h90q12.75 0 21.38 8.63 8.62 8.63 8.62 21.39 0 12.75-8.62 21.37-8.63 8.61-21.38 8.61h-90v90q0 12.75-8.63 21.38-8.62 8.62-21.38 8.62t-21.37-8.62ZM200-643.85h349.92-25.69 13.23H200Z"/></svg>',
+		'desc'    => 'Dropdown priced packages with total and Stripe card field.',
+		'badge'   => 'Stripe',
+		'content' => '<!-- wp:wpzoom-forms/form -->
+<div class="wp-block-wpzoom-forms-form"><!-- wp:wpzoom-forms/text-name-field {"id":"input_pay_dd_nm","name":"Name"} -->
+<label for="input_pay_dd_nm"><span>Name</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="text" name="input_pay_dd_nm" id="input_pay_dd_nm" placeholder="" required class="wp-block-wpzoom-forms-text-name-field"/>
+<!-- /wp:wpzoom-forms/text-name-field -->
+
+<!-- wp:wpzoom-forms/text-email-field {"id":"input_pay_dd_em","name":"Email","replyto":true} -->
+<label for="input_pay_dd_em"><span>Email</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><input type="email" name="input_pay_dd_em" id="input_pay_dd_em" placeholder="" required data-replyto="true" class="wp-block-wpzoom-forms-text-email-field"/>
+<!-- /wp:wpzoom-forms/text-email-field -->
+
+<!-- wp:wpzoom-forms/payment-dropdown {"id":"input_pay_pkg_01","name":"Package","options":[{"label":"Starter website","price":299},{"label":"Business website","price":599},{"label":"E-commerce setup","price":1299}],"defaultValue":"Starter website","label":"Select a package","required":true} -->
+<div class="wp-block-wpzoom-forms-payment-dropdown"><label for="input_pay_pkg_01"><span>Select a package</span><sup class="wp-block-wpzoom-forms-required">*</sup></label><select class="wpzf-payment-options" name="input_pay_pkg_01" id="input_pay_pkg_01" required defaultvalue="Starter website" data-payment-type="dropdown"><option value="Starter website" data-price="299" class="wpzf-payment-option">Starter website — $299.00</option><option value="Business website" data-price="599" class="wpzf-payment-option">Business website — $599.00</option><option value="E-commerce setup" data-price="1299" class="wpzf-payment-option">E-commerce setup — $1299.00</option></select></div>
+<!-- /wp:wpzoom-forms/payment-dropdown -->
+
+<!-- wp:separator {"className":"is-style-wide"} -->
+<hr class="wp-block-separator has-alpha-channel-opacity is-style-wide"/>
+<!-- /wp:separator -->
+
+<!-- wp:wpzoom-forms/payment-total {"label":"Investment","className":"is-style-inline"} -->
+<div class="wp-block-wpzoom-forms-payment-total is-style-inline"><label class="wpzf-payment-total-label" for="wpzf_payment_total">Investment</label><div class="wpzf-payment-total-amount">$0.00</div><input type="hidden" name="wpzf_payment_total" value="0"/></div>
+<!-- /wp:wpzoom-forms/payment-total -->
+
+<!-- wp:separator {"className":"is-style-wide"} -->
+<hr class="wp-block-separator has-alpha-channel-opacity is-style-wide"/>
+<!-- /wp:separator -->
+
+<!-- wp:wpzoom-forms/stripe-card {"className":"is-style-stripe"} -->
+<div class="wpzf-stripe-card-wrapper wp-block-wpzoom-forms-stripe-card is-style-stripe"><label class="wpzf-stripe-card-label"><span>Card Details</span></label><div id="wpzf-payment-element" class="wpzf-stripe-card-element"></div><div id="wpzf-card-errors" class="wpzf-stripe-card-errors" role="alert"></div><input type="hidden" name="wpzf_payment_intent_id" value=""/></div>
+<!-- /wp:wpzoom-forms/stripe-card -->
+
+<!-- wp:wpzoom-forms/submit-field {"id":"input_submit"} -->
+<input type="submit" id="input_submit" value="Pay deposit" class="wp-block-wpzoom-forms-submit-field"/>
+<!-- /wp:wpzoom-forms/submit-field --></div>
+<!-- /wp:wpzoom-forms/form -->',
+	),
+	array(
 		'id'       => 'restaurant-callback-request',
 		'name'     => 'Restaurant Callback',
 		'category' => 'restaurant',

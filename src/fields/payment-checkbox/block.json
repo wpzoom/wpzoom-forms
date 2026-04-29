@@ -1,0 +1,94 @@
+{
+	"$schema":      "https://schemas.wp.org/trunk/block.json",
+	"apiVersion":   3,
+	"name":         "wpzoom-forms/payment-checkbox",
+	"title":        "Checkbox Items",
+	"category":     "wpzoom-forms-payments",
+	"ancestor":     [ "wpzoom-forms/form" ],
+	"description":  "A multi-checkbox field where each option has a price. Users can select multiple items.",
+	"keywords":     [ "wpzoom", "form", "payment", "checkbox", "items", "price" ],
+	"version":      "1.0.0",
+	"textdomain":   "wpzoom-forms",
+	"attributes":   {
+		"id":            {
+			"type":      "string",
+			"default":   ""
+		},
+		"name":          {
+			"type":      "string",
+			"default":   ""
+		},
+		"options":       {
+			"type":      "array",
+			"default":   [ { "label": "Item #1", "price": 10 } ]
+		},
+		"label":         {
+			"type":      "string",
+			"default":   "Select items"
+		},
+		"showLabel":     {
+			"type":      "boolean",
+			"default":   true
+		},
+		"required":      {
+			"type":      "boolean",
+			"default":   false
+		}
+	},
+	"supports":     {
+		"align":         true,
+		"html":          false,
+		"shadow":        true,
+		"color":         {
+			"background": true,
+			"gradients":  true,
+			"text":       true
+		},
+		"typography":    {
+			"fontSize":   true,
+			"lineHeight": true,
+			"__experimentalFontFamily": true,
+			"__experimentalFontWeight": true,
+			"__experimentalFontStyle": true,
+			"__experimentalTextTransform": true,
+			"__experimentalTextDecoration": true,
+			"__experimentalLetterSpacing": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true
+			}
+		},
+		"dimensions":    {
+			"minHeight":  true
+		},
+		"spacing":       {
+			"margin":     true,
+			"padding":    true,
+			"__experimentalDefaultControls": {
+				"padding": true
+			}
+		},
+		"__experimentalBorder": {
+			"radius":     true,
+			"__experimentalSkipSerialization": true,
+			"__experimentalDefaultControls": {
+				"radius": true
+			}
+		}
+	},
+	"selectors":    {
+		"root":          ".wpzoom-forms_payment_checkbox-field",
+		"color":         ".wpzoom-forms_payment_checkbox-field > input",
+		"typography":    ".wpzoom-forms_payment_checkbox-field > input",
+		"dimensions":    ".wpzoom-forms_payment_checkbox-field > input",
+		"spacing":       ".wpzoom-forms_payment_checkbox-field > input",
+		"__experimentalBorder": ".wpzoom-forms_payment_checkbox-field > input"
+	},
+	"styles":       [
+		{ "name": "modern", "label": "Modern", "isDefault": true },
+		{ "name": "classic", "label": "Classic" }
+	],
+	"editorScript": "file:./index.js",
+	"editorStyle":  "wpzoom-forms-css-backend-main",
+	"script":       "wpzoom-forms-js-frontend-formblock",
+	"style":        "wpzoom-forms-css-frontend-formblock"
+}

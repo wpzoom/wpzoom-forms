@@ -1,0 +1,21 @@
+{
+    "name": "wpzoom/wpzoom-forms",
+    "description": "Simple, user-friendly contact form plugin for WordPress that utilizes Gutenberg blocks for easy form building and customization.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "WPZOOM",
+            "homepage": "https://www.wpzoom.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "stripe/stripe-php": "^19.4"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true,
+        "preferred-install": "dist"
+    }
+}
