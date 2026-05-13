@@ -2078,7 +2078,7 @@ class WPZOOM_Forms {
 			$styleOutput
 		);
 
-		$content = $style . $content;
+		$content = $content . $style;
 
 		return $content;
 	}
