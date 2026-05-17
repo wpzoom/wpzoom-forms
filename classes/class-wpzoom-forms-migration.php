@@ -39,19 +39,23 @@ class WPZOOM_Forms_Migration {
 	public static function build_from_post_content( $form_id ) {
 		$post = get_post( $form_id );
 		if ( ! $post ) return WPZOOM_Forms_Schema::defaults();
+		return self::build_from_content( $post->post_content );
+	}
 
+	/**
+	 * Build a v2 schema from raw post_content (block markup). Useful for previewing
+	 * a template before any post is created.
+	 *
+	 * @param string $post_content
+	 * @return array Sanitized schema (always populated; falls back to defaults if empty).
+	 */
+	public static function build_from_content( $post_content ) {
 		$schema             = WPZOOM_Forms_Schema::defaults();
 		$schema['fields']   = array();
 		$schema['settings']['submitLabel'] = __( 'Submit', 'wpzoom-forms' );
 
-		$blocks = parse_blocks( $post->post_content );
+		$blocks = parse_blocks( (string) $post_content );
 		self::walk_blocks( $blocks, $schema );
-
-		// Pull other settings out of legacy postmeta where they live.
-		$success = get_post_meta( $form_id, '_form_success_message', true );
-		$failure = get_post_meta( $form_id, '_form_failure_message', true );
-		$subject = get_post_meta( $form_id, '_form_subject', true );
-		// These get stored separately (notification settings), schema keeps just form-related bits.
 
 		// If no fields were found, fall back to a sensible starter form.
 		if ( empty( $schema['fields'] ) ) {

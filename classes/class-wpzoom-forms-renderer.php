@@ -55,11 +55,23 @@ class WPZOOM_Forms_Renderer {
 
 		$captcha_html = self::captcha_field_html();
 
+		// Per-instance enqueue (no-op if the global enqueue already ran).
+		// Respect the site owner's existing settings: only attach the plugin's
+		// default stylesheet when "Load default styling for forms" is enabled.
+		wp_enqueue_script( 'wpzf-frontend-form' );
+		if ( class_exists( 'WPZOOM_Forms_Settings' ) && (bool) WPZOOM_Forms_Settings::get( 'wpzf_use_theme_styles' ) ) {
+			wp_enqueue_style( 'wpzf-frontend-form' );
+		}
+
+		// Theme value of 'default' means "let the site theme style it" → we still ship
+		// minimal *layout* classes but skip the visual theme variant entirely.
+		$theme_class = $settings['theme'] !== 'default' ? ' wpzf-theme-' . sanitize_html_class( $settings['theme'] ) : '';
+
 		ob_start();
 		?>
-		<div id="<?php echo esc_attr( $form_uid ); ?>" class="wpzf-form wpzf-theme-<?php echo esc_attr( $settings['theme'] ); ?> wpzf-labels-<?php echo esc_attr( $settings['labelsPosition'] ); ?>">
+		<div id="<?php echo esc_attr( $form_uid ); ?>" class="wpzf-form wpzoom-forms_form<?php echo esc_attr( $theme_class ); ?> wpzf-labels-<?php echo esc_attr( $settings['labelsPosition'] ); ?>">
 			<div id="<?php echo esc_attr( $notice_id ); ?>" class="wpzf-notice" hidden></div>
-			<form method="POST" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="wpzf-form__inner" data-form-id="<?php echo esc_attr( $form_id ); ?>" data-success="<?php echo esc_attr( $success_msg ); ?>" data-failure="<?php echo esc_attr( $failure_msg ); ?>" novalidate>
+			<form method="POST" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="wpzf-form__inner wp-block-wpzoom-forms-form" data-form-id="<?php echo esc_attr( $form_id ); ?>" data-success="<?php echo esc_attr( $success_msg ); ?>" data-failure="<?php echo esc_attr( $failure_msg ); ?>" novalidate>
 				<input type="hidden" name="action" value="wpzf_submit" />
 				<input type="hidden" name="form_id" value="<?php echo esc_attr( $form_id ); ?>" />
 				<?php wp_nonce_field( 'wpzf_submit' ); ?>
@@ -250,14 +262,37 @@ class WPZOOM_Forms_Renderer {
 		}
 
 		return sprintf(
-			'<div class="wpzf-field wpzf-field--width-%1$s wpzf-field--type-%2$s%3$s">%4$s%5$s%6$s</div>',
+			'<div class="wpzf-field wpzf-field--width-%1$s wpzf-field--type-%2$s%3$s%4$s">%5$s%6$s%7$s</div>',
 			esc_attr( $field['width'] ),
 			esc_attr( $type ),
 			$extra_class,
+			' ' . esc_attr( self::legacy_field_class( $type ) ),
 			$label_html,
 			$input_html,
 			$help_html
 		);
+	}
+
+	/**
+	 * Returns the matching legacy block class for a given v2 field type,
+	 * so any custom theme CSS targeting the old `.wp-block-wpzoom-forms-*`
+	 * selectors continues to apply against the new markup.
+	 */
+	private static function legacy_field_class( $type ) {
+		static $map = array(
+			'text'       => 'wp-block-wpzoom-forms-text-plain-field',
+			'name'       => 'wp-block-wpzoom-forms-text-name-field',
+			'email'      => 'wp-block-wpzoom-forms-text-email-field',
+			'tel'        => 'wp-block-wpzoom-forms-text-phone-field',
+			'url'        => 'wp-block-wpzoom-forms-text-website-field',
+			'textarea'   => 'wp-block-wpzoom-forms-textarea-field',
+			'select'     => 'wp-block-wpzoom-forms-select-field',
+			'radio'      => 'wp-block-wpzoom-forms-radio-field',
+			'checkboxes' => 'wp-block-wpzoom-forms-multi-checkbox-field',
+			'checkbox'   => 'wp-block-wpzoom-forms-checkbox-field',
+			'date'       => 'wp-block-wpzoom-forms-datepicker-field',
+		);
+		return isset( $map[ $type ] ) ? $map[ $type ] : '';
 	}
 
 	/**

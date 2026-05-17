@@ -467,64 +467,220 @@ textarea.wpzf-preview-input { resize: none; }
 .wpzf-builder--picker { background: $bg; }
 
 .wpzf-picker {
-	max-width: 1100px;
-	margin: 0 auto;
-	padding: 32px 24px;
+	display: flex; flex-direction: column;
+	height: calc(100vh - 32px);
+	overflow: hidden;
 
 	&__header {
 		display: flex; align-items: flex-start; gap: 12px;
-		margin-bottom: 24px;
-		h1 { margin: 0 0 4px; font-size: 22px; color: $text; }
-		p  { margin: 0; color: $muted; }
+		padding: 20px 28px;
+		background: #fff;
+		border-bottom: 1px solid $border;
+		flex-shrink: 0;
 	}
-
+	&__heading {
+		h1 { margin: 0 0 4px; font-size: 18px; color: $text; }
+		p  { margin: 0; font-size: 13px; color: $muted; }
+	}
 	&__error {
+		margin: 12px 28px 0;
 		padding: 10px 14px;
 		background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;
 		border-radius: 6px;
-		margin-bottom: 16px;
 	}
 
-	&__grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-		gap: 16px;
-	}
+	&__ai-upsell {
+		display: flex; align-items: center; gap: 14px;
+		margin: 14px 28px 0;
+		padding: 14px 18px;
+		background: linear-gradient(135deg, #eef2ff, #f5f3ff);
+		border: 1px solid #c7d2fe;
+		border-radius: 10px;
 
-	&__card {
-		display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
-		padding: 20px;
-		background: #fff;
-		border: 1px solid $border; border-radius: 10px;
-		text-align: left; cursor: pointer;
-		transition: border-color .15s, box-shadow .15s, transform .05s;
-
-		&:hover { border-color: $brand; box-shadow: 0 4px 12px rgba(0,0,0,.06); }
-		&:active { transform: scale(.99); }
-		&:disabled { opacity: .5; cursor: progress; }
-
-		&--blank {
-			background: $border-soft;
-			border-style: dashed;
-			.wpzf-picker__icon { color: $brand; }
+		&-icon {
+			display: inline-flex; align-items: center; justify-content: center;
+			width: 36px; height: 36px;
+			background: #fff; border-radius: 8px;
+			color: #4f46e5;
+			flex-shrink: 0;
+		}
+		&-text {
+			flex: 1; display: flex; flex-direction: column; gap: 2px;
+			strong { color: #1e1b4b; font-size: 14px; }
+			span   { color: #4338ca; font-size: 13px; }
 		}
 	}
 
-	&__icon {
-		display: inline-flex; align-items: center; justify-content: center;
-		width: 40px; height: 40px;
-		background: rgba(34,113,177,.08);
-		color: $brand;
-		border-radius: 8px;
-		svg { width: 24px; height: 24px; }
+	&__pro-badge {
+		display: inline-block;
+		margin-left: 6px;
+		padding: 1px 6px;
+		background: #4f46e5; color: #fff;
+		border-radius: 4px;
+		font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+		vertical-align: middle;
 	}
-	&__name { font-size: 15px; font-weight: 600; color: $text; }
-	&__desc { font-size: 13px; color: $muted; line-height: 1.45; }
+
+	&__pro-placeholder {
+		max-width: 480px; margin: 60px auto;
+		padding: 36px 32px;
+		background: #fff;
+		border: 1px dashed $border;
+		border-radius: 12px;
+		text-align: center;
+		color: $text;
+		h3 { margin: 12px 0 6px; font-size: 18px; }
+		p  { margin: 0 0 14px; color: $muted; }
+		&-icon {
+			display: inline-flex; align-items: center; justify-content: center;
+			width: 48px; height: 48px;
+			background: rgba(79,70,229,.08); color: #4f46e5;
+			border-radius: 12px;
+		}
+		&-hint { font-size: 13px; }
+	}
+
+	&__split {
+		flex: 1;
+		display: grid;
+		grid-template-columns: 320px 1fr;
+		min-height: 0;
+	}
+
+	&__list {
+		background: #fff;
+		border-right: 1px solid $border;
+		overflow-y: auto;
+		padding: 12px;
+		min-height: 0; // allow scroll inside the grid row
+	}
+	&__item {
+		display: grid; grid-template-columns: 36px 1fr; gap: 12px;
+		width: 100%;
+		padding: 12px;
+		background: transparent;
+		border: 1px solid transparent; border-radius: 8px;
+		text-align: left; cursor: pointer;
+		color: $text;
+		text-decoration: none;
+		transition: background .12s, border-color .12s;
+
+		& + & { margin-top: 4px; }
+		&:hover { background: $border-soft; }
+		&.is-selected {
+			background: rgba(34,113,177,.07);
+			border-color: rgba(34,113,177,.35);
+		}
+		&.is-pro {
+			.wpzf-picker__item-icon { opacity: .85; }
+		}
+		&--cta {
+			margin-top: 8px !important;
+			border-top: 1px solid $border;
+			border-radius: 0 0 8px 8px;
+			padding-top: 16px;
+			color: $brand;
+			.wpzf-picker__item-icon { background: rgba(34,113,177,.08); color: $brand; }
+			&:hover { background: rgba(34,113,177,.06); }
+		}
+	}
+	&__item-icon {
+		display: inline-flex; align-items: center; justify-content: center;
+		width: 36px; height: 36px;
+		background: $border-soft; border-radius: 8px;
+		color: $text;
+		svg { width: 20px; height: 20px; }
+	}
+	&__item-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+	&__item-name { font-size: 13px; font-weight: 600; line-height: 1.3; }
+	&__item-desc { font-size: 12px; color: $muted; line-height: 1.4;
+		display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	&__preview {
+		display: flex; flex-direction: column;
+		min-width: 0;
+		min-height: 0; // critical: lets the inner canvas overflow-scroll
+		background: $bg;
+	}
+	&__preview-header {
+		display: flex; align-items: center; justify-content: space-between; gap: 12px;
+		padding: 18px 28px;
+		background: #fff;
+		border-bottom: 1px solid $border;
+		flex-shrink: 0;
+		h2 { margin: 0 0 4px; font-size: 16px; color: $text; }
+		p  { margin: 0; font-size: 13px; color: $muted; }
+	}
+	&__preview-canvas {
+		flex: 1; overflow-y: auto;
+		padding: 32px;
+		display: flex; justify-content: center; align-items: flex-start;
+	}
+	&__empty {
+		color: $muted; font-size: 13px;
+		padding: 60px 20px; text-align: center;
+		max-width: 480px;
+	}
 
 	&--loading, &--error {
-		display: flex; flex-direction: column; align-items: center; justify-content: center;
-		padding: 80px 24px;
-		min-height: 320px;
+		justify-content: center; align-items: center;
+	}
+}
+
+/* ─── live form preview inside the picker ─────────────────────────────────── */
+.wpzf-preview-form {
+	width: 100%; max-width: 640px;
+	background: #fff;
+	border: 1px solid $border;
+	border-radius: 12px;
+	padding: 28px;
+	box-shadow: 0 1px 2px rgba(0,0,0,.04);
+	color: $text;
+
+	&__fields { display: flex; flex-wrap: wrap; gap: 16px; }
+	&__row {
+		flex-basis: 100%; min-width: 0;
+		&--w-half       { flex-basis: calc(50% - 8px); }
+		&--w-third      { flex-basis: calc(33.333% - 11px); }
+		&--w-two-thirds { flex-basis: calc(66.667% - 6px); }
+	}
+	&__label {
+		display: block; margin-bottom: 6px;
+		font-size: 13px; font-weight: 500;
+	}
+	&__input {
+		width: 100%; box-sizing: border-box;
+		padding: 9px 12px;
+		background: #fff;
+		border: 1px solid $border; border-radius: 6px;
+		font: inherit; color: $text;
+		pointer-events: none;
+		min-height: 38px;
+	}
+	textarea.wpzf-preview-form__input { resize: none; min-height: 0; }
+
+	&__choices { display: flex; flex-direction: column; gap: 6px; }
+	&__choice  { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; }
+	&__choice--single { padding-top: 4px; }
+
+	&__heading   { margin: 0; font-weight: 600; }
+	&__paragraph { color: $muted; }
+	&__divider   { border: 0; border-top: 1px solid $border; margin: 8px 0; }
+
+	&__submit {
+		margin-top: 24px;
+		&--center { text-align: center; }
+		&--right  { text-align: right; }
+		&--full   { .wpzf-preview-form__btn { width: 100%; } }
+	}
+	&__btn {
+		padding: 11px 28px;
+		background: $brand; color: #fff;
+		border: 0; border-radius: 6px;
+		font-size: 14px; font-weight: 600;
+		cursor: default; pointer-events: none;
 	}
 }
 

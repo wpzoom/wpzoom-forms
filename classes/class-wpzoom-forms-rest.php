@@ -86,22 +86,38 @@ class WPZOOM_Forms_REST {
 		) );
 	}
 
-	/** Return summaries of all prebuilt form templates. */
+	/**
+	 * Return summaries of all prebuilt form templates, including a v2 schema
+	 * preview computed by parsing the template's block markup through the
+	 * Migration helper. This lets the builder render a live preview of the
+	 * form before the user commits to creating it.
+	 */
 	public function list_templates() {
-		$file = WPZOOM_FORMS_PATH . 'templates/templates.php';
-		if ( ! file_exists( $file ) ) return rest_ensure_response( array() );
-		$templates = include $file;
-		if ( ! is_array( $templates ) ) return rest_ensure_response( array() );
+		$templates = WPZOOM_Forms_Templates::all();
+		if ( empty( $templates ) ) return rest_ensure_response( array() );
+
 		$out = array();
 		foreach ( $templates as $t ) {
+			$is_pro = ! empty( $t['is_pro'] );
 			$out[] = array(
-				'id'   => isset( $t['id'] ) ? $t['id'] : '',
-				'name' => isset( $t['name'] ) ? $t['name'] : '',
-				'desc' => isset( $t['desc'] ) ? $t['desc'] : '',
-				'icon' => isset( $t['icon'] ) ? $t['icon'] : '',
+				'id'     => isset( $t['id'] ) ? $t['id'] : '',
+				'name'   => isset( $t['name'] ) ? $t['name'] : '',
+				'desc'   => isset( $t['desc'] ) ? $t['desc'] : '',
+				'icon'   => isset( $t['icon'] ) ? $t['icon'] : '',
+				'isPro'  => $is_pro,
+				// PRO templates have no markup in the free build, so skip the schema cost.
+				'schema' => $is_pro ? null : $this->schema_for_template( $t ),
 			);
 		}
 		return rest_ensure_response( $out );
+	}
+
+	/**
+	 * Compile a v2 schema preview for a template without persisting anything.
+	 */
+	private function schema_for_template( $template ) {
+		$content = isset( $template['content'] ) ? $template['content'] : '';
+		return WPZOOM_Forms_Migration::build_from_content( $content );
 	}
 
 	/** Predefined option-list packs (countries, US states). */
@@ -166,6 +182,9 @@ class WPZOOM_Forms_REST {
 		$template_data = null;
 		if ( $template ) {
 			$template_data = WPZOOM_Forms_Templates::get( $template );
+			if ( $template_data && ! empty( $template_data['is_pro'] ) ) {
+				return new WP_Error( 'wpzf_pro_only', __( 'This template is only available in WPZOOM Forms PRO.', 'wpzoom-forms' ), array( 'status' => 402 ) );
+			}
 			if ( $template_data && empty( $title ) ) {
 				$title = $template_data['name'];
 			}

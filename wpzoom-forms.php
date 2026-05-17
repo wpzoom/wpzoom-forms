@@ -3401,7 +3401,14 @@ add_filter( 'render_block', function( $block_content, $block ) {
 }, 9, 2 );
 
 /**
- * Frontend asset: clean form CSS + minimal JS for AJAX submit + validation.
+ * Frontend asset registration.
+ *
+ *  - The AJAX submit script always loads (tiny, no styles).
+ *  - The default theme stylesheet only loads when the existing
+ *    "Load default styling for forms" setting is enabled, mirroring the
+ *    legacy behaviour so we don't fight a site owner's theme CSS.
+ *  - Enqueueing happens globally when "Load plugin assets globally" is on,
+ *    otherwise it's wired up in the renderer the first time a form is output.
  */
 add_action( 'wp_enqueue_scripts', function() {
 	wp_register_style(
@@ -3417,9 +3424,14 @@ add_action( 'wp_enqueue_scripts', function() {
 		WPZOOM_FORMS_VERSION,
 		true
 	);
-	// Always enqueue on frontend (cheap, single small file).
-	wp_enqueue_style( 'wpzf-frontend-form' );
-	wp_enqueue_script( 'wpzf-frontend-form' );
+
+	$use_theme_style    = class_exists( 'WPZOOM_Forms_Settings' ) ? (bool) WPZOOM_Forms_Settings::get( 'wpzf_use_theme_styles' ) : false;
+	$global_load_assets = class_exists( 'WPZOOM_Forms_Settings' ) ? (bool) WPZOOM_Forms_Settings::get( 'wpzf_global_assets_load' ) : false;
+
+	if ( $global_load_assets ) {
+		wp_enqueue_script( 'wpzf-frontend-form' );
+		if ( $use_theme_style ) wp_enqueue_style( 'wpzf-frontend-form' );
+	}
 }, 20 );
 
 /**
@@ -3440,6 +3452,35 @@ add_action( 'admin_head-edit.php', function() {
 			if (btn.length) {
 				btn.attr('href', '<?php echo esc_js( admin_url( 'admin.php?page=wpzf-form-builder' ) ); ?>');
 				btn.text(<?php echo wp_json_encode( __( 'Add New Form', 'wpzoom-forms' ) ); ?>);
+			}
+		});
+	</script>
+	<?php
+} );
+
+/**
+ * Render the legacy "Upgrade to PRO" sidebar banner on the forms list page.
+ * The legacy template-manager modal used to ship this; we disabled that modal
+ * when replacing the form editor, so re-emit the banner here so the upsell
+ * isn't lost.
+ */
+add_action( 'admin_footer-edit.php', function() {
+	$screen = get_current_screen();
+	if ( ! $screen || $screen->post_type !== 'wpzf-form' ) return;
+	if ( ! class_exists( 'WPZOOM_Forms_Settings' ) ) return;
+
+	$settings_class = new WPZOOM_Forms_Settings();
+	$settings_class->upsell_banner(); // echoes the .wpzoom-forms-settings-upsell-container markup
+	?>
+	<script>
+		jQuery(function($){
+			var $banner = $('.wpzoom-forms-settings-upsell-container').last();
+			if ( ! $banner.length ) return;
+			// Drop the upsell into the right rail next to the posts table.
+			var $filter = $('#posts-filter');
+			if ( $filter.length ) {
+				$banner.css({ 'float':'right', 'margin-left':'20px', 'max-width':'280px' });
+				$filter.before( $banner );
 			}
 		});
 	</script>
