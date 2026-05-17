@@ -1,0 +1,304 @@
+<?php
+/**
+ * Render a v2 form schema to HTML on the frontend.
+ *
+ * Produces semantic, lightly-classed markup that the frontend CSS skins. The
+ * markup intentionally avoids inline styles and per-field decorations — visual
+ * appearance is centralized in build/frontend-form/style.css.
+ *
+ * @package WPZOOM_Forms
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+class WPZOOM_Forms_Renderer {
+
+	/**
+	 * Render a form by id. Returns HTML string, never echoes.
+	 */
+	public static function render( $form_id ) {
+		$form_id = (int) $form_id;
+		if ( $form_id < 1 ) return self::error_html( __( 'Invalid form id.', 'wpzoom-forms' ), false );
+
+		$post = get_post( $form_id );
+		if ( ! $post || $post->post_type !== 'wpzf-form' ) {
+			return self::error_html( __( 'Form not found.', 'wpzoom-forms' ), current_user_can( 'manage_options' ) );
+		}
+		if ( $post->post_status !== 'publish' ) {
+			return self::error_html( __( 'This form is not published.', 'wpzoom-forms' ), current_user_can( 'manage_options' ) );
+		}
+
+		$schema = WPZOOM_Forms_Schema::get_for_form( $form_id );
+		if ( $schema === null ) {
+			$schema = WPZOOM_Forms_Migration::migrate( $form_id );
+		}
+
+		return self::render_schema( $form_id, $schema );
+	}
+
+	private static function error_html( $msg, $show_for_admins_only ) {
+		if ( $show_for_admins_only && ! current_user_can( 'manage_options' ) ) return '';
+		return sprintf(
+			'<div class="wpzf-error" style="border:1px solid #d63638;background:#fff;padding:1em;color:#d63638;">%s</div>',
+			esc_html( $msg )
+		);
+	}
+
+	private static function render_schema( $form_id, $schema ) {
+		$settings  = $schema['settings'];
+		$fields    = $schema['fields'];
+
+		$form_uid  = 'wpzf-' . $form_id;
+		$notice_id = $form_uid . '-notice';
+		$success_msg = get_post_meta( $form_id, '_form_success_message', true ) ?: __( "Thanks! We've received your submission.", 'wpzoom-forms' );
+		$failure_msg = get_post_meta( $form_id, '_form_failure_message', true ) ?: __( 'Sorry, something went wrong. Please try again.', 'wpzoom-forms' );
+
+		$captcha_html = self::captcha_field_html();
+
+		ob_start();
+		?>
+		<div id="<?php echo esc_attr( $form_uid ); ?>" class="wpzf-form wpzf-theme-<?php echo esc_attr( $settings['theme'] ); ?> wpzf-labels-<?php echo esc_attr( $settings['labelsPosition'] ); ?>">
+			<div id="<?php echo esc_attr( $notice_id ); ?>" class="wpzf-notice" hidden></div>
+			<form method="POST" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="wpzf-form__inner" data-form-id="<?php echo esc_attr( $form_id ); ?>" data-success="<?php echo esc_attr( $success_msg ); ?>" data-failure="<?php echo esc_attr( $failure_msg ); ?>" novalidate>
+				<input type="hidden" name="action" value="wpzf_submit" />
+				<input type="hidden" name="form_id" value="<?php echo esc_attr( $form_id ); ?>" />
+				<?php wp_nonce_field( 'wpzf_submit' ); ?>
+
+				<?php if ( ! empty( $settings['honeypot'] ) ) : ?>
+					<div class="wpzf-honeypot" aria-hidden="true">
+						<label>Leave this field empty: <input type="text" name="wpzf_hp" tabindex="-1" autocomplete="off" value="" /></label>
+					</div>
+				<?php endif; ?>
+
+				<div class="wpzf-fields">
+					<?php foreach ( $fields as $field ) : ?>
+						<?php echo self::render_field( $field, $settings ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<?php endforeach; ?>
+				</div>
+
+				<?php echo $captcha_html; // phpcs:ignore ?>
+
+				<div class="wpzf-submit wpzf-submit--align-<?php echo esc_attr( $settings['submitAlign'] ); ?>">
+					<button type="submit" class="wpzf-submit__btn"><?php echo esc_html( $settings['submitLabel'] ); ?></button>
+				</div>
+			</form>
+		</div>
+		<?php
+		return ob_get_clean();
+	}
+
+	private static function render_field( $field, $form_settings ) {
+		$type = $field['type'];
+
+		// Layout-only fields (no input).
+		if ( $type === 'heading' ) {
+			$tag = isset( $field['level'] ) ? $field['level'] : 'h3';
+			return sprintf(
+				'<div class="wpzf-field wpzf-field--width-%1$s wpzf-field--layout"><%2$s class="wpzf-heading">%3$s</%2$s></div>',
+				esc_attr( $field['width'] ),
+				esc_attr( $tag ),
+				esc_html( $field['text'] )
+			);
+		}
+		if ( $type === 'paragraph' ) {
+			return sprintf(
+				'<div class="wpzf-field wpzf-field--width-%1$s wpzf-field--layout"><div class="wpzf-paragraph">%2$s</div></div>',
+				esc_attr( $field['width'] ),
+				wp_kses_post( $field['text'] )
+			);
+		}
+		if ( $type === 'divider' ) {
+			return sprintf(
+				'<div class="wpzf-field wpzf-field--width-%1$s wpzf-field--layout"><hr class="wpzf-divider" /></div>',
+				esc_attr( $field['width'] )
+			);
+		}
+		if ( $type === 'hidden' ) {
+			return sprintf(
+				'<input type="hidden" name="wpzf_%1$s" value="%2$s" />',
+				esc_attr( $field['id'] ),
+				esc_attr( $field['defaultValue'] )
+			);
+		}
+
+		$field_name  = 'wpzf_' . $field['id'];
+		static $seq = 0; $seq++;
+		$field_id    = $field['id'] . '-' . $seq;
+		$required    = ! empty( $field['required'] );
+		$required_attr = $required ? ' required="required" aria-required="true"' : '';
+		$placeholder = ! empty( $field['placeholder'] ) ? ' placeholder="' . esc_attr( $field['placeholder'] ) . '"' : '';
+		$default     = isset( $field['defaultValue'] ) ? $field['defaultValue'] : '';
+
+		$extra_class = ! empty( $field['cssClass'] ) ? ' ' . esc_attr( $field['cssClass'] ) : '';
+
+		$show_label = $form_settings['labelsPosition'] !== 'hidden' && $type !== 'checkbox';
+		$req_mark   = $required && ! empty( $form_settings['showRequiredMark'] ) ? ' <span class="wpzf-required">*</span>' : '';
+		$label_html = $show_label
+			? sprintf( '<label class="wpzf-label" for="%1$s">%2$s%3$s</label>', esc_attr( $field_id ), esc_html( $field['label'] ), $req_mark )
+			: '';
+		$help_html  = ! empty( $field['help'] )
+			? sprintf( '<div class="wpzf-help">%s</div>', esc_html( $field['help'] ) )
+			: '';
+
+		$input_html = '';
+		switch ( $type ) {
+			case 'text':
+				$extra = ! empty( $field['isSubject'] ) ? ' data-subject="1"' : '';
+				$input_html = sprintf(
+					'<input type="text" id="%1$s" name="%2$s" class="wpzf-input"%3$s%4$s%5$s value="%6$s" />',
+					esc_attr( $field_id ), esc_attr( $field_name ), $required_attr, $placeholder, $extra, esc_attr( $default )
+				);
+				if ( ! empty( $field['isSubject'] ) ) {
+					$input_html .= '<input type="hidden" name="wpzf_subject" value="' . esc_attr( $field_name ) . '" />';
+				}
+				break;
+			case 'name':
+				$input_html = sprintf(
+					'<input type="text" id="%1$s" name="%2$s" class="wpzf-input" autocomplete="name"%3$s%4$s value="%5$s" />',
+					esc_attr( $field_id ), esc_attr( $field_name ), $required_attr, $placeholder, esc_attr( $default )
+				);
+				break;
+			case 'email':
+				$input_html = sprintf(
+					'<input type="email" id="%1$s" name="%2$s" class="wpzf-input" autocomplete="email"%3$s%4$s value="%5$s" />',
+					esc_attr( $field_id ), esc_attr( $field_name ), $required_attr, $placeholder, esc_attr( $default )
+				);
+				if ( ! empty( $field['isReplyTo'] ) ) {
+					$input_html .= '<input type="hidden" name="wpzf_replyto" value="' . esc_attr( $field_name ) . '" />';
+				}
+				break;
+			case 'tel':
+				$input_html = sprintf(
+					'<input type="tel" id="%1$s" name="%2$s" class="wpzf-input" autocomplete="tel"%3$s%4$s value="%5$s" />',
+					esc_attr( $field_id ), esc_attr( $field_name ), $required_attr, $placeholder, esc_attr( $default )
+				);
+				break;
+			case 'url':
+				$input_html = sprintf(
+					'<input type="url" id="%1$s" name="%2$s" class="wpzf-input" inputmode="url" autocomplete="url"%3$s%4$s value="%5$s" />',
+					esc_attr( $field_id ), esc_attr( $field_name ), $required_attr, $placeholder, esc_attr( $default )
+				);
+				break;
+			case 'number':
+				$min  = isset( $field['min'] )  && $field['min']  !== null ? ' min="'  . esc_attr( $field['min'] )  . '"' : '';
+				$max  = isset( $field['max'] )  && $field['max']  !== null ? ' max="'  . esc_attr( $field['max'] )  . '"' : '';
+				$step = isset( $field['step'] ) && $field['step'] !== null ? ' step="' . esc_attr( $field['step'] ) . '"' : '';
+				$input_html = sprintf(
+					'<input type="number" id="%1$s" name="%2$s" class="wpzf-input"%3$s%4$s%5$s%6$s%7$s value="%8$s" />',
+					esc_attr( $field_id ), esc_attr( $field_name ), $required_attr, $placeholder, $min, $max, $step, esc_attr( $default )
+				);
+				break;
+			case 'textarea':
+				$rows = isset( $field['rows'] ) ? (int) $field['rows'] : 4;
+				$input_html = sprintf(
+					'<textarea id="%1$s" name="%2$s" class="wpzf-input wpzf-input--textarea" rows="%3$d"%4$s%5$s>%6$s</textarea>',
+					esc_attr( $field_id ), esc_attr( $field_name ), $rows, $required_attr, $placeholder, esc_textarea( $default )
+				);
+				break;
+			case 'date':
+				$input_html = sprintf(
+					'<input type="date" id="%1$s" name="%2$s" class="wpzf-input"%3$s%4$s value="%5$s" />',
+					esc_attr( $field_id ), esc_attr( $field_name ), $required_attr, $placeholder, esc_attr( $default )
+				);
+				break;
+			case 'select':
+				$opts = isset( $field['options'] ) ? $field['options'] : array();
+				$ohtml = '<option value="">' . esc_html( $field['placeholder'] ?: __( '— Select —', 'wpzoom-forms' ) ) . '</option>';
+				foreach ( $opts as $opt ) {
+					$sel = ( $default !== '' && $default === $opt['value'] ) ? ' selected="selected"' : '';
+					$ohtml .= sprintf( '<option value="%1$s"%2$s>%3$s</option>', esc_attr( $opt['value'] ), $sel, esc_html( $opt['label'] ) );
+				}
+				$input_html = sprintf(
+					'<select id="%1$s" name="%2$s" class="wpzf-input wpzf-input--select"%3$s>%4$s</select>',
+					esc_attr( $field_id ), esc_attr( $field_name ), $required_attr, $ohtml
+				);
+				break;
+			case 'radio':
+				$opts = isset( $field['options'] ) ? $field['options'] : array();
+				$inner = '';
+				foreach ( $opts as $i => $opt ) {
+					$oid = $field_id . '-' . $i;
+					$chk = ( $default !== '' && $default === $opt['value'] ) ? ' checked="checked"' : '';
+					$inner .= sprintf(
+						'<label class="wpzf-choice" for="%1$s"><input type="radio" id="%1$s" name="%2$s" value="%3$s"%4$s%5$s /> <span>%6$s</span></label>',
+						esc_attr( $oid ), esc_attr( $field_name ), esc_attr( $opt['value'] ), $required_attr, $chk, esc_html( $opt['label'] )
+					);
+				}
+				$input_html = '<div class="wpzf-choices wpzf-choices--radio">' . $inner . '</div>';
+				break;
+			case 'checkboxes':
+				$opts = isset( $field['options'] ) ? $field['options'] : array();
+				$inner = '';
+				foreach ( $opts as $i => $opt ) {
+					$oid = $field_id . '-' . $i;
+					$inner .= sprintf(
+						'<label class="wpzf-choice" for="%1$s"><input type="checkbox" id="%1$s" name="%2$s[]" value="%3$s" /> <span>%4$s</span></label>',
+						esc_attr( $oid ), esc_attr( $field_name ), esc_attr( $opt['value'] ), esc_html( $opt['label'] )
+					);
+				}
+				$input_html = '<div class="wpzf-choices wpzf-choices--checkbox">' . $inner . '</div>';
+				break;
+			case 'checkbox':
+				$text = isset( $field['checkboxText'] ) ? $field['checkboxText'] : $field['label'];
+				$input_html = sprintf(
+					'<label class="wpzf-choice wpzf-choice--single" for="%1$s"><input type="checkbox" id="%1$s" name="%2$s" value="1"%3$s /> <span>%4$s%5$s</span></label>',
+					esc_attr( $field_id ), esc_attr( $field_name ), $required_attr, esc_html( $text ), $req_mark
+				);
+				// hide the outer label since the inner one renders text.
+				$label_html = '';
+				break;
+		}
+
+		return sprintf(
+			'<div class="wpzf-field wpzf-field--width-%1$s wpzf-field--type-%2$s%3$s">%4$s%5$s%6$s</div>',
+			esc_attr( $field['width'] ),
+			esc_attr( $type ),
+			$extra_class,
+			$label_html,
+			$input_html,
+			$help_html
+		);
+	}
+
+	/**
+	 * Returns HTML for the active captcha field, if any (reads existing settings).
+	 */
+	private static function captcha_field_html() {
+		$config = self::captcha_config();
+		if ( $config['active'] === 'recaptcha' && ! empty( $config['site_key'] ) ) {
+			if ( $config['type'] === 'v3' ) {
+				return '<input type="hidden" name="recaptcha_token" class="wpzf-recaptcha-token" data-sitekey="' . esc_attr( $config['site_key'] ) . '" />';
+			}
+			return '<div class="wpzf-captcha"><div class="g-recaptcha" data-sitekey="' . esc_attr( $config['site_key'] ) . '"></div></div>';
+		}
+		if ( $config['active'] === 'turnstile' && ! empty( $config['site_key'] ) ) {
+			return '<div class="wpzf-captcha"><div class="cf-turnstile" data-sitekey="' . esc_attr( $config['site_key'] ) . '"></div></div>';
+		}
+		return '';
+	}
+
+	/**
+	 * Mirror of the captcha-config logic in the main plugin class, but read-only.
+	 */
+	private static function captcha_config() {
+		// Delegate to the main plugin if it exposes the existing helper.
+		global $wpzoom_forms;
+		if ( $wpzoom_forms && method_exists( $wpzoom_forms, 'get_spam_protection_config' ) ) {
+			$cfg = $wpzoom_forms->get_spam_protection_config();
+			$service = isset( $cfg['active_service'] ) ? $cfg['active_service'] : 'none';
+			if ( $service === 'recaptcha' ) {
+				$type = isset( $cfg['type'] ) ? $cfg['type'] : 'v2';
+				$site = $type === 'v3' ? ( $cfg['recaptcha_v3_site_key'] ?? '' ) : ( $cfg['recaptcha_v2_site_key'] ?? '' );
+				return array( 'active' => 'recaptcha', 'type' => $type, 'site_key' => $site );
+			}
+			if ( $service === 'turnstile' ) {
+				return array(
+					'active'   => 'turnstile',
+					'type'     => '',
+					'site_key' => $cfg['turnstile_site_key'] ?? '',
+				);
+			}
+		}
+		return array( 'active' => 'none', 'type' => '', 'site_key' => '' );
+	}
+}

@@ -1,0 +1,464 @@
+/* WPZOOM Forms — v2 Builder UI
+   ============================
+   The builder takes over the entire wp-admin content area below the admin bar.
+   We hide the default WP admin notices/header for a focused, full-bleed canvas. */
+
+$brand:        #2271b1;
+$brand-hover:  #135e96;
+$accent:       #4f46e5;
+$text:         #1f2937;
+$muted:        #6b7280;
+$border:       #e5e7eb;
+$border-soft:  #f1f3f5;
+$bg:           #f6f7f9;
+$bg-card:      #ffffff;
+$danger:       #d63638;
+$success:      #2ca362;
+$radius:       8px;
+
+/* full-screen takeover ----------------------------------------------------- */
+body.wpzf-form_page_wpzf-form-builder,
+body.toplevel_page_wpzf-form-builder,
+body[class*="page_wpzf-form-builder"] {
+	background: $bg;
+
+	#wpcontent { padding-left: 0; }
+	#wpbody-content { padding-bottom: 0; }
+	#wpfooter { display: none; }
+	.notice, .update-nag, .updated, .error { display: none !important; }
+	.wrap { margin: 0; }
+}
+
+#wpzf-builder-root { min-height: calc(100vh - 32px); }
+
+.wpzf-builder {
+	display: flex;
+	flex-direction: column;
+	height: calc(100vh - 32px);
+	font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	color: $text;
+
+	&--loading,
+	&--error {
+		justify-content: center;
+		align-items: center;
+		min-height: 50vh;
+	}
+}
+
+.wpzf-spinner {
+	width: 32px; height: 32px;
+	border: 3px solid $border;
+	border-top-color: $brand;
+	border-radius: 50%;
+	animation: wpzf-spin 0.9s linear infinite;
+}
+@keyframes wpzf-spin { to { transform: rotate(360deg); } }
+
+/* topbar ------------------------------------------------------------------ */
+.wpzf-topbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #fff;
+	border-bottom: 1px solid $border;
+	padding: 0 16px;
+	height: 56px;
+	flex-shrink: 0;
+
+	&__left, &__right { display: flex; align-items: center; gap: 12px; }
+
+	&__exit {
+		display: inline-flex; align-items: center; justify-content: center;
+		width: 32px; height: 32px;
+		border-radius: 6px;
+		color: $muted; text-decoration: none;
+		&:hover { background: $border-soft; color: $text; }
+	}
+
+	&__brand {
+		display: inline-flex; align-items: center; gap: 8px;
+		font-weight: 600; color: $text;
+		svg { color: $brand; }
+	}
+
+	&__title {
+		display: inline-flex; align-items: center; gap: 6px;
+		background: transparent; border: 1px dashed transparent;
+		padding: 4px 8px; border-radius: 6px;
+		font-size: 14px; font-weight: 500; color: $text; cursor: pointer;
+		&:hover { border-color: $border; background: $border-soft; }
+		svg { color: $muted; }
+	}
+
+	&__title-input {
+		font: inherit; padding: 4px 8px;
+		border: 1px solid $brand; border-radius: 6px;
+		min-width: 280px;
+	}
+}
+
+/* buttons ----------------------------------------------------------------- */
+.wpzf-btn {
+	display: inline-flex; align-items: center; gap: 6px;
+	padding: 7px 14px;
+	border: 1px solid $border;
+	border-radius: 6px;
+	background: #fff; color: $text;
+	font-size: 13px; font-weight: 500;
+	cursor: pointer;
+	text-decoration: none;
+	transition: background .15s, border-color .15s, box-shadow .15s;
+
+	&:hover:not(:disabled) { background: $border-soft; border-color: #d1d5db; }
+	&:disabled { opacity: .5; cursor: not-allowed; }
+
+	&--primary {
+		background: $brand; color: #fff; border-color: $brand;
+		&:hover:not(:disabled) { background: $brand-hover; border-color: $brand-hover; }
+	}
+	&--ghost {
+		background: transparent; border-color: transparent; color: $text;
+		&:hover:not(:disabled) { background: $border-soft; }
+	}
+	&--dirty {
+		box-shadow: 0 0 0 3px rgba(34,113,177,.18);
+	}
+	&--small { padding: 4px 10px; font-size: 12px; }
+}
+
+.wpzf-badge {
+	display: inline-flex; align-items: center; justify-content: center;
+	min-width: 18px; height: 18px; padding: 0 6px;
+	background: $border; color: $text; border-radius: 9px;
+	font-size: 11px; font-weight: 600;
+	margin-right: 4px;
+}
+
+.wpzf-icon-btn {
+	display: inline-flex; align-items: center; justify-content: center;
+	width: 24px; height: 24px;
+	background: transparent; border: 0; padding: 0;
+	color: $muted; border-radius: 4px; cursor: pointer;
+	&:hover { background: $border-soft; color: $text; }
+	&--danger:hover { color: $danger; background: rgba(214,54,56,.08); }
+}
+
+/* layout: 3-column body --------------------------------------------------- */
+.wpzf-builder__body {
+	flex: 1;
+	display: grid;
+	grid-template-columns: 280px 1fr 340px;
+	min-height: 0;
+}
+
+.wpzf-sidebar {
+	background: #fff;
+	overflow-y: auto;
+
+	&--left  { border-right: 1px solid $border; }
+	&--right { border-left:  1px solid $border; }
+}
+
+/* sidebar — tabs ---------------------------------------------------------- */
+.wpzf-tabs {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	border-bottom: 1px solid $border;
+	background: $bg;
+}
+.wpzf-tab {
+	display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+	padding: 11px 8px;
+	background: transparent; border: 0; border-bottom: 2px solid transparent;
+	color: $muted; font-size: 12px; font-weight: 500; cursor: pointer;
+
+	&:hover { color: $text; }
+	&.is-active {
+		color: $brand; border-bottom-color: $brand;
+		background: #fff;
+	}
+}
+
+/* sidebar — palette ------------------------------------------------------- */
+.wpzf-palette {
+	padding: 16px;
+	&__group + & { margin-top: 16px; }
+	&__group { margin-bottom: 20px; }
+	&__title {
+		font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+		color: $muted; margin: 0 0 8px;
+	}
+	&__grid {
+		display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+	}
+	&__item {
+		display: flex; align-items: center; gap: 6px;
+		padding: 10px 10px;
+		background: #fff; border: 1px solid $border; border-radius: 6px;
+		color: $text; font-size: 12px; font-weight: 500;
+		cursor: pointer; text-align: left;
+		transition: border-color .15s, background .15s, transform .05s;
+		&:hover { border-color: $brand; background: rgba(34,113,177,.05); }
+		&:active { transform: scale(.98); }
+	}
+	&__icon { color: $brand; display: inline-flex; }
+	&__label { line-height: 1.2; }
+}
+.wpzf-sidehint { padding: 16px; color: $muted; font-size: 13px; }
+
+/* canvas ------------------------------------------------------------------ */
+.wpzf-canvas {
+	overflow-y: auto;
+	background: $bg;
+	&__inner {
+		max-width: 760px; margin: 0 auto;
+		padding: 32px 24px;
+	}
+}
+
+.wpzf-preview {
+	background: #fff;
+	border-radius: 12px;
+	padding: 32px;
+	box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.04);
+}
+
+.wpzf-empty-state {
+	text-align: center;
+	padding: 48px 16px;
+	color: $muted;
+	h2 { font-size: 18px; color: $text; margin: 0 0 8px; }
+	p  { margin: 0 0 20px; }
+	&__shortcuts {
+		display: inline-flex; gap: 8px;
+		button {
+			padding: 8px 14px;
+			background: $border-soft; color: $text;
+			border: 1px solid $border; border-radius: 999px;
+			font-size: 13px; cursor: pointer;
+			&:hover { background: #fff; border-color: $brand; color: $brand; }
+		}
+	}
+}
+
+.wpzf-canvas-fields {
+	display: flex; flex-wrap: wrap; gap: 16px;
+}
+.wpzf-canvas-row {
+	flex-basis: 100%; min-width: 0;
+	&--width-half       { flex-basis: calc(50% - 8px); }
+	&--width-third      { flex-basis: calc(33.333% - 11px); }
+	&--width-two-thirds { flex-basis: calc(66.667% - 6px); }
+
+	&.is-dragging .wpzf-field-card { opacity: .4; }
+	&.is-drop-target .wpzf-field-card { outline: 2px dashed $brand; outline-offset: 4px; }
+}
+
+.wpzf-field-card {
+	position: relative;
+	padding: 12px 14px 12px 30px;
+	background: #fff;
+	border: 1px solid $border;
+	border-radius: $radius;
+	cursor: pointer;
+	transition: border-color .15s, box-shadow .15s;
+
+	&:hover  { border-color: #c5cdd6; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
+	&.is-selected {
+		border-color: $brand;
+		box-shadow: 0 0 0 3px rgba(34,113,177,.15);
+	}
+
+	&__drag {
+		position: absolute; left: 8px; top: 50%; transform: translateY(-50%);
+		color: $muted; opacity: 0; cursor: grab;
+		transition: opacity .15s;
+	}
+	&:hover &__drag,
+	&.is-selected &__drag { opacity: 1; }
+
+	&__label {
+		display: block; margin-bottom: 6px;
+		font-size: 13px; font-weight: 500; color: $text;
+	}
+	&__help { margin-top: 6px; font-size: 12px; color: $muted; }
+
+	&__actions {
+		position: absolute; top: 8px; right: 8px;
+		display: flex; gap: 4px;
+		opacity: 0; transition: opacity .15s;
+	}
+	&:hover &__actions, &.is-selected &__actions { opacity: 1; }
+}
+
+.wpzf-required { color: $danger; }
+
+/* preview inputs (non-interactive look) */
+.wpzf-preview-input {
+	width: 100%; box-sizing: border-box;
+	padding: 9px 12px;
+	background: #fff;
+	border: 1px solid $border; border-radius: 6px;
+	font: inherit; color: $text;
+	pointer-events: none;
+}
+textarea.wpzf-preview-input { resize: none; }
+.wpzf-preview-choices { display: flex; flex-direction: column; gap: 6px; }
+.wpzf-preview-choice  {
+	display: inline-flex; align-items: center; gap: 8px;
+	color: $text; font-size: 13px;
+	pointer-events: none;
+}
+.wpzf-preview-heading { margin: 0; font-weight: 600; color: $text; }
+.wpzf-preview-paragraph { color: $text; }
+.wpzf-preview-divider { border: 0; border-top: 1px solid $border; margin: 8px 0; }
+
+.wpzf-preview-submit {
+	margin-top: 24px;
+	&--align-left   { text-align: left; }
+	&--align-center { text-align: center; }
+	&--align-right  { text-align: right; }
+	&--align-full .wpzf-preview-submit__btn { width: 100%; }
+	&__btn {
+		display: inline-block;
+		padding: 11px 28px;
+		background: $brand; color: #fff;
+		border: 0; border-radius: 6px;
+		font-size: 14px; font-weight: 600;
+		cursor: default; pointer-events: none;
+	}
+}
+
+/* inspector --------------------------------------------------------------- */
+.wpzf-inspector {
+	display: flex; flex-direction: column; height: 100%;
+
+	&__header {
+		display: flex; justify-content: space-between; align-items: center;
+		padding: 14px 16px;
+		border-bottom: 1px solid $border;
+		h3 { margin: 0; font-size: 14px; font-weight: 600; color: $text; }
+	}
+	&__type {
+		font-size: 11px; padding: 2px 8px;
+		background: $border-soft; color: $muted;
+		border-radius: 10px; text-transform: uppercase; letter-spacing: 0.4px;
+	}
+	&__body { padding: 14px 16px; overflow-y: auto; flex: 1; }
+}
+
+.wpzf-inspector-empty {
+	padding: 48px 24px; text-align: center; color: $muted;
+	h3 { margin: 12px 0 4px; color: $text; font-size: 15px; }
+	p  { margin: 0 0 16px; font-size: 13px; }
+}
+
+.wpzf-row { margin-bottom: 14px;
+	&__label {
+		display: block; font-size: 12px; font-weight: 600; color: $text;
+		margin-bottom: 4px;
+	}
+	&__control input[type="text"],
+	&__control input[type="email"],
+	&__control input[type="number"],
+	&__control input[type="url"],
+	&__control select,
+	&__control textarea {
+		width: 100%; box-sizing: border-box;
+		padding: 8px 10px;
+		border: 1px solid $border; border-radius: 6px;
+		font: inherit; color: $text; background: #fff;
+		&:focus { outline: 0; border-color: $brand; box-shadow: 0 0 0 3px rgba(34,113,177,.18); }
+	}
+	&__control textarea { resize: vertical; font-family: inherit; }
+}
+
+.wpzf-toggle {
+	display: inline-flex; align-items: center; gap: 8px;
+	font-size: 13px; color: $text; cursor: pointer;
+	input[type="checkbox"] { margin: 0; }
+}
+
+.wpzf-segmented {
+	display: inline-flex;
+	border: 1px solid $border; border-radius: 6px; overflow: hidden;
+	button {
+		padding: 6px 12px; border: 0; background: #fff; color: $text;
+		font-size: 12px; cursor: pointer;
+		&:hover { background: $border-soft; }
+		&.is-active { background: $brand; color: #fff; }
+		& + button { border-left: 1px solid $border; }
+	}
+}
+
+.wpzf-options { display: flex; flex-direction: column; gap: 6px; }
+.wpzf-option {
+	display: grid; grid-template-columns: 1fr 100px 24px; gap: 6px;
+	input[type="text"] {
+		width: 100%; box-sizing: border-box; padding: 6px 8px;
+		border: 1px solid $border; border-radius: 4px; font-size: 12px;
+	}
+}
+
+.wpzf-method-list { display: flex; flex-direction: column; gap: 6px; }
+.wpzf-method {
+	display: grid; grid-template-columns: auto 1fr; gap: 4px 10px;
+	padding: 10px 12px;
+	border: 1px solid $border; border-radius: 6px;
+	cursor: pointer;
+	&:hover { border-color: #c5cdd6; }
+	&.is-active { border-color: $brand; background: rgba(34,113,177,.04); }
+	input[type="radio"] { grid-row: span 2; margin-top: 3px; }
+	&__name { font-weight: 600; font-size: 13px; }
+	&__hint { color: $muted; font-size: 12px; }
+}
+
+/* notices ---------------------------------------------------------------- */
+.wpzf-notices {
+	position: fixed; bottom: 24px; right: 24px;
+	display: flex; flex-direction: column; gap: 8px;
+	z-index: 9999;
+}
+.wpzf-notice-toast {
+	display: inline-flex; align-items: center; gap: 12px;
+	padding: 10px 14px;
+	background: $text; color: #fff;
+	border-radius: 6px;
+	box-shadow: 0 6px 24px rgba(0,0,0,.18);
+	font-size: 13px;
+	button { background: transparent; color: rgba(255,255,255,.7); border: 0; cursor: pointer; font-size: 16px; }
+	&--success { background: $success; }
+	&--error   { background: $danger; }
+}
+
+/* modal ----------------------------------------------------------------- */
+.wpzf-modal {
+	position: fixed; inset: 0;
+	background: rgba(0,0,0,.4);
+	display: flex; align-items: center; justify-content: center;
+	z-index: 10000;
+	&__inner {
+		background: #fff; border-radius: $radius;
+		min-width: 480px; max-width: 90vw;
+		box-shadow: 0 20px 50px rgba(0,0,0,.25);
+	}
+	&__header {
+		display: flex; justify-content: space-between; align-items: center;
+		padding: 14px 18px; border-bottom: 1px solid $border;
+		h2 { margin: 0; font-size: 16px; }
+	}
+	&__body { padding: 18px; }
+}
+
+.wpzf-embed-code {
+	display: flex; align-items: center; gap: 8px;
+	padding: 10px 12px;
+	background: $bg; border: 1px solid $border; border-radius: 6px;
+	code {
+		flex: 1; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+		color: $text; background: transparent;
+		font-size: 13px; user-select: all;
+	}
+}
+.wpzf-hint { color: $muted; font-size: 12px; margin-top: 10px; }

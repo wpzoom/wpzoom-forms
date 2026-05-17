@@ -10,10 +10,10 @@
  * @wordpress-plugin
  * Plugin Name: WPZOOM Forms
  * Plugin URI:  https://www.wpzoom.com/plugins/wpzoom-forms
- * Description: Simple, user-friendly contact form plugin for WordPress that utilizes Gutenberg blocks for easy form building and customization.
+ * Description: Simple, user-friendly contact form plugin for WordPress with a dedicated drag-and-drop builder.
  * Author:      WPZOOM
  * Author URI:  https://www.wpzoom.com
- * Version:     1.3.9
+ * Version:     2.0.0
  * License:     GPL2+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
@@ -901,7 +901,7 @@ class WPZOOM_Forms {
 	 * @return array
 	 * @since  1.3.7
 	 */
-	private function get_spam_protection_config() {
+	public function get_spam_protection_config() {
 		$service = sanitize_text_field( (string) WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_service' ) );
 		$type    = sanitize_text_field( (string) WPZOOM_Forms_Settings::get( 'wpzf_global_captcha_type' ) );
 
@@ -3317,3 +3317,122 @@ if ( ! function_exists( 'wpzoom_forms_plugin_action_links' ) ) {
 if ( defined( 'ELEMENTOR_VERSION' ) && is_callable( 'Elementor\Plugin::instance' ) ) {
 	require_once 'elementor/wpzoom-forms-elementor.php';
 }
+
+/* -------------------------------------------------------------------------- */
+/* WPZOOM Forms v2 — schema-driven builder, REST API, renderer.               */
+/* Coexists with the legacy block system: schema is the source of truth, the  */
+/* legacy renderer remains a fallback during/after migration.                 */
+/* -------------------------------------------------------------------------- */
+require_once WPZOOM_FORMS_PATH . 'classes/class-wpzoom-forms-schema.php';
+require_once WPZOOM_FORMS_PATH . 'classes/class-wpzoom-forms-migration.php';
+require_once WPZOOM_FORMS_PATH . 'classes/class-wpzoom-forms-rest.php';
+require_once WPZOOM_FORMS_PATH . 'classes/class-wpzoom-forms-renderer.php';
+require_once WPZOOM_FORMS_PATH . 'classes/class-wpzoom-forms-submission-handler.php';
+require_once WPZOOM_FORMS_PATH . 'classes/class-wpzoom-forms-builder-page.php';
+require_once WPZOOM_FORMS_PATH . 'classes/class-wpzoom-forms-submission-view.php';
+
+add_action( 'init', function() {
+	global $wpzoom_forms;
+
+	// Take over form submission from the legacy handler.
+	if ( $wpzoom_forms ) {
+		remove_action( 'admin_post_wpzf_submit',        array( $wpzoom_forms, 'action_form_post' ), 10 );
+		remove_action( 'admin_post_nopriv_wpzf_submit', array( $wpzoom_forms, 'action_form_post' ), 10 );
+		// The legacy class whitelist-resets $wp_meta_boxes to keep ONLY its own boxes —
+		// drop that hook so our submission-detail boxes survive.
+		remove_action( 'in_admin_header', array( $wpzoom_forms, 'remove_meta_boxes' ), 100 );
+		// The legacy meta-box registration adds boxes we replace with our own.
+		remove_action( 'add_meta_boxes_wpzf-submission', array( $wpzoom_forms, 'add_meta_boxes' ), 10 );
+	}
+
+	// Register meta so REST/admin can expose it.
+	register_post_meta( 'wpzf-form', WPZOOM_Forms_Schema::META_KEY, array(
+		'type'         => 'string',
+		'single'       => true,
+		'show_in_rest' => true,
+		'auth_callback' => function() { return current_user_can( 'edit_posts' ); },
+	) );
+
+	( new WPZOOM_Forms_REST() )->register();
+	( new WPZOOM_Forms_Submission_Handler() )->register();
+	( new WPZOOM_Forms_Builder_Page() )->register();
+	( new WPZOOM_Forms_Submission_View() )->register();
+}, 11 ); // After main class init (priority 9).
+
+/**
+ * Override the legacy form-block render callback + the shortcode to use the
+ * v2 renderer. Legacy block content is auto-migrated to schema on first read.
+ */
+add_action( 'init', function() {
+	global $wpzoom_forms;
+	if ( ! $wpzoom_forms ) return;
+
+	// Replace shortcode.
+	remove_shortcode( 'wpzf_form' );
+	add_shortcode( 'wpzf_form', function( $atts ) {
+		$atts = shortcode_atts( array( 'id' => 0 ), $atts, 'wpzf_form' );
+		return WPZOOM_Forms_Renderer::render( (int) $atts['id'] );
+	} );
+}, 12 );
+
+/**
+ * For the form-block (Gutenberg block that embeds a form by id), substitute
+ * the render callback to use the new renderer. The block remains registered
+ * so existing content keeps working. We hook `render_block` (rather than
+ * patching the block type at registration time) because the main class
+ * registers the block at init:9, before our filters get a chance to attach.
+ */
+add_filter( 'render_block', function( $block_content, $block ) {
+	if ( ! isset( $block['blockName'] ) || $block['blockName'] !== 'wpzoom-forms/form-block' ) return $block_content;
+	if ( is_admin() ) return $block_content;
+	$id = isset( $block['attrs']['formId'] ) ? (int) $block['attrs']['formId'] : 0;
+	if ( $id < 1 ) return $block_content;
+	return WPZOOM_Forms_Renderer::render( $id );
+}, 9, 2 );
+
+/**
+ * Frontend asset: clean form CSS + minimal JS for AJAX submit + validation.
+ */
+add_action( 'wp_enqueue_scripts', function() {
+	wp_register_style(
+		'wpzf-frontend-form',
+		WPZOOM_FORMS_URL . 'build/frontend-form/style.css',
+		array(),
+		WPZOOM_FORMS_VERSION
+	);
+	wp_register_script(
+		'wpzf-frontend-form',
+		WPZOOM_FORMS_URL . 'build/frontend-form/script.js',
+		array(),
+		WPZOOM_FORMS_VERSION,
+		true
+	);
+	// Always enqueue on frontend (cheap, single small file).
+	wp_enqueue_style( 'wpzf-frontend-form' );
+	wp_enqueue_script( 'wpzf-frontend-form' );
+}, 20 );
+
+/**
+ * Customize the "All Forms" admin list a bit:
+ * - rename "Add New" wording, replace target link with our builder.
+ */
+add_action( 'admin_head-edit.php', function() {
+	$screen = get_current_screen();
+	if ( ! $screen || $screen->post_type !== 'wpzf-form' ) return;
+	?>
+	<style>
+		.wp-heading-inline + .page-title-action { background: #2271b1; color: #fff; border-color: #2271b1; }
+		.wp-heading-inline + .page-title-action:hover { background: #135e96; }
+	</style>
+	<script>
+		jQuery(function($){
+			var btn = $('.page-title-action').first();
+			if (btn.length) {
+				btn.attr('href', '<?php echo esc_js( admin_url( 'admin.php?page=wpzf-form-builder' ) ); ?>');
+				btn.text(<?php echo wp_json_encode( __( 'Add New Form', 'wpzoom-forms' ) ); ?>);
+			}
+		});
+	</script>
+	<?php
+} );
+

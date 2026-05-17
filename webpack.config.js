@@ -9,6 +9,7 @@ function recursiveIssuer( m ) {
 module.exports = {
 	...defaultConfig,
 	entry: {
+		// legacy block-based system (still bundled so existing assets resolve).
 		'main/backend/script':         path.resolve( __dirname, 'src', 'main', 'backend', 'script.js' ),
 		'main/backend/style':          path.resolve( __dirname, 'src', 'main', 'backend', 'style.scss' ),
 		'submissions/backend/style':   path.resolve( __dirname, 'src', 'submissions', 'backend', 'style.scss' ),
@@ -28,7 +29,14 @@ module.exports = {
 		'fields/submit/index':         path.resolve( __dirname, 'src', 'fields', 'submit', 'index.js' ),
 		'fields/textarea/index':       path.resolve( __dirname, 'src', 'fields', 'textarea', 'index.js' ),
 		'fields/website/index':        path.resolve( __dirname, 'src', 'fields', 'website', 'index.js' ),
-		'fields/datepicker/index':     path.resolve( __dirname, 'src', 'fields', 'datepicker', 'index.js' )
+		'fields/datepicker/index':     path.resolve( __dirname, 'src', 'fields', 'datepicker', 'index.js' ),
+
+		// v2: new builder admin app + frontend form CSS/JS + submission view styles.
+		'builder/script':              path.resolve( __dirname, 'src', 'builder', 'index.js' ),
+		'builder/style':               path.resolve( __dirname, 'src', 'builder', 'style.scss' ),
+		'frontend-form/style':         path.resolve( __dirname, 'src', 'frontend-form', 'style.scss' ),
+		'frontend-form/script':        path.resolve( __dirname, 'src', 'frontend-form', 'script.js' ),
+		'submission-view/style':       path.resolve( __dirname, 'src', 'submission-view', 'style.scss' ),
 	},
 	optimization: {
 		...defaultConfig.optimization,
@@ -55,6 +63,24 @@ module.exports = {
 				formBlockFrontendStyle: {
 					name:   'form-block/frontend/style',
 					test:   ( m, c, entry = 'form-block/frontend/style' ) => m.constructor.name === 'CssModule' && recursiveIssuer( m ) === entry,
+					chunks: 'all',
+					enforce: true
+				},
+				builderStyle: {
+					name:   'builder/style',
+					test:   ( m, c, entry = 'builder/style' ) => m.constructor.name === 'CssModule' && recursiveIssuer( m ) === entry,
+					chunks: 'all',
+					enforce: true
+				},
+				frontendFormStyle: {
+					name:   'frontend-form/style',
+					test:   ( m, c, entry = 'frontend-form/style' ) => m.constructor.name === 'CssModule' && recursiveIssuer( m ) === entry,
+					chunks: 'all',
+					enforce: true
+				},
+				submissionViewStyle: {
+					name:   'submission-view/style',
+					test:   ( m, c, entry = 'submission-view/style' ) => m.constructor.name === 'CssModule' && recursiveIssuer( m ) === entry,
 					chunks: 'all',
 					enforce: true
 				}

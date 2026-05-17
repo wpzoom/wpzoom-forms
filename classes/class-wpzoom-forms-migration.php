@@ -1,0 +1,150 @@
+<?php
+/**
+ * Convert legacy block-based form content into the new JSON schema.
+ *
+ * Triggered the first time a legacy form is opened in the new builder, or on
+ * demand via the REST API. The block content is left intact in post_content
+ * so the legacy renderer remains a working fallback.
+ *
+ * @package WPZOOM_Forms
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+class WPZOOM_Forms_Migration {
+
+	/** Block name → schema field type. */
+	private static $type_map = array(
+		'wpzoom-forms/text-plain-field'      => 'text',
+		'wpzoom-forms/text-name-field'       => 'name',
+		'wpzoom-forms/text-email-field'      => 'email',
+		'wpzoom-forms/text-website-field'    => 'url',
+		'wpzoom-forms/text-phone-field'      => 'tel',
+		'wpzoom-forms/textarea-field'        => 'textarea',
+		'wpzoom-forms/select-field'          => 'select',
+		'wpzoom-forms/multi-checkbox-field'  => 'checkboxes',
+		'wpzoom-forms/checkbox-field'        => 'checkbox',
+		'wpzoom-forms/radio-field'           => 'radio',
+		'wpzoom-forms/label-field'           => 'heading',
+		'wpzoom-forms/submit-field'          => '__submit',
+		'wpzoom-forms/datepicker-field'      => 'date',
+	);
+
+	/**
+	 * Build a v2 schema from a form's existing block content.
+	 *
+	 * @param int $form_id
+	 * @return array Sanitized schema (may be empty fields if no blocks present).
+	 */
+	public static function build_from_post_content( $form_id ) {
+		$post = get_post( $form_id );
+		if ( ! $post ) return WPZOOM_Forms_Schema::defaults();
+
+		$schema             = WPZOOM_Forms_Schema::defaults();
+		$schema['fields']   = array();
+		$schema['settings']['submitLabel'] = __( 'Submit', 'wpzoom-forms' );
+
+		$blocks = parse_blocks( $post->post_content );
+		self::walk_blocks( $blocks, $schema );
+
+		// Pull other settings out of legacy postmeta where they live.
+		$success = get_post_meta( $form_id, '_form_success_message', true );
+		$failure = get_post_meta( $form_id, '_form_failure_message', true );
+		$subject = get_post_meta( $form_id, '_form_subject', true );
+		// These get stored separately (notification settings), schema keeps just form-related bits.
+
+		// If no fields were found, fall back to a sensible starter form.
+		if ( empty( $schema['fields'] ) ) {
+			$schema = WPZOOM_Forms_Schema::defaults();
+		}
+
+		return WPZOOM_Forms_Schema::sanitize( $schema );
+	}
+
+	private static function walk_blocks( $blocks, &$schema ) {
+		if ( ! is_array( $blocks ) ) return;
+		foreach ( $blocks as $block ) {
+			if ( ! is_array( $block ) ) continue;
+
+			$name  = isset( $block['blockName'] ) ? $block['blockName'] : '';
+			$attrs = isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : array();
+
+			if ( isset( self::$type_map[ $name ] ) ) {
+				$type = self::$type_map[ $name ];
+				if ( '__submit' === $type ) {
+					if ( ! empty( $attrs['name'] ) ) {
+						$schema['settings']['submitLabel'] = sanitize_text_field( $attrs['name'] );
+					}
+				} else {
+					$schema['fields'][] = self::block_to_field( $type, $attrs );
+				}
+			}
+
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				self::walk_blocks( $block['innerBlocks'], $schema );
+			}
+		}
+	}
+
+	private static function block_to_field( $type, $attrs ) {
+		$over = array();
+		if ( isset( $attrs['name'] ) ) {
+			$over['label'] = $attrs['name'];
+		} elseif ( isset( $attrs['label'] ) ) {
+			$over['label'] = $attrs['label'];
+		}
+
+		if ( isset( $attrs['placeholder'] ) ) $over['placeholder'] = $attrs['placeholder'];
+		if ( isset( $attrs['required'] ) )    $over['required']    = (bool) $attrs['required'];
+		if ( isset( $attrs['id'] ) && is_string( $attrs['id'] ) && $attrs['id'] !== '' ) {
+			$over['id'] = sanitize_key( $attrs['id'] );
+		}
+
+		if ( $type === 'textarea' && isset( $attrs['rows'] ) ) {
+			$over['rows'] = (int) $attrs['rows'];
+		}
+
+		if ( $type === 'email' ) {
+			$over['isReplyTo'] = isset( $attrs['replyto'] ) ? (bool) $attrs['replyto'] : false;
+		}
+
+		if ( $type === 'text' && isset( $attrs['subject'] ) ) {
+			$over['isSubject'] = (bool) $attrs['subject'];
+		}
+
+		if ( in_array( $type, array( 'select', 'radio', 'checkboxes' ), true ) ) {
+			$opts = array();
+			if ( isset( $attrs['options'] ) && is_array( $attrs['options'] ) ) {
+				foreach ( $attrs['options'] as $opt ) {
+					$label = is_array( $opt ) && isset( $opt['label'] ) ? $opt['label'] : (string) $opt;
+					$value = is_array( $opt ) && isset( $opt['value'] ) ? $opt['value'] : sanitize_title( $label );
+					if ( $label === '' ) continue;
+					$opts[] = array( 'label' => $label, 'value' => $value );
+				}
+			}
+			if ( ! empty( $opts ) ) {
+				$over['options'] = $opts;
+			}
+		}
+
+		if ( $type === 'heading' ) {
+			$over['text']  = isset( $attrs['name'] ) ? $attrs['name'] : __( 'Heading', 'wpzoom-forms' );
+			$over['label'] = '';
+		}
+
+		if ( $type === 'date' && isset( $attrs['format'] ) ) {
+			$over['format'] = $attrs['format'];
+		}
+
+		return WPZOOM_Forms_Schema::make_field( $type, $over );
+	}
+
+	/**
+	 * Migrate one form and persist its schema.
+	 */
+	public static function migrate( $form_id ) {
+		$schema = self::build_from_post_content( $form_id );
+		WPZOOM_Forms_Schema::save_for_form( $form_id, $schema );
+		return $schema;
+	}
+}
