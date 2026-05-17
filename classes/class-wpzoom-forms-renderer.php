@@ -297,18 +297,56 @@ class WPZOOM_Forms_Renderer {
 
 	/**
 	 * Returns HTML for the active captcha field, if any (reads existing settings).
+	 * Also enqueues the matching provider SDK on demand.
 	 */
 	private static function captcha_field_html() {
 		$config = self::captcha_config();
+
 		if ( $config['active'] === 'recaptcha' && ! empty( $config['site_key'] ) ) {
+			// reCAPTCHA v3 — invisible: load the api.js with ?render=<key> and
+			// expose the key to our frontend script so it can call grecaptcha.execute().
 			if ( $config['type'] === 'v3' ) {
-				return '<input type="hidden" name="recaptcha_token" class="wpzf-recaptcha-token" data-sitekey="' . esc_attr( $config['site_key'] ) . '" />';
+				wp_enqueue_script(
+					'wpzf-google-recaptcha',
+					'https://www.google.com/recaptcha/api.js?render=' . rawurlencode( $config['site_key'] ),
+					array(),
+					null,
+					true
+				);
+				// Inline JSON tag rather than wp_localize_script so it's idempotent per render.
+				return sprintf(
+					'<input type="hidden" name="recaptcha_token" class="wpzf-recaptcha-token" data-sitekey="%1$s" data-action="wpzf_submit" />',
+					esc_attr( $config['site_key'] )
+				);
 			}
-			return '<div class="wpzf-captcha"><div class="g-recaptcha" data-sitekey="' . esc_attr( $config['site_key'] ) . '"></div></div>';
+			// reCAPTCHA v2 — visible checkbox widget; api.js auto-renders any .g-recaptcha element.
+			wp_enqueue_script(
+				'wpzf-google-recaptcha',
+				'https://www.google.com/recaptcha/api.js',
+				array(),
+				null,
+				true
+			);
+			return sprintf(
+				'<div class="wpzf-captcha"><div class="g-recaptcha" data-sitekey="%1$s"></div></div>',
+				esc_attr( $config['site_key'] )
+			);
 		}
+
 		if ( $config['active'] === 'turnstile' && ! empty( $config['site_key'] ) ) {
-			return '<div class="wpzf-captcha"><div class="cf-turnstile" data-sitekey="' . esc_attr( $config['site_key'] ) . '"></div></div>';
+			wp_enqueue_script(
+				'wpzf-turnstile',
+				'https://challenges.cloudflare.com/turnstile/v0/api.js',
+				array(),
+				null,
+				array( 'strategy' => 'defer' )
+			);
+			return sprintf(
+				'<div class="wpzf-captcha"><div class="cf-turnstile" data-sitekey="%1$s"></div></div>',
+				esc_attr( $config['site_key'] )
+			);
 		}
+
 		return '';
 	}
 

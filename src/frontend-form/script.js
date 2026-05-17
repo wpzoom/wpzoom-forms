@@ -47,6 +47,29 @@
 		} );
 	}
 
+	/**
+	 * Resolve any captcha token that needs JS to produce (reCAPTCHA v3).
+	 * Visible providers (reCAPTCHA v2, Turnstile) populate their own form fields,
+	 * so we just pick those up via FormData and there's nothing to do here.
+	 */
+	function resolveCaptcha( form ) {
+		return new Promise( function ( resolve ) {
+			var v3 = form.querySelector( 'input.wpzf-recaptcha-token' );
+			if ( v3 && window.grecaptcha && window.grecaptcha.ready ) {
+				var siteKey = v3.dataset.sitekey;
+				var action  = v3.dataset.action || 'wpzf_submit';
+				window.grecaptcha.ready( function () {
+					window.grecaptcha.execute( siteKey, { action: action } ).then( function ( token ) {
+						v3.value = token;
+						resolve();
+					}, function () { resolve(); } );
+				} );
+				return;
+			}
+			resolve();
+		} );
+	}
+
 	function handleSubmit( e ) {
 		var form = e.target;
 		if ( ! form.classList || ! form.classList.contains( 'wpzf-form__inner' ) ) return;
@@ -56,6 +79,12 @@
 		clearErrors( form );
 		wrap.classList.add( 'is-submitting' );
 
+		resolveCaptcha( form ).then( function () {
+			submitForm( form, wrap );
+		} );
+	}
+
+	function submitForm( form, wrap ) {
 		var fd = new FormData( form );
 
 		fetch( form.getAttribute( 'action' ), {

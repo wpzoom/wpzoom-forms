@@ -85,7 +85,10 @@ class WPZOOM_Forms_Submission_Handler {
 
 			if ( is_array( $raw ) ) {
 				$raw = array_map( 'sanitize_text_field', $raw );
-				$value_for_email = implode( ', ', $raw );
+				// For checkboxes/radio/select with options, swap submitted *values* for the
+				// human-readable *labels* so the email + admin list don't show opaque slugs.
+				$mapped = $this->values_to_labels( $field, $raw );
+				$value_for_email = implode( ', ', $mapped );
 				$value_for_store = $value_for_email;
 				$is_empty = empty( $raw );
 			} else {
@@ -98,6 +101,18 @@ class WPZOOM_Forms_Submission_Handler {
 				} elseif ( $field['type'] === 'url' ) {
 					$value_for_store = esc_url_raw( $raw );
 					$value_for_email = $value_for_store;
+				} elseif ( in_array( $field['type'], array( 'select', 'radio' ), true ) ) {
+					$value_for_store = sanitize_text_field( $raw );
+					$mapped = $this->values_to_labels( $field, array( $value_for_store ) );
+					$value_for_email = $mapped[0] ?? $value_for_store;
+				} elseif ( $field['type'] === 'checkbox' ) {
+					// Single-checkbox: empty unless checked. Render as human-friendly text.
+					$value_for_store = sanitize_text_field( $raw );
+					if ( $value_for_store !== '' ) {
+						$value_for_email = ! empty( $field['checkboxText'] ) ? $field['checkboxText'] : __( 'Yes', 'wpzoom-forms' );
+					} else {
+						$value_for_email = '';
+					}
 				} else {
 					$value_for_store = sanitize_text_field( $raw );
 					$value_for_email = $value_for_store;
@@ -129,22 +144,36 @@ class WPZOOM_Forms_Submission_Handler {
 			$respond( false, __( 'Please fix the errors below.', 'wpzoom-forms' ), $errors );
 		}
 
-		// Anti-spam (Akismet) via main plugin class.
-		if ( method_exists( 'WPZOOM_Forms', 'instance' ) || class_exists( 'WPZOOM_Forms' ) ) {
-			global $wpzoom_forms;
-			if ( $wpzoom_forms && method_exists( $wpzoom_forms, 'not_spam' ) ) {
-				$details = array(
-					'from'    => $reply_to_email,
-					'message' => array(
-						'_wpzf_form_id' => $form_id,
-						'_wpzf_fields'  => $collected,
-					),
-				);
-				if ( ! $wpzoom_forms->not_spam( $details ) ) {
-					// Mark as spam silently — keep UX, store as spam status.
-					$this->store_submission( $form_id, $collected, 'spam' );
-					$respond( true, __( 'Thanks!', 'wpzoom-forms' ) );
+		// Anti-spam (Akismet) via main plugin class. Akismet expects the standard
+		// comment-check shape — flatten what we have into name/email/url/message
+		// the way the legacy not_spam() reads it.
+		global $wpzoom_forms;
+		if ( $wpzoom_forms && method_exists( $wpzoom_forms, 'not_spam' ) ) {
+			$name_for_akismet = '';
+			$url_for_akismet  = '';
+			$message_lines    = array();
+			foreach ( $schema['fields'] as $f ) {
+				if ( empty( $types[ $f['type'] ]['is_input'] ) ) continue;
+				$value = isset( $collected[ $this->label_for( $f ) ] ) ? $collected[ $this->label_for( $f ) ] : '';
+				if ( $value === '' ) continue;
+				if ( $f['type'] === 'name' && $name_for_akismet === '' ) {
+					$name_for_akismet = $value;
+				} elseif ( $f['type'] === 'url' && $url_for_akismet === '' ) {
+					$url_for_akismet = $value;
+				} elseif ( in_array( $f['type'], array( 'textarea', 'text' ), true ) ) {
+					$message_lines[] = $value;
 				}
+			}
+			$details = array(
+				'name'    => $name_for_akismet,
+				'from'    => $reply_to_email,
+				'url'     => $url_for_akismet,
+				'message' => trim( implode( "\n\n", $message_lines ) ),
+			);
+			if ( ! $wpzoom_forms->not_spam( $details ) ) {
+				// Mark as spam silently — keep UX, store as spam status.
+				$this->store_submission( $form_id, $collected, 'spam' );
+				$respond( true, __( 'Thanks!', 'wpzoom-forms' ) );
 			}
 		}
 
@@ -179,6 +208,29 @@ class WPZOOM_Forms_Submission_Handler {
 		$label = isset( $field['label'] ) && $field['label'] !== '' ? $field['label'] : ucfirst( $field['type'] );
 		// Prevent collisions by appending the field id when duplicates exist.
 		return $label;
+	}
+
+	/**
+	 * Translate submitted option values into their human-readable labels for
+	 * select / radio / checkboxes fields. Unmapped values pass through as-is
+	 * so any custom or legacy data still appears in the output.
+	 */
+	private function values_to_labels( $field, $values ) {
+		if ( empty( $field['options'] ) || ! is_array( $field['options'] ) ) {
+			return $values;
+		}
+		$lookup = array();
+		foreach ( $field['options'] as $opt ) {
+			if ( isset( $opt['value'] ) ) {
+				$lookup[ (string) $opt['value'] ] = isset( $opt['label'] ) && $opt['label'] !== '' ? $opt['label'] : $opt['value'];
+			}
+		}
+		$out = array();
+		foreach ( $values as $v ) {
+			$key = (string) $v;
+			$out[] = array_key_exists( $key, $lookup ) ? $lookup[ $key ] : $v;
+		}
+		return $out;
 	}
 
 	private function captcha_ok() {
