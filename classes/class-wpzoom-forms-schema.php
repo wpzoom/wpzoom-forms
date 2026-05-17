@@ -88,8 +88,9 @@ class WPZOOM_Forms_Schema {
 				$base['label'] = __( 'Number', 'wpzoom-forms' );
 				break;
 			case 'date':
-				$base['format'] = 'Y-m-d';
-				$base['label']  = __( 'Date', 'wpzoom-forms' );
+				$base['format']     = 'Y-m-d';
+				$base['mode']       = 'single'; // single | multiple | range
+				$base['label']      = __( 'Date', 'wpzoom-forms' );
 				break;
 			case 'select':
 			case 'radio':
@@ -228,6 +229,7 @@ class WPZOOM_Forms_Schema {
 					break;
 				case 'date':
 					$clean['format'] = isset( $f['format'] ) ? self::clean_string( $f['format'] ) : 'Y-m-d';
+					$clean['mode']   = self::enum( isset( $f['mode'] ) ? $f['mode'] : 'single', array( 'single', 'multiple', 'range' ), 'single' );
 					break;
 				case 'select':
 				case 'radio':

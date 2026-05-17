@@ -3325,6 +3325,8 @@ if ( defined( 'ELEMENTOR_VERSION' ) && is_callable( 'Elementor\Plugin::instance'
 /* -------------------------------------------------------------------------- */
 require_once WPZOOM_FORMS_PATH . 'classes/class-wpzoom-forms-schema.php';
 require_once WPZOOM_FORMS_PATH . 'classes/class-wpzoom-forms-migration.php';
+require_once WPZOOM_FORMS_PATH . 'classes/class-wpzoom-forms-templates.php';
+require_once WPZOOM_FORMS_PATH . 'classes/class-wpzoom-forms-option-lists.php';
 require_once WPZOOM_FORMS_PATH . 'classes/class-wpzoom-forms-rest.php';
 require_once WPZOOM_FORMS_PATH . 'classes/class-wpzoom-forms-renderer.php';
 require_once WPZOOM_FORMS_PATH . 'classes/class-wpzoom-forms-submission-handler.php';
@@ -3343,6 +3345,14 @@ add_action( 'init', function() {
 		remove_action( 'in_admin_header', array( $wpzoom_forms, 'remove_meta_boxes' ), 100 );
 		// The legacy meta-box registration adds boxes we replace with our own.
 		remove_action( 'add_meta_boxes_wpzf-submission', array( $wpzoom_forms, 'add_meta_boxes' ), 10 );
+	}
+
+	// Disable the legacy template-picker modal — our React builder owns templates now.
+	if ( class_exists( 'WPZOOM_Forms_Template_Manager' ) ) {
+		$legacy_tm = WPZOOM_Forms_Template_Manager::instance();
+		remove_action( 'admin_enqueue_scripts', array( $legacy_tm, 'scripts' ) );
+		remove_action( 'admin_footer',          array( $legacy_tm, 'modal_window' ) );
+		remove_filter( 'default_content',       array( $legacy_tm, 'default_form_content' ), 10 );
 	}
 
 	// Register meta so REST/admin can expose it.

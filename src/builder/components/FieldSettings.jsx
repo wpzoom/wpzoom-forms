@@ -1,4 +1,6 @@
+import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { api } from '../api';
 
 const HAS_LABEL    = [ 'text', 'name', 'email', 'tel', 'url', 'number', 'textarea', 'date', 'select', 'radio', 'checkboxes', 'checkbox', 'hidden' ];
 const HAS_PLACEHOLDER = [ 'text', 'name', 'email', 'tel', 'url', 'number', 'textarea', 'date', 'select' ];
@@ -12,6 +14,13 @@ const WIDTH_OPTIONS = [
 	{ value: 'half',       label: '1/2' },
 	{ value: 'third',      label: '1/3' },
 	{ value: 'two-thirds', label: '2/3' },
+];
+
+const DATE_FORMATS = [
+	{ value: 'Y-m-d',  label: 'YYYY-MM-DD (2026-05-17)' },
+	{ value: 'F j, Y', label: 'Month D, YYYY (May 17, 2026)' },
+	{ value: 'm/d/Y',  label: 'MM/DD/YYYY (05/17/2026)' },
+	{ value: 'd/m/Y',  label: 'DD/MM/YYYY (17/05/2026)' },
 ];
 
 export default function FieldSettings({ field, onChange }) {
@@ -78,6 +87,25 @@ export default function FieldSettings({ field, onChange }) {
 						</Row>
 						<Row label={ __( 'Step', 'wpzoom-forms' ) }>
 							<input type="number" step="any" value={ field.step == null ? '' : field.step } onChange={ ( e ) => set( { step: e.target.value === '' ? null : parseFloat( e.target.value ) } ) } />
+						</Row>
+					</>
+				) }
+
+				{ field.type === 'date' && (
+					<>
+						<Row label={ __( 'Mode', 'wpzoom-forms' ) }>
+							<div className="wpzf-segmented">
+								{ [ 'single', 'multiple', 'range' ].map( ( v ) => (
+									<button key={ v } type="button" className={ ( field.mode || 'single' ) === v ? 'is-active' : '' } onClick={ () => set( { mode: v } ) }>
+										{ v === 'single' ? __( 'Single', 'wpzoom-forms' ) : v === 'multiple' ? __( 'Multiple', 'wpzoom-forms' ) : __( 'Range', 'wpzoom-forms' ) }
+									</button>
+								) ) }
+							</div>
+						</Row>
+						<Row label={ __( 'Date Format', 'wpzoom-forms' ) }>
+							<select value={ field.format || 'Y-m-d' } onChange={ ( e ) => set( { format: e.target.value } ) }>
+								{ DATE_FORMATS.map( ( f ) => <option key={ f.value } value={ f.value }>{ f.label }</option> ) }
+							</select>
 						</Row>
 					</>
 				) }
@@ -154,7 +182,15 @@ function Row({ label, children }) {
 	);
 }
 
+/* ───────────────── Options editor ───────────────── */
+
+function slugify( s ) {
+	return String( s ).toLowerCase().trim().replace( /\s+/g, '-' ).replace( /[^a-z0-9-]/g, '' );
+}
+
 function OptionsEditor({ options, onChange }) {
+	const [ bulk, setBulk ] = useState( false );
+
 	const update = ( i, patch ) => {
 		const next = options.slice();
 		next[ i ] = { ...next[ i ], ...patch };
@@ -162,14 +198,48 @@ function OptionsEditor({ options, onChange }) {
 	};
 	const remove = ( i ) => onChange( options.filter( ( _, idx ) => idx !== i ) );
 	const add    = () => onChange( [ ...options, { label: 'Option ' + ( options.length + 1 ), value: 'option-' + ( options.length + 1 ) } ] );
-	const slugify = ( s ) => String( s ).toLowerCase().trim().replace( /\s+/g, '-' ).replace( /[^a-z0-9-]/g, '' );
+
+	// HTML5 drag-and-drop reorder.
+	const [ dragIdx, setDragIdx ] = useState( null );
+	const onDragStart = ( e, idx ) => {
+		setDragIdx( idx );
+		e.dataTransfer.effectAllowed = 'move';
+		try { e.dataTransfer.setData( 'text/plain', String( idx ) ); } catch ( _ ) {}
+	};
+	const onDragOver = ( e ) => { e.preventDefault(); };
+	const onDrop = ( e, idx ) => {
+		e.preventDefault();
+		if ( dragIdx === null || dragIdx === idx ) return;
+		const next = options.slice();
+		const [ item ] = next.splice( dragIdx, 1 );
+		next.splice( idx, 0, item );
+		onChange( next );
+		setDragIdx( null );
+	};
+	const onDragEnd = () => setDragIdx( null );
 
 	return (
 		<div className="wpzf-row">
-			<label className="wpzf-row__label">{ __( 'Options', 'wpzoom-forms' ) }</label>
+			<div className="wpzf-row__label-row">
+				<label className="wpzf-row__label">{ __( 'Options', 'wpzoom-forms' ) }</label>
+				<button type="button" className="wpzf-link-btn" onClick={ () => setBulk( true ) }>
+					{ __( 'Bulk Edit', 'wpzoom-forms' ) }
+				</button>
+			</div>
 			<div className="wpzf-options">
 				{ options.map( ( o, i ) => (
-					<div className="wpzf-option" key={ i }>
+					<div
+						className={ 'wpzf-option' + ( dragIdx === i ? ' is-dragging' : '' ) }
+						key={ i }
+						draggable
+						onDragStart={ ( e ) => onDragStart( e, i ) }
+						onDragOver={ onDragOver }
+						onDrop={ ( e ) => onDrop( e, i ) }
+						onDragEnd={ onDragEnd }
+					>
+						<span className="wpzf-option__handle" title={ __( 'Drag to reorder', 'wpzoom-forms' ) } aria-hidden="true">
+							<svg width="10" height="14" viewBox="0 0 10 14" fill="currentColor"><circle cx="2" cy="2" r="1.2"/><circle cx="8" cy="2" r="1.2"/><circle cx="2" cy="7" r="1.2"/><circle cx="8" cy="7" r="1.2"/><circle cx="2" cy="12" r="1.2"/><circle cx="8" cy="12" r="1.2"/></svg>
+						</span>
 						<input
 							type="text"
 							value={ o.label }
@@ -185,6 +255,71 @@ function OptionsEditor({ options, onChange }) {
 					</div>
 				) ) }
 				<button type="button" className="wpzf-btn wpzf-btn--ghost wpzf-btn--small" onClick={ add }>+ { __( 'Add option', 'wpzoom-forms' ) }</button>
+			</div>
+
+			{ bulk && (
+				<BulkOptionsModal
+					initial={ options }
+					onApply={ ( next ) => { onChange( next ); setBulk( false ); } }
+					onClose={ () => setBulk( false ) }
+				/>
+			) }
+		</div>
+	);
+}
+
+/* ───────────────── Bulk options modal (with predefined lists) ───────────────── */
+
+function BulkOptionsModal({ initial, onApply, onClose }) {
+	const [ text, setText ]   = useState( ( initial || [] ).map( ( o ) => o.label ).join( '\n' ) );
+	const [ lists, setLists ] = useState( null );
+	const [ loadErr, setLoadErr ] = useState( '' );
+
+	useEffect( () => {
+		api.getOptionLists().then( setLists ).catch( ( e ) => setLoadErr( e.message || '' ) );
+	}, [] );
+
+	const apply = () => {
+		const next = text.split( /\r?\n/ ).map( ( l ) => l.trim() ).filter( Boolean ).map( ( label ) => ( { label, value: slugify( label ) } ) );
+		onApply( next );
+	};
+
+	const useList = ( items ) => {
+		const existing = text.trim();
+		setText( ( existing ? existing + '\n' : '' ) + items.join( '\n' ) );
+	};
+
+	return (
+		<div className="wpzf-modal" role="dialog" aria-modal="true" onClick={ onClose }>
+			<div className="wpzf-modal__inner wpzf-modal__inner--wide" onClick={ ( e ) => e.stopPropagation() }>
+				<div className="wpzf-modal__header">
+					<h2>{ __( 'Bulk Edit Options', 'wpzoom-forms' ) }</h2>
+					<button className="wpzf-icon-btn" onClick={ onClose } aria-label={ __( 'Close', 'wpzoom-forms' ) }>×</button>
+				</div>
+				<div className="wpzf-modal__body">
+					<p className="wpzf-hint">{ __( 'Each line is a new option. Values are generated from labels.', 'wpzoom-forms' ) }</p>
+					<textarea
+						className="wpzf-bulk__textarea"
+						rows={ 12 }
+						value={ text }
+						onChange={ ( e ) => setText( e.target.value ) }
+						placeholder={ __( 'Option one\nOption two\nOption three', 'wpzoom-forms' ) }
+					/>
+					{ ! loadErr && lists && lists.length > 0 && (
+						<div className="wpzf-bulk__lists">
+							<span className="wpzf-bulk__lists-label">{ __( 'Predefined lists:', 'wpzoom-forms' ) }</span>
+							{ lists.map( ( l ) => (
+								<button key={ l.id } type="button" className="wpzf-btn wpzf-btn--ghost wpzf-btn--small" onClick={ () => useList( l.items ) }>
+									{ l.label }
+								</button>
+							) ) }
+						</div>
+					) }
+				</div>
+				<div className="wpzf-modal__footer">
+					<button className="wpzf-btn wpzf-btn--ghost" onClick={ onClose }>{ __( 'Cancel', 'wpzoom-forms' ) }</button>
+					<button className="wpzf-btn wpzf-btn--primary" onClick={ apply }>{ __( 'Apply', 'wpzoom-forms' ) }</button>
+				</div>
 			</div>
 		</div>
 	);

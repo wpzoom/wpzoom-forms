@@ -75,25 +75,14 @@ class WPZOOM_Forms_Builder_Page {
 			}
 		}
 
-		// New form
+		// New form via post-new.php → forward to the builder's template picker.
 		if ( $pagenow === 'post-new.php' && isset( $_GET['post_type'] ) && $_GET['post_type'] === 'wpzf-form' ) {
-			// Create a draft + redirect.
-			$id = wp_insert_post( array(
-				'post_type'    => 'wpzf-form',
-				'post_status'  => 'publish',
-				'post_title'   => __( 'New Form', 'wpzoom-forms' ),
-				'post_content' => '',
-			) );
-			if ( ! is_wp_error( $id ) && $id > 0 ) {
-				WPZOOM_Forms_Schema::save_for_form( $id, WPZOOM_Forms_Schema::defaults() );
-				update_post_meta( $id, '_form_method', 'combined' );
-				update_post_meta( $id, '_form_email', get_option( 'admin_email' ) );
-				update_post_meta( $id, '_form_subject', __( 'New Form Submission', 'wpzoom-forms' ) );
-				update_post_meta( $id, '_form_success_message', __( "Thanks! We've received your submission.", 'wpzoom-forms' ) );
-				update_post_meta( $id, '_form_failure_message', __( 'Sorry, something went wrong. Please try again.', 'wpzoom-forms' ) );
-				wp_safe_redirect( admin_url( 'admin.php?page=' . self::SLUG . '&id=' . $id . '&new=1' ) );
-				exit;
+			$target = admin_url( 'admin.php?page=' . self::SLUG );
+			if ( isset( $_GET['template'] ) ) {
+				$target = add_query_arg( 'template', sanitize_key( $_GET['template'] ), $target );
 			}
+			wp_safe_redirect( $target );
+			exit;
 		}
 	}
 
@@ -177,27 +166,8 @@ class WPZOOM_Forms_Builder_Page {
 	}
 
 	public function render_page() {
-		$id = isset( $_GET['id'] ) ? (int) $_GET['id'] : 0;
-		// If no id given, create one and redirect.
-		if ( $id < 1 ) {
-			$new = wp_insert_post( array(
-				'post_type'    => 'wpzf-form',
-				'post_status'  => 'publish',
-				'post_title'   => __( 'New Form', 'wpzoom-forms' ),
-				'post_content' => '',
-			) );
-			if ( ! is_wp_error( $new ) && $new > 0 ) {
-				WPZOOM_Forms_Schema::save_for_form( $new, WPZOOM_Forms_Schema::defaults() );
-				update_post_meta( $new, '_form_method', 'combined' );
-				update_post_meta( $new, '_form_email', get_option( 'admin_email' ) );
-				update_post_meta( $new, '_form_subject', __( 'New Form Submission', 'wpzoom-forms' ) );
-				update_post_meta( $new, '_form_success_message', __( "Thanks! We've received your submission.", 'wpzoom-forms' ) );
-				update_post_meta( $new, '_form_failure_message', __( 'Sorry, something went wrong. Please try again.', 'wpzoom-forms' ) );
-				wp_safe_redirect( admin_url( 'admin.php?page=' . self::SLUG . '&id=' . $new . '&new=1' ) );
-				exit;
-			}
-		}
-
-		echo '<div id="wpzf-builder-root" class="wpzf-builder-root" data-form-id="' . esc_attr( $id ) . '"></div>';
+		$id       = isset( $_GET['id'] ) ? (int) $_GET['id'] : 0;
+		$template = isset( $_GET['template'] ) ? sanitize_key( $_GET['template'] ) : '';
+		echo '<div id="wpzf-builder-root" class="wpzf-builder-root" data-form-id="' . esc_attr( $id ) . '" data-template="' . esc_attr( $template ) . '"></div>';
 	}
 }

@@ -27,7 +27,7 @@ export const makeField = ( type ) => {
 		case 'number':
 			return { ...base, label: 'Number', min: null, max: null, step: null };
 		case 'date':
-			return { ...base, label: 'Date', format: 'Y-m-d' };
+			return { ...base, label: 'Date', format: 'Y-m-d', mode: 'single' };
 		case 'select':
 		case 'radio':
 		case 'checkboxes':

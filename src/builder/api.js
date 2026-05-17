@@ -10,8 +10,10 @@ const base = '/wpzf/v1';
 export const api = {
 	getForm: ( id ) => apiFetch( { path: `${ base }/forms/${ id }` } ),
 	listForms: () => apiFetch( { path: `${ base }/forms` } ),
-	createForm: ( title ) => apiFetch( { path: `${ base }/forms`, method: 'POST', data: { title } } ),
+	createForm: ( opts = {} ) => apiFetch( { path: `${ base }/forms`, method: 'POST', data: opts } ),
 	updateForm: ( id, payload ) => apiFetch( { path: `${ base }/forms/${ id }`, method: 'PUT', data: payload } ),
 	deleteForm: ( id ) => apiFetch( { path: `${ base }/forms/${ id }`, method: 'DELETE' } ),
 	duplicateForm: ( id ) => apiFetch( { path: `${ base }/forms/${ id }/duplicate`, method: 'POST' } ),
+	getTemplates: () => apiFetch( { path: `${ base }/templates` } ),
+	getOptionLists: () => apiFetch( { path: `${ base }/option-lists` } ),
 };

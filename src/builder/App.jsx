@@ -9,6 +9,7 @@ import Canvas from './components/Canvas.jsx';
 import Inspector from './components/Inspector.jsx';
 import Notices from './components/Notices.jsx';
 import EmbedModal from './components/EmbedModal.jsx';
+import TemplatePicker from './components/TemplatePicker.jsx';
 
 const TABS = {
 	FIELDS:        'fields',
@@ -104,11 +105,12 @@ function reducer( state, action ) {
 	}
 }
 
-export default function App({ formId }) {
+export default function App({ formId, presetTemplate }) {
 	const [ state, dispatch ] = useReducer( reducer, initialState );
 
-	// Load on mount
+	// Load on mount — only when we have a form id.
 	useEffect( () => {
+		if ( ! formId ) return;
 		let cancelled = false;
 		dispatch( { type: 'LOAD_START' } );
 		api.getForm( formId ).then( ( form ) => {
@@ -163,6 +165,15 @@ export default function App({ formId }) {
 		if ( ! state.selectedField || ! state.form ) return null;
 		return state.form.schema.fields.find( f => f.id === state.selectedField ) || null;
 	}, [ state.selectedField, state.form ] );
+
+	// No form id → show the template picker.
+	if ( ! formId ) {
+		return (
+			<div className="wpzf-builder wpzf-builder--picker">
+				<TemplatePicker presetTemplate={ presetTemplate } />
+			</div>
+		);
+	}
 
 	if ( state.loading ) {
 		return (

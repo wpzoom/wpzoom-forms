@@ -72,6 +72,41 @@ class WPZOOM_Forms_REST {
 			'callback'            => array( $this, 'field_types' ),
 			'permission_callback' => array( $this, 'check_manage' ),
 		) );
+
+		register_rest_route( self::NAMESPACE_V1, '/templates', array(
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => array( $this, 'list_templates' ),
+			'permission_callback' => array( $this, 'check_manage' ),
+		) );
+
+		register_rest_route( self::NAMESPACE_V1, '/option-lists', array(
+			'methods'             => WP_REST_Server::READABLE,
+			'callback'            => array( $this, 'option_lists' ),
+			'permission_callback' => array( $this, 'check_manage' ),
+		) );
+	}
+
+	/** Return summaries of all prebuilt form templates. */
+	public function list_templates() {
+		$file = WPZOOM_FORMS_PATH . 'templates/templates.php';
+		if ( ! file_exists( $file ) ) return rest_ensure_response( array() );
+		$templates = include $file;
+		if ( ! is_array( $templates ) ) return rest_ensure_response( array() );
+		$out = array();
+		foreach ( $templates as $t ) {
+			$out[] = array(
+				'id'   => isset( $t['id'] ) ? $t['id'] : '',
+				'name' => isset( $t['name'] ) ? $t['name'] : '',
+				'desc' => isset( $t['desc'] ) ? $t['desc'] : '',
+				'icon' => isset( $t['icon'] ) ? $t['icon'] : '',
+			);
+		}
+		return rest_ensure_response( $out );
+	}
+
+	/** Predefined option-list packs (countries, US states). */
+	public function option_lists() {
+		return rest_ensure_response( WPZOOM_Forms_Option_Lists::all() );
 	}
 
 	public function check_manage() {
@@ -124,22 +159,41 @@ class WPZOOM_Forms_REST {
 	}
 
 	public function create_form( $req ) {
-		$title = $req->get_param( 'title' );
+		$title    = $req->get_param( 'title' );
+		$template = $req->get_param( 'template' );
+
+		// If a template id is given, prefer its name for the post title.
+		$template_data = null;
+		if ( $template ) {
+			$template_data = WPZOOM_Forms_Templates::get( $template );
+			if ( $template_data && empty( $title ) ) {
+				$title = $template_data['name'];
+			}
+		}
+
 		if ( empty( $title ) ) $title = __( 'New Form', 'wpzoom-forms' );
+
+		$post_content = $template_data ? $template_data['content'] : '';
 
 		$id = wp_insert_post( array(
 			'post_type'    => 'wpzf-form',
 			'post_status'  => 'publish',
 			'post_title'   => sanitize_text_field( $title ),
-			'post_content' => '',
+			'post_content' => $post_content,
 		) );
 
 		if ( is_wp_error( $id ) || $id === 0 ) {
 			return new WP_Error( 'wpzf_create_failed', __( 'Could not create form.', 'wpzoom-forms' ), array( 'status' => 500 ) );
 		}
 
-		// Seed with default schema + sensible meta.
-		WPZOOM_Forms_Schema::save_for_form( $id, WPZOOM_Forms_Schema::defaults() );
+		// If template content was supplied, convert it (block markup) to v2 schema.
+		if ( $template_data ) {
+			$schema = WPZOOM_Forms_Migration::build_from_post_content( $id );
+			WPZOOM_Forms_Schema::save_for_form( $id, $schema );
+		} else {
+			WPZOOM_Forms_Schema::save_for_form( $id, WPZOOM_Forms_Schema::defaults() );
+		}
+
 		update_post_meta( $id, '_form_method', 'combined' );
 		update_post_meta( $id, '_form_email', get_option( 'admin_email' ) );
 		update_post_meta( $id, '_form_subject', __( 'New Form Submission', 'wpzoom-forms' ) );
