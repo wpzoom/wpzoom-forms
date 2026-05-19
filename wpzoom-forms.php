@@ -3378,17 +3378,22 @@ add_action( 'init', function() {
 
 /**
  * Override the legacy form-block render callback + the shortcode to use the
- * v2 renderer. Legacy block content is auto-migrated to schema on first read.
+ * v2 renderer — but only for forms that have been saved through the new builder
+ * (i.e. the _wpzf_schema postmeta exists). Old forms that haven't been touched
+ * fall back to the original render path so their styling is fully preserved.
  */
 add_action( 'init', function() {
 	global $wpzoom_forms;
 	if ( ! $wpzoom_forms ) return;
 
-	// Replace shortcode.
 	remove_shortcode( 'wpzf_form' );
-	add_shortcode( 'wpzf_form', function( $atts ) {
+	add_shortcode( 'wpzf_form', function( $atts ) use ( $wpzoom_forms ) {
 		$atts = shortcode_atts( array( 'id' => 0 ), $atts, 'wpzf_form' );
-		return WPZOOM_Forms_Renderer::render( (int) $atts['id'] );
+		$id   = (int) $atts['id'];
+		if ( get_post_meta( $id, WPZOOM_Forms_Schema::META_KEY, true ) ) {
+			return WPZOOM_Forms_Renderer::render( $id );
+		}
+		return $wpzoom_forms->form_block_render( array( 'formId' => $id ) );
 	} );
 }, 12 );
 
@@ -3405,15 +3410,14 @@ add_filter( 'render_block', function( $block_content, $block ) {
 	$id = isset( $block['attrs']['formId'] ) ? (int) $block['attrs']['formId'] : 0;
 	if ( $id < 1 ) return $block_content;
 
-	// form_block_render already ran (render_callback) and its output is in $block_content.
-	// Extract the inline <style> block it generated (field/button colors set in the block editor)
-	// and carry it forward into the new renderer's output so those customizations aren't lost.
-	$style_html = '';
-	if ( preg_match( '~<style>(.*?)</style>~s', $block_content, $m ) ) {
-		$style_html = '<style>' . $m[1] . '</style>';
+	// Only switch to the v2 renderer when the form has been saved through the new
+	// builder (_wpzf_schema exists). Otherwise return the original block output
+	// unchanged so old forms keep all their existing styling and behaviour.
+	if ( ! get_post_meta( $id, WPZOOM_Forms_Schema::META_KEY, true ) ) {
+		return $block_content;
 	}
 
-	return $style_html . WPZOOM_Forms_Renderer::render( $id );
+	return WPZOOM_Forms_Renderer::render( $id );
 }, 9, 2 );
 
 /**
