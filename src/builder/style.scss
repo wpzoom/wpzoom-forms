@@ -103,6 +103,7 @@ body[class*="page_wpzf-form-builder"] {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	position: relative;
 	background: $bg-card;
 	border-bottom: 1px solid $border;
 	padding: 0 16px;
@@ -110,13 +111,16 @@ body[class*="page_wpzf-form-builder"] {
 	flex-shrink: 0;
 	box-shadow: $elevation-x-small;
 
-	&__left, &__right { display: flex; align-items: center; gap: 12px; }
+	&__left, &__right { display: flex; align-items: center; gap: 8px; }
 
-	&__exit {
-		display: inline-flex; align-items: center; justify-content: center;
-		width: 32px; height: 32px;
-		color: $muted; text-decoration: none;
-		&:hover { background: $border-soft; color: $text; }
+	&__center {
+		position: absolute;
+		left: 50%;
+		transform: translateX(-50%);
+		display: flex;
+		align-items: center;
+		pointer-events: none;
+		> * { pointer-events: auto; }
 	}
 
 	&__brand {
@@ -127,10 +131,13 @@ body[class*="page_wpzf-form-builder"] {
 
 	// WP Button used as the inline title display/trigger.
 	&__title.components-button {
-		border: 1px dashed transparent; border-radius: $radius-medium;
-		font-size: 13px; font-weight: 500; color: $text; height: auto; padding: 4px 8px;
-		&:hover:not(:disabled) { border-color: $border; background: $border-soft; }
-		// tame the WP icon colour so the pencil reads as muted
+		min-width: 180px;
+		background: $border-soft;
+		border-radius: $radius-medium;
+		justify-content: center !important;
+		&:hover:not(:disabled) { 
+			background: $border;
+		}
 		.dashicon, svg:not(:root) { color: $muted; }
 	}
 
@@ -183,11 +190,7 @@ body[class*="page_wpzf-form-builder"] {
 }
 
 .wpzf-badge {
-	display: inline-flex; align-items: center; justify-content: center;
-	min-width: 18px; height: 18px; padding: 0 6px;
-	background: $border; color: $text; border-radius: $radius-full;
-	font-size: 11px; font-weight: 600;
-	margin-right: 4px;
+	margin-right: 6px;
 }
 
 .wpzf-icon-btn {

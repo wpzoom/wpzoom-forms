@@ -1,7 +1,7 @@
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Button, TextControl } from '@wordpress/components';
-import { edit, code, settings } from '@wordpress/icons';
+import { edit, code, settings, chevronLeft } from '@wordpress/icons';
 
 const BellIcon = () => (
 	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px">
@@ -27,22 +27,34 @@ export default function Topbar({
 	return (
 		<header className="wpzf-topbar">
 			<div className="wpzf-topbar__left">
-				<a
+				<Button
 					className="wpzf-topbar__exit"
 					href={ exitUrl }
-					title={ __( 'Back to forms', 'wpzoom-forms' ) }
-					aria-label={ __( 'Back to forms', 'wpzoom-forms' ) }
-				>
-					<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M15.4 7.4L14 6l-6 6 6 6 1.4-1.4L10.8 12z"/></svg>
-				</a>
+					label={ __( 'Back to forms', 'wpzoom-forms' ) }
+					icon={chevronLeft}
+					showTooltip
+				/>
 				<div className="wpzf-topbar__brand">
 					<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" clipRule="evenodd" d="M7.33 2h13.34v20H4V5.33h3.33V2zm10 3.33h-6.66v3.34H7.33v10h3.34v-3.34H14V12h-3.33V8.67h6.66V5.33z" /></svg>
 					<span>{ __( 'WPZOOM Forms', 'wpzoom-forms' ) }</span>
 				</div>
+				<Button
+					variant="secondary"
+					href={ submissionsUrl }
+					label={ __( 'View Submissions', 'wpzoom-forms' ) }
+					showTooltip
+				>
+					<span className="wpzf-badge">{ submissions || 0 }</span>
+					{ __( 'Submissions', 'wpzoom-forms' ) }
+				</Button>
+			</div>
+
+			<div className="wpzf-topbar__center">
 				{ editing ? (
 					<div className="wpzf-topbar__title-wrap">
 						<TextControl
 							label={ __( 'Form title', 'wpzoom-forms' ) }
+							size="compact"
 							hideLabelFromVision
 							value={ title }
 							onChange={ onTitleChange }
@@ -58,6 +70,8 @@ export default function Topbar({
 				) : (
 					<Button
 						icon={ edit }
+						size="compact"
+						iconSize={ 20 }
 						iconPosition="right"
 						className="wpzf-topbar__title"
 						onClick={ () => setEditing( true ) }
@@ -70,12 +84,6 @@ export default function Topbar({
 			</div>
 
 			<div className="wpzf-topbar__right">
-				<Button
-					href={ submissionsUrl }
-				>
-					<span className="wpzf-badge">{ submissions || 0 }</span>
-					{ __( 'Submissions', 'wpzoom-forms' ) }
-				</Button>
 				<Button
 					icon={ code }
 					onClick={ onEmbed }
