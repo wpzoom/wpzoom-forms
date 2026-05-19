@@ -234,6 +234,8 @@ class WPZOOM_Forms_Settings {
 		$premium_badge = '<span class="wpzoom-forms-badge wpzoom-forms-field-is_premium">' . __( 'Premium', 'wpzoom-forms' ) . '</span>';
 		$soon_badge    = '<span class="wpzoom-forms-badge wpzoom-forms-field-is_coming_soon">' . __( 'Coming Soon', 'wpzoom-forms' ) . '</span>';
 
+		$beta_badge = '<span class="wpzoom-forms-badge wpzoom-forms-field-is_beta">' . __( 'Beta', 'wpzoom-forms' ) . '</span>';
+
 		self::$settings = array(
 			'general'     => array(
 				'tab_id'       => 'tab-general',
@@ -268,6 +270,25 @@ class WPZOOM_Forms_Settings {
 									'description' => esc_html__( 'If you want to embed a form using shortcodes in a page builder, enable this option to ensure all the needed assets are loaded.', 'wpzoom-forms' ),
 									'default'     => true,
 									
+								),
+							),
+						),
+					),
+					array(
+						'id'       => 'wpzoom_section_experiments',
+						'title'    => __( 'Experimental Features', 'wpzoom-forms' ),
+						'page'     => 'wpzoom-forms-settings-general',
+						'callback' => array( $this, 'section_experiments_cb' ),
+						'fields'   => array(
+							array(
+								'id'    => 'wpzf_enable_new_builder',
+								'title' => esc_html__( 'Try new forms editor', 'wpzoom-forms' ) . ' ' . $beta_badge,
+								'type'  => 'checkbox',
+								'args'  => array(
+									'label_for'   => 'wpzf_enable_new_builder',
+									'class'       => 'wpzoom-forms-field',
+									'description' => esc_html__( 'Enable the new React-based forms editor. You can switch back at any time to keep using the classic block editor for your forms.', 'wpzoom-forms' ),
+									'default'     => false,
 								),
 							),
 						),
@@ -873,6 +894,15 @@ class WPZOOM_Forms_Settings {
 	public function section_general_cb( $args ) {
 		?>
 		 <p class="section-description"><?php esc_html_e( 'Customize how WPZOOM Forms loads styles and assets on your site.', 'wpzoom-forms' ); ?></p>
+		<?php
+	}
+
+	/**
+	 * Experimental Features section callback
+	 */
+	public function section_experiments_cb( $args ) {
+		?>
+		<p class="section-description"><?php esc_html_e( 'Try out features we\'re still polishing.', 'wpzoom-forms' ); ?></p>
 		<?php
 	}
 

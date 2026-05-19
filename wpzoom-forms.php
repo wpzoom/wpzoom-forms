@@ -3347,8 +3347,14 @@ add_action( 'init', function() {
 		remove_action( 'add_meta_boxes_wpzf-submission', array( $wpzoom_forms, 'add_meta_boxes' ), 10 );
 	}
 
-	// Disable the legacy template-picker modal — our React builder owns templates now.
-	if ( class_exists( 'WPZOOM_Forms_Template_Manager' ) ) {
+	// Disable the legacy template-picker modal — our React builder owns templates
+	// when the beta builder is opted into. With the toggle off, leave the legacy
+	// modal in place so the classic editing flow keeps working.
+	if (
+		class_exists( 'WPZOOM_Forms_Template_Manager' )
+		&& class_exists( 'WPZOOM_Forms_Builder_Page' )
+		&& WPZOOM_Forms_Builder_Page::is_enabled()
+	) {
 		$legacy_tm = WPZOOM_Forms_Template_Manager::instance();
 		remove_action( 'admin_enqueue_scripts', array( $legacy_tm, 'scripts' ) );
 		remove_action( 'admin_footer',          array( $legacy_tm, 'modal_window' ) );
@@ -3437,10 +3443,14 @@ add_action( 'wp_enqueue_scripts', function() {
 /**
  * Customize the "All Forms" admin list a bit:
  * - rename "Add New" wording, replace target link with our builder.
+ *
+ * Only active when the beta builder is enabled; otherwise the default
+ * "Add New" button points at the classic block editor as it always did.
  */
 add_action( 'admin_head-edit.php', function() {
 	$screen = get_current_screen();
 	if ( ! $screen || $screen->post_type !== 'wpzf-form' ) return;
+	if ( ! class_exists( 'WPZOOM_Forms_Builder_Page' ) || ! WPZOOM_Forms_Builder_Page::is_enabled() ) return;
 	?>
 	<style>
 		.wp-heading-inline + .page-title-action { background: #2271b1; color: #fff; border-color: #2271b1; }
@@ -3462,12 +3472,14 @@ add_action( 'admin_head-edit.php', function() {
  * Render the legacy "Upgrade to PRO" sidebar banner on the forms list page.
  * The legacy template-manager modal used to ship this; we disabled that modal
  * when replacing the form editor, so re-emit the banner here so the upsell
- * isn't lost.
+ * isn't lost. With the beta builder off the legacy modal still loads and
+ * already includes its own banner — skip in that case to avoid duplicates.
  */
 add_action( 'admin_footer-edit.php', function() {
 	$screen = get_current_screen();
 	if ( ! $screen || $screen->post_type !== 'wpzf-form' ) return;
 	if ( ! class_exists( 'WPZOOM_Forms_Settings' ) ) return;
+	if ( ! class_exists( 'WPZOOM_Forms_Builder_Page' ) || ! WPZOOM_Forms_Builder_Page::is_enabled() ) return;
 
 	$settings_class = new WPZOOM_Forms_Settings();
 	$settings_class->upsell_banner(); // echoes the .wpzoom-forms-settings-upsell-container markup

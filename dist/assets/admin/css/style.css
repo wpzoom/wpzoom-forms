@@ -138,6 +138,13 @@ div.wp-tab-panel-inactive {
 .wpzf-form_page_wpzf-settings .wpzoom-forms-field-is_premium {
     background: #FDA921;
 }
+.wpzf-form_page_wpzf-settings .wpzoom-forms-field-is_beta {
+    background: #6c4bb6;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-weight: 600;
+    font-size: 11px;
+}
 .wpzf-form_page_wpzf-settings .wpzoom-forms-field-is_active {
     background: #46b450;
 }
