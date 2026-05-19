@@ -4,3 +4,18 @@
 .wpzf-honeypot {
 	display: none !important;
 }
+
+// Choice/radio/checkbox groups — the structural flex rules live in frontend-form/style.css
+// which isn't loaded in the editor context, so the columns collapse without these.
+.wpzf-choices {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5em;
+	padding-top: 4px;
+}
+
+.wpzf-choice {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+}
