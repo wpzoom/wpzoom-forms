@@ -28,6 +28,9 @@ class WPZOOM_Forms_Migration {
 		'wpzoom-forms/label-field'           => 'heading',
 		'wpzoom-forms/submit-field'          => '__submit',
 		'wpzoom-forms/datepicker-field'      => 'date',
+		'core/paragraph'                     => 'paragraph',
+		'core/heading'                       => 'heading',
+		'core/separator'                     => 'divider',
 	);
 
 	/**
@@ -72,6 +75,9 @@ class WPZOOM_Forms_Migration {
 
 			$name  = isset( $block['blockName'] ) ? $block['blockName'] : '';
 			$attrs = isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : array();
+			if ( ! empty( $block['innerHTML'] ) ) {
+				$attrs['_innerHTML'] = $block['innerHTML'];
+			}
 
 			if ( isset( self::$type_map[ $name ] ) ) {
 				$type = self::$type_map[ $name ];
@@ -132,7 +138,26 @@ class WPZOOM_Forms_Migration {
 		}
 
 		if ( $type === 'heading' ) {
-			$over['text']  = isset( $attrs['name'] ) ? $attrs['name'] : __( 'Heading', 'wpzoom-forms' );
+			if ( isset( $attrs['name'] ) ) {
+				// wpzoom-forms/label-field stores its text in the 'name' attribute
+				$over['text'] = $attrs['name'];
+			} elseif ( isset( $attrs['_innerHTML'] ) ) {
+				// core/heading: renderer uses esc_html so strip all tags to plain text
+				$over['text'] = wp_strip_all_tags( $attrs['_innerHTML'] );
+				if ( isset( $attrs['level'] ) ) {
+					$over['level'] = 'h' . (int) $attrs['level'];
+				}
+			} else {
+				$over['text'] = __( 'Heading', 'wpzoom-forms' );
+			}
+			$over['label'] = '';
+		}
+
+		if ( $type === 'paragraph' ) {
+			$html = isset( $attrs['_innerHTML'] ) ? trim( $attrs['_innerHTML'] ) : '';
+			// Strip the outer <p> wrapper; .wpzf-paragraph div already acts as the container
+			$html          = preg_replace( '/^\s*<p[^>]*>|<\/p>\s*$/i', '', $html );
+			$over['text']  = wp_kses_post( $html );
 			$over['label'] = '';
 		}
 
