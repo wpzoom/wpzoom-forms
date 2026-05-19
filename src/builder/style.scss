@@ -1,20 +1,63 @@
 /* WPZOOM Forms — v2 Builder UI
    ============================
-   The builder takes over the entire wp-admin content area below the admin bar.
-   We hide the default WP admin notices/header for a focused, full-bleed canvas. */
+   Colors:    WP gray scale + --wp-admin-theme-color for accent
+   Elevation: WP layered box-shadow tokens
+   Radius:    WP radius scale (x-small 1 / small 2 / medium 4 / large 8 / full 9999px) */
 
+// ── WP design-system token values ───────────────────────────────────────────
+// Gray scale (@wordpress/base-styles)
+$gray-900: #1e1e1e;
+$gray-700: #757575;   // lightest gray meeting 4.5:1 text contrast
+$gray-600: #949494;   // lightest gray meeting 3:1 UI contrast
+$gray-400: #ccc;
+$gray-200: #e0e0e0;
+$gray-100: #f0f0f0;   // WP admin page background
+
+// Accent — hex used in rgba(); CSS var used in solid property values so the
+// builder honours the admin's active colour scheme (Profile → Admin Color Scheme).
 $brand:        #2271b1;
 $brand-hover:  #135e96;
-$accent:       #4f46e5;
-$text:         #1f2937;
-$muted:        #6b7280;
-$border:       #e5e7eb;
-$border-soft:  #f1f3f5;
-$bg:           #f6f7f9;
-$bg-card:      #ffffff;
-$danger:       #d63638;
-$success:      #2ca362;
-$radius:       8px;
+$accent:       #4f46e5;   // purple, only for pro/upsell elements
+
+// Semantic aliases
+$text:        $gray-900;
+$muted:       $gray-700;
+$border:      $gray-200;
+$border-soft: $gray-100;
+$bg:          $gray-100;
+$bg-card:     #fff;
+$danger:      #d63638;   // WP admin standard red
+$success:     #4ab866;   // WP $alert-green
+
+// Radius (WP tokens)
+$radius-x-small: 1px;
+$radius-small:   2px;
+$radius-medium:  4px;
+$radius-large:   8px;
+$radius-full:    9999px;
+$radius:         $radius-large;  // compat alias
+
+// Elevation (WP layered shadow tokens)
+$elevation-x-small:
+	0 1px 1px rgba(0,0,0,.03),
+	0 1px 2px rgba(0,0,0,.02),
+	0 3px 3px rgba(0,0,0,.02),
+	0 4px 4px rgba(0,0,0,.01);
+$elevation-small:
+	0 1px 2px rgba(0,0,0,.05),
+	0 2px 3px rgba(0,0,0,.04),
+	0 6px 6px rgba(0,0,0,.03),
+	0 8px 8px rgba(0,0,0,.02);
+$elevation-medium:
+	0 2px 3px rgba(0,0,0,.05),
+	0 4px 5px rgba(0,0,0,.04),
+	0 12px 12px rgba(0,0,0,.03),
+	0 16px 16px rgba(0,0,0,.02);
+$elevation-large:
+	0 5px 15px rgba(0,0,0,.08),
+	0 15px 27px rgba(0,0,0,.07),
+	0 30px 36px rgba(0,0,0,.04),
+	0 50px 43px rgba(0,0,0,.02);
 
 /* full-screen takeover ----------------------------------------------------- */
 body.wpzf-form_page_wpzf-form-builder,
@@ -35,7 +78,7 @@ body[class*="page_wpzf-form-builder"] {
 	display: flex;
 	flex-direction: column;
 	height: calc(100vh - 32px);
-	font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	font: 13px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 	color: $text;
 
 	&--loading,
@@ -49,7 +92,7 @@ body[class*="page_wpzf-form-builder"] {
 .wpzf-spinner {
 	width: 32px; height: 32px;
 	border: 3px solid $border;
-	border-top-color: $brand;
+	border-top-color: var(--wp-admin-theme-color, #{$brand});
 	border-radius: 50%;
 	animation: wpzf-spin 0.9s linear infinite;
 }
@@ -60,18 +103,19 @@ body[class*="page_wpzf-form-builder"] {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	background: #fff;
+	background: $bg-card;
 	border-bottom: 1px solid $border;
 	padding: 0 16px;
 	height: 56px;
 	flex-shrink: 0;
+	box-shadow: $elevation-x-small;
 
 	&__left, &__right { display: flex; align-items: center; gap: 12px; }
 
 	&__exit {
 		display: inline-flex; align-items: center; justify-content: center;
 		width: 32px; height: 32px;
-		border-radius: 6px;
+		border-radius: $radius-medium;
 		color: $muted; text-decoration: none;
 		&:hover { background: $border-soft; color: $text; }
 	}
@@ -79,22 +123,23 @@ body[class*="page_wpzf-form-builder"] {
 	&__brand {
 		display: inline-flex; align-items: center; gap: 8px;
 		font-weight: 600; color: $text;
-		svg { color: $brand; }
+		svg { color: var(--wp-admin-theme-color, #{$brand}); }
 	}
 
 	&__title {
 		display: inline-flex; align-items: center; gap: 6px;
 		background: transparent; border: 1px dashed transparent;
-		padding: 4px 8px; border-radius: 6px;
-		font-size: 14px; font-weight: 500; color: $text; cursor: pointer;
+		padding: 4px 8px; border-radius: $radius-medium;
+		font-size: 13px; font-weight: 500; color: $text; cursor: pointer;
 		&:hover { border-color: $border; background: $border-soft; }
 		svg { color: $muted; }
 	}
 
 	&__title-input {
 		font: inherit; padding: 4px 8px;
-		border: 1px solid $brand; border-radius: 6px;
+		border: 1px solid var(--wp-admin-theme-color, #{$brand}); border-radius: $radius-medium;
 		min-width: 280px;
+		&:focus { outline: var(--wp-admin-border-width-focus, 2px) solid var(--wp-admin-theme-color, #{$brand}); outline-offset: 0; }
 	}
 }
 
@@ -103,26 +148,31 @@ body[class*="page_wpzf-form-builder"] {
 	display: inline-flex; align-items: center; gap: 6px;
 	padding: 7px 14px;
 	border: 1px solid $border;
-	border-radius: 6px;
-	background: #fff; color: $text;
+	border-radius: $radius-medium;
+	background: $bg-card; color: $text;
 	font-size: 13px; font-weight: 500;
 	cursor: pointer;
 	text-decoration: none;
 	transition: background .15s, border-color .15s, box-shadow .15s;
 
-	&:hover:not(:disabled) { background: $border-soft; border-color: #d1d5db; }
+	&:hover:not(:disabled) { background: $border-soft; border-color: $gray-400; }
 	&:disabled { opacity: .5; cursor: not-allowed; }
 
 	&--primary {
-		background: $brand; color: #fff; border-color: $brand;
-		&:hover:not(:disabled) { background: $brand-hover; border-color: $brand-hover; }
+		background: var(--wp-admin-theme-color, #{$brand});
+		color: #fff;
+		border-color: var(--wp-admin-theme-color, #{$brand});
+		&:hover:not(:disabled) {
+			background: var(--wp-admin-theme-color-darker-10, #{$brand-hover});
+			border-color: var(--wp-admin-theme-color-darker-10, #{$brand-hover});
+		}
 	}
 	&--ghost {
 		background: transparent; border-color: transparent; color: $text;
 		&:hover:not(:disabled) { background: $border-soft; }
 	}
 	&--dirty {
-		box-shadow: 0 0 0 3px rgba(34,113,177,.18);
+		box-shadow: 0 0 0 2px rgba($brand, .2);
 	}
 	&--small { padding: 4px 10px; font-size: 12px; }
 }
@@ -130,7 +180,7 @@ body[class*="page_wpzf-form-builder"] {
 .wpzf-badge {
 	display: inline-flex; align-items: center; justify-content: center;
 	min-width: 18px; height: 18px; padding: 0 6px;
-	background: $border; color: $text; border-radius: 9px;
+	background: $border; color: $text; border-radius: $radius-full;
 	font-size: 11px; font-weight: 600;
 	margin-right: 4px;
 }
@@ -139,9 +189,9 @@ body[class*="page_wpzf-form-builder"] {
 	display: inline-flex; align-items: center; justify-content: center;
 	width: 24px; height: 24px;
 	background: transparent; border: 0; padding: 0;
-	color: $muted; border-radius: 4px; cursor: pointer;
+	color: $muted; border-radius: $radius-small; cursor: pointer;
 	&:hover { background: $border-soft; color: $text; }
-	&--danger:hover { color: $danger; background: rgba(214,54,56,.08); }
+	&--danger:hover { color: $danger; background: rgba($danger, .08); }
 }
 
 /* layout: 3-column body --------------------------------------------------- */
@@ -153,7 +203,7 @@ body[class*="page_wpzf-form-builder"] {
 }
 
 .wpzf-sidebar {
-	background: #fff;
+	background: $bg-card;
 	overflow-y: auto;
 
 	&--left  { border-right: 1px solid $border; }
@@ -175,8 +225,9 @@ body[class*="page_wpzf-form-builder"] {
 
 	&:hover { color: $text; }
 	&.is-active {
-		color: $brand; border-bottom-color: $brand;
-		background: #fff;
+		color: var(--wp-admin-theme-color, #{$brand});
+		border-bottom-color: var(--wp-admin-theme-color, #{$brand});
+		background: $bg-card;
 	}
 }
 
@@ -194,15 +245,15 @@ body[class*="page_wpzf-form-builder"] {
 	}
 	&__item {
 		display: flex; align-items: center; gap: 6px;
-		padding: 10px 10px;
-		background: #fff; border: 1px solid $border; border-radius: 6px;
+		padding: 10px;
+		background: $bg-card; border: 1px solid $border; border-radius: $radius-medium;
 		color: $text; font-size: 12px; font-weight: 500;
 		cursor: pointer; text-align: left;
 		transition: border-color .15s, background .15s, transform .05s;
-		&:hover { border-color: $brand; background: rgba(34,113,177,.05); }
+		&:hover { border-color: var(--wp-admin-theme-color, #{$brand}); background: rgba($brand, .05); }
 		&:active { transform: scale(.98); }
 	}
-	&__icon { color: $brand; display: inline-flex; }
+	&__icon { color: var(--wp-admin-theme-color, #{$brand}); display: inline-flex; }
 	&__label { line-height: 1.2; }
 }
 .wpzf-sidehint { padding: 16px; color: $muted; font-size: 13px; }
@@ -218,10 +269,10 @@ body[class*="page_wpzf-form-builder"] {
 }
 
 .wpzf-preview {
-	background: #fff;
-	border-radius: 12px;
+	background: $bg-card;
+	border-radius: $radius-medium;
 	padding: 32px;
-	box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.04);
+	box-shadow: $elevation-small;
 }
 
 .wpzf-empty-state {
@@ -235,9 +286,13 @@ body[class*="page_wpzf-form-builder"] {
 		button {
 			padding: 8px 14px;
 			background: $border-soft; color: $text;
-			border: 1px solid $border; border-radius: 999px;
+			border: 1px solid $border; border-radius: $radius-full;
 			font-size: 13px; cursor: pointer;
-			&:hover { background: #fff; border-color: $brand; color: $brand; }
+			&:hover {
+				background: $bg-card;
+				border-color: var(--wp-admin-theme-color, #{$brand});
+				color: var(--wp-admin-theme-color, #{$brand});
+			}
 		}
 	}
 }
@@ -252,22 +307,22 @@ body[class*="page_wpzf-form-builder"] {
 	&--width-two-thirds { flex-basis: calc(66.667% - 6px); }
 
 	&.is-dragging .wpzf-field-card { opacity: .4; }
-	&.is-drop-target .wpzf-field-card { outline: 2px dashed $brand; outline-offset: 4px; }
+	&.is-drop-target .wpzf-field-card { outline: 2px dashed var(--wp-admin-theme-color, #{$brand}); outline-offset: 4px; }
 }
 
 .wpzf-field-card {
 	position: relative;
 	padding: 12px 14px 12px 30px;
-	background: #fff;
+	background: $bg-card;
 	border: 1px solid $border;
-	border-radius: $radius;
+	border-radius: $radius-medium;
 	cursor: pointer;
 	transition: border-color .15s, box-shadow .15s;
 
-	&:hover  { border-color: #c5cdd6; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
+	&:hover  { border-color: $gray-400; box-shadow: $elevation-x-small; }
 	&.is-selected {
-		border-color: $brand;
-		box-shadow: 0 0 0 3px rgba(34,113,177,.15);
+		border-color: var(--wp-admin-theme-color, #{$brand});
+		box-shadow: 0 0 0 2px rgba($brand, .15);
 	}
 
 	&__drag {
@@ -298,8 +353,8 @@ body[class*="page_wpzf-form-builder"] {
 .wpzf-preview-input {
 	width: 100%; box-sizing: border-box;
 	padding: 9px 12px;
-	background: #fff;
-	border: 1px solid $border; border-radius: 6px;
+	background: $bg-card;
+	border: 1px solid $border; border-radius: $radius-medium;
 	font: inherit; color: $text;
 	pointer-events: none;
 }
@@ -323,8 +378,8 @@ textarea.wpzf-preview-input { resize: none; }
 	&__btn {
 		display: inline-block;
 		padding: 11px 28px;
-		background: $brand; color: #fff;
-		border: 0; border-radius: 6px;
+		background: var(--wp-admin-theme-color, #{$brand}); color: #fff;
+		border: 0; border-radius: $radius-medium;
 		font-size: 14px; font-weight: 600;
 		cursor: default; pointer-events: none;
 	}
@@ -343,7 +398,7 @@ textarea.wpzf-preview-input { resize: none; }
 	&__type {
 		font-size: 11px; padding: 2px 8px;
 		background: $border-soft; color: $muted;
-		border-radius: 10px; text-transform: uppercase; letter-spacing: 0.4px;
+		border-radius: $radius-full; text-transform: uppercase; letter-spacing: 0.4px;
 	}
 	&__body { padding: 14px 16px; overflow-y: auto; flex: 1; }
 }
@@ -367,9 +422,13 @@ textarea.wpzf-preview-input { resize: none; }
 	&__control textarea {
 		width: 100%; box-sizing: border-box;
 		padding: 8px 10px;
-		border: 1px solid $border; border-radius: 6px;
-		font: inherit; color: $text; background: #fff;
-		&:focus { outline: 0; border-color: $brand; box-shadow: 0 0 0 3px rgba(34,113,177,.18); }
+		border: 1px solid $border; border-radius: $radius-medium;
+		font: inherit; color: $text; background: $bg-card;
+		&:focus {
+			outline: none;
+			border-color: var(--wp-admin-theme-color, #{$brand});
+			box-shadow: 0 0 0 var(--wp-admin-border-width-focus, 2px) rgba($brand, .2);
+		}
 	}
 	&__control textarea { resize: vertical; font-family: inherit; }
 }
@@ -382,12 +441,12 @@ textarea.wpzf-preview-input { resize: none; }
 
 .wpzf-segmented {
 	display: inline-flex;
-	border: 1px solid $border; border-radius: 6px; overflow: hidden;
+	border: 1px solid $border; border-radius: $radius-medium; overflow: hidden;
 	button {
-		padding: 6px 12px; border: 0; background: #fff; color: $text;
+		padding: 6px 12px; border: 0; background: $bg-card; color: $text;
 		font-size: 12px; cursor: pointer;
 		&:hover { background: $border-soft; }
-		&.is-active { background: $brand; color: #fff; }
+		&.is-active { background: var(--wp-admin-theme-color, #{$brand}); color: #fff; }
 		& + button { border-left: 1px solid $border; }
 	}
 }
@@ -397,7 +456,7 @@ textarea.wpzf-preview-input { resize: none; }
 	display: grid; grid-template-columns: 1fr 100px 24px; gap: 6px;
 	input[type="text"] {
 		width: 100%; box-sizing: border-box; padding: 6px 8px;
-		border: 1px solid $border; border-radius: 4px; font-size: 12px;
+		border: 1px solid $border; border-radius: $radius-small; font-size: 12px;
 	}
 }
 
@@ -405,16 +464,16 @@ textarea.wpzf-preview-input { resize: none; }
 .wpzf-method {
 	display: grid; grid-template-columns: auto 1fr; gap: 4px 10px;
 	padding: 10px 12px;
-	border: 1px solid $border; border-radius: 6px;
+	border: 1px solid $border; border-radius: $radius-medium;
 	cursor: pointer;
-	&:hover { border-color: #c5cdd6; }
-	&.is-active { border-color: $brand; background: rgba(34,113,177,.04); }
+	&:hover { border-color: $gray-400; }
+	&.is-active { border-color: var(--wp-admin-theme-color, #{$brand}); background: rgba($brand, .04); }
 	input[type="radio"] { grid-row: span 2; margin-top: 3px; }
 	&__name { font-weight: 600; font-size: 13px; }
 	&__hint { color: $muted; font-size: 12px; }
 }
 
-/* notices ---------------------------------------------------------------- */
+/* notices ----------------------------------------------------------------- */
 .wpzf-notices {
 	position: fixed; bottom: 24px; right: 24px;
 	display: flex; flex-direction: column; gap: 8px;
@@ -424,24 +483,24 @@ textarea.wpzf-preview-input { resize: none; }
 	display: inline-flex; align-items: center; gap: 12px;
 	padding: 10px 14px;
 	background: $text; color: #fff;
-	border-radius: 6px;
-	box-shadow: 0 6px 24px rgba(0,0,0,.18);
+	border-radius: $radius-medium;
+	box-shadow: $elevation-medium;
 	font-size: 13px;
 	button { background: transparent; color: rgba(255,255,255,.7); border: 0; cursor: pointer; font-size: 16px; }
 	&--success { background: $success; }
 	&--error   { background: $danger; }
 }
 
-/* modal ----------------------------------------------------------------- */
+/* modal ------------------------------------------------------------------ */
 .wpzf-modal {
 	position: fixed; inset: 0;
 	background: rgba(0,0,0,.4);
 	display: flex; align-items: center; justify-content: center;
 	z-index: 10000;
 	&__inner {
-		background: #fff; border-radius: $radius;
+		background: $bg-card; border-radius: $radius-large;
 		min-width: 480px; max-width: 90vw;
-		box-shadow: 0 20px 50px rgba(0,0,0,.25);
+		box-shadow: $elevation-large;
 	}
 	&__header {
 		display: flex; justify-content: space-between; align-items: center;
@@ -454,7 +513,7 @@ textarea.wpzf-preview-input { resize: none; }
 .wpzf-embed-code {
 	display: flex; align-items: center; gap: 8px;
 	padding: 10px 12px;
-	background: $bg; border: 1px solid $border; border-radius: 6px;
+	background: $bg; border: 1px solid $border; border-radius: $radius-medium;
 	code {
 		flex: 1; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 		color: $text; background: transparent;
@@ -474,9 +533,10 @@ textarea.wpzf-preview-input { resize: none; }
 	&__header {
 		display: flex; align-items: flex-start; gap: 12px;
 		padding: 20px 28px;
-		background: #fff;
+		background: $bg-card;
 		border-bottom: 1px solid $border;
 		flex-shrink: 0;
+		box-shadow: $elevation-x-small;
 	}
 	&__heading {
 		h1 { margin: 0 0 4px; font-size: 18px; color: $text; }
@@ -486,7 +546,7 @@ textarea.wpzf-preview-input { resize: none; }
 		margin: 12px 28px 0;
 		padding: 10px 14px;
 		background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;
-		border-radius: 6px;
+		border-radius: $radius-medium;
 	}
 
 	&__ai-upsell {
@@ -495,13 +555,13 @@ textarea.wpzf-preview-input { resize: none; }
 		padding: 14px 18px;
 		background: linear-gradient(135deg, #eef2ff, #f5f3ff);
 		border: 1px solid #c7d2fe;
-		border-radius: 10px;
+		border-radius: $radius-medium;
 
 		&-icon {
 			display: inline-flex; align-items: center; justify-content: center;
 			width: 36px; height: 36px;
-			background: #fff; border-radius: 8px;
-			color: #4f46e5;
+			background: $bg-card; border-radius: $radius-medium;
+			color: $accent;
 			flex-shrink: 0;
 		}
 		&-text {
@@ -515,8 +575,8 @@ textarea.wpzf-preview-input { resize: none; }
 		display: inline-block;
 		margin-left: 6px;
 		padding: 1px 6px;
-		background: #4f46e5; color: #fff;
-		border-radius: 4px;
+		background: $accent; color: #fff;
+		border-radius: $radius-small;
 		font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
 		vertical-align: middle;
 	}
@@ -524,9 +584,9 @@ textarea.wpzf-preview-input { resize: none; }
 	&__pro-placeholder {
 		max-width: 480px; margin: 60px auto;
 		padding: 36px 32px;
-		background: #fff;
+		background: $bg-card;
 		border: 1px dashed $border;
-		border-radius: 12px;
+		border-radius: $radius-medium;
 		text-align: center;
 		color: $text;
 		h3 { margin: 12px 0 6px; font-size: 18px; }
@@ -534,8 +594,8 @@ textarea.wpzf-preview-input { resize: none; }
 		&-icon {
 			display: inline-flex; align-items: center; justify-content: center;
 			width: 48px; height: 48px;
-			background: rgba(79,70,229,.08); color: #4f46e5;
-			border-radius: 12px;
+			background: rgba($accent, .08); color: $accent;
+			border-radius: $radius-medium;
 		}
 		&-hint { font-size: 13px; }
 	}
@@ -548,18 +608,18 @@ textarea.wpzf-preview-input { resize: none; }
 	}
 
 	&__list {
-		background: #fff;
+		background: $bg-card;
 		border-right: 1px solid $border;
 		overflow-y: auto;
 		padding: 12px;
-		min-height: 0; // allow scroll inside the grid row
+		min-height: 0;
 	}
 	&__item {
 		display: grid; grid-template-columns: 36px 1fr; gap: 12px;
 		width: 100%;
 		padding: 12px;
 		background: transparent;
-		border: 1px solid transparent; border-radius: 8px;
+		border: 1px solid transparent; border-radius: $radius-medium;
 		text-align: left; cursor: pointer;
 		color: $text;
 		text-decoration: none;
@@ -568,8 +628,8 @@ textarea.wpzf-preview-input { resize: none; }
 		& + & { margin-top: 4px; }
 		&:hover { background: $border-soft; }
 		&.is-selected {
-			background: rgba(34,113,177,.07);
-			border-color: rgba(34,113,177,.35);
+			background: rgba($brand, .07);
+			border-color: rgba($brand, .35);
 		}
 		&.is-pro {
 			.wpzf-picker__item-icon { opacity: .85; }
@@ -577,17 +637,17 @@ textarea.wpzf-preview-input { resize: none; }
 		&--cta {
 			margin-top: 8px !important;
 			border-top: 1px solid $border;
-			border-radius: 0 0 8px 8px;
+			border-radius: 0 0 $radius-medium $radius-medium;
 			padding-top: 16px;
-			color: $brand;
-			.wpzf-picker__item-icon { background: rgba(34,113,177,.08); color: $brand; }
-			&:hover { background: rgba(34,113,177,.06); }
+			color: var(--wp-admin-theme-color, #{$brand});
+			.wpzf-picker__item-icon { background: rgba($brand, .08); color: var(--wp-admin-theme-color, #{$brand}); }
+			&:hover { background: rgba($brand, .06); }
 		}
 	}
 	&__item-icon {
 		display: inline-flex; align-items: center; justify-content: center;
 		width: 36px; height: 36px;
-		background: $border-soft; border-radius: 8px;
+		background: $border-soft; border-radius: $radius-medium;
 		color: $text;
 		svg { width: 20px; height: 20px; }
 	}
@@ -601,13 +661,13 @@ textarea.wpzf-preview-input { resize: none; }
 	&__preview {
 		display: flex; flex-direction: column;
 		min-width: 0;
-		min-height: 0; // critical: lets the inner canvas overflow-scroll
+		min-height: 0;
 		background: $bg;
 	}
 	&__preview-header {
 		display: flex; align-items: center; justify-content: space-between; gap: 12px;
 		padding: 18px 28px;
-		background: #fff;
+		background: $bg-card;
 		border-bottom: 1px solid $border;
 		flex-shrink: 0;
 		h2 { margin: 0 0 4px; font-size: 16px; color: $text; }
@@ -629,14 +689,14 @@ textarea.wpzf-preview-input { resize: none; }
 	}
 }
 
-/* ─── live form preview inside the picker ─────────────────────────────────── */
+/* live form preview inside the picker ------------------------------------- */
 .wpzf-preview-form {
 	width: 100%; max-width: 640px;
-	background: #fff;
+	background: $bg-card;
 	border: 1px solid $border;
-	border-radius: 12px;
+	border-radius: $radius-medium;
 	padding: 28px;
-	box-shadow: 0 1px 2px rgba(0,0,0,.04);
+	box-shadow: $elevation-x-small;
 	color: $text;
 
 	&__fields { display: flex; flex-wrap: wrap; gap: 16px; }
@@ -653,8 +713,8 @@ textarea.wpzf-preview-input { resize: none; }
 	&__input {
 		width: 100%; box-sizing: border-box;
 		padding: 9px 12px;
-		background: #fff;
-		border: 1px solid $border; border-radius: 6px;
+		background: $bg-card;
+		border: 1px solid $border; border-radius: $radius-medium;
 		font: inherit; color: $text;
 		pointer-events: none;
 		min-height: 38px;
@@ -677,14 +737,14 @@ textarea.wpzf-preview-input { resize: none; }
 	}
 	&__btn {
 		padding: 11px 28px;
-		background: $brand; color: #fff;
-		border: 0; border-radius: 6px;
+		background: var(--wp-admin-theme-color, #{$brand}); color: #fff;
+		border: 0; border-radius: $radius-medium;
 		font-size: 14px; font-weight: 600;
 		cursor: default; pointer-events: none;
 	}
 }
 
-/* options editor — handle + drag state */
+/* options editor — handle + drag state ------------------------------------ */
 .wpzf-options .wpzf-option {
 	grid-template-columns: 16px 1fr 100px 24px;
 	align-items: center;
@@ -702,20 +762,24 @@ textarea.wpzf-preview-input { resize: none; }
 }
 .wpzf-link-btn {
 	background: transparent; border: 0; padding: 0;
-	color: $brand; font-size: 12px; cursor: pointer;
+	color: var(--wp-admin-theme-color, #{$brand}); font-size: 12px; cursor: pointer;
 	&:hover { text-decoration: underline; }
 }
 
-/* bulk options modal */
+/* bulk options modal ------------------------------------------------------ */
 .wpzf-modal__inner--wide { min-width: 560px; }
 .wpzf-bulk__textarea {
 	width: 100%; box-sizing: border-box;
 	padding: 10px 12px;
-	border: 1px solid $border; border-radius: 6px;
+	border: 1px solid $border; border-radius: $radius-medium;
 	font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
 	color: $text;
 	resize: vertical;
-	&:focus { outline: 0; border-color: $brand; box-shadow: 0 0 0 3px rgba(34,113,177,.18); }
+	&:focus {
+		outline: none;
+		border-color: var(--wp-admin-theme-color, #{$brand});
+		box-shadow: 0 0 0 var(--wp-admin-border-width-focus, 2px) rgba($brand, .2);
+	}
 }
 .wpzf-bulk__lists {
 	display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
@@ -726,4 +790,3 @@ textarea.wpzf-preview-input { resize: none; }
 	display: flex; justify-content: flex-end; gap: 8px;
 	padding: 12px 18px; border-top: 1px solid $border; background: $bg;
 }
-
