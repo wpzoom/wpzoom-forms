@@ -333,7 +333,7 @@ class Wpzoom_Forms_Cpt extends Widget_Base {
 			\Elementor\Group_Control_Border::get_type(),
 			[
 				'name' => 'button_border',
-				'selector' => '{{WRAPPER}} input[type="submit"]',
+				'selector' => '{{WRAPPER}} input[type="submit"], {{WRAPPER}} button.wpzf-submit__btn',
 			]
 		);
 
@@ -344,7 +344,7 @@ class Wpzoom_Forms_Cpt extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}} input[type="submit"]' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} input[type="submit"], {{WRAPPER}} button.wpzf-submit__btn' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -357,7 +357,7 @@ class Wpzoom_Forms_Cpt extends Widget_Base {
 				'separator' => '',
 				'default'   => '',
 				'selectors' => [
-					'{{WRAPPER}} input[type="submit"]' => 'color: {{VALUE}};'
+					'{{WRAPPER}} input[type="submit"], {{WRAPPER}} button.wpzf-submit__btn' => 'color: {{VALUE}};'
 				]
 			]
 		);
@@ -370,7 +370,7 @@ class Wpzoom_Forms_Cpt extends Widget_Base {
 				'separator' => '',
 				'default'   => '',
 				'selectors' => [
-					'{{WRAPPER}} input[type="submit"]' => 'background-color: {{VALUE}};'
+					'{{WRAPPER}} input[type="submit"], {{WRAPPER}} button.wpzf-submit__btn' => 'background-color: {{VALUE}};'
 				]
 			]
 		);
