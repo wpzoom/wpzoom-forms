@@ -3390,7 +3390,7 @@ add_action( 'init', function() {
 	add_shortcode( 'wpzf_form', function( $atts ) use ( $wpzoom_forms ) {
 		$atts = shortcode_atts( array( 'id' => 0 ), $atts, 'wpzf_form' );
 		$id   = (int) $atts['id'];
-		if ( get_post_meta( $id, WPZOOM_Forms_Schema::META_KEY, true ) ) {
+		if ( WPZOOM_Forms_Builder_Page::is_enabled() && get_post_meta( $id, WPZOOM_Forms_Schema::META_KEY, true ) ) {
 			return WPZOOM_Forms_Renderer::render( $id );
 		}
 		return $wpzoom_forms->form_block_render( array( 'formId' => $id ) );
@@ -3410,10 +3410,10 @@ add_filter( 'render_block', function( $block_content, $block ) {
 	$id = isset( $block['attrs']['formId'] ) ? (int) $block['attrs']['formId'] : 0;
 	if ( $id < 1 ) return $block_content;
 
-	// Only switch to the v2 renderer when the form has been saved through the new
-	// builder (_wpzf_schema exists). Otherwise return the original block output
-	// unchanged so old forms keep all their existing styling and behaviour.
-	if ( ! get_post_meta( $id, WPZOOM_Forms_Schema::META_KEY, true ) ) {
+	// Only switch to the v2 renderer when the beta builder is enabled and the form
+	// has been saved through it (_wpzf_schema exists). Otherwise return the original
+	// block output unchanged so old forms keep all their existing styling and behaviour.
+	if ( ! WPZOOM_Forms_Builder_Page::is_enabled() || ! get_post_meta( $id, WPZOOM_Forms_Schema::META_KEY, true ) ) {
 		return $block_content;
 	}
 
