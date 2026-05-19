@@ -2047,24 +2047,25 @@ class WPZOOM_Forms {
 			$styleOutput .= sprintf( '#' . $form_ID . ' label { color: %s; }', $labelTextColor );
 		}
 		
-		//Button styles
+		//Button styles — target both old <input type="submit"> and new builder's <button class="wpzf-submit__btn">
+		$btn_sel = '#' . $form_ID . ' input[type="submit"], #' . $form_ID . ' button.wpzf-submit__btn';
 		if( ! empty( $btnBrdStyle ) && 'default' !== $btnBrdStyle ) {
-			$styleOutput .= sprintf( '#' . $form_ID . ' input[type="submit"] { border-style: %s; }', $btnBrdStyle );
+			$styleOutput .= sprintf( $btn_sel . ' { border-style: %s; }', $btnBrdStyle );
 			if( ! empty( $btnBrdWidth ) ) {
-				$styleOutput .= sprintf( '#' . $form_ID . ' input[type="submit"] { border-width: %s; }', $btnBrdWidth );
+				$styleOutput .= sprintf( $btn_sel . ' { border-width: %s; }', $btnBrdWidth );
 			}
 			if( ! empty( $btnBrdRadius ) ) {
-				$styleOutput .= sprintf( '#' . $form_ID . ' input[type="submit"] { border-radius: %s; }', $btnBrdRadius );
+				$styleOutput .= sprintf( $btn_sel . ' { border-radius: %s; }', $btnBrdRadius );
 			}
 		}
 		if( ! empty( $btnTextColor ) ) {
-			$styleOutput .= sprintf( '#' . $form_ID . ' input[type="submit"] { color: %s; }', $btnTextColor );
+			$styleOutput .= sprintf( $btn_sel . ' { color: %s; }', $btnTextColor );
 		}
 		if( ! empty( $btnBrdColor ) ) {
-			$styleOutput .= sprintf( '#' . $form_ID . ' input[type="submit"] { border-color: %s; }', $btnBrdColor );
+			$styleOutput .= sprintf( $btn_sel . ' { border-color: %s; }', $btnBrdColor );
 		}
 		if( ! empty( $btnBgColor ) ) {
-			$styleOutput .= sprintf( '#' . $form_ID . ' input[type="submit"] { background-color: %s; }', $btnBgColor );
+			$styleOutput .= sprintf( $btn_sel . ' { background-color: %s; }', $btnBgColor );
 		}
 
 		// Add styles for the notice
@@ -3403,7 +3404,16 @@ add_filter( 'render_block', function( $block_content, $block ) {
 	if ( is_admin() ) return $block_content;
 	$id = isset( $block['attrs']['formId'] ) ? (int) $block['attrs']['formId'] : 0;
 	if ( $id < 1 ) return $block_content;
-	return WPZOOM_Forms_Renderer::render( $id );
+
+	// form_block_render already ran (render_callback) and its output is in $block_content.
+	// Extract the inline <style> block it generated (field/button colors set in the block editor)
+	// and carry it forward into the new renderer's output so those customizations aren't lost.
+	$style_html = '';
+	if ( preg_match( '~<style>(.*?)</style>~s', $block_content, $m ) ) {
+		$style_html = '<style>' . $m[1] . '</style>';
+	}
+
+	return $style_html . WPZOOM_Forms_Renderer::render( $id );
 }, 9, 2 );
 
 /**
