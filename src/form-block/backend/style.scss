@@ -1,1 +1,6 @@
 // Form block backend styles
+
+// The honeypot field is spam-protection only — it must never be visible in the editor preview.
+.wpzf-honeypot {
+	display: none !important;
+}
