@@ -1,5 +1,16 @@
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import {
+	TextControl,
+	TextareaControl,
+	SelectControl,
+	ToggleControl,
+	Button,
+	Modal,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+} from '@wordpress/components';
+import { trash, plus } from '@wordpress/icons';
 import { api } from '../api';
 
 const HAS_LABEL    = [ 'text', 'name', 'email', 'tel', 'url', 'number', 'textarea', 'date', 'select', 'radio', 'checkboxes', 'checkbox', 'hidden' ];
@@ -10,7 +21,7 @@ const HAS_DEFAULT  = [ 'text', 'name', 'email', 'tel', 'url', 'number', 'date', 
 const HAS_OPTIONS  = [ 'select', 'radio', 'checkboxes' ];
 
 const WIDTH_OPTIONS = [
-	{ value: 'full',       label: 'Full Width' },
+	{ value: 'full',       label: __( 'Full', 'wpzoom-forms' ) },
 	{ value: 'half',       label: '1/2' },
 	{ value: 'third',      label: '1/3' },
 	{ value: 'two-thirds', label: '2/3' },
@@ -35,103 +46,138 @@ export default function FieldSettings({ field, onChange }) {
 
 			<div className="wpzf-inspector__body">
 				{ HAS_LABEL.includes( field.type ) && (
-					<Row label={ __( 'Label', 'wpzoom-forms' ) }>
-						<input type="text" value={ field.label || '' } onChange={ ( e ) => set( { label: e.target.value } ) } />
-					</Row>
+					<TextControl
+						label={ __( 'Label', 'wpzoom-forms' ) }
+						value={ field.label || '' }
+						onChange={ ( v ) => set( { label: v } ) }
+					/>
 				) }
 
 				{ field.type === 'heading' && (
 					<>
-						<Row label={ __( 'Text', 'wpzoom-forms' ) }>
-							<input type="text" value={ field.text || '' } onChange={ ( e ) => set( { text: e.target.value } ) } />
-						</Row>
-						<Row label={ __( 'Heading Level', 'wpzoom-forms' ) }>
-							<select value={ field.level || 'h3' } onChange={ ( e ) => set( { level: e.target.value } ) }>
-								<option value="h2">H2</option><option value="h3">H3</option><option value="h4">H4</option><option value="h5">H5</option>
-							</select>
-						</Row>
+						<TextControl
+							label={ __( 'Text', 'wpzoom-forms' ) }
+							value={ field.text || '' }
+							onChange={ ( v ) => set( { text: v } ) }
+						/>
+						<SelectControl
+							label={ __( 'Heading Level', 'wpzoom-forms' ) }
+							value={ field.level || 'h3' }
+							options={ [
+								{ value: 'h2', label: 'H2' },
+								{ value: 'h3', label: 'H3' },
+								{ value: 'h4', label: 'H4' },
+								{ value: 'h5', label: 'H5' },
+							] }
+							onChange={ ( v ) => set( { level: v } ) }
+						/>
 					</>
 				) }
 
 				{ field.type === 'paragraph' && (
-					<Row label={ __( 'Text', 'wpzoom-forms' ) }>
-						<textarea rows={ 4 } value={ field.text || '' } onChange={ ( e ) => set( { text: e.target.value } ) } />
-					</Row>
+					<TextareaControl
+						label={ __( 'Text', 'wpzoom-forms' ) }
+						rows={ 4 }
+						value={ field.text || '' }
+						onChange={ ( v ) => set( { text: v } ) }
+					/>
 				) }
 
 				{ HAS_PLACEHOLDER.includes( field.type ) && (
-					<Row label={ __( 'Placeholder', 'wpzoom-forms' ) }>
-						<input type="text" value={ field.placeholder || '' } onChange={ ( e ) => set( { placeholder: e.target.value } ) } />
-					</Row>
+					<TextControl
+						label={ __( 'Placeholder', 'wpzoom-forms' ) }
+						value={ field.placeholder || '' }
+						onChange={ ( v ) => set( { placeholder: v } ) }
+					/>
 				) }
 
 				{ HAS_DEFAULT.includes( field.type ) && (
-					<Row label={ __( 'Default Value', 'wpzoom-forms' ) }>
-						<input type="text" value={ field.defaultValue || '' } onChange={ ( e ) => set( { defaultValue: e.target.value } ) } />
-					</Row>
+					<TextControl
+						label={ __( 'Default Value', 'wpzoom-forms' ) }
+						value={ field.defaultValue || '' }
+						onChange={ ( v ) => set( { defaultValue: v } ) }
+					/>
 				) }
 
 				{ field.type === 'textarea' && (
-					<Row label={ __( 'Rows', 'wpzoom-forms' ) }>
-						<input type="number" min="1" max="20" value={ field.rows || 4 } onChange={ ( e ) => set( { rows: parseInt( e.target.value, 10 ) || 4 } ) } />
-					</Row>
+					<TextControl
+						label={ __( 'Rows', 'wpzoom-forms' ) }
+						type="number"
+						min={ 1 }
+						max={ 20 }
+						value={ String( field.rows || 4 ) }
+						onChange={ ( v ) => set( { rows: parseInt( v, 10 ) || 4 } ) }
+					/>
 				) }
 
 				{ field.type === 'number' && (
 					<>
-						<Row label={ __( 'Min', 'wpzoom-forms' ) }>
-							<input type="number" value={ field.min == null ? '' : field.min } onChange={ ( e ) => set( { min: e.target.value === '' ? null : parseFloat( e.target.value ) } ) } />
-						</Row>
-						<Row label={ __( 'Max', 'wpzoom-forms' ) }>
-							<input type="number" value={ field.max == null ? '' : field.max } onChange={ ( e ) => set( { max: e.target.value === '' ? null : parseFloat( e.target.value ) } ) } />
-						</Row>
-						<Row label={ __( 'Step', 'wpzoom-forms' ) }>
-							<input type="number" step="any" value={ field.step == null ? '' : field.step } onChange={ ( e ) => set( { step: e.target.value === '' ? null : parseFloat( e.target.value ) } ) } />
-						</Row>
+						<TextControl
+							label={ __( 'Min', 'wpzoom-forms' ) }
+							type="number"
+							value={ field.min == null ? '' : String( field.min ) }
+							onChange={ ( v ) => set( { min: v === '' ? null : parseFloat( v ) } ) }
+						/>
+						<TextControl
+							label={ __( 'Max', 'wpzoom-forms' ) }
+							type="number"
+							value={ field.max == null ? '' : String( field.max ) }
+							onChange={ ( v ) => set( { max: v === '' ? null : parseFloat( v ) } ) }
+						/>
+						<TextControl
+							label={ __( 'Step', 'wpzoom-forms' ) }
+							type="number"
+							step="any"
+							value={ field.step == null ? '' : String( field.step ) }
+							onChange={ ( v ) => set( { step: v === '' ? null : parseFloat( v ) } ) }
+						/>
 					</>
 				) }
 
 				{ field.type === 'date' && (
 					<>
-						<Row label={ __( 'Mode', 'wpzoom-forms' ) }>
-							<div className="wpzf-segmented">
-								{ [ 'single', 'multiple', 'range' ].map( ( v ) => (
-									<button key={ v } type="button" className={ ( field.mode || 'single' ) === v ? 'is-active' : '' } onClick={ () => set( { mode: v } ) }>
-										{ v === 'single' ? __( 'Single', 'wpzoom-forms' ) : v === 'multiple' ? __( 'Multiple', 'wpzoom-forms' ) : __( 'Range', 'wpzoom-forms' ) }
-									</button>
-								) ) }
-							</div>
-						</Row>
-						<Row label={ __( 'Date Format', 'wpzoom-forms' ) }>
-							<select value={ field.format || 'Y-m-d' } onChange={ ( e ) => set( { format: e.target.value } ) }>
-								{ DATE_FORMATS.map( ( f ) => <option key={ f.value } value={ f.value }>{ f.label }</option> ) }
-							</select>
-						</Row>
+						<ToggleGroupControl
+							label={ __( 'Mode', 'wpzoom-forms' ) }
+							value={ field.mode || 'single' }
+							onChange={ ( v ) => set( { mode: v } ) }
+							isBlock
+							__nextHasNoMarginBottom={ false }
+						>
+							<ToggleGroupControlOption value="single"   label={ __( 'Single',   'wpzoom-forms' ) } />
+							<ToggleGroupControlOption value="multiple" label={ __( 'Multiple', 'wpzoom-forms' ) } />
+							<ToggleGroupControlOption value="range"    label={ __( 'Range',    'wpzoom-forms' ) } />
+						</ToggleGroupControl>
+						<SelectControl
+							label={ __( 'Date Format', 'wpzoom-forms' ) }
+							value={ field.format || 'Y-m-d' }
+							options={ DATE_FORMATS }
+							onChange={ ( v ) => set( { format: v } ) }
+						/>
 					</>
 				) }
 
 				{ field.type === 'checkbox' && (
-					<Row label={ __( 'Checkbox Label', 'wpzoom-forms' ) }>
-						<input type="text" value={ field.checkboxText || '' } onChange={ ( e ) => set( { checkboxText: e.target.value } ) } />
-					</Row>
+					<TextControl
+						label={ __( 'Checkbox Label', 'wpzoom-forms' ) }
+						value={ field.checkboxText || '' }
+						onChange={ ( v ) => set( { checkboxText: v } ) }
+					/>
 				) }
 
 				{ field.type === 'email' && (
-					<Row label="">
-						<label className="wpzf-toggle">
-							<input type="checkbox" checked={ !! field.isReplyTo } onChange={ ( e ) => set( { isReplyTo: e.target.checked } ) } />
-							<span>{ __( 'Use as reply-to address', 'wpzoom-forms' ) }</span>
-						</label>
-					</Row>
+					<ToggleControl
+						label={ __( 'Use as reply-to address', 'wpzoom-forms' ) }
+						checked={ !! field.isReplyTo }
+						onChange={ ( v ) => set( { isReplyTo: v } ) }
+					/>
 				) }
 
 				{ field.type === 'text' && (
-					<Row label="">
-						<label className="wpzf-toggle">
-							<input type="checkbox" checked={ !! field.isSubject } onChange={ ( e ) => set( { isSubject: e.target.checked } ) } />
-							<span>{ __( 'Use as email subject', 'wpzoom-forms' ) }</span>
-						</label>
-					</Row>
+					<ToggleControl
+						label={ __( 'Use as email subject', 'wpzoom-forms' ) }
+						checked={ !! field.isSubject }
+						onChange={ ( v ) => set( { isSubject: v } ) }
+					/>
 				) }
 
 				{ HAS_OPTIONS.includes( field.type ) && (
@@ -139,45 +185,46 @@ export default function FieldSettings({ field, onChange }) {
 				) }
 
 				{ HAS_REQUIRED.includes( field.type ) && (
-					<Row label="">
-						<label className="wpzf-toggle">
-							<input type="checkbox" checked={ !! field.required } onChange={ ( e ) => set( { required: e.target.checked } ) } />
-							<span>{ __( 'Required', 'wpzoom-forms' ) }</span>
-						</label>
-					</Row>
+					<ToggleControl
+						label={ __( 'Required', 'wpzoom-forms' ) }
+						checked={ !! field.required }
+						onChange={ ( v ) => set( { required: v } ) }
+					/>
 				) }
 
 				{ HAS_HELP.includes( field.type ) && (
-					<Row label={ __( 'Help text', 'wpzoom-forms' ) }>
-						<textarea rows={ 2 } value={ field.help || '' } onChange={ ( e ) => set( { help: e.target.value } ) } />
-					</Row>
+					<TextareaControl
+						label={ __( 'Help text', 'wpzoom-forms' ) }
+						rows={ 2 }
+						value={ field.help || '' }
+						onChange={ ( v ) => set( { help: v } ) }
+					/>
 				) }
 
-				<Row label={ __( 'Width', 'wpzoom-forms' ) }>
-					<div className="wpzf-segmented">
-						{ WIDTH_OPTIONS.map( ( w ) => (
-							<button key={ w.value } type="button" className={ ( field.width || 'full' ) === w.value ? 'is-active' : '' } onClick={ () => set( { width: w.value } ) }>{ w.label }</button>
-						) ) }
-					</div>
-				</Row>
+				<ToggleGroupControl
+					label={ __( 'Width', 'wpzoom-forms' ) }
+					value={ field.width || 'full' }
+					onChange={ ( v ) => set( { width: v } ) }
+					isBlock
+					__nextHasNoMarginBottom={ false }
+				>
+					{ WIDTH_OPTIONS.map( ( w ) => (
+						<ToggleGroupControlOption key={ w.value } value={ w.value } label={ w.label } />
+					) ) }
+				</ToggleGroupControl>
 
-				<Row label={ __( 'CSS Class', 'wpzoom-forms' ) }>
-					<input type="text" value={ field.cssClass || '' } onChange={ ( e ) => set( { cssClass: e.target.value } ) } />
-				</Row>
+				<TextControl
+					label={ __( 'CSS Class', 'wpzoom-forms' ) }
+					value={ field.cssClass || '' }
+					onChange={ ( v ) => set( { cssClass: v } ) }
+				/>
 
-				<Row label={ __( 'Field ID', 'wpzoom-forms' ) }>
-					<input type="text" value={ field.id } disabled />
-				</Row>
+				<TextControl
+					label={ __( 'Field ID', 'wpzoom-forms' ) }
+					value={ field.id }
+					disabled
+				/>
 			</div>
-		</div>
-	);
-}
-
-function Row({ label, children }) {
-	return (
-		<div className="wpzf-row">
-			{ label !== '' && <label className="wpzf-row__label">{ label }</label> }
-			<div className="wpzf-row__control">{ children }</div>
 		</div>
 	);
 }
@@ -222,9 +269,9 @@ function OptionsEditor({ options, onChange }) {
 		<div className="wpzf-row">
 			<div className="wpzf-row__label-row">
 				<label className="wpzf-row__label">{ __( 'Options', 'wpzoom-forms' ) }</label>
-				<button type="button" className="wpzf-link-btn" onClick={ () => setBulk( true ) }>
+				<Button variant="link" onClick={ () => setBulk( true ) }>
 					{ __( 'Bulk Edit', 'wpzoom-forms' ) }
-				</button>
+				</Button>
 			</div>
 			<div className="wpzf-options">
 				{ options.map( ( o, i ) => (
@@ -251,11 +298,26 @@ function OptionsEditor({ options, onChange }) {
 							} }
 						/>
 						<input type="text" value={ o.value } placeholder="value" onChange={ ( e ) => update( i, { value: e.target.value } ) } />
-						<button type="button" className="wpzf-icon-btn wpzf-icon-btn--danger" onClick={ () => remove( i ) }>×</button>
+						<Button
+							variant="tertiary"
+							isDestructive
+							icon={ trash }
+							label={ __( 'Remove option', 'wpzoom-forms' ) }
+							onClick={ () => remove( i ) }
+							size="compact"
+						/>
 					</div>
 				) ) }
-				<button type="button" className="wpzf-btn wpzf-btn--ghost wpzf-btn--small" onClick={ add }>+ { __( 'Add option', 'wpzoom-forms' ) }</button>
 			</div>
+			<Button
+				variant="secondary"
+				icon={ plus }
+				onClick={ add }
+				size="compact"
+				style={ { marginTop: '6px' } }
+			>
+				{ __( 'Add option', 'wpzoom-forms' ) }
+			</Button>
 
 			{ bulk && (
 				<BulkOptionsModal
@@ -268,7 +330,7 @@ function OptionsEditor({ options, onChange }) {
 	);
 }
 
-/* ───────────────── Bulk options modal (with predefined lists) ───────────────── */
+/* ───────────────── Bulk options modal ───────────────── */
 
 function BulkOptionsModal({ initial, onApply, onClose }) {
 	const [ text, setText ]   = useState( ( initial || [] ).map( ( o ) => o.label ).join( '\n' ) );
@@ -290,37 +352,32 @@ function BulkOptionsModal({ initial, onApply, onClose }) {
 	};
 
 	return (
-		<div className="wpzf-modal" role="dialog" aria-modal="true" onClick={ onClose }>
-			<div className="wpzf-modal__inner wpzf-modal__inner--wide" onClick={ ( e ) => e.stopPropagation() }>
-				<div className="wpzf-modal__header">
-					<h2>{ __( 'Bulk Edit Options', 'wpzoom-forms' ) }</h2>
-					<button className="wpzf-icon-btn" onClick={ onClose } aria-label={ __( 'Close', 'wpzoom-forms' ) }>×</button>
+		<Modal
+			title={ __( 'Bulk Edit Options', 'wpzoom-forms' ) }
+			onRequestClose={ onClose }
+			size="medium"
+		>
+			<TextareaControl
+				help={ __( 'Each line is a new option. Values are generated from labels.', 'wpzoom-forms' ) }
+				rows={ 12 }
+				value={ text }
+				onChange={ setText }
+				placeholder={ __( 'Option one\nOption two\nOption three', 'wpzoom-forms' ) }
+			/>
+			{ ! loadErr && lists && lists.length > 0 && (
+				<div className="wpzf-bulk__lists">
+					<span className="wpzf-bulk__lists-label">{ __( 'Predefined lists:', 'wpzoom-forms' ) }</span>
+					{ lists.map( ( l ) => (
+						<Button key={ l.id } variant="secondary" size="compact" onClick={ () => useList( l.items ) }>
+							{ l.label }
+						</Button>
+					) ) }
 				</div>
-				<div className="wpzf-modal__body">
-					<p className="wpzf-hint">{ __( 'Each line is a new option. Values are generated from labels.', 'wpzoom-forms' ) }</p>
-					<textarea
-						className="wpzf-bulk__textarea"
-						rows={ 12 }
-						value={ text }
-						onChange={ ( e ) => setText( e.target.value ) }
-						placeholder={ __( 'Option one\nOption two\nOption three', 'wpzoom-forms' ) }
-					/>
-					{ ! loadErr && lists && lists.length > 0 && (
-						<div className="wpzf-bulk__lists">
-							<span className="wpzf-bulk__lists-label">{ __( 'Predefined lists:', 'wpzoom-forms' ) }</span>
-							{ lists.map( ( l ) => (
-								<button key={ l.id } type="button" className="wpzf-btn wpzf-btn--ghost wpzf-btn--small" onClick={ () => useList( l.items ) }>
-									{ l.label }
-								</button>
-							) ) }
-						</div>
-					) }
-				</div>
-				<div className="wpzf-modal__footer">
-					<button className="wpzf-btn wpzf-btn--ghost" onClick={ onClose }>{ __( 'Cancel', 'wpzoom-forms' ) }</button>
-					<button className="wpzf-btn wpzf-btn--primary" onClick={ apply }>{ __( 'Apply', 'wpzoom-forms' ) }</button>
-				</div>
+			) }
+			<div className="wpzf-modal__footer">
+				<Button variant="tertiary" onClick={ onClose }>{ __( 'Cancel', 'wpzoom-forms' ) }</Button>
+				<Button variant="primary" onClick={ apply }>{ __( 'Apply', 'wpzoom-forms' ) }</Button>
 			</div>
-		</div>
+		</Modal>
 	);
 }

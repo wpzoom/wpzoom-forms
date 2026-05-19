@@ -204,14 +204,14 @@ export default function App({ formId, presetTemplate }) {
 				onTitleChange={ ( title ) => dispatch( { type: 'SET_TITLE', title } ) }
 				onSave={ save }
 				onEmbed={ () => dispatch( { type: 'TOGGLE_EMBED', show: true } ) }
+				activeTab={ state.activeTab }
+				onTab={ ( tab ) => dispatch( { type: 'SET_TAB', tab } ) }
 				submissionsUrl={ window.wpzfBuilder.submissionsListUrl + '&wpzf_form=' + formId }
 				exitUrl={ window.wpzfBuilder.formsListUrl }
 			/>
 
 			<div className="wpzf-builder__body">
 				<LeftSidebar
-					activeTab={ state.activeTab }
-					onTab={ ( tab ) => dispatch( { type: 'SET_TAB', tab } ) }
 					onAddField={ addField }
 				/>
 
@@ -231,7 +231,7 @@ export default function App({ formId, presetTemplate }) {
 					activeTab={ state.activeTab }
 					selectedField={ selectedFieldObj }
 					form={ state.form }
-					onSelectFieldsTab={ () => dispatch( { type: 'SET_TAB', tab: TABS.FIELDS } ) }
+	
 					onUpdateField={ ( patch ) => dispatch( { type: 'UPDATE_FIELD', id: state.selectedField, patch } ) }
 					onUpdateSettings={ ( patch ) => dispatch( { type: 'UPDATE_SETTINGS', patch } ) }
 					onUpdateNotifications={ ( patch ) => dispatch( { type: 'UPDATE_NOTIFICATIONS', patch } ) }

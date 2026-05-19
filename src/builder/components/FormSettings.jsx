@@ -1,4 +1,10 @@
 import { __ } from '@wordpress/i18n';
+import {
+	TextControl,
+	ToggleControl,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+} from '@wordpress/components';
 
 export default function FormSettings({ settings, onChange }) {
 	return (
@@ -7,57 +13,60 @@ export default function FormSettings({ settings, onChange }) {
 				<h3>{ __( 'Form Settings', 'wpzoom-forms' ) }</h3>
 			</div>
 			<div className="wpzf-inspector__body">
-				<Row label={ __( 'Submit Button Text', 'wpzoom-forms' ) }>
-					<input type="text" value={ settings.submitLabel || '' } onChange={ ( e ) => onChange( { submitLabel: e.target.value } ) } />
-				</Row>
+				<TextControl
+					label={ __( 'Submit Button Text', 'wpzoom-forms' ) }
+					value={ settings.submitLabel || '' }
+					onChange={ ( v ) => onChange( { submitLabel: v } ) }
+				/>
 
-				<Row label={ __( 'Submit Button Alignment', 'wpzoom-forms' ) }>
-					<div className="wpzf-segmented">
-						{ [ 'left', 'center', 'right', 'full' ].map( ( v ) => (
-							<button key={ v } type="button" className={ settings.submitAlign === v ? 'is-active' : '' } onClick={ () => onChange( { submitAlign: v } ) }>{ v.charAt(0).toUpperCase() + v.slice(1) }</button>
-						) ) }
-					</div>
-				</Row>
+				<ToggleGroupControl
+					label={ __( 'Submit Button Alignment', 'wpzoom-forms' ) }
+					value={ settings.submitAlign }
+					onChange={ ( v ) => onChange( { submitAlign: v } ) }
+					isBlock
+					__nextHasNoMarginBottom={ false }
+				>
+					{ [ 'left', 'center', 'right', 'full' ].map( ( v ) => (
+						<ToggleGroupControlOption key={ v } value={ v } label={ v.charAt( 0 ).toUpperCase() + v.slice( 1 ) } />
+					) ) }
+				</ToggleGroupControl>
 
-				<Row label={ __( 'Labels Position', 'wpzoom-forms' ) }>
-					<div className="wpzf-segmented">
-						{ [ 'top', 'left', 'hidden' ].map( ( v ) => (
-							<button key={ v } type="button" className={ settings.labelsPosition === v ? 'is-active' : '' } onClick={ () => onChange( { labelsPosition: v } ) }>{ v.charAt(0).toUpperCase() + v.slice(1) }</button>
-						) ) }
-					</div>
-				</Row>
+				<ToggleGroupControl
+					label={ __( 'Labels Position', 'wpzoom-forms' ) }
+					value={ settings.labelsPosition }
+					onChange={ ( v ) => onChange( { labelsPosition: v } ) }
+					isBlock
+					__nextHasNoMarginBottom={ false }
+				>
+					{ [ 'top', 'left', 'hidden' ].map( ( v ) => (
+						<ToggleGroupControlOption key={ v } value={ v } label={ v.charAt( 0 ).toUpperCase() + v.slice( 1 ) } />
+					) ) }
+				</ToggleGroupControl>
 
-				<Row label={ __( 'Form Style', 'wpzoom-forms' ) }>
-					<div className="wpzf-segmented">
-						{ [ 'default', 'minimal', 'modern' ].map( ( v ) => (
-							<button key={ v } type="button" className={ settings.theme === v ? 'is-active' : '' } onClick={ () => onChange( { theme: v } ) }>{ v.charAt(0).toUpperCase() + v.slice(1) }</button>
-						) ) }
-					</div>
-				</Row>
+				<ToggleGroupControl
+					label={ __( 'Form Style', 'wpzoom-forms' ) }
+					value={ settings.theme }
+					onChange={ ( v ) => onChange( { theme: v } ) }
+					isBlock
+					__nextHasNoMarginBottom={ false }
+				>
+					{ [ 'default', 'minimal', 'modern' ].map( ( v ) => (
+						<ToggleGroupControlOption key={ v } value={ v } label={ v.charAt( 0 ).toUpperCase() + v.slice( 1 ) } />
+					) ) }
+				</ToggleGroupControl>
 
-				<Row label="">
-					<label className="wpzf-toggle">
-						<input type="checkbox" checked={ !! settings.showRequiredMark } onChange={ ( e ) => onChange( { showRequiredMark: e.target.checked } ) } />
-						<span>{ __( 'Show required-field asterisk (*)', 'wpzoom-forms' ) }</span>
-					</label>
-				</Row>
+				<ToggleControl
+					label={ __( 'Show required-field asterisk (*)', 'wpzoom-forms' ) }
+					checked={ !! settings.showRequiredMark }
+					onChange={ ( v ) => onChange( { showRequiredMark: v } ) }
+				/>
 
-				<Row label="">
-					<label className="wpzf-toggle">
-						<input type="checkbox" checked={ !! settings.honeypot } onChange={ ( e ) => onChange( { honeypot: e.target.checked } ) } />
-						<span>{ __( 'Enable spam honeypot field', 'wpzoom-forms' ) }</span>
-					</label>
-				</Row>
+				<ToggleControl
+					label={ __( 'Enable spam honeypot field', 'wpzoom-forms' ) }
+					checked={ !! settings.honeypot }
+					onChange={ ( v ) => onChange( { honeypot: v } ) }
+				/>
 			</div>
-		</div>
-	);
-}
-
-function Row({ label, children }) {
-	return (
-		<div className="wpzf-row">
-			{ label !== '' && <label className="wpzf-row__label">{ label }</label> }
-			<div className="wpzf-row__control">{ children }</div>
 		</div>
 	);
 }

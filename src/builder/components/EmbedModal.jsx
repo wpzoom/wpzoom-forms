@@ -1,9 +1,12 @@
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Modal, Button } from '@wordpress/components';
+import { copy } from '@wordpress/icons';
 
 export default function EmbedModal({ shortcode, onClose }) {
 	const [ copied, setCopied ] = useState( false );
-	const copy = () => {
+
+	const doCopy = () => {
 		const done = () => {
 			setCopied( true );
 			setTimeout( () => setCopied( false ), 1500 );
@@ -25,21 +28,23 @@ export default function EmbedModal({ shortcode, onClose }) {
 	};
 
 	return (
-		<div className="wpzf-modal" role="dialog" aria-modal="true" onClick={ onClose }>
-			<div className="wpzf-modal__inner" onClick={ ( e ) => e.stopPropagation() }>
-				<div className="wpzf-modal__header">
-					<h2>{ __( 'Embed your form', 'wpzoom-forms' ) }</h2>
-					<button className="wpzf-icon-btn" onClick={ onClose } aria-label="Close">×</button>
-				</div>
-				<div className="wpzf-modal__body">
-					<p>{ __( 'Paste this shortcode into any post or page to display the form:', 'wpzoom-forms' ) }</p>
-					<div className="wpzf-embed-code">
-						<code>{ shortcode }</code>
-						<button className="wpzf-btn wpzf-btn--ghost" onClick={ copy }>{ copied ? __( 'Copied!', 'wpzoom-forms' ) : __( 'Copy', 'wpzoom-forms' ) }</button>
-					</div>
-					<p className="wpzf-hint">{ __( 'You can also insert the form via the WPZOOM Forms block in the Gutenberg editor.', 'wpzoom-forms' ) }</p>
-				</div>
+		<Modal
+			title={ __( 'Embed your form', 'wpzoom-forms' ) }
+			onRequestClose={ onClose }
+			size="small"
+		>
+			<p>{ __( 'Paste this shortcode into any post or page to display the form:', 'wpzoom-forms' ) }</p>
+			<div className="wpzf-embed-code">
+				<code>{ shortcode }</code>
+				<Button
+					variant="secondary"
+					icon={ copied ? null : copy }
+					onClick={ doCopy }
+				>
+					{ copied ? __( 'Copied!', 'wpzoom-forms' ) : __( 'Copy', 'wpzoom-forms' ) }
+				</Button>
 			</div>
-		</div>
+			<p className="wpzf-hint">{ __( 'You can also insert the form via the WPZOOM Forms block in the Gutenberg editor.', 'wpzoom-forms' ) }</p>
+		</Modal>
 	);
 }

@@ -115,7 +115,6 @@ body[class*="page_wpzf-form-builder"] {
 	&__exit {
 		display: inline-flex; align-items: center; justify-content: center;
 		width: 32px; height: 32px;
-		border-radius: $radius-medium;
 		color: $muted; text-decoration: none;
 		&:hover { background: $border-soft; color: $text; }
 	}
@@ -126,21 +125,27 @@ body[class*="page_wpzf-form-builder"] {
 		svg { color: var(--wp-admin-theme-color, #{$brand}); }
 	}
 
-	&__title {
-		display: inline-flex; align-items: center; gap: 6px;
-		background: transparent; border: 1px dashed transparent;
-		padding: 4px 8px; border-radius: $radius-medium;
-		font-size: 13px; font-weight: 500; color: $text; cursor: pointer;
-		&:hover { border-color: $border; background: $border-soft; }
-		svg { color: $muted; }
+	// WP Button used as the inline title display/trigger.
+	&__title.components-button {
+		border: 1px dashed transparent; border-radius: $radius-medium;
+		font-size: 13px; font-weight: 500; color: $text; height: auto; padding: 4px 8px;
+		&:hover:not(:disabled) { border-color: $border; background: $border-soft; }
+		// tame the WP icon colour so the pencil reads as muted
+		.dashicon, svg:not(:root) { color: $muted; }
 	}
 
-	&__title-input {
-		font: inherit; padding: 4px 8px;
-		border: 1px solid var(--wp-admin-theme-color, #{$brand}); border-radius: $radius-medium;
-		min-width: 280px;
-		&:focus { outline: var(--wp-admin-border-width-focus, 2px) solid var(--wp-admin-theme-color, #{$brand}); outline-offset: 0; }
+	// Wrapper for WP TextControl used as the inline title editor.
+	&__title-wrap {
+		.components-base-control__field { margin-bottom: 0; }
+		.components-text-control__input {
+			font: inherit; min-width: 280px; height: 32px;
+		}
 	}
+}
+
+// Dirty-state glow on the WP primary Save button.
+.wpzf-topbar__right .components-button.is-dirty {
+	box-shadow: 0 0 0 2px rgba($brand, .25);
 }
 
 /* buttons ----------------------------------------------------------------- */
@@ -210,26 +215,6 @@ body[class*="page_wpzf-form-builder"] {
 	&--right { border-left:  1px solid $border; }
 }
 
-/* sidebar — tabs ---------------------------------------------------------- */
-.wpzf-tabs {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	border-bottom: 1px solid $border;
-	background: $bg;
-}
-.wpzf-tab {
-	display: inline-flex; align-items: center; justify-content: center; gap: 4px;
-	padding: 11px 8px;
-	background: transparent; border: 0; border-bottom: 2px solid transparent;
-	color: $muted; font-size: 12px; font-weight: 500; cursor: pointer;
-
-	&:hover { color: $text; }
-	&.is-active {
-		color: var(--wp-admin-theme-color, #{$brand});
-		border-bottom-color: var(--wp-admin-theme-color, #{$brand});
-		background: $bg-card;
-	}
-}
 
 /* sidebar — palette ------------------------------------------------------- */
 .wpzf-palette {
@@ -256,7 +241,11 @@ body[class*="page_wpzf-form-builder"] {
 	&__icon { color: var(--wp-admin-theme-color, #{$brand}); display: inline-flex; }
 	&__label { line-height: 1.2; }
 }
-.wpzf-sidehint { padding: 16px; color: $muted; font-size: 13px; }
+// Vertical separator between button groups in the topbar.
+.wpzf-topbar__divider {
+	width: 1px; height: 24px;
+	background: $border; flex-shrink: 0;
+}
 
 /* canvas ------------------------------------------------------------------ */
 .wpzf-canvas {
@@ -766,7 +755,7 @@ textarea.wpzf-preview-input { resize: none; }
 
 /* options editor — handle + drag state ------------------------------------ */
 .wpzf-options .wpzf-option {
-	grid-template-columns: 16px 1fr 100px 24px;
+	grid-template-columns: 16px 1fr 100px 32px;
 	align-items: center;
 }
 .wpzf-option__handle {
@@ -809,4 +798,32 @@ textarea.wpzf-preview-input { resize: none; }
 .wpzf-modal__footer {
 	display: flex; justify-content: flex-end; gap: 8px;
 	padding: 12px 18px; border-top: 1px solid $border; background: $bg;
+}
+
+/* @wordpress/components integration ---------------------------------------- */
+
+// Normalize WP component spacing inside the inspector panel.
+.wpzf-inspector__body {
+	.components-base-control { margin-bottom: 16px; }
+	// ButtonGroup sits flush under its BaseControl label.
+	.components-base-control__field { margin-bottom: 0; }
+}
+
+// Widen WP components inputs to fill the sidebar.
+.wpzf-inspector__body .components-text-control__input,
+.wpzf-inspector__body .components-textarea-control__input,
+.wpzf-inspector__body .components-select-control__input {
+	width: 100%;
+}
+
+// Embed-code and hint inside WP Modal.
+.components-modal__content {
+	.wpzf-embed-code { margin-top: 8px; }
+	.wpzf-hint { margin-top: 12px; }
+	.wpzf-modal__footer {
+		background: transparent;
+		padding: 12px 0 0;
+		margin: 8px 0 0;
+		border-radius: 0;
+	}
 }
