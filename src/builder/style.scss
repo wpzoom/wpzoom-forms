@@ -248,10 +248,10 @@ body[class*="page_wpzf-form-builder"] {
 		padding: 10px;
 		background: $bg-card; border: 1px solid $border; border-radius: $radius-medium;
 		color: $text; font-size: 12px; font-weight: 500;
-		cursor: pointer; text-align: left;
+		cursor: grab; text-align: left;
 		transition: border-color .15s, background .15s, transform .05s;
 		&:hover { border-color: var(--wp-admin-theme-color, #{$brand}); background: rgba($brand, .05); }
-		&:active { transform: scale(.98); }
+		&:active { transform: scale(.98); cursor: grabbing; }
 	}
 	&__icon { color: var(--wp-admin-theme-color, #{$brand}); display: inline-flex; }
 	&__label { line-height: 1.2; }
@@ -279,6 +279,13 @@ body[class*="page_wpzf-form-builder"] {
 	text-align: center;
 	padding: 48px 16px;
 	color: $muted;
+	border: 2px dashed transparent;
+	border-radius: $radius-medium;
+	transition: border-color .15s, background .15s;
+	&.is-over {
+		border-color: var(--wp-admin-theme-color, #{$brand});
+		background: rgba($brand, .03);
+	}
 	h2 { font-size: 18px; color: $text; margin: 0 0 8px; }
 	p  { margin: 0 0 20px; }
 	&__shortcuts {
@@ -299,6 +306,19 @@ body[class*="page_wpzf-form-builder"] {
 
 .wpzf-canvas-fields {
 	display: flex; flex-wrap: wrap; gap: 16px;
+}
+
+// Drop zone rendered after the last field — accepts palette drags and reorder-to-end.
+.wpzf-canvas-drop-end {
+	flex-basis: 100%;
+	min-height: 48px;
+	border: 2px dashed $border;
+	border-radius: $radius-medium;
+	transition: border-color .15s, background .15s;
+	&.is-over {
+		border-color: var(--wp-admin-theme-color, #{$brand});
+		background: rgba($brand, .04);
+	}
 }
 .wpzf-canvas-row {
 	flex-basis: 100%; min-width: 0;

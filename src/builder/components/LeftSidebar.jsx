@@ -92,6 +92,11 @@ export default function LeftSidebar({ activeTab, onTab, onAddField }) {
 									<button
 										key={ type }
 										className="wpzf-palette__item"
+										draggable
+										onDragStart={ ( e ) => {
+											e.dataTransfer.setData( 'wpzf/new-field', type );
+											e.dataTransfer.effectAllowed = 'copy';
+										} }
 										onClick={ () => onAddField( type ) }
 										title={ TYPE_LABELS[ type ] }
 									>

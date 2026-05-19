@@ -46,7 +46,11 @@ function reducer( state, action ) {
 
 		case 'ADD_FIELD': {
 			const f = clone( state.form );
-			f.schema.fields.push( action.field );
+			if ( action.index !== undefined ) {
+				f.schema.fields.splice( action.index, 0, action.field );
+			} else {
+				f.schema.fields.push( action.field );
+			}
 			return { ...state, form: f, dirty: true, selectedField: action.field.id, activeTab: TABS.FIELDS };
 		}
 
@@ -187,7 +191,8 @@ export default function App({ formId, presetTemplate }) {
 		return <div className="wpzf-builder wpzf-builder--error">{ __( 'Could not load form.', 'wpzoom-forms' ) }</div>;
 	}
 
-	const addField = ( type ) => dispatch( { type: 'ADD_FIELD', field: makeField( type ) } );
+	const addField    = ( type )        => dispatch( { type: 'ADD_FIELD', field: makeField( type ) } );
+	const insertField = ( type, index ) => dispatch( { type: 'ADD_FIELD', field: makeField( type ), index } );
 
 	return (
 		<div className="wpzf-builder">
@@ -219,6 +224,7 @@ export default function App({ formId, presetTemplate }) {
 					onDelete={ ( id ) => dispatch( { type: 'DELETE_FIELD', id } ) }
 					onDuplicate={ ( id ) => dispatch( { type: 'DUPLICATE_FIELD', id } ) }
 					onAddField={ addField }
+					onInsertField={ insertField }
 				/>
 
 				<Inspector
