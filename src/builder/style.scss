@@ -65,7 +65,9 @@ body.toplevel_page_wpzf-form-builder,
 body[class*="page_wpzf-form-builder"] {
 	background: $bg;
 
-	#wpcontent { padding-left: 0; }
+	#adminmenuwrap,
+	#adminmenuback { display: none !important; }
+	#wpcontent { margin-left: 0 !important; padding-left: 0; }
 	#wpbody-content { padding-bottom: 0; }
 	#wpfooter { display: none; }
 	.notice, .update-nag, .updated, .error { display: none !important; }
@@ -109,7 +111,6 @@ body[class*="page_wpzf-form-builder"] {
 	padding: 0 16px;
 	height: 56px;
 	flex-shrink: 0;
-	box-shadow: $elevation-x-small;
 
 	&__left, &__right { display: flex; align-items: center; gap: 8px; }
 
