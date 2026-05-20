@@ -18,7 +18,7 @@ const HAS_LABEL    = [ 'text', 'name', 'email', 'tel', 'url', 'number', 'textare
 const HAS_PLACEHOLDER = [ 'text', 'name', 'email', 'tel', 'url', 'number', 'textarea', 'date', 'select' ];
 const HAS_REQUIRED = [ 'text', 'name', 'email', 'tel', 'url', 'number', 'textarea', 'date', 'select', 'radio', 'checkboxes', 'checkbox' ];
 const HAS_HELP     = [ 'text', 'name', 'email', 'tel', 'url', 'number', 'textarea', 'date', 'select', 'radio', 'checkboxes', 'checkbox' ];
-const HAS_DEFAULT  = [ 'text', 'name', 'email', 'tel', 'url', 'number', 'date', 'select', 'hidden' ];
+const HAS_DEFAULT  = [ 'text', 'name', 'email', 'tel', 'url', 'number', 'date', 'hidden' ];
 const HAS_OPTIONS  = [ 'select', 'radio', 'checkboxes' ];
 const HAS_CONDITIONAL_LOGIC = [ 'text', 'name', 'email', 'tel', 'url', 'textarea', 'select', 'checkboxes', 'checkbox', 'radio', 'date' ];
 
@@ -197,7 +197,13 @@ export default function FieldSettings({ field, onChange }) {
 								) }
 
 								{ HAS_OPTIONS.includes( field.type ) && (
-									<OptionsEditor options={ field.options || [] } onChange={ ( options ) => set( { options } ) } />
+									<OptionsEditor
+										options={ field.options || [] }
+										onChange={ ( options ) => set( { options } ) }
+										fieldType={ field.type }
+										defaultValue={ field.defaultValue }
+										onChangeDefault={ ( v ) => set( { defaultValue: v } ) }
+									/>
 								) }
 
 								{ HAS_REQUIRED.includes( field.type ) && (
@@ -293,8 +299,25 @@ function slugify( s ) {
 	return String( s ).toLowerCase().trim().replace( /\s+/g, '-' ).replace( /[^a-z0-9-]/g, '' );
 }
 
-function OptionsEditor({ options, onChange }) {
+function OptionsEditor({ options, onChange, fieldType, defaultValue, onChangeDefault }) {
 	const [ bulk, setBulk ] = useState( false );
+	const isMulti = fieldType === 'checkboxes';
+
+	const isDefault = ( val ) => {
+		if ( isMulti ) {
+			return Array.isArray( defaultValue ) ? defaultValue.includes( val ) : false;
+		}
+		return defaultValue === val;
+	};
+
+	const toggleDefault = ( val ) => {
+		if ( isMulti ) {
+			const cur = Array.isArray( defaultValue ) ? defaultValue : [];
+			onChangeDefault( cur.includes( val ) ? cur.filter( ( v ) => v !== val ) : [ ...cur, val ] );
+		} else {
+			onChangeDefault( isDefault( val ) ? '' : val );
+		}
+	};
 
 	const update = ( i, patch ) => {
 		const next = options.slice();
@@ -345,6 +368,13 @@ function OptionsEditor({ options, onChange }) {
 						<span className="wpzf-option__handle" title={ __( 'Drag to reorder', 'wpzoom-forms' ) } aria-hidden="true">
 							<svg width="10" height="14" viewBox="0 0 10 14" fill="currentColor"><circle cx="2" cy="2" r="1.2"/><circle cx="8" cy="2" r="1.2"/><circle cx="2" cy="7" r="1.2"/><circle cx="8" cy="7" r="1.2"/><circle cx="2" cy="12" r="1.2"/><circle cx="8" cy="12" r="1.2"/></svg>
 						</span>
+						<input
+							type={ isMulti ? 'checkbox' : 'radio' }
+							className="wpzf-option__default"
+							checked={ isDefault( o.value ) }
+							onChange={ () => toggleDefault( o.value ) }
+							title={ __( 'Set as default', 'wpzoom-forms' ) }
+						/>
 						<input
 							type="text"
 							value={ o.label }

@@ -381,6 +381,11 @@ body[class*="page_wpzf-form-builder"] {
 		opacity: 0; transition: opacity .15s;
 	}
 	&:hover &__actions, &.is-selected &__actions { opacity: 1; }
+
+	// inputs
+	.wpzf-input--select{
+		max-width: none;
+	}
 }
 
 .wpzf-required { color: $danger; }
@@ -441,7 +446,7 @@ textarea.wpzf-input { resize: none; }
 		background: $border-soft; color: $muted;
 		border-radius: $radius-full; text-transform: uppercase; letter-spacing: 0.4px;
 	}
-	&__body { padding: 14px 16px; overflow-y: auto; flex: 1; }
+	&__body { padding: 14px 16px; overflow-y: auto; flex: 1; min-height: 0; }
 
 	&__tabs {
 		display: flex; flex-direction: column; flex: 1; overflow: hidden;
@@ -454,7 +459,16 @@ textarea.wpzf-input { resize: none; }
 			flex-shrink: 0;
 			overflow: hidden;
 		}
-		
+
+		// WP TabPanel wraps children in this div — make it a flex column
+		// so the inner __body can grow to fill and scroll correctly.
+		.components-tab-panel__tab-content {
+			flex: 1;
+			min-height: 0;
+			overflow: hidden;
+			display: flex;
+			flex-direction: column;
+		}
 	}
 }
 
@@ -707,16 +721,24 @@ textarea.wpzf-input { resize: none; }
 
 .wpzf-picker {
 	display: flex; flex-direction: column;
-	height: calc(100vh - 32px);
+	height: 100vh;
 	overflow: hidden;
 
 	&__header {
-		display: flex; align-items: flex-start; gap: 12px;
+		display: flex; align-items: center; gap: 12px;
 		padding: 20px 28px;
 		background: $bg-card;
 		border-bottom: 1px solid $border;
 		flex-shrink: 0;
 		box-shadow: $elevation-x-small;
+		.wpzf-topbar__exit{
+			color: white;
+			height: 36px;
+			min-width: 36px !important;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
 	}
 	&__heading {
 		h1 { margin: 0 0 4px; font-size: 18px; color: $text; }
@@ -926,8 +948,13 @@ textarea.wpzf-input { resize: none; }
 
 /* options editor — handle + drag state ------------------------------------ */
 .wpzf-options .wpzf-option {
-	grid-template-columns: 16px 1fr 100px 32px;
+	grid-template-columns: 16px 20px 1fr 100px 32px;
 	align-items: center;
+}
+.wpzf-option__default {
+	margin: 0;
+	cursor: pointer;
+	accent-color: var(--wp-admin-theme-color, #{$brand});
 }
 .wpzf-option__handle {
 	display: inline-flex; align-items: center; justify-content: center;

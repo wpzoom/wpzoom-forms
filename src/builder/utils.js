@@ -30,10 +30,20 @@ export const makeField = ( type ) => {
 			return { ...base, label: 'Date', format: 'Y-m-d', mode: 'single' };
 		case 'select':
 		case 'radio':
+			return {
+				...base,
+				label: type === 'select' ? 'Dropdown' : 'Multiple Choice',
+				options: [
+					{ label: 'Option 1', value: 'option-1' },
+					{ label: 'Option 2', value: 'option-2' },
+					{ label: 'Option 3', value: 'option-3' },
+				],
+			};
 		case 'checkboxes':
 			return {
 				...base,
-				label: type === 'select' ? 'Dropdown' : type === 'radio' ? 'Multiple Choice' : 'Checkboxes',
+				label: 'Checkboxes',
+				defaultValue: [],
 				options: [
 					{ label: 'Option 1', value: 'option-1' },
 					{ label: 'Option 2', value: 'option-2' },

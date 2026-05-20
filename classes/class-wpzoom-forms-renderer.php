@@ -260,13 +260,15 @@ class WPZOOM_Forms_Renderer {
 				$input_html = '<div class="wpzf-choices wpzf-choices--radio">' . $inner . '</div>';
 				break;
 			case 'checkboxes':
-				$opts = isset( $field['options'] ) ? $field['options'] : array();
-				$inner = '';
+				$opts     = isset( $field['options'] ) ? $field['options'] : array();
+				$defaults = is_array( $default ) ? $default : array();
+				$inner    = '';
 				foreach ( $opts as $i => $opt ) {
 					$oid = $field_id . '-' . $i;
+					$chk = in_array( $opt['value'], $defaults, true ) ? ' checked="checked"' : '';
 					$inner .= sprintf(
-						'<label class="wpzf-choice" for="%1$s"><input type="checkbox" id="%1$s" name="%2$s[]" value="%3$s" /> <span>%4$s</span></label>',
-						esc_attr( $oid ), esc_attr( $field_name ), esc_attr( $opt['value'] ), esc_html( $opt['label'] )
+						'<label class="wpzf-choice" for="%1$s"><input type="checkbox" id="%1$s" name="%2$s[]" value="%3$s"%4$s /> <span>%5$s</span></label>',
+						esc_attr( $oid ), esc_attr( $field_name ), esc_attr( $opt['value'] ), $chk, esc_html( $opt['label'] )
 					);
 				}
 				$input_html = '<div class="wpzf-choices wpzf-choices--checkbox">' . $inner . '</div>';
