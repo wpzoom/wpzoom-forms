@@ -72,7 +72,7 @@ class WPZOOM_Forms_Renderer {
 		foreach ( $fields as $field ) {
 			if ( ! empty( $field['customCSS'] ) ) {
 				$fid      = sanitize_html_class( $field['id'] );
-				$selector = '.wpzf-field_' . $fid;
+				$selector = '#' . $form_uid . ' .wpzf-field_' . $fid;
 				$css      = str_replace( 'selector', $selector, $field['customCSS'] );
 				// Strip any </style> injection attempts.
 				$css      = preg_replace( '#</?\s*style[^>]*>#i', '', $css );

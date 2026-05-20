@@ -178,8 +178,9 @@ class WPZOOM_Forms_Migration {
 	}
 
 	/**
-	 * Pull the style attribute off the first input/textarea/select in $html and
-	 * return it as a customCSS block, or an empty string if nothing is found.
+	 * Extract CSS from the first input/textarea/select in $html.
+	 * Combines inline style declarations with any WP preset color/background
+	 * classes, returning a formatted customCSS block or empty string.
 	 */
 	private static function extract_inline_css( $html, $type ) {
 		static $input_types = array( 'text', 'name', 'email', 'tel', 'url', 'number', 'date' );
@@ -193,33 +194,46 @@ class WPZOOM_Forms_Migration {
 			return '';
 		}
 
-		if ( ! preg_match( '/<' . $tag . '[^>]+\bstyle=["\']([^"\']+)["\'][^>]*>/i', $html, $m ) ) {
+		// Capture all attributes of the opening tag.
+		if ( ! preg_match( '/<' . $tag . '(\s[^>]*)>/i', $html, $tag_match ) ) {
 			return '';
 		}
+		$tag_attrs = $tag_match[1];
+		$lines     = array();
 
-		return self::inline_style_to_css( $m[1], 'selector .wpzf-input' );
-	}
+		// Inline style declarations.
+		if ( preg_match( '/\bstyle=["\']([^"\']+)["\']/i', $tag_attrs, $m ) ) {
+			foreach ( explode( ';', $m[1] ) as $decl ) {
+				$decl = trim( $decl );
+				if ( $decl === '' || strpos( $decl, ':' ) === false ) continue;
+				list( $prop, $val ) = explode( ':', $decl, 2 );
+				$prop = trim( $prop );
+				$val  = trim( $val );
+				if ( $prop !== '' && $val !== '' ) {
+					$lines[] = '  ' . $prop . ': ' . $val . ';';
+				}
+			}
+		}
 
-	/**
-	 * Convert an inline style string into a CSS rule block.
-	 * e.g. "border-radius:99px;padding:14px" → "selector { border-radius: 99px;\n  padding: 14px;\n}"
-	 */
-	private static function inline_style_to_css( $style_string, $selector ) {
-		$lines = array();
-		foreach ( explode( ';', $style_string ) as $decl ) {
-			$decl = trim( $decl );
-			if ( $decl === '' || strpos( $decl, ':' ) === false ) continue;
-			list( $prop, $val ) = explode( ':', $decl, 2 );
-			$prop = trim( $prop );
-			$val  = trim( $val );
-			if ( $prop !== '' && $val !== '' ) {
-				$lines[] = '  ' . $prop . ': ' . $val . ';';
+		// WP preset classes → CSS variables (color + background-color only).
+		if ( preg_match( '/\bclass=["\']([^"\']*)["\']/', $tag_attrs, $m ) ) {
+			$classes = $m[1];
+			if ( preg_match( '/\bhas-([\w-]+)-background-color\b/', $classes, $bg ) ) {
+				$lines[] = '  background-color: var(--wp--preset--color--' . $bg[1] . ');';
+			}
+			if ( preg_match_all( '/\bhas-([\w-]+)-color\b/', $classes, $clr ) ) {
+				foreach ( $clr[1] as $slug ) {
+					// Skip slugs that are actually part of a -background-color class.
+					if ( substr( $slug, -11 ) !== '-background' ) {
+						$lines[] = '  color: var(--wp--preset--color--' . $slug . ');';
+					}
+				}
 			}
 		}
 
 		if ( empty( $lines ) ) return '';
 
-		return $selector . " {\n" . implode( "\n", $lines ) . "\n}";
+		return "selector .wpzf-input {\n" . implode( "\n", $lines ) . "\n}";
 	}
 
 	/**
