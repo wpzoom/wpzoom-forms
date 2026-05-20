@@ -3,7 +3,10 @@ import {
 	TextControl,
 	TextareaControl,
 	RadioControl,
+	Button,
 } from '@wordpress/components';
+
+const NOTIFICATION_EMAIL_URL = 'https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=builder-notification-email-upsell';
 
 const METHODS = [
 	{ value: 'email',    label: __( 'Email Only', 'wpzoom-forms' ) },
@@ -55,6 +58,23 @@ export default function NotificationsTab({ notifications, onChange }) {
 					value={ notifications.failureMessage || '' }
 					onChange={ ( v ) => onChange( { failureMessage: v } ) }
 				/>
+
+				<div className="wpzf-notification-email-upsell">
+					<Button
+						variant="primary"
+						href={ NOTIFICATION_EMAIL_URL }
+						target="_blank"
+						rel="noopener noreferrer"
+						className="wpzf-notification-email-upsell__btn"
+						__next40pxDefaultSize
+					>
+						{ __( 'Customize Notification Email', 'wpzoom-forms' ) }
+						<span className="wpzf-notification-email-upsell__badge">PRO</span>
+					</Button>
+					<p className="wpzf-notification-email-upsell__desc">
+						{ __( 'Edit the template for emails sent to you when a new form entry is submitted.', 'wpzoom-forms' ) }
+					</p>
+				</div>
 			</div>
 		</div>
 	);
