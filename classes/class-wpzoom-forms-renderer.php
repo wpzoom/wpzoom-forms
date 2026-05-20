@@ -67,7 +67,24 @@ class WPZOOM_Forms_Renderer {
 		// minimal *layout* classes but skip the visual theme variant entirely.
 		$theme_class = $settings['theme'] !== 'default' ? ' wpzf-theme-' . sanitize_html_class( $settings['theme'] ) : '';
 
+		// Collect per-field custom CSS.
+		$field_css = '';
+		foreach ( $fields as $field ) {
+			if ( ! empty( $field['customCSS'] ) ) {
+				$fid      = sanitize_html_class( $field['id'] );
+				$selector = '.wpzf-field_' . $fid;
+				$css      = str_replace( 'selector', $selector, $field['customCSS'] );
+				// Strip any </style> injection attempts.
+				$css      = preg_replace( '#</?\s*style[^>]*>#i', '', $css );
+				$field_css .= $css . "\n";
+			}
+		}
+
 		ob_start();
+		if ( ! empty( $field_css ) ) :
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo '<style>' . $field_css . '</style>';
+		endif;
 		?>
 		<div id="<?php echo esc_attr( $form_uid ); ?>" class="wpzf-form wpzoom-forms_form<?php echo esc_attr( $theme_class ); ?> wpzf-labels-<?php echo esc_attr( $settings['labelsPosition'] ); ?>">
 			<div id="<?php echo esc_attr( $notice_id ); ?>" class="wpzf-notice" hidden></div>
@@ -100,29 +117,33 @@ class WPZOOM_Forms_Renderer {
 	}
 
 	private static function render_field( $field, $form_settings ) {
-		$type = $field['type'];
+		$type      = $field['type'];
+		$fid_class = ' wpzf-field_' . sanitize_html_class( $field['id'] );
 
 		// Layout-only fields (no input).
 		if ( $type === 'heading' ) {
 			$tag = isset( $field['level'] ) ? $field['level'] : 'h3';
 			return sprintf(
-				'<div class="wpzf-field wpzf-field--width-%1$s wpzf-field--layout"><%2$s class="wpzf-heading">%3$s</%2$s></div>',
+				'<div class="wpzf-field wpzf-field--width-%1$s wpzf-field--layout%4$s"><%2$s class="wpzf-heading">%3$s</%2$s></div>',
 				esc_attr( $field['width'] ),
 				esc_attr( $tag ),
-				esc_html( $field['text'] )
+				esc_html( $field['text'] ),
+				$fid_class
 			);
 		}
 		if ( $type === 'paragraph' ) {
 			return sprintf(
-				'<div class="wpzf-field wpzf-field--width-%1$s wpzf-field--layout"><div class="wpzf-paragraph">%2$s</div></div>',
+				'<div class="wpzf-field wpzf-field--width-%1$s wpzf-field--layout%3$s"><div class="wpzf-paragraph">%2$s</div></div>',
 				esc_attr( $field['width'] ),
-				wp_kses_post( $field['text'] )
+				wp_kses_post( $field['text'] ),
+				$fid_class
 			);
 		}
 		if ( $type === 'divider' ) {
 			return sprintf(
-				'<div class="wpzf-field wpzf-field--width-%1$s wpzf-field--layout"><hr class="wpzf-divider" /></div>',
-				esc_attr( $field['width'] )
+				'<div class="wpzf-field wpzf-field--width-%1$s wpzf-field--layout%2$s"><hr class="wpzf-divider" /></div>',
+				esc_attr( $field['width'] ),
+				$fid_class
 			);
 		}
 		if ( $type === 'hidden' ) {
@@ -262,11 +283,12 @@ class WPZOOM_Forms_Renderer {
 		}
 
 		return sprintf(
-			'<div class="wpzf-field wpzf-field--width-%1$s wpzf-field--type-%2$s%3$s%4$s">%5$s%6$s%7$s</div>',
+			'<div class="wpzf-field wpzf-field--width-%1$s wpzf-field--type-%2$s%3$s%4$s%5$s">%6$s%7$s%8$s</div>',
 			esc_attr( $field['width'] ),
 			esc_attr( $type ),
 			$extra_class,
 			' ' . esc_attr( self::legacy_field_class( $type ) ),
+			$fid_class,
 			$label_html,
 			$input_html,
 			$help_html

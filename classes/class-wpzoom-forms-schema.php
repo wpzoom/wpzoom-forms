@@ -74,6 +74,7 @@ class WPZOOM_Forms_Schema {
 			'defaultValue' => '',
 			'width'        => 'full',
 			'cssClass'     => '',
+			'customCSS'    => '',
 		);
 
 		switch ( $type ) {
@@ -217,6 +218,7 @@ class WPZOOM_Forms_Schema {
 			$clean['defaultValue'] = isset( $f['defaultValue'] ) ? self::clean_string( (string) $f['defaultValue'] ) : '';
 			$clean['width']        = self::enum( isset( $f['width'] ) ? $f['width'] : 'full', self::field_widths(), 'full' );
 			$clean['cssClass']     = isset( $f['cssClass'] ) ? sanitize_html_class( $f['cssClass'], '' ) : '';
+			$clean['customCSS']    = isset( $f['customCSS'] ) ? wp_strip_all_tags( wp_unslash( $f['customCSS'] ) ) : '';
 
 			switch ( $type ) {
 				case 'textarea':

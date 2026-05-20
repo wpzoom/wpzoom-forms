@@ -165,7 +165,61 @@ class WPZOOM_Forms_Migration {
 			$over['format'] = $attrs['format'];
 		}
 
+		// Extract inline styles from the old block's HTML output and carry them
+		// into customCSS so visual styling isn't lost after migration.
+		if ( isset( $attrs['_innerHTML'] ) ) {
+			$css = self::extract_inline_css( $attrs['_innerHTML'], $type );
+			if ( $css !== '' ) {
+				$over['customCSS'] = $css;
+			}
+		}
+
 		return WPZOOM_Forms_Schema::make_field( $type, $over );
+	}
+
+	/**
+	 * Pull the style attribute off the first input/textarea/select in $html and
+	 * return it as a customCSS block, or an empty string if nothing is found.
+	 */
+	private static function extract_inline_css( $html, $type ) {
+		static $input_types = array( 'text', 'name', 'email', 'tel', 'url', 'number', 'date' );
+		if ( in_array( $type, $input_types, true ) ) {
+			$tag = 'input';
+		} elseif ( $type === 'textarea' ) {
+			$tag = 'textarea';
+		} elseif ( $type === 'select' ) {
+			$tag = 'select';
+		} else {
+			return '';
+		}
+
+		if ( ! preg_match( '/<' . $tag . '[^>]+\bstyle=["\']([^"\']+)["\'][^>]*>/i', $html, $m ) ) {
+			return '';
+		}
+
+		return self::inline_style_to_css( $m[1], 'selector .wpzf-input' );
+	}
+
+	/**
+	 * Convert an inline style string into a CSS rule block.
+	 * e.g. "border-radius:99px;padding:14px" → "selector { border-radius: 99px;\n  padding: 14px;\n}"
+	 */
+	private static function inline_style_to_css( $style_string, $selector ) {
+		$lines = array();
+		foreach ( explode( ';', $style_string ) as $decl ) {
+			$decl = trim( $decl );
+			if ( $decl === '' || strpos( $decl, ':' ) === false ) continue;
+			list( $prop, $val ) = explode( ':', $decl, 2 );
+			$prop = trim( $prop );
+			$val  = trim( $val );
+			if ( $prop !== '' && $val !== '' ) {
+				$lines[] = '  ' . $prop . ': ' . $val . ';';
+			}
+		}
+
+		if ( empty( $lines ) ) return '';
+
+		return $selector . " {\n" . implode( "\n", $lines ) . "\n}";
 	}
 
 	/**

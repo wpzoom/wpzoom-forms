@@ -239,6 +239,17 @@ export default function FieldSettings({ field, onChange }) {
 									onChange={ ( v ) => set( { cssClass: v } ) }
 								/>
 
+								{ field.type !== 'hidden' && (
+									<TextareaControl
+										label={ __( 'Additional CSS', 'wpzoom-forms' ) }
+										rows={ 5 }
+										value={ field.customCSS || '' }
+										onChange={ ( v ) => set( { customCSS: v } ) }
+										help={ __( 'Use "selector" to target this field\'s wrapper. Example: selector { border-radius: 8px; }', 'wpzoom-forms' ) }
+										className="wpzf-custom-css-textarea"
+									/>
+								) }
+
 								<TextControl
 									label={ __( 'Field ID', 'wpzoom-forms' ) }
 									value={ field.id }
