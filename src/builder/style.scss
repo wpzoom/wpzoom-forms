@@ -66,6 +66,7 @@ body[class*="page_wpzf-form-builder"] {
 	background: $bg;
 
 	#adminmenuwrap,
+	#wpadminbar,
 	#adminmenuback { display: none !important; }
 	#wpcontent { margin-left: 0 !important; padding-left: 0; }
 	#wpbody-content { padding-bottom: 0; }
@@ -74,12 +75,12 @@ body[class*="page_wpzf-form-builder"] {
 	.wrap { margin: 0; }
 }
 
-#wpzf-builder-root { min-height: calc(100vh - 32px); }
+#wpzf-builder-root { min-height: 100vh; margin-top: -32px;  }
 
 .wpzf-builder {
 	display: flex;
 	flex-direction: column;
-	height: calc(100vh - 32px);
+	height: 100vh;
 	font: 13px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 	color: $text;
 
