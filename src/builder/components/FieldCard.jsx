@@ -54,21 +54,33 @@ function FieldPreview({ field }) {
 			return <input type="text" readOnly className="wpzf-input" placeholder={ field.placeholder || ' ' } />;
 		case 'textarea':
 			return <textarea readOnly className="wpzf-input" rows={ field.rows || 4 } placeholder={ field.placeholder || ' ' } />;
-		case 'select':
+		case 'select': {
+			const selDefault = field.defaultValue || '';
 			return (
-				<select className="wpzf-input wpzf-input--select">
-					<option>{ field.placeholder || '— Select —' }</option>
-					{ ( field.options || [] ).map( ( o, i ) => <option key={ i }>{ o.label }</option> ) }
+				<select className="wpzf-input wpzf-input--select" value={ selDefault } onChange={ () => {} }>
+					<option value="">{ field.placeholder || '— Select —' }</option>
+					{ ( field.options || [] ).map( ( o, i ) => (
+						<option key={ i } value={ o.value }>{ o.label }</option>
+					) ) }
 				</select>
 			);
+		}
 		case 'radio':
 		case 'checkboxes': {
-			const isRadio = field.type === 'radio';
+			const isRadio   = field.type === 'radio';
+			const defVal    = field.defaultValue;
+			const isChecked = ( val ) => isRadio
+				? defVal === val
+				: Array.isArray( defVal ) && defVal.includes( val );
 			return (
 				<div className="wpzf-choices">
 					{ ( field.options || [] ).map( ( o, i ) => (
 						<label key={ i } className="wpzf-choice">
-							<input type={ isRadio ? 'radio' : 'checkbox' } readOnly />
+							<input
+								type={ isRadio ? 'radio' : 'checkbox' }
+								checked={ isChecked( o.value ) }
+								onChange={ () => {} }
+							/>
 							<span>{ o.label }</span>
 						</label>
 					) ) }
