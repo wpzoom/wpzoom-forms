@@ -1,3 +1,4 @@
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	TextControl,
@@ -5,6 +6,100 @@ import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
+import ProModal from './ProModal.jsx';
+
+const FORM_STYLES = [
+	{
+		value:  'default',
+		label:  __( 'Default', 'wpzoom-forms' ),
+		colors: [ '#374151', '#6b7280', '#d1d5db', '#f9fafb', '#111827' ],
+		isPro:  false,
+	},
+	{
+		value:  'minimal',
+		label:  __( 'Minimal', 'wpzoom-forms' ),
+		colors: [ '#1f2937', '#6b7280', '#d1d5db', '#ffffff', '#9ca3af' ],
+		isPro:  false,
+	},
+	{
+		value:  'modern',
+		label:  __( 'Modern', 'wpzoom-forms' ),
+		colors: [ '#4f46e5', '#7c3aed', '#0f172a', '#f8fafc', '#e2e8f0' ],
+		isPro:  false,
+	},
+	{
+		value:  'bold',
+		label:  __( 'Bold', 'wpzoom-forms' ),
+		colors: [ '#111827', '#f97316', '#374151', '#e5e7eb', '#fff7ed' ],
+		isPro:  false,
+	},
+	{
+		value:  'rounded',
+		label:  __( 'Rounded', 'wpzoom-forms' ),
+		colors: [ '#6d28d9', '#ede9fe', '#7c3aed', '#ffffff', '#f5f3ff' ],
+		isPro:  false,
+	},
+	{
+		value:  'dark',
+		label:  __( 'Dark', 'wpzoom-forms' ),
+		colors: [ '#0f172a', '#1e293b', '#3b82f6', '#334155', '#e2e8f0' ],
+		isPro:  false,
+	},
+	{
+		value:  'glass',
+		label:  __( 'Glass', 'wpzoom-forms' ),
+		colors: [ '#6366f1', '#818cf8', '#1e1b4b', '#e0e7ff', '#c7d2fe' ],
+		isPro:  true,
+	},
+	{
+		value:  'neon',
+		label:  __( 'Neon', 'wpzoom-forms' ),
+		colors: [ '#0f172a', '#06b6d4', '#d946ef', '#7c3aed', '#818cf8' ],
+		isPro:  true,
+	},
+];
+
+function StylePicker( { value, onChange } ) {
+	const [ proLabel, setProLabel ] = useState( '' );
+
+	return (
+		<div className="wpzf-row">
+			<label className="wpzf-row__label">{ __( 'Form Style', 'wpzoom-forms' ) }</label>
+			<div className="wpzf-style-picker">
+				{ FORM_STYLES.map( ( style ) => (
+					<button
+						key={ style.value }
+						type="button"
+						className={ [
+							'wpzf-style-picker__item',
+							value === style.value ? 'is-selected' : '',
+							style.isPro ? 'is-pro' : '',
+						].filter( Boolean ).join( ' ' ) }
+						onClick={ () => {
+							if ( style.isPro ) { setProLabel( style.label ); }
+							else { onChange( style.value ); }
+						} }
+						title={ style.label + ( style.isPro ? ' (PRO)' : '' ) }
+					>
+						<div className="wpzf-style-picker__swatches">
+							{ style.colors.map( ( color, i ) => (
+								<span key={ i } className="wpzf-style-picker__swatch" style={ { background: color } } />
+							) ) }
+						</div>
+						<span className="wpzf-style-picker__name">{ style.label }</span>
+						{ style.isPro && <span className="wpzf-style-picker__pro-badge">PRO</span> }
+					</button>
+				) ) }
+			</div>
+			{ proLabel && (
+				<ProModal
+					fieldLabel={ proLabel + ' ' + __( 'style', 'wpzoom-forms' ) }
+					onClose={ () => setProLabel( '' ) }
+				/>
+			) }
+		</div>
+	);
+}
 
 export default function FormSettings({ settings, onChange }) {
 	return (
@@ -43,17 +138,10 @@ export default function FormSettings({ settings, onChange }) {
 					) ) }
 				</ToggleGroupControl>
 
-				<ToggleGroupControl
-					label={ __( 'Form Style', 'wpzoom-forms' ) }
+				<StylePicker
 					value={ settings.theme }
 					onChange={ ( v ) => onChange( { theme: v } ) }
-					isBlock
-					__nextHasNoMarginBottom={ false }
-				>
-					{ [ 'default', 'minimal', 'modern' ].map( ( v ) => (
-						<ToggleGroupControlOption key={ v } value={ v } label={ v.charAt( 0 ).toUpperCase() + v.slice( 1 ) } />
-					) ) }
-				</ToggleGroupControl>
+				/>
 
 				<ToggleControl
 					label={ __( 'Show required-field asterisk (*)', 'wpzoom-forms' ) }

@@ -23,10 +23,10 @@ export default function FieldCard({ field, settings, selected, onSelect, onDelet
 
 			<div className="wpzf-field-card__body">
 				{ showLabel && (
-					<label className="wpzf-field-card__label">{ field.label }{ reqMark }</label>
+					<label className="wpzf-field-card__label wpzf-label">{ field.label }{ reqMark }</label>
 				) }
 				<FieldPreview field={ field } />
-				{ field.help && <div className="wpzf-field-card__help">{ field.help }</div> }
+				{ field.help && <div className="wpzf-field-card__help wpzf-help">{ field.help }</div> }
 			</div>
 
 			<div className="wpzf-field-card__actions" onClick={ ( e ) => e.stopPropagation() }>
@@ -51,12 +51,12 @@ function FieldPreview({ field }) {
 		case 'number':
 		case 'date':
 		case 'hidden':
-			return <input type="text" readonly className="wpzf-preview-input" placeholder={ field.placeholder || ' ' } />;
+			return <input type="text" readOnly className="wpzf-input" placeholder={ field.placeholder || ' ' } />;
 		case 'textarea':
-			return <textarea readonly className="wpzf-preview-input" rows={ field.rows || 4 } placeholder={ field.placeholder || ' ' } />;
+			return <textarea readOnly className="wpzf-input" rows={ field.rows || 4 } placeholder={ field.placeholder || ' ' } />;
 		case 'select':
 			return (
-				<select readonly className="wpzf-preview-input">
+				<select className="wpzf-input wpzf-input--select">
 					<option>{ field.placeholder || '— Select —' }</option>
 					{ ( field.options || [] ).map( ( o, i ) => <option key={ i }>{ o.label }</option> ) }
 				</select>
@@ -65,10 +65,10 @@ function FieldPreview({ field }) {
 		case 'checkboxes': {
 			const isRadio = field.type === 'radio';
 			return (
-				<div className="wpzf-preview-choices">
+				<div className="wpzf-choices">
 					{ ( field.options || [] ).map( ( o, i ) => (
-						<label key={ i } className="wpzf-preview-choice">
-							<input type={ isRadio ? 'radio' : 'checkbox' } readonly/>
+						<label key={ i } className="wpzf-choice">
+							<input type={ isRadio ? 'radio' : 'checkbox' } readOnly />
 							<span>{ o.label }</span>
 						</label>
 					) ) }
@@ -77,19 +77,19 @@ function FieldPreview({ field }) {
 		}
 		case 'checkbox':
 			return (
-				<label className="wpzf-preview-choice wpzf-preview-choice--single">
-					<input type="checkbox" readonly/>
+				<label className="wpzf-choice wpzf-choice--single">
+					<input type="checkbox" readOnly />
 					<span>{ field.checkboxText || field.label }</span>
 				</label>
 			);
 		case 'heading': {
 			const Tag = field.level || 'h3';
-			return <Tag className="wpzf-preview-heading">{ field.text || ' ' }</Tag>;
+			return <Tag className="wpzf-heading">{ field.text || ' ' }</Tag>;
 		}
 		case 'paragraph':
-			return <div className="wpzf-preview-paragraph" dangerouslySetInnerHTML={ { __html: field.text || '&nbsp;' } } />;
+			return <div className="wpzf-paragraph" dangerouslySetInnerHTML={ { __html: field.text || '&nbsp;' } } />;
 		case 'divider':
-			return <hr className="wpzf-preview-divider" />;
+			return <hr className="wpzf-divider" />;
 		default:
 			return null;
 	}

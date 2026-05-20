@@ -237,3 +237,240 @@
 		border-radius: var(--wpzf-radius);
 	}
 }
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   THEME: bold
+   High contrast, thick borders, orange accent. Confident and clear.
+   ──────────────────────────────────────────────────────────────────────────── */
+.wpzf-form.wpzf-theme-bold {
+	--wpzf-accent:  #f97316;
+	--wpzf-text:    #111827;
+	--wpzf-muted:   #6b7280;
+	--wpzf-border:  #111827;
+	--wpzf-bg:      #ffffff;
+
+	color: var(--wpzf-text);
+
+	.wpzf-label {
+		display: block; margin-bottom: 0.4em;
+		font-size: 0.875em; font-weight: 700; color: var(--wpzf-text);
+	}
+	.wpzf-input {
+		@extend %wpzf-input-base;
+		background: var(--wpzf-bg);
+		color: var(--wpzf-text);
+		border: 2px solid var(--wpzf-border);
+		border-radius: 0;
+		transition: border-color .15s, box-shadow .15s;
+		&::placeholder { color: var(--wpzf-muted); }
+		&:focus {
+			outline: 0;
+			border-color: var(--wpzf-accent);
+			box-shadow: 4px 4px 0 var(--wpzf-accent);
+		}
+	}
+	.wpzf-help { margin-top: 4px; font-size: 12px; color: var(--wpzf-muted); }
+	.wpzf-choices { gap: 6px; padding-top: 4px; }
+	.wpzf-choice {
+		gap: 8px;
+		input { accent-color: var(--wpzf-accent); }
+	}
+	.wpzf-submit__btn {
+		display: inline-block;
+		padding: 12px 32px;
+		background: var(--wpzf-text); color: #fff;
+		border: 2px solid var(--wpzf-text);
+		font: inherit; font-size: 0.875em; font-weight: 800;
+		letter-spacing: .08em; text-transform: uppercase;
+		cursor: pointer;
+		transition: background .15s, color .15s, box-shadow .15s;
+		&:hover {
+			background: var(--wpzf-accent);
+			border-color: var(--wpzf-accent);
+			box-shadow: 4px 4px 0 var(--wpzf-text);
+		}
+	}
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   THEME: rounded
+   Pill-shaped inputs, soft purple, friendly and airy.
+   ──────────────────────────────────────────────────────────────────────────── */
+.wpzf-form.wpzf-theme-rounded {
+	--wpzf-accent:  #7c3aed;
+	--wpzf-accent-soft: #ede9fe;
+	--wpzf-text:    #3b0764;
+	--wpzf-muted:   #7e22ce;
+	--wpzf-border:  #ddd6fe;
+	--wpzf-bg:      #ffffff;
+	--wpzf-radius:  9999px;
+	--wpzf-focus-shadow: 0 0 0 4px rgba(124,58,237,.2);
+
+	color: var(--wpzf-text);
+
+	.wpzf-label {
+		display: block; margin-bottom: 0.4em;
+		font-size: 0.875em; font-weight: 600; color: var(--wpzf-muted);
+	}
+	.wpzf-input {
+		@extend %wpzf-input-base;
+		background: var(--wpzf-accent-soft);
+		color: var(--wpzf-text);
+		border: 1.5px solid var(--wpzf-border);
+		border-radius: var(--wpzf-radius);
+		transition: border-color .15s, box-shadow .15s;
+		&::placeholder { color: rgba(124,58,237,.4); }
+		&:focus { outline: 0; border-color: var(--wpzf-accent); box-shadow: var(--wpzf-focus-shadow); }
+	}
+	textarea.wpzf-input { border-radius: 20px; }
+	.wpzf-input--select { border-radius: var(--wpzf-radius); }
+	.wpzf-help { margin-top: 4px; font-size: 12px; color: var(--wpzf-muted); }
+	.wpzf-choices { gap: 8px; padding-top: 4px; }
+	.wpzf-choice {
+		padding: 8px 16px;
+		background: var(--wpzf-accent-soft);
+		border: 1.5px solid var(--wpzf-border);
+		border-radius: var(--wpzf-radius);
+		gap: 10px;
+		transition: border-color .15s;
+		input { accent-color: var(--wpzf-accent); }
+		&:hover { border-color: var(--wpzf-accent); }
+	}
+	.wpzf-choice--single { background: transparent; border: 0; padding: 4px 0; border-radius: 0; }
+	.wpzf-submit__btn {
+		display: inline-block;
+		padding: 12px 32px;
+		background: var(--wpzf-accent); color: #fff;
+		border: 0; border-radius: var(--wpzf-radius);
+		font: inherit; font-weight: 700;
+		cursor: pointer;
+		box-shadow: 0 4px 14px rgba(124,58,237,.3);
+		transition: transform .12s, box-shadow .15s, filter .15s;
+		&:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,58,237,.4); }
+		&:active { transform: none; filter: brightness(.95); }
+	}
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   THEME: dark
+   Dark canvas, blue accent. Calm and focused.
+   ──────────────────────────────────────────────────────────────────────────── */
+.wpzf-form.wpzf-theme-dark {
+	--wpzf-accent:  #3b82f6;
+	--wpzf-text:    #e2e8f0;
+	--wpzf-muted:   #94a3b8;
+	--wpzf-border:  #334155;
+	--wpzf-bg:      #1e293b;
+	--wpzf-bg-form: #0f172a;
+	--wpzf-radius:  8px;
+	--wpzf-focus-shadow: 0 0 0 3px rgba(59,130,246,.3);
+
+	background: var(--wpzf-bg-form);
+	padding: 24px;
+	border-radius: 12px;
+	color: var(--wpzf-text);
+
+	.wpzf-label {
+		display: block; margin-bottom: 0.4em;
+		font-size: 0.875em; font-weight: 500; color: var(--wpzf-muted);
+	}
+	.wpzf-input {
+		@extend %wpzf-input-base;
+		background: var(--wpzf-bg);
+		color: var(--wpzf-text);
+		border: 1px solid var(--wpzf-border);
+		border-radius: var(--wpzf-radius);
+		transition: border-color .15s, box-shadow .15s;
+		&::placeholder { color: rgba(148,163,184,.5); }
+		&:focus { outline: 0; border-color: var(--wpzf-accent); box-shadow: var(--wpzf-focus-shadow); }
+	}
+	.wpzf-help { margin-top: 4px; font-size: 12px; color: var(--wpzf-muted); }
+	.wpzf-choices { gap: 8px; padding-top: 4px; }
+	.wpzf-choice {
+		padding: 10px 14px;
+		background: var(--wpzf-bg);
+		border: 1px solid var(--wpzf-border);
+		border-radius: var(--wpzf-radius);
+		color: var(--wpzf-text);
+		gap: 10px;
+		transition: border-color .15s;
+		input { accent-color: var(--wpzf-accent); }
+		&:hover { border-color: var(--wpzf-accent); }
+	}
+	.wpzf-choice--single { background: transparent; border: 0; padding: 4px 0; border-radius: 0; }
+	.wpzf-heading { color: var(--wpzf-text); }
+	.wpzf-paragraph { color: var(--wpzf-muted); }
+	.wpzf-divider { border-top-color: var(--wpzf-border); }
+	.wpzf-required { color: #f87171; }
+	.wpzf-submit__btn {
+		display: inline-block;
+		padding: 12px 28px;
+		background: var(--wpzf-accent); color: #fff;
+		border: 0; border-radius: var(--wpzf-radius);
+		font: inherit; font-weight: 600;
+		cursor: pointer;
+		transition: filter .15s, transform .12s;
+		&:hover { filter: brightness(1.1); transform: translateY(-1px); }
+		&:active { filter: brightness(.95); transform: none; }
+	}
+	.wpzf-notice[data-status="success"] { background: #052e16; border-color: #166534; color: #86efac; border-radius: var(--wpzf-radius); }
+	.wpzf-notice[data-status="error"]   { background: #450a0a; border-color: #991b1b; color: #fca5a5; border-radius: var(--wpzf-radius); }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
+   THEME: flat
+   Flat/material-inspired. Teal accent, filled soft background inputs.
+   ──────────────────────────────────────────────────────────────────────────── */
+.wpzf-form.wpzf-theme-flat {
+	--wpzf-accent:  #059669;
+	--wpzf-text:    #064e3b;
+	--wpzf-muted:   #6b7280;
+	--wpzf-border:  #a7f3d0;
+	--wpzf-bg:      #ecfdf5;
+	--wpzf-radius:  4px;
+
+	color: var(--wpzf-text);
+
+	.wpzf-label {
+		display: block; margin-bottom: 0.35em;
+		font-size: 0.8em; font-weight: 700; letter-spacing: .03em;
+		text-transform: uppercase; color: var(--wpzf-muted);
+	}
+	.wpzf-input {
+		@extend %wpzf-input-base;
+		background: var(--wpzf-bg);
+		color: var(--wpzf-text);
+		border: 0;
+		border-bottom: 2px solid var(--wpzf-border);
+		border-radius: var(--wpzf-radius) var(--wpzf-radius) 0 0;
+		transition: border-color .15s, background .15s;
+		&::placeholder { color: rgba(5,150,105,.4); }
+		&:focus {
+			outline: 0;
+			background: #d1fae5;
+			border-bottom-color: var(--wpzf-accent);
+		}
+	}
+	.wpzf-help { margin-top: 4px; font-size: 12px; color: var(--wpzf-muted); }
+	.wpzf-choices { gap: 6px; padding-top: 4px; }
+	.wpzf-choice {
+		padding: 8px 12px;
+		background: var(--wpzf-bg);
+		border-radius: var(--wpzf-radius);
+		gap: 10px;
+		input { accent-color: var(--wpzf-accent); }
+	}
+	.wpzf-choice--single { background: transparent; padding: 4px 0; }
+	.wpzf-submit__btn {
+		display: inline-block;
+		padding: 12px 28px;
+		background: var(--wpzf-accent); color: #fff;
+		border: 0; border-radius: var(--wpzf-radius);
+		font: inherit; font-weight: 600;
+		letter-spacing: .02em;
+		cursor: pointer;
+		transition: filter .15s;
+		&:hover { filter: brightness(1.08); }
+		&:active { filter: brightness(.96); }
+	}
+}

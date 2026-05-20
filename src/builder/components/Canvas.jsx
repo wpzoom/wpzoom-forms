@@ -70,7 +70,7 @@ export default function Canvas({
 	return (
 		<main className="wpzf-canvas">
 			<div className="wpzf-canvas__inner">
-				<div className={ cls( 'wpzf-preview', 'wpzf-labels-' + settings.labelsPosition ) }>
+				<div className={ cls( 'wpzf-preview', 'wpzf-form', settings.theme && settings.theme !== 'default' && 'wpzf-theme-' + settings.theme, 'wpzf-labels-' + settings.labelsPosition ) }>
 
 					{ empty && (
 						<div
@@ -131,8 +131,8 @@ export default function Canvas({
 					) }
 
 					{ ! empty && (
-						<div className={ cls( 'wpzf-preview-submit', 'wpzf-preview-submit--align-' + settings.submitAlign ) }>
-							<button type="button" className="wpzf-preview-submit__btn">{ settings.submitLabel || __( 'Submit', 'wpzoom-forms' ) }</button>
+						<div className={ cls( 'wpzf-preview-submit', 'wpzf-submit', 'wpzf-preview-submit--align-' + settings.submitAlign, 'wpzf-submit--align-' + settings.submitAlign ) }>
+							<button type="button" className="wpzf-preview-submit__btn wpzf-submit__btn">{ settings.submitLabel || __( 'Submit', 'wpzoom-forms' ) }</button>
 						</div>
 					) }
 

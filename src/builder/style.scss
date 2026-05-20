@@ -385,40 +385,45 @@ body[class*="page_wpzf-form-builder"] {
 
 .wpzf-required { color: $danger; }
 
-/* preview inputs (non-interactive look) */
-.wpzf-preview-input {
+/* preview inputs — default (no theme) look */
+.wpzf-input {
 	width: 100%; box-sizing: border-box;
 	padding: 9px 12px;
 	background: $bg-card;
 	border: 1px solid $border; border-radius: $radius-medium;
 	font: inherit; color: $text;
-	pointer-events: none;
 }
-textarea.wpzf-preview-input { resize: none; }
-.wpzf-preview-choices { display: flex; flex-direction: column; gap: 6px; }
-.wpzf-preview-choice  {
+textarea.wpzf-input { resize: none; }
+.wpzf-choices { display: flex; flex-direction: column; gap: 6px; }
+.wpzf-choice  {
 	display: inline-flex; align-items: center; gap: 8px;
 	color: $text; font-size: 13px;
-	pointer-events: none;
 }
-.wpzf-preview-heading { margin: 0; font-weight: 600; color: $text; }
-.wpzf-preview-paragraph { color: $text; }
-.wpzf-preview-divider { border: 0; border-top: 1px solid $border; margin: 8px 0; }
+.wpzf-heading { margin: 0; font-weight: 600; color: $text; }
+.wpzf-paragraph { color: $text; }
+.wpzf-divider { border: 0; border-top: 1px solid $border; margin: 8px 0; }
+
+/* make all preview form controls non-interactive */
+.wpzf-preview .wpzf-input,
+.wpzf-preview .wpzf-choice input,
+.wpzf-preview .wpzf-choices { pointer-events: none; }
 
 .wpzf-preview-submit {
 	margin-left: 6px;
 	&--align-left   { text-align: left; }
 	&--align-center { text-align: center; }
 	&--align-right  { text-align: right; }
-	&--align-full .wpzf-preview-submit__btn { width: 100%; }
-	&__btn {
-		display: inline-block;
-		padding: 11px 28px;
-		background: var(--wp-admin-theme-color, #{$brand}); color: #fff;
-		border: 0; border-radius: $radius-medium;
-		font-size: 14px; font-weight: 600;
-		cursor: default; pointer-events: none;
-	}
+	&--align-full .wpzf-submit__btn { width: 100%; }
+}
+
+/* default (no theme) submit button */
+.wpzf-preview-submit__btn {
+	display: inline-block;
+	padding: 11px 28px;
+	background: var(--wp-admin-theme-color, #{$brand}); color: #fff;
+	border: 0; border-radius: $radius-medium;
+	font-size: 14px; font-weight: 600;
+	cursor: default; pointer-events: none;
 }
 
 /* inspector --------------------------------------------------------------- */
@@ -497,8 +502,9 @@ textarea.wpzf-preview-input { resize: none; }
 
 .wpzf-row { margin-bottom: 14px;
 	&__label {
-		display: block; font-size: 12px; font-weight: 600; color: $text;
-		margin-bottom: 4px;
+		display: block; font-size: 11px; color: $text;
+		margin-bottom: 8px;
+		text-transform: uppercase;
 	}
 	&__control input[type="text"],
 	&__control input[type="email"],
@@ -517,6 +523,80 @@ textarea.wpzf-preview-input { resize: none; }
 		}
 	}
 	&__control textarea { resize: vertical; font-family: inherit; }
+}
+
+/* style picker ------------------------------------------------------------ */
+.wpzf-style-picker {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px;
+	margin-top: 4px;
+	margin-bottom: 16px;
+
+	&__item {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 7px;
+		padding: 10px 8px 9px;
+		background: $bg-card;
+		border: 1px solid $border;
+		border-radius: $radius-medium;
+		cursor: pointer;
+		transition: border-color .15s, box-shadow .15s;
+		text-align: center;
+
+		&:hover { border-color: var(--wp-admin-theme-color, #{$brand}); }
+
+		&.is-selected {
+			border-color: var(--wp-admin-theme-color, #{$brand});
+			box-shadow: 0 0 0 1px var(--wp-admin-theme-color, #{$brand});
+		}
+
+		&.is-pro {
+			cursor: default;
+			&:hover { border-color: #b45309; box-shadow: none; }
+		}
+	}
+
+	&__swatches {
+		display: flex;
+		gap: 3px;
+		align-items: center;
+	}
+
+	&__swatch {
+		width: 16px;
+		height: 16px;
+		border-radius: 50%;
+		border: 1px solid rgba(0,0,0,.1);
+		flex-shrink: 0;
+	}
+
+	&__name {
+		font-size: 10px;
+		font-weight: 600;
+		letter-spacing: .05em;
+		text-transform: uppercase;
+		color: $text;
+		line-height: 1.2;
+	}
+
+	&__pro-badge {
+		position: absolute;
+		top: 5px;
+		right: 5px;
+		font-size: 8px;
+		font-weight: 700;
+		letter-spacing: .04em;
+		text-transform: uppercase;
+		color: #b45309;
+		background: rgba(#b45309, .1);
+		padding: 1px 4px;
+		border-radius: 3px;
+		line-height: 1.5;
+	}
 }
 
 .wpzf-toggle {
@@ -907,4 +987,21 @@ textarea.wpzf-preview-input { resize: none; }
 		margin: 8px 0 0;
 		border-radius: 0;
 	}
+}
+
+/* ── frontend theme styles (scoped under .wpzf-form.wpzf-theme-*) ─────────── */
+@import '../frontend-form/style';
+
+// The canvas card always keeps its own padding regardless of what the
+// theme sets on .wpzf-form, so the card chrome doesn't collapse.
+.wpzf-preview.wpzf-form {
+	padding: 32px;
+	box-shadow: $elevation-small;
+}
+
+// Theme-themed submit button overrides the default builder button look
+// but stays non-interactive.
+.wpzf-preview .wpzf-submit__btn {
+	cursor: default !important;
+	pointer-events: none !important;
 }

@@ -12,8 +12,8 @@ export default function ProModal({ fieldLabel, onClose }) {
 		>
 			<p>
 				{ fieldLabel
-					? __( 'The', 'wpzoom-forms' ) + ' ' + fieldLabel + ' ' + __( 'field is available in WPZOOM Forms Pro. Upgrade to unlock it along with more field types, advanced integrations, and priority support.', 'wpzoom-forms' )
-					: __( 'This field is available in WPZOOM Forms Pro. Upgrade to unlock more field types, advanced integrations, and priority support.', 'wpzoom-forms' )
+					? __( 'The', 'wpzoom-forms' ) + ' ' + fieldLabel + ' ' + __( 'is available in WPZOOM Forms Pro. Upgrade to unlock it along with more features, advanced integrations, and priority support.', 'wpzoom-forms' )
+					: __( 'This feature is available in WPZOOM Forms Pro. Upgrade to unlock more features, advanced integrations, and priority support.', 'wpzoom-forms' )
 				}
 			</p>
 			<div className="wpzf-pro-modal__actions">

@@ -182,7 +182,7 @@ class WPZOOM_Forms_Schema {
 			'submitLabel'      => isset( $in['submitLabel'] ) ? self::clean_string( $in['submitLabel'] ) : $defaults['submitLabel'],
 			'submitAlign'      => self::enum( isset( $in['submitAlign'] ) ? $in['submitAlign'] : '', array( 'left', 'center', 'right', 'full' ), $defaults['submitAlign'] ),
 			'labelsPosition'   => self::enum( isset( $in['labelsPosition'] ) ? $in['labelsPosition'] : '', array( 'top', 'left', 'hidden' ), $defaults['labelsPosition'] ),
-			'theme'            => self::enum( isset( $in['theme'] ) ? $in['theme'] : '', array( 'default', 'minimal', 'modern' ), $defaults['theme'] ),
+			'theme'            => self::enum( isset( $in['theme'] ) ? $in['theme'] : '', array( 'default', 'minimal', 'modern', 'bold', 'rounded', 'dark', 'flat' ), $defaults['theme'] ),
 			'honeypot'         => ! empty( $in['honeypot'] ),
 			'showRequiredMark' => ! empty( $in['showRequiredMark'] ),
 		);
