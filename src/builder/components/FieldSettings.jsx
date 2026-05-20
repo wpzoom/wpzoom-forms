@@ -7,6 +7,7 @@ import {
 	ToggleControl,
 	Button,
 	Modal,
+	TabPanel,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
@@ -19,6 +20,9 @@ const HAS_REQUIRED = [ 'text', 'name', 'email', 'tel', 'url', 'number', 'textare
 const HAS_HELP     = [ 'text', 'name', 'email', 'tel', 'url', 'number', 'textarea', 'date', 'select', 'radio', 'checkboxes', 'checkbox' ];
 const HAS_DEFAULT  = [ 'text', 'name', 'email', 'tel', 'url', 'number', 'date', 'select', 'hidden' ];
 const HAS_OPTIONS  = [ 'select', 'radio', 'checkboxes' ];
+const HAS_CONDITIONAL_LOGIC = [ 'text', 'name', 'email', 'tel', 'url', 'textarea', 'select', 'checkboxes', 'checkbox', 'radio', 'date' ];
+
+const CONDITIONAL_LOGIC_URL = 'https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpzoom-forms-free&utm_medium=conditional-logic-upsell&utm_campaign=plugin-upsell';
 
 const WIDTH_OPTIONS = [
 	{ value: 'full',       label: __( 'Full', 'wpzoom-forms' ) },
@@ -34,6 +38,11 @@ const DATE_FORMATS = [
 	{ value: 'd/m/Y',  label: 'DD/MM/YYYY (17/05/2026)' },
 ];
 
+const TABS = [
+	{ name: 'general',  title: __( 'General',  'wpzoom-forms' ) },
+	{ name: 'advanced', title: __( 'Advanced', 'wpzoom-forms' ) },
+];
+
 export default function FieldSettings({ field, onChange }) {
 	const set = ( patch ) => onChange( patch );
 
@@ -44,187 +53,225 @@ export default function FieldSettings({ field, onChange }) {
 				<span className="wpzf-inspector__type">{ field.type }</span>
 			</div>
 
-			<div className="wpzf-inspector__body">
-				{ HAS_LABEL.includes( field.type ) && (
-					<TextControl
-						label={ __( 'Label', 'wpzoom-forms' ) }
-						value={ field.label || '' }
-						onChange={ ( v ) => set( { label: v } ) }
-					/>
+			<TabPanel
+				className="wpzf-inspector__tabs"
+				tabs={ TABS }
+			>
+				{ ( tab ) => (
+					<div className="wpzf-inspector__body">
+						{ tab.name === 'general' && (
+							<>
+								{ HAS_LABEL.includes( field.type ) && (
+									<TextControl
+										label={ __( 'Label', 'wpzoom-forms' ) }
+										value={ field.label || '' }
+										onChange={ ( v ) => set( { label: v } ) }
+									/>
+								) }
+
+								{ field.type === 'heading' && (
+									<>
+										<TextControl
+											label={ __( 'Text', 'wpzoom-forms' ) }
+											value={ field.text || '' }
+											onChange={ ( v ) => set( { text: v } ) }
+										/>
+										<SelectControl
+											label={ __( 'Heading Level', 'wpzoom-forms' ) }
+											value={ field.level || 'h3' }
+											options={ [
+												{ value: 'h2', label: 'H2' },
+												{ value: 'h3', label: 'H3' },
+												{ value: 'h4', label: 'H4' },
+												{ value: 'h5', label: 'H5' },
+											] }
+											onChange={ ( v ) => set( { level: v } ) }
+										/>
+									</>
+								) }
+
+								{ field.type === 'paragraph' && (
+									<TextareaControl
+										label={ __( 'Text', 'wpzoom-forms' ) }
+										rows={ 4 }
+										value={ field.text || '' }
+										onChange={ ( v ) => set( { text: v } ) }
+									/>
+								) }
+
+								{ HAS_PLACEHOLDER.includes( field.type ) && (
+									<TextControl
+										label={ __( 'Placeholder', 'wpzoom-forms' ) }
+										value={ field.placeholder || '' }
+										onChange={ ( v ) => set( { placeholder: v } ) }
+									/>
+								) }
+
+								{ HAS_DEFAULT.includes( field.type ) && (
+									<TextControl
+										label={ __( 'Default Value', 'wpzoom-forms' ) }
+										value={ field.defaultValue || '' }
+										onChange={ ( v ) => set( { defaultValue: v } ) }
+									/>
+								) }
+
+								{ field.type === 'textarea' && (
+									<TextControl
+										label={ __( 'Rows', 'wpzoom-forms' ) }
+										type="number"
+										min={ 1 }
+										max={ 20 }
+										value={ String( field.rows || 4 ) }
+										onChange={ ( v ) => set( { rows: parseInt( v, 10 ) || 4 } ) }
+									/>
+								) }
+
+								{ field.type === 'number' && (
+									<>
+										<TextControl
+											label={ __( 'Min', 'wpzoom-forms' ) }
+											type="number"
+											value={ field.min == null ? '' : String( field.min ) }
+											onChange={ ( v ) => set( { min: v === '' ? null : parseFloat( v ) } ) }
+										/>
+										<TextControl
+											label={ __( 'Max', 'wpzoom-forms' ) }
+											type="number"
+											value={ field.max == null ? '' : String( field.max ) }
+											onChange={ ( v ) => set( { max: v === '' ? null : parseFloat( v ) } ) }
+										/>
+										<TextControl
+											label={ __( 'Step', 'wpzoom-forms' ) }
+											type="number"
+											step="any"
+											value={ field.step == null ? '' : String( field.step ) }
+											onChange={ ( v ) => set( { step: v === '' ? null : parseFloat( v ) } ) }
+										/>
+									</>
+								) }
+
+								{ field.type === 'date' && (
+									<>
+										<ToggleGroupControl
+											label={ __( 'Mode', 'wpzoom-forms' ) }
+											value={ field.mode || 'single' }
+											onChange={ ( v ) => set( { mode: v } ) }
+											isBlock
+											__nextHasNoMarginBottom={ false }
+										>
+											<ToggleGroupControlOption value="single"   label={ __( 'Single',   'wpzoom-forms' ) } />
+											<ToggleGroupControlOption value="multiple" label={ __( 'Multiple', 'wpzoom-forms' ) } />
+											<ToggleGroupControlOption value="range"    label={ __( 'Range',    'wpzoom-forms' ) } />
+										</ToggleGroupControl>
+										<SelectControl
+											label={ __( 'Date Format', 'wpzoom-forms' ) }
+											value={ field.format || 'Y-m-d' }
+											options={ DATE_FORMATS }
+											onChange={ ( v ) => set( { format: v } ) }
+										/>
+									</>
+								) }
+
+								{ field.type === 'checkbox' && (
+									<TextControl
+										label={ __( 'Checkbox Label', 'wpzoom-forms' ) }
+										value={ field.checkboxText || '' }
+										onChange={ ( v ) => set( { checkboxText: v } ) }
+									/>
+								) }
+
+								{ field.type === 'email' && (
+									<ToggleControl
+										label={ __( 'Use as reply-to address', 'wpzoom-forms' ) }
+										checked={ !! field.isReplyTo }
+										onChange={ ( v ) => set( { isReplyTo: v } ) }
+									/>
+								) }
+
+								{ field.type === 'text' && (
+									<ToggleControl
+										label={ __( 'Use as email subject', 'wpzoom-forms' ) }
+										checked={ !! field.isSubject }
+										onChange={ ( v ) => set( { isSubject: v } ) }
+									/>
+								) }
+
+								{ HAS_OPTIONS.includes( field.type ) && (
+									<OptionsEditor options={ field.options || [] } onChange={ ( options ) => set( { options } ) } />
+								) }
+
+								{ HAS_REQUIRED.includes( field.type ) && (
+									<ToggleControl
+										label={ __( 'Required', 'wpzoom-forms' ) }
+										checked={ !! field.required }
+										onChange={ ( v ) => set( { required: v } ) }
+									/>
+								) }
+
+								{ HAS_HELP.includes( field.type ) && (
+									<TextareaControl
+										label={ __( 'Help text', 'wpzoom-forms' ) }
+										rows={ 2 }
+										value={ field.help || '' }
+										onChange={ ( v ) => set( { help: v } ) }
+									/>
+								) }
+
+								<ToggleGroupControl
+									label={ __( 'Width', 'wpzoom-forms' ) }
+									value={ field.width || 'full' }
+									onChange={ ( v ) => set( { width: v } ) }
+									isBlock
+									__nextHasNoMarginBottom={ false }
+								>
+									{ WIDTH_OPTIONS.map( ( w ) => (
+										<ToggleGroupControlOption key={ w.value } value={ w.value } label={ w.label } />
+									) ) }
+								</ToggleGroupControl>
+							</>
+						) }
+
+						{ tab.name === 'advanced' && (
+							<>
+								<TextControl
+									label={ __( 'CSS Class', 'wpzoom-forms' ) }
+									value={ field.cssClass || '' }
+									onChange={ ( v ) => set( { cssClass: v } ) }
+								/>
+
+								<TextControl
+									label={ __( 'Field ID', 'wpzoom-forms' ) }
+									value={ field.id }
+									disabled
+								/>
+
+								{ HAS_CONDITIONAL_LOGIC.includes( field.type ) && (
+									<div className="wpzf-conditional-logic-upsell">
+										<div className="wpzf-conditional-logic-upsell__header">
+											<span className="wpzf-conditional-logic-upsell__title">
+												{ __( 'Conditional Logic', 'wpzoom-forms' ) }
+											</span>
+											<span className="wpzf-conditional-logic-upsell__badge">PRO</span>
+										</div>
+										<div className="wpzf-conditional-logic-upsell__body">
+											<p>{ __( 'Show or hide this field based on the value of another field.', 'wpzoom-forms' ) }</p>
+											<Button
+												href={ CONDITIONAL_LOGIC_URL }
+												target="_blank"
+												rel="noopener noreferrer"
+												variant="primary"
+											>
+												{ __( 'Unlock this feature', 'wpzoom-forms' ) }
+											</Button>
+						
+										</div>
+									</div>
+								) }
+							</>
+						) }
+					</div>
 				) }
-
-				{ field.type === 'heading' && (
-					<>
-						<TextControl
-							label={ __( 'Text', 'wpzoom-forms' ) }
-							value={ field.text || '' }
-							onChange={ ( v ) => set( { text: v } ) }
-						/>
-						<SelectControl
-							label={ __( 'Heading Level', 'wpzoom-forms' ) }
-							value={ field.level || 'h3' }
-							options={ [
-								{ value: 'h2', label: 'H2' },
-								{ value: 'h3', label: 'H3' },
-								{ value: 'h4', label: 'H4' },
-								{ value: 'h5', label: 'H5' },
-							] }
-							onChange={ ( v ) => set( { level: v } ) }
-						/>
-					</>
-				) }
-
-				{ field.type === 'paragraph' && (
-					<TextareaControl
-						label={ __( 'Text', 'wpzoom-forms' ) }
-						rows={ 4 }
-						value={ field.text || '' }
-						onChange={ ( v ) => set( { text: v } ) }
-					/>
-				) }
-
-				{ HAS_PLACEHOLDER.includes( field.type ) && (
-					<TextControl
-						label={ __( 'Placeholder', 'wpzoom-forms' ) }
-						value={ field.placeholder || '' }
-						onChange={ ( v ) => set( { placeholder: v } ) }
-					/>
-				) }
-
-				{ HAS_DEFAULT.includes( field.type ) && (
-					<TextControl
-						label={ __( 'Default Value', 'wpzoom-forms' ) }
-						value={ field.defaultValue || '' }
-						onChange={ ( v ) => set( { defaultValue: v } ) }
-					/>
-				) }
-
-				{ field.type === 'textarea' && (
-					<TextControl
-						label={ __( 'Rows', 'wpzoom-forms' ) }
-						type="number"
-						min={ 1 }
-						max={ 20 }
-						value={ String( field.rows || 4 ) }
-						onChange={ ( v ) => set( { rows: parseInt( v, 10 ) || 4 } ) }
-					/>
-				) }
-
-				{ field.type === 'number' && (
-					<>
-						<TextControl
-							label={ __( 'Min', 'wpzoom-forms' ) }
-							type="number"
-							value={ field.min == null ? '' : String( field.min ) }
-							onChange={ ( v ) => set( { min: v === '' ? null : parseFloat( v ) } ) }
-						/>
-						<TextControl
-							label={ __( 'Max', 'wpzoom-forms' ) }
-							type="number"
-							value={ field.max == null ? '' : String( field.max ) }
-							onChange={ ( v ) => set( { max: v === '' ? null : parseFloat( v ) } ) }
-						/>
-						<TextControl
-							label={ __( 'Step', 'wpzoom-forms' ) }
-							type="number"
-							step="any"
-							value={ field.step == null ? '' : String( field.step ) }
-							onChange={ ( v ) => set( { step: v === '' ? null : parseFloat( v ) } ) }
-						/>
-					</>
-				) }
-
-				{ field.type === 'date' && (
-					<>
-						<ToggleGroupControl
-							label={ __( 'Mode', 'wpzoom-forms' ) }
-							value={ field.mode || 'single' }
-							onChange={ ( v ) => set( { mode: v } ) }
-							isBlock
-							__nextHasNoMarginBottom={ false }
-						>
-							<ToggleGroupControlOption value="single"   label={ __( 'Single',   'wpzoom-forms' ) } />
-							<ToggleGroupControlOption value="multiple" label={ __( 'Multiple', 'wpzoom-forms' ) } />
-							<ToggleGroupControlOption value="range"    label={ __( 'Range',    'wpzoom-forms' ) } />
-						</ToggleGroupControl>
-						<SelectControl
-							label={ __( 'Date Format', 'wpzoom-forms' ) }
-							value={ field.format || 'Y-m-d' }
-							options={ DATE_FORMATS }
-							onChange={ ( v ) => set( { format: v } ) }
-						/>
-					</>
-				) }
-
-				{ field.type === 'checkbox' && (
-					<TextControl
-						label={ __( 'Checkbox Label', 'wpzoom-forms' ) }
-						value={ field.checkboxText || '' }
-						onChange={ ( v ) => set( { checkboxText: v } ) }
-					/>
-				) }
-
-				{ field.type === 'email' && (
-					<ToggleControl
-						label={ __( 'Use as reply-to address', 'wpzoom-forms' ) }
-						checked={ !! field.isReplyTo }
-						onChange={ ( v ) => set( { isReplyTo: v } ) }
-					/>
-				) }
-
-				{ field.type === 'text' && (
-					<ToggleControl
-						label={ __( 'Use as email subject', 'wpzoom-forms' ) }
-						checked={ !! field.isSubject }
-						onChange={ ( v ) => set( { isSubject: v } ) }
-					/>
-				) }
-
-				{ HAS_OPTIONS.includes( field.type ) && (
-					<OptionsEditor options={ field.options || [] } onChange={ ( options ) => set( { options } ) } />
-				) }
-
-				{ HAS_REQUIRED.includes( field.type ) && (
-					<ToggleControl
-						label={ __( 'Required', 'wpzoom-forms' ) }
-						checked={ !! field.required }
-						onChange={ ( v ) => set( { required: v } ) }
-					/>
-				) }
-
-				{ HAS_HELP.includes( field.type ) && (
-					<TextareaControl
-						label={ __( 'Help text', 'wpzoom-forms' ) }
-						rows={ 2 }
-						value={ field.help || '' }
-						onChange={ ( v ) => set( { help: v } ) }
-					/>
-				) }
-
-				<ToggleGroupControl
-					label={ __( 'Width', 'wpzoom-forms' ) }
-					value={ field.width || 'full' }
-					onChange={ ( v ) => set( { width: v } ) }
-					isBlock
-					__nextHasNoMarginBottom={ false }
-				>
-					{ WIDTH_OPTIONS.map( ( w ) => (
-						<ToggleGroupControlOption key={ w.value } value={ w.value } label={ w.label } />
-					) ) }
-				</ToggleGroupControl>
-
-				<TextControl
-					label={ __( 'CSS Class', 'wpzoom-forms' ) }
-					value={ field.cssClass || '' }
-					onChange={ ( v ) => set( { cssClass: v } ) }
-				/>
-
-				<TextControl
-					label={ __( 'Field ID', 'wpzoom-forms' ) }
-					value={ field.id }
-					disabled
-				/>
-			</div>
+			</TabPanel>
 		</div>
 	);
 }

@@ -40,6 +40,7 @@ export default function Topbar({
 				</div>
 				<Button
 					variant="secondary"
+					size="compact"
 					href={ submissionsUrl }
 					label={ __( 'View Submissions', 'wpzoom-forms' ) }
 					showTooltip
@@ -86,6 +87,7 @@ export default function Topbar({
 			<div className="wpzf-topbar__right">
 				<Button
 					icon={ code }
+					size="compact"
 					onClick={ onEmbed }
 				>
 					{ __( 'Embed', 'wpzoom-forms' ) }
@@ -95,6 +97,7 @@ export default function Topbar({
 
 				<Button
 					icon={ BellIcon }
+					size="compact"
 					isPressed={ activeTab === 'notifications' }
 					label={ __( 'Notifications', 'wpzoom-forms' ) }
 					showTooltip
@@ -105,6 +108,7 @@ export default function Topbar({
 
 				<Button
 					icon={ settings }
+					size="compact"
 					isPressed={ activeTab === 'form-settings' }
 					label={ __( 'Form Settings', 'wpzoom-forms' ) }
 					showTooltip
@@ -117,6 +121,7 @@ export default function Topbar({
 
 				<Button
 					variant="primary"
+					size="compact"
 					onClick={ onSave }
 					disabled={ saving || ! dirty }
 					className={ dirty ? 'is-dirty' : undefined }
