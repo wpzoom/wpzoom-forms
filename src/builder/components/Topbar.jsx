@@ -9,6 +9,10 @@ const BellIcon = () => (
 	</svg>
 );
 
+const WPZform = (
+	<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" clipRule="evenodd" d="M7.33 2h13.34v20H4V5.33h3.33V2zm10 3.33h-6.66v3.34H7.33v10h3.34v-3.34H14V12h-3.33V8.67h6.66V5.33z" /></svg>
+)
+
 export default function Topbar({
 	title,
 	dirty,
@@ -28,14 +32,16 @@ export default function Topbar({
 		<header className="wpzf-topbar">
 			<div className="wpzf-topbar__left">
 				<Button
+					variant="primary"
 					className="wpzf-topbar__exit"
 					href={ exitUrl }
 					label={ __( 'Back to forms', 'wpzoom-forms' ) }
 					icon={chevronLeft}
+					iconSize={ 28 }
 					showTooltip
 				/>
 				<div className="wpzf-topbar__brand">
-					<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" clipRule="evenodd" d="M7.33 2h13.34v20H4V5.33h3.33V2zm10 3.33h-6.66v3.34H7.33v10h3.34v-3.34H14V12h-3.33V8.67h6.66V5.33z" /></svg>
+					{WPZform}
 					<span>{ __( 'WPZOOM Forms', 'wpzoom-forms' ) }</span>
 				</div>
 				<Button

@@ -316,7 +316,7 @@ function OptionsEditor({ options, onChange }) {
 		<div className="wpzf-row">
 			<div className="wpzf-row__label-row">
 				<label className="wpzf-row__label">{ __( 'Options', 'wpzoom-forms' ) }</label>
-				<Button variant="link" onClick={ () => setBulk( true ) }>
+				<Button onClick={ () => setBulk( true ) }>
 					{ __( 'Bulk Edit', 'wpzoom-forms' ) }
 				</Button>
 			</div>
@@ -349,6 +349,7 @@ function OptionsEditor({ options, onChange }) {
 							variant="tertiary"
 							isDestructive
 							icon={ trash }
+							iconSize={ 16 }
 							label={ __( 'Remove option', 'wpzoom-forms' ) }
 							onClick={ () => remove( i ) }
 							size="compact"
@@ -358,10 +359,10 @@ function OptionsEditor({ options, onChange }) {
 			</div>
 			<Button
 				variant="secondary"
+				size="compact"
 				icon={ plus }
 				onClick={ add }
-				size="compact"
-				style={ { marginTop: '6px' } }
+				style={ { marginTop: '10px' } }
 			>
 				{ __( 'Add option', 'wpzoom-forms' ) }
 			</Button>

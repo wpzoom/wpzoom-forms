@@ -108,9 +108,16 @@ body[class*="page_wpzf-form-builder"] {
 	position: relative;
 	background: $bg-card;
 	border-bottom: 1px solid $border;
-	padding: 0 16px;
+	padding-right:16px;
 	height: 56px;
 	flex-shrink: 0;
+
+	&__exit {
+		height: 56px;
+    	min-width: 56px !important;
+		background-color: #1e1e1e !important;
+		border-radius: 0;
+	}
 
 	&__left, &__right { display: flex; align-items: center; gap: 8px; }
 
