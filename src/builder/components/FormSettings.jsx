@@ -57,6 +57,18 @@ const FORM_STYLES = [
 		colors: [ '#0f172a', '#06b6d4', '#d946ef', '#7c3aed', '#818cf8' ],
 		isPro:  true,
 	},
+	{
+		value:  'outline',
+		label:  __( 'Outline', 'wpzoom-forms' ),
+		colors: [ '#2563eb', '#ffffff', '#d1d5db', '#111827', '#f9fafb' ],
+		isPro:  true,
+	},
+	{
+		value:    'custom',
+		label:    __( 'Custom Style', 'wpzoom-forms' ),
+		isCustom: true,
+		isPro:    true,
+	},
 ];
 
 function StylePicker( { value, onChange } ) {
@@ -81,11 +93,17 @@ function StylePicker( { value, onChange } ) {
 						} }
 						title={ style.label + ( style.isPro ? ' (PRO)' : '' ) }
 					>
-						<div className="wpzf-style-picker__swatches">
-							{ style.colors.map( ( color, i ) => (
-								<span key={ i } className="wpzf-style-picker__swatch" style={ { background: color } } />
-							) ) }
-						</div>
+						{ style.isCustom ? (
+							<div className="wpzf-style-picker__custom-preview">
+								<svg xmlns="http://www.w3.org/2000/svg" height="22" viewBox="0 -960 960 960" width="22" fill="currentColor"><path d="M120-160v-117q0-16 6-30.5t17-25.5l335-335-58-56 58-56 76 76 124-124q5-5 12.5-8t15.5-3q8 0 15 3t13 8l94 94q5 6 8 13t3 15q0 8-3 15.5t-8 12.5L705-555l76 78-57 57-56-58-335 335q-11 11-25.5 17t-30.5 6H160q-17 0-28.5-11.5T120-160Zm80-40h78l332-334-76-76-334 332v78Z"/></svg>
+							</div>
+						) : (
+							<div className="wpzf-style-picker__swatches">
+								{ style.colors.map( ( color, i ) => (
+									<span key={ i } className="wpzf-style-picker__swatch" style={ { background: color } } />
+								) ) }
+							</div>
+						) }
 						<span className="wpzf-style-picker__name">{ style.label }</span>
 						{ style.isPro && <span className="wpzf-style-picker__pro-badge">PRO</span> }
 					</button>

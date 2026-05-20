@@ -597,6 +597,16 @@ textarea.wpzf-input { resize: none; }
 		border-radius: 3px;
 		line-height: 1.5;
 	}
+
+	&__custom-preview {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 88px;
+		height: 16px;
+		border-radius: 8px;
+		opacity: .85;
+	}
 }
 
 .wpzf-toggle {
