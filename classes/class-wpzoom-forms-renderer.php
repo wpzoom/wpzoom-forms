@@ -63,9 +63,7 @@ class WPZOOM_Forms_Renderer {
 			wp_enqueue_style( 'wpzf-frontend-form' );
 		}
 
-		// Theme value of 'default' means "let the site theme style it" → we still ship
-		// minimal *layout* classes but skip the visual theme variant entirely.
-		$theme_class = $settings['theme'] !== 'default' ? ' wpzf-theme-' . sanitize_html_class( $settings['theme'] ) : '';
+		$theme_class = ' wpzf-theme-' . sanitize_html_class( ! empty( $settings['theme'] ) ? $settings['theme'] : 'default' );
 
 		// Collect per-field custom CSS.
 		$field_css = '';
