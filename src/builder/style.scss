@@ -311,18 +311,20 @@ body[class*="page_wpzf-form-builder"] {
 }
 
 .wpzf-canvas-fields {
-	display: flex; flex-wrap: wrap; gap: 16px;
+	display: flex; flex-wrap: wrap; gap: 4px;
+	padding-left: 24px;
+	margin-left: -30px;
 }
 
 // Drop zone rendered after the last field — accepts palette drags and reorder-to-end.
 .wpzf-canvas-drop-end {
 	flex-basis: 100%;
-	min-height: 48px;
-	border: 2px dashed $border;
+	min-height: 16px;
 	border-radius: $radius-medium;
 	transition: border-color .15s, background .15s;
 	&.is-over {
-		border-color: var(--wp-admin-theme-color, #{$brand});
+		min-height: 48px;
+		border: 2px dashed var(--wp-admin-theme-color, #{$brand});
 		background: rgba($brand, .04);
 	}
 }
@@ -338,21 +340,21 @@ body[class*="page_wpzf-form-builder"] {
 
 .wpzf-field-card {
 	position: relative;
-	padding: 12px 14px 12px 30px;
-	background: $bg-card;
-	border: 1px solid $border;
+	padding: 6px 10px;
+	border: 1px solid transparent;
 	border-radius: $radius-medium;
 	cursor: pointer;
-	transition: border-color .15s, box-shadow .15s;
+	transition: border-color .15s, box-shadow .15s, background .15s;
 
-	&:hover  { border-color: $gray-400; box-shadow: $elevation-x-small; }
+	&:hover  { background: $bg-card; border-color: $gray-400; border-style: dotted; }
 	&.is-selected {
+		background: rgba($brand, .04);
 		border-color: var(--wp-admin-theme-color, #{$brand});
-		box-shadow: 0 0 0 2px rgba($brand, .15);
+		border-style: dotted;
 	}
 
 	&__drag {
-		position: absolute; left: 8px; top: 50%; transform: translateY(-50%);
+		position: absolute; left: -20px; top: 50%; transform: translateY(-50%);
 		color: $muted; opacity: 0; cursor: grab;
 		transition: opacity .15s;
 	}
@@ -396,7 +398,7 @@ textarea.wpzf-preview-input { resize: none; }
 .wpzf-preview-divider { border: 0; border-top: 1px solid $border; margin: 8px 0; }
 
 .wpzf-preview-submit {
-	margin-top: 24px;
+	margin-left: 6px;
 	&--align-left   { text-align: left; }
 	&--align-center { text-align: center; }
 	&--align-right  { text-align: right; }

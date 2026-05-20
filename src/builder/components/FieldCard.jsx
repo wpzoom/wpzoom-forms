@@ -3,7 +3,7 @@ import { cls } from '../utils';
 
 /**
  * Renders a field preview inside the canvas. Click selects, hover shows actions.
- * The preview is intentionally non-interactive (pointer-events disabled inside).
+ * The preview is intentionally non-interactive (pointer-events readonly).
  */
 export default function FieldCard({ field, settings, selected, onSelect, onDelete, onDuplicate }) {
 	const showLabel = settings.labelsPosition !== 'hidden' && field.type !== 'checkbox' && field.label;
@@ -51,12 +51,12 @@ function FieldPreview({ field }) {
 		case 'number':
 		case 'date':
 		case 'hidden':
-			return <input type="text" disabled className="wpzf-preview-input" placeholder={ field.placeholder || ' ' } />;
+			return <input type="text" readonly className="wpzf-preview-input" placeholder={ field.placeholder || ' ' } />;
 		case 'textarea':
-			return <textarea disabled className="wpzf-preview-input" rows={ field.rows || 4 } placeholder={ field.placeholder || ' ' } />;
+			return <textarea readonly className="wpzf-preview-input" rows={ field.rows || 4 } placeholder={ field.placeholder || ' ' } />;
 		case 'select':
 			return (
-				<select disabled className="wpzf-preview-input">
+				<select readonly className="wpzf-preview-input">
 					<option>{ field.placeholder || '— Select —' }</option>
 					{ ( field.options || [] ).map( ( o, i ) => <option key={ i }>{ o.label }</option> ) }
 				</select>
@@ -68,7 +68,7 @@ function FieldPreview({ field }) {
 				<div className="wpzf-preview-choices">
 					{ ( field.options || [] ).map( ( o, i ) => (
 						<label key={ i } className="wpzf-preview-choice">
-							<input type={ isRadio ? 'radio' : 'checkbox' } disabled />
+							<input type={ isRadio ? 'radio' : 'checkbox' } readonly/>
 							<span>{ o.label }</span>
 						</label>
 					) ) }
@@ -78,7 +78,7 @@ function FieldPreview({ field }) {
 		case 'checkbox':
 			return (
 				<label className="wpzf-preview-choice wpzf-preview-choice--single">
-					<input type="checkbox" disabled />
+					<input type="checkbox" readonly/>
 					<span>{ field.checkboxText || field.label }</span>
 				</label>
 			);
