@@ -1,6 +1,6 @@
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Icon } from '../icons';
+import FieldsIcons from '../icons';
 import ProModal from './ProModal';
 
 const FIELD_GROUPS = [
@@ -46,7 +46,7 @@ const TYPE_LABELS = {
 
 const TYPE_ICONS = {
 	text: 'text', name: 'user', email: 'email', tel: 'phone',
-	url: 'link', number: 'number', textarea: 'paragraph',
+	url: 'link', number: 'number', textarea: 'message',
 	select: 'select', radio: 'radio', checkboxes: 'checkboxes', checkbox: 'checkbox',
 	date: 'date',
 	heading: 'heading', paragraph: 'paragraph', divider: 'divider',
@@ -82,7 +82,7 @@ export default function LeftSidebar({ onAddField }) {
 									onClick={ () => onAddField( type ) }
 									title={ TYPE_LABELS[ type ] }
 								>
-									<span className="wpzf-palette__icon"><Icon name={ TYPE_ICONS[ type ] } size={ 18 } /></span>
+									<span className="wpzf-palette__icon">{ FieldsIcons[ TYPE_ICONS[ type ] ] }</span>
 									<span className="wpzf-palette__label">{ TYPE_LABELS[ type ] }</span>
 								</button>
 							) ) }
@@ -101,7 +101,7 @@ export default function LeftSidebar({ onAddField }) {
 								onClick={ () => setProField( field.label ) }
 								title={ field.label + ' (Pro)' }
 							>
-								<span className="wpzf-palette__icon"><Icon name={ field.icon } size={ 18 } /></span>
+								<span className="wpzf-palette__icon">{ FieldsIcons[ field.icon ] }</span>
 								<span className="wpzf-palette__label">{ field.label }</span>
 								<span className="wpzf-palette__pro-badge">PRO</span>
 							</button>
