@@ -31,7 +31,6 @@
 
     input[type=checkbox],
     input[type=radio] {
-        margin-right: 10px;
         vertical-align: middle;
     }
 
@@ -39,7 +38,6 @@
         display: block;
         float: left;
         position: relative;
-        top: 10px;
     }
 
     input[type=checkbox] + label {
