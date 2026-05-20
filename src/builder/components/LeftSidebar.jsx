@@ -1,11 +1,13 @@
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon } from '../icons';
+import ProModal from './ProModal';
 
 const FIELD_GROUPS = [
 	{
 		id: 'standard',
 		label: 'Standard Fields',
-		types: [ 'text', 'name', 'email', 'tel', 'url', 'number', 'textarea' ],
+		types: [ 'text', 'name', 'email', 'tel', 'url', 'textarea' ],
 	},
 	{
 		id: 'choice',
@@ -15,7 +17,7 @@ const FIELD_GROUPS = [
 	{
 		id: 'advanced',
 		label: 'Advanced',
-		types: [ 'date', 'hidden' ],
+		types: [ 'date' ],
 	},
 	{
 		id: 'layout',
@@ -25,19 +27,18 @@ const FIELD_GROUPS = [
 ];
 
 const TYPE_LABELS = {
-	text:       'Single Line Text',
+	text:       'Text',
 	name:       'Name',
 	email:      'Email',
 	tel:        'Phone',
-	url:        'Website / URL',
+	url:        'Website',
 	number:     'Number',
-	textarea:   'Paragraph Text',
-	select:     'Dropdown',
-	radio:      'Multiple Choice',
-	checkboxes: 'Checkboxes',
-	checkbox:   'Single Checkbox',
+	textarea:   'Message',
+	select:     'Select',
+	radio:      'Radio',
+	checkboxes: 'Multichoice',
+	checkbox:   'Checkbox',
 	date:       'Date',
-	hidden:     'Hidden',
 	heading:    'Heading',
 	paragraph:  'Paragraph',
 	divider:    'Divider',
@@ -47,11 +48,21 @@ const TYPE_ICONS = {
 	text: 'text', name: 'user', email: 'email', tel: 'phone',
 	url: 'link', number: 'number', textarea: 'paragraph',
 	select: 'select', radio: 'radio', checkboxes: 'checkboxes', checkbox: 'checkbox',
-	date: 'date', hidden: 'hidden',
+	date: 'date',
 	heading: 'heading', paragraph: 'paragraph', divider: 'divider',
 };
 
+const PRO_FIELDS = [
+	{ type: 'number', label: 'Number', icon: 'number' },
+	{ type: 'hidden', label: 'Hidden', icon: 'hidden' },
+	{ type: 'upload', label: 'Upload', icon: 'upload' },
+	{ type: 'time',   label: 'Time',   icon: 'time' },
+	{ type: 'gdpr',   label: 'GDPR',   icon: 'gdpr' },
+];
+
 export default function LeftSidebar({ onAddField }) {
+	const [ proField, setProField ] = useState( null );
+
 	return (
 		<aside className="wpzf-sidebar wpzf-sidebar--left">
 			<div className="wpzf-palette">
@@ -78,7 +89,33 @@ export default function LeftSidebar({ onAddField }) {
 						</div>
 					</div>
 				) ) }
+
+				<div className="wpzf-palette__group wpzf-palette__group--premium">
+					<h3 className="wpzf-palette__title">Premium Fields</h3>
+					<div className="wpzf-palette__grid">
+						{ PRO_FIELDS.map( ( field ) => (
+							<button
+								key={ field.type }
+								className="wpzf-palette__item wpzf-palette__item--pro"
+								draggable={ false }
+								onClick={ () => setProField( field.label ) }
+								title={ field.label + ' (Pro)' }
+							>
+								<span className="wpzf-palette__icon"><Icon name={ field.icon } size={ 18 } /></span>
+								<span className="wpzf-palette__label">{ field.label }</span>
+								<span className="wpzf-palette__pro-badge">PRO</span>
+							</button>
+						) ) }
+					</div>
+				</div>
 			</div>
+
+			{ proField && (
+				<ProModal
+					fieldLabel={ proField }
+					onClose={ () => setProField( null ) }
+				/>
+			) }
 		</aside>
 	);
 }
