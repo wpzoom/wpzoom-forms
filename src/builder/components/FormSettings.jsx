@@ -156,6 +156,18 @@ export default function FormSettings({ settings, onChange }) {
 					) ) }
 				</ToggleGroupControl>
 
+				<ToggleGroupControl
+					label={ __( 'Form Layout', 'wpzoom-forms' ) }
+					value={ settings.formLayout || 'default' }
+					onChange={ ( v ) => onChange( { formLayout: v } ) }
+					isBlock
+					__nextHasNoMarginBottom={ false }
+				>
+					<ToggleGroupControlOption value="default"    label={ __( 'Default',    'wpzoom-forms' ) } />
+					<ToggleGroupControlOption value="horizontal" label={ __( 'Horizontal', 'wpzoom-forms' ) } />
+					<ToggleGroupControlOption value="compact"    label={ __( 'Compact',    'wpzoom-forms' ) } />
+				</ToggleGroupControl>
+
 				<StylePicker
 					value={ settings.theme }
 					onChange={ ( v ) => onChange( { theme: v } ) }

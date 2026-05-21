@@ -89,6 +89,42 @@
 	.wpzf-label { margin-bottom: 0; }
 }
 
+/* ─── layout: horizontal ────────────────────────────────────────────────────── */
+// Fields + submit button sit side-by-side in a flex row.
+// Best for simple forms: one email input + submit (newsletter-style).
+.wpzf-layout-horizontal {
+	.wpzf-form__inner {
+		display: flex;
+		align-items: flex-start;
+		gap: 8px;
+	}
+	.wpzf-fields {
+		flex: 1;
+		min-width: 0;
+	}
+	.wpzf-submit {
+		margin-top: 0;
+		flex-shrink: 0;
+		.wpzf-submit__btn{
+			margin-top: 0px;
+		}
+	}
+	@media (max-width: 600px) {
+		.wpzf-form__inner {
+			flex-direction: column;
+			align-items: stretch;
+		}
+		.wpzf-submit__btn { width: 100%; }
+	}
+}
+
+/* ─── layout: compact ───────────────────────────────────────────────────────── */
+// Tighter vertical rhythm — useful inside modals, sidebars, or narrow columns.
+.wpzf-layout-compact {
+	.wpzf-fields  { gap: 4px; }
+	.wpzf-submit  { margin-top: 6px; }
+}
+
 /* ─── shared input baseline (used by themes) ───────────────────────────────── */
 %wpzf-input-base {
 	width: 100%; box-sizing: border-box;
@@ -208,7 +244,7 @@
 	.wpzf-help { margin-top: 4px; font-size: 12px; color: var(--wpzf-muted); }
 	.wpzf-submit__btn {
 		display: inline-block;
-		padding: 10px 22px;
+		padding: 9px 22px;
 		background: var(--wpzf-accent); color: #fff;
 		border: 0; border-radius: var(--wpzf-radius);
 		font: inherit; font-weight: 600;
@@ -529,7 +565,7 @@
 	.wpzf-help { margin-top: 4px; font-size: 12px; color: var(--wpzf-muted); }
 	.wpzf-submit__btn {
 		display: inline-block;
-		padding: 10px 24px;
+		padding: 9px 24px;
 		background: transparent; color: var(--wpzf-accent);
 		border: 1.5px solid var(--wpzf-accent); border-radius: var(--wpzf-radius);
 		font: inherit; font-weight: 600;

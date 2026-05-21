@@ -70,7 +70,7 @@ export default function Canvas({
 	return (
 		<main className="wpzf-canvas">
 			<div className="wpzf-canvas__inner">
-				<div className={ cls( 'wpzf-preview', 'wpzf-form', settings.theme && settings.theme !== 'default' && 'wpzf-theme-' + settings.theme, 'wpzf-labels-' + settings.labelsPosition ) }>
+				<div className={ cls( 'wpzf-preview', 'wpzf-form', settings.theme && settings.theme !== 'default' && 'wpzf-theme-' + settings.theme, 'wpzf-labels-' + settings.labelsPosition, settings.formLayout && settings.formLayout !== 'default' && 'wpzf-layout-' + settings.formLayout ) }>
 
 					{ empty && (
 						<div

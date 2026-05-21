@@ -51,6 +51,7 @@ class WPZOOM_Forms_Schema {
 				'submitAlign'      => 'left',
 				'labelsPosition'   => 'top',
 				'theme'            => 'default',
+				'formLayout'       => 'default',
 				'honeypot'         => true,
 				'showRequiredMark' => true,
 			),
@@ -183,6 +184,7 @@ class WPZOOM_Forms_Schema {
 			'submitAlign'      => self::enum( isset( $in['submitAlign'] ) ? $in['submitAlign'] : '', array( 'left', 'center', 'right', 'full' ), $defaults['submitAlign'] ),
 			'labelsPosition'   => self::enum( isset( $in['labelsPosition'] ) ? $in['labelsPosition'] : '', array( 'top', 'left', 'hidden' ), $defaults['labelsPosition'] ),
 			'theme'            => self::enum( isset( $in['theme'] ) ? $in['theme'] : '', array( 'default', 'minimal', 'modern', 'bold', 'rounded', 'dark', 'flat' ), $defaults['theme'] ),
+			'formLayout'       => self::enum( isset( $in['formLayout'] ) ? $in['formLayout'] : '', array( 'default', 'horizontal', 'compact' ), $defaults['formLayout'] ),
 			'honeypot'         => ! empty( $in['honeypot'] ),
 			'showRequiredMark' => ! empty( $in['showRequiredMark'] ),
 		);

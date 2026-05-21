@@ -63,7 +63,8 @@ class WPZOOM_Forms_Renderer {
 			wp_enqueue_style( 'wpzf-frontend-form' );
 		}
 
-		$theme_class = ' wpzf-theme-' . sanitize_html_class( ! empty( $settings['theme'] ) ? $settings['theme'] : 'default' );
+		$theme_class  = ' wpzf-theme-'  . sanitize_html_class( ! empty( $settings['theme'] )      ? $settings['theme']      : 'default' );
+		$layout_class = ' wpzf-layout-' . sanitize_html_class( ! empty( $settings['formLayout'] ) ? $settings['formLayout'] : 'default' );
 
 		// Collect per-field custom CSS.
 		$field_css = '';
@@ -84,7 +85,7 @@ class WPZOOM_Forms_Renderer {
 			echo '<style>' . $field_css . '</style>';
 		endif;
 		?>
-		<div id="<?php echo esc_attr( $form_uid ); ?>" class="wpzf-form wpzoom-forms_form<?php echo esc_attr( $theme_class ); ?> wpzf-labels-<?php echo esc_attr( $settings['labelsPosition'] ); ?>">
+		<div id="<?php echo esc_attr( $form_uid ); ?>" class="wpzf-form wpzoom-forms_form<?php echo esc_attr( $theme_class ); ?><?php echo esc_attr( $layout_class ); ?> wpzf-labels-<?php echo esc_attr( $settings['labelsPosition'] ); ?>">
 			<div id="<?php echo esc_attr( $notice_id ); ?>" class="wpzf-notice" hidden></div>
 			<form method="POST" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="wpzf-form__inner wp-block-wpzoom-forms-form" data-form-id="<?php echo esc_attr( $form_id ); ?>" data-success="<?php echo esc_attr( $success_msg ); ?>" data-failure="<?php echo esc_attr( $failure_msg ); ?>" novalidate>
 				<input type="hidden" name="action" value="wpzf_submit" />

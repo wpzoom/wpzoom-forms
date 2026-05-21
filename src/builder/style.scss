@@ -417,10 +417,24 @@ textarea.wpzf-input { resize: none; }
 
 .wpzf-preview-submit {
 	margin-left: 6px;
+	margin-right: 6px;
 	&--align-left   { text-align: left; }
 	&--align-center { text-align: center; }
 	&--align-right  { text-align: right; }
 	&--align-full .wpzf-submit__btn { width: 100%; }
+}
+
+/* canvas layout modifiers — mirror frontend layout behaviour using canvas-specific selectors */
+.wpzf-preview.wpzf-layout-horizontal {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	.wpzf-canvas-fields  { flex: 1; min-width: 0; }
+	.wpzf-preview-submit { margin-top: 6px; flex-shrink: 0; }
+}
+.wpzf-preview.wpzf-layout-compact {
+	.wpzf-canvas-fields  { gap: 0px; }
+	.wpzf-preview-submit { margin-top: 6px; }
 }
 
 /* default (no theme) submit button */
