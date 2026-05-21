@@ -36,14 +36,10 @@ export default function Topbar({
 					className="wpzf-topbar__exit"
 					href={ exitUrl }
 					label={ __( 'Back to forms', 'wpzoom-forms' ) }
-					icon={chevronLeft}
+					icon={WPZform}
 					iconSize={ 28 }
 					showTooltip
 				/>
-				<div className="wpzf-topbar__brand">
-					{WPZform}
-					<span>{ __( 'WPZOOM Forms', 'wpzoom-forms' ) }</span>
-				</div>
 				<Button
 					variant="secondary"
 					size="compact"

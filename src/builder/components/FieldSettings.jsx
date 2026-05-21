@@ -168,6 +168,7 @@ export default function FieldSettings({ field, onChange }) {
 											value={ field.format || 'Y-m-d' }
 											options={ DATE_FORMATS }
 											onChange={ ( v ) => set( { format: v } ) }
+											__next40pxDefaultSize
 										/>
 									</>
 								) }
