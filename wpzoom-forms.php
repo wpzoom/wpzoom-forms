@@ -3433,7 +3433,15 @@ add_filter( 'render_block', function( $block_content, $block ) {
 		return $block_content;
 	}
 
-	return WPZOOM_Forms_Renderer::render( $id );
+	// The render_callback (form_block_render) already built a <style> tag containing
+	// per-form color/border overrides from the block attributes (fieldBgColor, btnBgColor, …).
+	// Preserve it so those settings actually apply to the new renderer's output.
+	$block_styles = '';
+	if ( preg_match( '/(<style\b[^>]*>.*?<\/style>)/is', $block_content, $m ) ) {
+		$block_styles = $m[1];
+	}
+
+	return $block_styles . WPZOOM_Forms_Renderer::render( $id );
 }, 9, 2 );
 
 /**
