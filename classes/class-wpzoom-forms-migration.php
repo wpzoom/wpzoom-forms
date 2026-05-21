@@ -104,8 +104,16 @@ class WPZOOM_Forms_Migration {
 			$over['label'] = $attrs['label'];
 		}
 
-		if ( isset( $attrs['placeholder'] ) ) $over['placeholder'] = $attrs['placeholder'];
-		if ( isset( $attrs['required'] ) )    $over['required']    = (bool) $attrs['required'];
+		// 'placeholder' and 'required' use source:"attribute" in block.json, so parse_blocks()
+		// won't include them in $attrs — extract them from the serialized HTML instead.
+		if ( isset( $attrs['_innerHTML'] ) ) {
+			if ( preg_match( '/\bplaceholder=["\']([^"\']*)["\']/', $attrs['_innerHTML'], $m ) ) {
+				$over['placeholder'] = html_entity_decode( $m[1], ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+			}
+			if ( preg_match( '/<(?:input|textarea|select)\b[^>]*\brequired\b/i', $attrs['_innerHTML'] ) ) {
+				$over['required'] = true;
+			}
+		}
 		if ( isset( $attrs['id'] ) && is_string( $attrs['id'] ) && $attrs['id'] !== '' ) {
 			$over['id'] = sanitize_key( $attrs['id'] );
 		}
