@@ -350,15 +350,13 @@ body[class*="page_wpzf-form-builder"] {
 	position: relative;
 	padding: 6px 10px;
 	border: 1px solid transparent;
-	border-radius: $radius-medium;
+	border-radius: $radius-small;
 	cursor: pointer;
 	transition: border-color .15s, box-shadow .15s, background .15s;
 
 	&:hover  { background: $bg-card; border-color: $gray-400; border-style: dotted; }
 	&.is-selected {
-		background: rgba($brand, .04);
-		border-color: var(--wp-admin-theme-color, #{$brand});
-		border-style: dotted;
+		background: $bg;
 	}
 
 	&__drag {
@@ -386,6 +384,10 @@ body[class*="page_wpzf-form-builder"] {
 	.wpzf-input--select{
 		max-width: none;
 	}
+}
+
+input.readonly, input[readonly], textarea.readonly, textarea[readonly] {
+	background-color: transparent;
 }
 
 .wpzf-required { color: $danger; }
@@ -1028,6 +1030,27 @@ textarea.wpzf-input { resize: none; }
 
 /* ── frontend theme styles (scoped under .wpzf-form.wpzf-theme-*) ─────────── */
 @import '../frontend-form/style';
+
+// Canvas equivalent of the frontend .wpzf-labels-left grid layout.
+// The frontend targets .wpzf-field--type-* but the canvas uses
+// .wpzf-field-card--type-* with a __body wrapper, so the rules don't match.
+.wpzf-labels-left .wpzf-field-card--type-text,
+.wpzf-labels-left .wpzf-field-card--type-name,
+.wpzf-labels-left .wpzf-field-card--type-email,
+.wpzf-labels-left .wpzf-field-card--type-tel,
+.wpzf-labels-left .wpzf-field-card--type-url,
+.wpzf-labels-left .wpzf-field-card--type-number,
+.wpzf-labels-left .wpzf-field-card--type-date,
+.wpzf-labels-left .wpzf-field-card--type-select {
+	.wpzf-field-card__body {
+		display: grid;
+		grid-template-columns: 160px 1fr;
+		gap: 12px;
+		align-items: center;
+		.wpzf-label { margin-bottom: 0; }
+		.wpzf-help { grid-column: 1 / -1; }
+	}
+}
 
 // The canvas card always keeps its own padding regardless of what the
 // theme sets on .wpzf-form, so the card chrome doesn't collapse.
