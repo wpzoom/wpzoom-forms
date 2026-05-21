@@ -440,13 +440,19 @@ class Wpzoom_Forms_Cpt extends Widget_Base {
 		}
 
 		if ( \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
-			printf( 
+			$use_new_renderer = class_exists( 'WPZOOM_Forms_Builder_Page' )
+				&& \WPZOOM_Forms_Builder_Page::is_enabled()
+				&& get_post_meta( intval( $post_id ), \WPZOOM_Forms_Schema::META_KEY, true );
+
+			printf(
 				'<div class="wpzoom-forms-post">%1$s</div>',
-				do_blocks( $form->post_content )
+				$use_new_renderer
+					? \WPZOOM_Forms_Renderer::render( intval( $post_id ) )
+					: do_blocks( $form->post_content )
 			);
-	   } else {
+		} else {
 			echo do_shortcode( '[wpzf_form id="' . $post_id . '"]' );
-	   }
+		}
 
 	}
 
