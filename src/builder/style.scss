@@ -374,7 +374,7 @@ body[class*="page_wpzf-form-builder"] {
 	&__help { margin-top: 6px; font-size: 12px; color: $muted; }
 
 	&__actions {
-		position: absolute; top: 8px; right: 8px;
+		position: absolute; top: 4px; right: 4px;
 		display: flex; gap: 4px;
 		opacity: 0; transition: opacity .15s;
 	}
@@ -950,8 +950,11 @@ textarea.wpzf-input { resize: none; }
 
 /* options editor — handle + drag state ------------------------------------ */
 .wpzf-options .wpzf-option {
-	grid-template-columns: 16px 20px 1fr 100px 32px;
+	grid-template-columns: 16px 20px 1fr 32px 32px;
 	align-items: center;
+	input[type=radio]{
+		margin: 0;
+	}
 }
 .wpzf-option__default {
 	margin: 0;
@@ -997,7 +1000,6 @@ textarea.wpzf-input { resize: none; }
 }
 .wpzf-modal__footer {
 	display: flex; justify-content: flex-end; gap: 8px;
-	padding: 12px 18px; border-top: 1px solid $border; background: $bg;
 }
 
 /* @wordpress/components integration ---------------------------------------- */
@@ -1020,12 +1022,6 @@ textarea.wpzf-input { resize: none; }
 .components-modal__content {
 	.wpzf-embed-code { margin-top: 8px; }
 	.wpzf-hint { margin-top: 12px; }
-	.wpzf-modal__footer {
-		background: transparent;
-		padding: 12px 0 0;
-		margin: 8px 0 0;
-		border-radius: 0;
-	}
 }
 
 /* ── frontend theme styles (scoped under .wpzf-form.wpzf-theme-*) ─────────── */

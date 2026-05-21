@@ -1,4 +1,6 @@
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Modal, Button } from '@wordpress/components';
 import { cls } from '../utils';
 
 /**
@@ -8,6 +10,7 @@ import { cls } from '../utils';
 export default function FieldCard({ field, settings, selected, onSelect, onDelete, onDuplicate }) {
 	const showLabel = settings.labelsPosition !== 'hidden' && field.type !== 'checkbox' && field.label;
 	const reqMark = field.required && settings.showRequiredMark ? <span className="wpzf-required"> *</span> : null;
+	const [ confirmOpen, setConfirmOpen ] = useState( false );
 
 	return (
 		<div
@@ -33,10 +36,28 @@ export default function FieldCard({ field, settings, selected, onSelect, onDelet
 				<button className="wpzf-icon-btn" title={ __( 'Duplicate', 'wpzoom-forms' ) } onClick={ onDuplicate }>
 					<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4a2 2 0 00-2 2v14h2V3h12V1zm3 4H8a2 2 0 00-2 2v14a2 2 0 002 2h11a2 2 0 002-2V7a2 2 0 00-2-2zm0 16H8V7h11v14z"/></svg>
 				</button>
-				<button className="wpzf-icon-btn wpzf-icon-btn--danger" title={ __( 'Delete', 'wpzoom-forms' ) } onClick={ ( e ) => { if ( window.confirm( __( 'Remove this field?', 'wpzoom-forms' ) ) ) onDelete(); } }>
+				<button className="wpzf-icon-btn wpzf-icon-btn--danger" title={ __( 'Delete', 'wpzoom-forms' ) } onClick={ () => setConfirmOpen( true ) }>
 					<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19a2 2 0 002 2h8a2 2 0 002-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
 				</button>
 			</div>
+
+			{ confirmOpen && (
+				<Modal
+					title={ __( 'Remove field', 'wpzoom-forms' ) }
+					onRequestClose={ () => setConfirmOpen( false ) }
+					size="small"
+				>
+					<p>{ __( 'Are you sure you want to remove this field? This action cannot be undone.', 'wpzoom-forms' ) }</p>
+					<div className="wpzf-modal__footer">
+						<Button variant="tertiary" onClick={ () => setConfirmOpen( false ) }>
+							{ __( 'Cancel', 'wpzoom-forms' ) }
+						</Button>
+						<Button variant="primary" isDestructive onClick={ () => { setConfirmOpen( false ); onDelete(); } }>
+							{ __( 'Delete', 'wpzoom-forms' ) }
+						</Button>
+					</div>
+				</Modal>
+			) }
 		</div>
 	);
 }

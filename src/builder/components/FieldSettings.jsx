@@ -11,7 +11,7 @@ import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
-import { trash, plus } from '@wordpress/icons';
+import { plus, reset } from '@wordpress/icons';
 import { api } from '../api';
 
 const HAS_LABEL    = [ 'text', 'name', 'email', 'tel', 'url', 'number', 'textarea', 'date', 'select', 'radio', 'checkboxes', 'checkbox', 'hidden' ];
@@ -324,8 +324,13 @@ function OptionsEditor({ options, onChange, fieldType, defaultValue, onChangeDef
 		next[ i ] = { ...next[ i ], ...patch };
 		onChange( next );
 	};
-	const remove = ( i ) => onChange( options.filter( ( _, idx ) => idx !== i ) );
-	const add    = () => onChange( [ ...options, { label: 'Option ' + ( options.length + 1 ), value: 'option-' + ( options.length + 1 ) } ] );
+	const remove      = ( i ) => onChange( options.filter( ( _, idx ) => idx !== i ) );
+	const insertAfter = ( i ) => {
+		const next = options.slice();
+		const n    = next.length + 1;
+		next.splice( i + 1, 0, { label: 'Option ' + n, value: 'option-' + n } );
+		onChange( next );
+	};
 
 	// HTML5 drag-and-drop reorder.
 	const [ dragIdx, setDragIdx ] = useState( null );
@@ -385,28 +390,24 @@ function OptionsEditor({ options, onChange, fieldType, defaultValue, onChangeDef
 								update( i, wasAutoValue ? { label, value: slugify( label ) } : { label } );
 							} }
 						/>
-						<input type="text" value={ o.value } placeholder="value" onChange={ ( e ) => update( i, { value: e.target.value } ) } />
 						<Button
-							variant="tertiary"
-							isDestructive
-							icon={ trash }
-							iconSize={ 16 }
+							icon={ reset }
+							iconSize={ 18 }
 							label={ __( 'Remove option', 'wpzoom-forms' ) }
 							onClick={ () => remove( i ) }
+							size="compact"
+							disabled={ options.length <= 1 }
+						/>
+						<Button
+							icon={ plus }
+							iconSize={ 18 }
+							label={ __( 'Add option below', 'wpzoom-forms' ) }
+							onClick={ () => insertAfter( i ) }
 							size="compact"
 						/>
 					</div>
 				) ) }
 			</div>
-			<Button
-				variant="secondary"
-				size="compact"
-				icon={ plus }
-				onClick={ add }
-				style={ { marginTop: '10px' } }
-			>
-				{ __( 'Add option', 'wpzoom-forms' ) }
-			</Button>
 
 			{ bulk && (
 				<BulkOptionsModal
