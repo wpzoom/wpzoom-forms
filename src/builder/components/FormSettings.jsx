@@ -40,9 +40,9 @@ const FORM_STYLES = [
 		isPro:  false,
 	},
 	{
-		value:  'dark',
-		label:  __( 'Dark', 'wpzoom-forms' ),
-		colors: [ '#0f172a', '#1e293b', '#3b82f6', '#334155', '#e2e8f0' ],
+		value:  'flat',
+		label:  __( 'Flat', 'wpzoom-forms' ),
+		colors: [ '#374151', '#f1f5f9', '#e2e8f0', '#ffffff', '#64748b' ],
 		isPro:  false,
 	},
 	{

@@ -439,100 +439,49 @@
 }
 
 /* ──────────────────────────────────────────────────────────────────────────────
-   THEME: dark
-   Dark inputs on a near-black background. Light text, blue accent.
+   THEME: flat
+   Borderless inputs with a soft grey fill. Clean, minimal, no visible outline.
    ──────────────────────────────────────────────────────────────────────────── */
-.wpzf-form.wpzf-theme-dark {
-	--wpzf-accent:        #60a5fa;
-	--wpzf-text:          #f1f5f9;
-	--wpzf-muted:         #94a3b8;
-	--wpzf-border:        #334155;
-	--wpzf-bg:            #1e293b;
-	--wpzf-radius:        6px;
-	--wpzf-check-radius:  4px;
-
-	background: #0f172a;
-	color: var(--wpzf-text);
+.wpzf-form.wpzf-theme-flat {
+	--wpzf-accent:        #374151;
+	--wpzf-text:          #374151;
+	--wpzf-muted:         #6b7280;
+	--wpzf-bg:            #f3f4f6;
+	--wpzf-radius:        2px;
+	--wpzf-check-radius:  2px;
 
 	.wpzf-label {
 		display: block; margin-bottom: .4em;
-		font-size: .875em; color: var(--wpzf-muted);
+		font-size: .875em; font-weight: 600; color: var(--wpzf-text);
 	}
 	.wpzf-input {
 		@extend %wpzf-input-base;
 		background: var(--wpzf-bg); color: var(--wpzf-text);
-		border: 1px solid var(--wpzf-border); border-radius: var(--wpzf-radius);
-		transition: border-color .15s, box-shadow .15s;
+		border: 0; border-radius: var(--wpzf-radius);
+		box-shadow: none;
+		transition: background .15s;
 		&::placeholder { color: var(--wpzf-muted); }
-		&:focus { outline: 0; border-color: var(--wpzf-accent); box-shadow: 0 0 0 3px rgba(96,165,250,.2); }
+		&:focus { outline: 0; background: #e2e8f0; box-shadow: none; }
 	}
 	.wpzf-help { margin-top: 4px; font-size: 12px; color: var(--wpzf-muted); }
 	.wpzf-heading { color: var(--wpzf-text); }
 	.wpzf-paragraph { color: var(--wpzf-muted); }
-	.wpzf-divider { border-top-color: var(--wpzf-border); }
-	.wpzf-required { color: #f87171; }
+	.wpzf-divider { border-top-color: #e2e8f0; }
+	.wpzf-required { color: #ef4444; }
 	.wpzf-submit__btn {
 		display: inline-block;
 		padding: 11px 24px;
-		background: var(--wpzf-accent); color: #0f172a;
+		background: var(--wpzf-accent); color: #ffffff;
 		border: 0; border-radius: var(--wpzf-radius);
 		font: inherit; font-weight: 700;
 		cursor: pointer;
 		transition: filter .15s;
-		&:hover { filter: brightness(1.05); }
+		&:hover { filter: brightness(1.1); }
 	}
-	.wpzf-notice[data-status="success"] { background: #052e16; border-color: #166534; color: #86efac; border-radius: var(--wpzf-radius); }
-	.wpzf-notice[data-status="error"]   { background: #450a0a; border-color: #991b1b; color: #fca5a5; border-radius: var(--wpzf-radius); }
-
-	// Light-coloured chevron for dark background.
-	@include wpzf-custom-controls('%2394a3b8');
-}
-
-/* ──────────────────────────────────────────────────────────────────────────────
-   THEME: flat
-   Filled gray inputs, bottom border on focus, teal accent.
-   ──────────────────────────────────────────────────────────────────────────── */
-.wpzf-form.wpzf-theme-flat {
-	--wpzf-accent:        #0d9488;
-	--wpzf-text:          #111827;
-	--wpzf-muted:         #6b7280;
-	--wpzf-border:        #d1d5db;
-	--wpzf-bg:            #f3f4f6;
-	--wpzf-radius:        4px;
-	--wpzf-check-radius:  4px;
-
-	color: var(--wpzf-text);
-
-	.wpzf-label {
-		display: block; margin-bottom: .4em;
-		font-size: .875em; font-weight: 500; color: var(--wpzf-text);
-	}
-	.wpzf-input {
-		@extend %wpzf-input-base;
-		background: var(--wpzf-bg); color: var(--wpzf-text);
-		border: 0; border-bottom: 2px solid #d1d5db;
-		border-radius: var(--wpzf-radius) var(--wpzf-radius) 0 0;
-		transition: border-color .15s, background .15s;
-		&::placeholder { color: var(--wpzf-muted); }
-		&:focus { outline: 0; border-bottom-color: var(--wpzf-accent); background: #e5e7eb; }
-	}
-	.wpzf-help { margin-top: 4px; font-size: 12px; color: var(--wpzf-muted); }
-	.wpzf-submit__btn {
-		display: inline-block;
-		padding: 11px 24px;
-		background: var(--wpzf-accent); color: #fff;
-		border: 0; border-radius: var(--wpzf-radius);
-		font: inherit; font-weight: 600;
-		cursor: pointer;
-		transition: filter .15s;
-		&:hover { filter: brightness(1.06); }
-	}
+	.wpzf-notice[data-status="success"] { background: #f0fdf4; border-color: #86efac; color: #166534; border-radius: var(--wpzf-radius); }
+	.wpzf-notice[data-status="error"]   { background: #fef2f2; border-color: #fca5a5; color: #991b1b; border-radius: var(--wpzf-radius); }
 
 	@include wpzf-custom-controls('%23374151');
-
-	// Flat checkboxes use the filled gray tone like inputs.
-	.wpzf-choice input[type="checkbox"],
-	.wpzf-choice input[type="radio"] { background: var(--wpzf-bg); border-color: #9ca3af; }
 }
 
 /* ──────────────────────────────────────────────────────────────────────────────
