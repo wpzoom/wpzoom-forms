@@ -868,6 +868,17 @@ class WPZOOM_Forms {
 				WPZOOM_FORMS_VERSION
 			);
 		} else {
+			// The form block uses ServerSideRender, which returns HTML with wpzf-* classes
+			// styled by frontend-form/style.css. That file is only registered on
+			// wp_enqueue_scripts, so the editor preview is completely unstyled without this.
+			wp_register_style(
+				'wpzf-frontend-form',
+				trailingslashit( $this->main_dir_url ) . 'frontend-form/style.css',
+				array(),
+				WPZOOM_FORMS_VERSION
+			);
+			wp_enqueue_style( 'wpzf-frontend-form' );
+
 			wp_register_script(
 				'wpzoom-forms-js-backend-formblock',
 				trailingslashit( $this->main_dir_url ) . 'form-block/backend/script.js',
@@ -885,10 +896,13 @@ class WPZOOM_Forms {
 				)
 			);
 
+			// frontend-form/style.css must be a dependency (not just enqueued) so that
+			// WordPress injects it inside the editor iframe (WP 6.3+), where
+			// ServerSideRender outputs the form HTML with wpzf-* classes.
 			wp_register_style(
 				'wpzoom-forms-css-backend-formblock',
 				trailingslashit( $this->main_dir_url ) . 'form-block/backend/style.css',
-				array(),
+				array( 'wpzf-frontend-form' ),
 				WPZOOM_FORMS_VERSION
 			);
 		}
@@ -1864,7 +1878,9 @@ class WPZOOM_Forms {
 
 		$current_screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 
-		if ( is_admin() || ( ! is_null( $current_screen ) && $current_screen->is_block_editor() ) ) return '';
+		// Allow rendering during REST API requests (ServerSideRender / block preview).
+		$is_rest = defined( 'REST_REQUEST' ) && REST_REQUEST;
+		if ( ( is_admin() && ! $is_rest ) || ( ! is_null( $current_screen ) && $current_screen->is_block_editor() ) ) return '';
 
 		// Get form ID and validate form exists and is published
 		$form_id = isset( $attributes['formId'] ) ? intval( $attributes['formId'] ) : 0;
