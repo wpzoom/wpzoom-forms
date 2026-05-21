@@ -41,7 +41,6 @@ export default function Topbar({
 					showTooltip
 				/>
 				<Button
-					variant="secondary"
 					size="compact"
 					href={ submissionsUrl }
 					label={ __( 'View Submissions', 'wpzoom-forms' ) }

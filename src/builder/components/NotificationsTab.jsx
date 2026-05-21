@@ -28,6 +28,8 @@ export default function NotificationsTab({ notifications, onChange }) {
 					onChange={ ( v ) => onChange( { method: v } ) }
 				/>
 
+				<div style={{ height: '16px' }} />
+
 				{ ( notifications.method === 'email' || notifications.method === 'combined' ) && (
 					<>
 						<TextControl
@@ -36,11 +38,13 @@ export default function NotificationsTab({ notifications, onChange }) {
 							value={ notifications.email || '' }
 							onChange={ ( v ) => onChange( { email: v } ) }
 							placeholder="you@example.com"
+							__next40pxDefaultSize
 						/>
 						<TextControl
 							label={ __( 'Email subject', 'wpzoom-forms' ) }
 							value={ notifications.subject || '' }
 							onChange={ ( v ) => onChange( { subject: v } ) }
+							__next40pxDefaultSize
 						/>
 					</>
 				) }
@@ -50,6 +54,7 @@ export default function NotificationsTab({ notifications, onChange }) {
 					rows={ 2 }
 					value={ notifications.successMessage || '' }
 					onChange={ ( v ) => onChange( { successMessage: v } ) }
+					__next40pxDefaultSize
 				/>
 
 				<TextareaControl
@@ -57,6 +62,7 @@ export default function NotificationsTab({ notifications, onChange }) {
 					rows={ 2 }
 					value={ notifications.failureMessage || '' }
 					onChange={ ( v ) => onChange( { failureMessage: v } ) }
+					__next40pxDefaultSize
 				/>
 
 				<div className="wpzf-notification-email-upsell">

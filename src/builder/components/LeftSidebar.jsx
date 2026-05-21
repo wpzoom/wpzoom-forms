@@ -112,7 +112,8 @@ export default function LeftSidebar({ onAddField }) {
 
 			{ proField && (
 				<ProModal
-					fieldLabel={ proField }
+					fieldLabel={ proField + ' Field' }
+
 					onClose={ () => setProField( null ) }
 				/>
 			) }
