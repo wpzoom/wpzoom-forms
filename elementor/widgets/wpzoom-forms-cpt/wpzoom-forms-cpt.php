@@ -440,9 +440,7 @@ class Wpzoom_Forms_Cpt extends Widget_Base {
 		}
 
 		if ( \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
-			$use_new_renderer = class_exists( 'WPZOOM_Forms_Builder_Page' )
-				&& \WPZOOM_Forms_Builder_Page::is_enabled()
-				&& get_post_meta( intval( $post_id ), \WPZOOM_Forms_Schema::META_KEY, true );
+			$use_new_renderer = get_post_meta( intval( $post_id ), \WPZOOM_Forms_Schema::META_KEY, true );
 
 			printf(
 				'<div class="wpzoom-forms-post">%1$s</div>',

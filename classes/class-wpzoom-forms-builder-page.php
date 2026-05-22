@@ -18,31 +18,7 @@ class WPZOOM_Forms_Builder_Page {
 
 	const SLUG = 'wpzf-form-builder';
 
-	/**
-	 * Option key that toggles the beta React builder on/off.
-	 */
-	const OPTION_ENABLED = 'wpzf_enable_new_builder';
-
-	/**
-	 * Is the new (beta) builder enabled?
-	 *
-	 * Defaults to false so the plugin keeps using the classic block editor
-	 * until the site owner opts in from the settings page.
-	 */
-	public static function is_enabled() {
-		if ( ! class_exists( 'WPZOOM_Forms_Settings' ) ) {
-			return false;
-		}
-		return (bool) WPZOOM_Forms_Settings::get( self::OPTION_ENABLED );
-	}
-
 	public function register() {
-		// When the beta builder is disabled, do not hijack any of the classic
-		// form editing flow — the legacy block editor remains in control.
-		if ( ! self::is_enabled() ) {
-			return;
-		}
-
 		add_action( 'admin_menu',         array( $this, 'register_page' ), 9 );
 		add_action( 'admin_init',         array( $this, 'maybe_intercept_edit_screen' ) );
 		add_filter( 'use_block_editor_for_post_type', array( $this, 'disable_block_editor' ), 10, 2 );

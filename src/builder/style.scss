@@ -338,7 +338,7 @@ body[class*="page_wpzf-form-builder"] {
 }
 .wpzf-canvas-row {
 	flex-basis: 100%; min-width: 0;
-	&--width-half       { flex-basis: calc(50% - 8px); }
+	&--width-half       { flex-basis: calc(50% - 2px); }
 	&--width-third      { flex-basis: calc(33.333% - 11px); }
 	&--width-two-thirds { flex-basis: calc(66.667% - 6px); }
 

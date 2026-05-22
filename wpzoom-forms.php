@@ -3364,14 +3364,8 @@ add_action( 'init', function() {
 		remove_action( 'add_meta_boxes_wpzf-submission', array( $wpzoom_forms, 'add_meta_boxes' ), 10 );
 	}
 
-	// Disable the legacy template-picker modal — our React builder owns templates
-	// when the beta builder is opted into. With the toggle off, leave the legacy
-	// modal in place so the classic editing flow keeps working.
-	if (
-		class_exists( 'WPZOOM_Forms_Template_Manager' )
-		&& class_exists( 'WPZOOM_Forms_Builder_Page' )
-		&& WPZOOM_Forms_Builder_Page::is_enabled()
-	) {
+	// Disable the legacy template-picker modal — our React builder owns templates now.
+	if ( class_exists( 'WPZOOM_Forms_Template_Manager' ) ) {
 		$legacy_tm = WPZOOM_Forms_Template_Manager::instance();
 		remove_action( 'admin_enqueue_scripts', array( $legacy_tm, 'scripts' ) );
 		remove_action( 'admin_footer',          array( $legacy_tm, 'modal_window' ) );
@@ -3406,7 +3400,7 @@ add_action( 'init', function() {
 	add_shortcode( 'wpzf_form', function( $atts ) use ( $wpzoom_forms ) {
 		$atts = shortcode_atts( array( 'id' => 0 ), $atts, 'wpzf_form' );
 		$id   = (int) $atts['id'];
-		if ( WPZOOM_Forms_Builder_Page::is_enabled() && get_post_meta( $id, WPZOOM_Forms_Schema::META_KEY, true ) ) {
+		if ( get_post_meta( $id, WPZOOM_Forms_Schema::META_KEY, true ) ) {
 			return WPZOOM_Forms_Renderer::render( $id );
 		}
 		return $wpzoom_forms->form_block_render( array( 'formId' => $id ) );
@@ -3426,10 +3420,10 @@ add_filter( 'render_block', function( $block_content, $block ) {
 	$id = isset( $block['attrs']['formId'] ) ? (int) $block['attrs']['formId'] : 0;
 	if ( $id < 1 ) return $block_content;
 
-	// Only switch to the v2 renderer when the beta builder is enabled and the form
-	// has been saved through it (_wpzf_schema exists). Otherwise return the original
-	// block output unchanged so old forms keep all their existing styling and behaviour.
-	if ( ! WPZOOM_Forms_Builder_Page::is_enabled() || ! get_post_meta( $id, WPZOOM_Forms_Schema::META_KEY, true ) ) {
+	// Only switch to the v2 renderer when the form has been saved through the new
+	// builder (_wpzf_schema exists). Otherwise return the original block output
+	// unchanged so old forms keep all their existing styling and behaviour.
+	if ( ! get_post_meta( $id, WPZOOM_Forms_Schema::META_KEY, true ) ) {
 		return $block_content;
 	}
 
@@ -3481,14 +3475,10 @@ add_action( 'wp_enqueue_scripts', function() {
 /**
  * Customize the "All Forms" admin list a bit:
  * - rename "Add New" wording, replace target link with our builder.
- *
- * Only active when the beta builder is enabled; otherwise the default
- * "Add New" button points at the classic block editor as it always did.
  */
 add_action( 'admin_head-edit.php', function() {
 	$screen = get_current_screen();
 	if ( ! $screen || $screen->post_type !== 'wpzf-form' ) return;
-	if ( ! class_exists( 'WPZOOM_Forms_Builder_Page' ) || ! WPZOOM_Forms_Builder_Page::is_enabled() ) return;
 	?>
 	<style>
 		.wp-heading-inline + .page-title-action { background: #2271b1; color: #fff; border-color: #2271b1; }
@@ -3510,14 +3500,12 @@ add_action( 'admin_head-edit.php', function() {
  * Render the legacy "Upgrade to PRO" sidebar banner on the forms list page.
  * The legacy template-manager modal used to ship this; we disabled that modal
  * when replacing the form editor, so re-emit the banner here so the upsell
- * isn't lost. With the beta builder off the legacy modal still loads and
- * already includes its own banner — skip in that case to avoid duplicates.
+ * isn't lost.
  */
 add_action( 'admin_footer-edit.php', function() {
 	$screen = get_current_screen();
 	if ( ! $screen || $screen->post_type !== 'wpzf-form' ) return;
 	if ( ! class_exists( 'WPZOOM_Forms_Settings' ) ) return;
-	if ( ! class_exists( 'WPZOOM_Forms_Builder_Page' ) || ! WPZOOM_Forms_Builder_Page::is_enabled() ) return;
 
 	$settings_class = new WPZOOM_Forms_Settings();
 	$settings_class->upsell_banner(); // echoes the .wpzoom-forms-settings-upsell-container markup
