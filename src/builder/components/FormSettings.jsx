@@ -46,15 +46,15 @@ const FORM_STYLES = [
 		isPro:  false,
 	},
 	{
-		value:  'glass',
-		label:  __( 'Glass', 'wpzoom-forms' ),
-		colors: [ '#6366f1', '#818cf8', '#1e1b4b', '#e0e7ff', '#c7d2fe' ],
+		value:  'soft',
+		label:  __( 'Soft', 'wpzoom-forms' ),
+		colors: [ '#8b5cf6', '#a78bfa', '#faf5ff', '#c4b5fd', '#ede9fe' ],
 		isPro:  true,
 	},
 	{
-		value:  'neon',
-		label:  __( 'Neon', 'wpzoom-forms' ),
-		colors: [ '#0f172a', '#06b6d4', '#d946ef', '#7c3aed', '#818cf8' ],
+		value:  'ink',
+		label:  __( 'Ink', 'wpzoom-forms' ),
+		colors: [ '#111827', '#374151', '#ffffff', '#f9fafb', '#6b7280' ],
 		isPro:  true,
 	},
 	{
