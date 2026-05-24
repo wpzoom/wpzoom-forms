@@ -2016,7 +2016,7 @@ class WPZOOM_Forms {
 			$content = preg_replace( '/<input([^>]*)type="submit"([^>]*)class="([^"]+)"/i', '<input $1 type="submit" data-sitekey="' . $recaptcha_site_key . '" data-callback="wpzf_submit" data-action="submit" ' . $data_badge_location . ' $2 class="$3 g-recaptcha"', $content );
 		} elseif ( 'turnstile' === $captcha_method ) {
 			$turnstile_widget = '<div class="cf-turnstile" data-theme="' . $turnstile_widget_theme . '" data-sitekey="' . $turnstile_site_key . '"></div>';
-			$content = preg_replace( '/<input([^>]*)type="submit"([^>]*)class="([^"]+)".*>/i', '<input $1 type="submit" data-callback="wpzf_submit" data-action="submit" $2 class="$3 cf-captcha">' . $turnstile_widget, $content );
+			$content = preg_replace( '/<input([^>]*)type="submit"([^>]*)class="([^"]+)"([^>]*)>/i', '<input $1 type="submit" data-callback="wpzf_submit" data-action="submit" $2 class="$3 cf-captcha" $4>' . $turnstile_widget, $content );
 		}
 
 		$style = $styleOutput = '';
