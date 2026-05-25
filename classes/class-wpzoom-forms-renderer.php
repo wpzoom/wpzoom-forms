@@ -4,7 +4,7 @@
  *
  * Produces semantic, lightly-classed markup that the frontend CSS skins. The
  * markup intentionally avoids inline styles and per-field decorations — visual
- * appearance is centralized in build/frontend-form/style.css.
+ * appearance is centralized in build/form-block/frontend/style.css.
  *
  * @package WPZOOM_Forms
  */
@@ -60,7 +60,7 @@ class WPZOOM_Forms_Renderer {
 		// default stylesheet when "Load default styling for forms" is enabled.
 		wp_enqueue_script( 'wpzf-frontend-form' );
 		if ( class_exists( 'WPZOOM_Forms_Settings' ) && (bool) WPZOOM_Forms_Settings::get( 'wpzf_use_theme_styles' ) ) {
-			wp_enqueue_style( 'wpzf-frontend-form' );
+			wp_enqueue_style( 'wpzoom-forms-css-frontend-formblock' );
 		}
 
 		$theme_class  = ' wpzf-theme-'  . sanitize_html_class( ! empty( $settings['theme'] )      ? $settings['theme']      : 'default' );

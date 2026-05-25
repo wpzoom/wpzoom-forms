@@ -868,17 +868,6 @@ class WPZOOM_Forms {
 				WPZOOM_FORMS_VERSION
 			);
 		} else {
-			// The form block uses ServerSideRender, which returns HTML with wpzf-* classes
-			// styled by frontend-form/style.css. That file is only registered on
-			// wp_enqueue_scripts, so the editor preview is completely unstyled without this.
-			wp_register_style(
-				'wpzf-frontend-form',
-				trailingslashit( $this->main_dir_url ) . 'frontend-form/style.css',
-				array(),
-				WPZOOM_FORMS_VERSION
-			);
-			wp_enqueue_style( 'wpzf-frontend-form' );
-
 			wp_register_script(
 				'wpzoom-forms-js-backend-formblock',
 				trailingslashit( $this->main_dir_url ) . 'form-block/backend/script.js',
@@ -896,13 +885,10 @@ class WPZOOM_Forms {
 				)
 			);
 
-			// frontend-form/style.css must be a dependency (not just enqueued) so that
-			// WordPress injects it inside the editor iframe (WP 6.3+), where
-			// ServerSideRender outputs the form HTML with wpzf-* classes.
 			wp_register_style(
 				'wpzoom-forms-css-backend-formblock',
 				trailingslashit( $this->main_dir_url ) . 'form-block/backend/style.css',
-				array( 'wpzf-frontend-form' ),
+				array(),
 				WPZOOM_FORMS_VERSION
 			);
 		}
@@ -3449,12 +3435,6 @@ add_filter( 'render_block', function( $block_content, $block ) {
  *    otherwise it's wired up in the renderer the first time a form is output.
  */
 add_action( 'wp_enqueue_scripts', function() {
-	wp_register_style(
-		'wpzf-frontend-form',
-		WPZOOM_FORMS_URL . 'build/frontend-form/style.css',
-		array(),
-		WPZOOM_FORMS_VERSION
-	);
 	wp_register_script(
 		'wpzf-frontend-form',
 		WPZOOM_FORMS_URL . 'build/frontend-form/script.js',
@@ -3463,12 +3443,10 @@ add_action( 'wp_enqueue_scripts', function() {
 		true
 	);
 
-	$use_theme_style    = class_exists( 'WPZOOM_Forms_Settings' ) ? (bool) WPZOOM_Forms_Settings::get( 'wpzf_use_theme_styles' ) : false;
 	$global_load_assets = class_exists( 'WPZOOM_Forms_Settings' ) ? (bool) WPZOOM_Forms_Settings::get( 'wpzf_global_assets_load' ) : false;
 
 	if ( $global_load_assets ) {
 		wp_enqueue_script( 'wpzf-frontend-form' );
-		if ( $use_theme_style ) wp_enqueue_style( 'wpzf-frontend-form' );
 	}
 }, 20 );
 

@@ -31,10 +31,9 @@ module.exports = {
 		'fields/website/index':        path.resolve( __dirname, 'src', 'fields', 'website', 'index.js' ),
 		'fields/datepicker/index':     path.resolve( __dirname, 'src', 'fields', 'datepicker', 'index.js' ),
 
-		// v2: new builder admin app + frontend form CSS/JS + submission view styles.
+		// v2: new builder admin app + frontend form JS + submission view styles.
 		'builder/script':              path.resolve( __dirname, 'src', 'builder', 'index.js' ),
 		'builder/style':               path.resolve( __dirname, 'src', 'builder', 'style.scss' ),
-		'frontend-form/style':         path.resolve( __dirname, 'src', 'frontend-form', 'style.scss' ),
 		'frontend-form/script':        path.resolve( __dirname, 'src', 'frontend-form', 'script.js' ),
 		'submission-view/style':       path.resolve( __dirname, 'src', 'submission-view', 'style.scss' ),
 	},
@@ -69,12 +68,6 @@ module.exports = {
 				builderStyle: {
 					name:   'builder/style',
 					test:   ( m, c, entry = 'builder/style' ) => m.constructor.name === 'CssModule' && recursiveIssuer( m ) === entry,
-					chunks: 'all',
-					enforce: true
-				},
-				frontendFormStyle: {
-					name:   'frontend-form/style',
-					test:   ( m, c, entry = 'frontend-form/style' ) => m.constructor.name === 'CssModule' && recursiveIssuer( m ) === entry,
 					chunks: 'all',
 					enforce: true
 				},

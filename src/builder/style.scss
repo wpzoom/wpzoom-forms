@@ -1038,9 +1038,6 @@ textarea.wpzf-input { resize: none; }
 	.wpzf-hint { margin-top: 12px; }
 }
 
-/* ── frontend theme styles (scoped under .wpzf-form.wpzf-theme-*) ─────────── */
-@import '../frontend-form/style';
-
 // Canvas equivalent of the frontend .wpzf-labels-left grid layout.
 // The frontend targets .wpzf-field--type-* but the canvas uses
 // .wpzf-field-card--type-* with a __body wrapper, so the rules don't match.

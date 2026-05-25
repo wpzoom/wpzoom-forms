@@ -144,8 +144,8 @@ class WPZOOM_Forms_Builder_Page {
 
 		// Also enqueue the frontend form CSS so the preview matches the public form.
 		wp_enqueue_style(
-			'wpzf-frontend-form',
-			WPZOOM_FORMS_URL . 'build/frontend-form/style.css',
+			'wpzoom-forms-css-frontend-formblock',
+			WPZOOM_FORMS_URL . 'build/form-block/frontend/style.css',
 			array(),
 			WPZOOM_FORMS_VERSION
 		);
