@@ -3379,17 +3379,10 @@ add_action( 'init', function() {
  * fall back to the original render path so their styling is fully preserved.
  */
 add_action( 'init', function() {
-	global $wpzoom_forms;
-	if ( ! $wpzoom_forms ) return;
-
 	remove_shortcode( 'wpzf_form' );
-	add_shortcode( 'wpzf_form', function( $atts ) use ( $wpzoom_forms ) {
+	add_shortcode( 'wpzf_form', function( $atts ) {
 		$atts = shortcode_atts( array( 'id' => 0 ), $atts, 'wpzf_form' );
-		$id   = (int) $atts['id'];
-		if ( get_post_meta( $id, WPZOOM_Forms_Schema::META_KEY, true ) ) {
-			return WPZOOM_Forms_Renderer::render( $id );
-		}
-		return $wpzoom_forms->form_block_render( array( 'formId' => $id ) );
+		return WPZOOM_Forms_Renderer::render( (int) $atts['id'] );
 	} );
 }, 12 );
 
