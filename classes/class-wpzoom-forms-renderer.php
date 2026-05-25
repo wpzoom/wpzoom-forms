@@ -62,6 +62,21 @@ class WPZOOM_Forms_Renderer {
 			wp_enqueue_style( 'wpzoom-forms-css-frontend-formblock' );
 		}
 
+		// Detect legacy redirect result (?success=1&wpzf_submitted_form=X) and
+		// pre-fill the notice server-side so no JS is needed to display it.
+		$notice_status = '';
+		$notice_text   = '';
+		$submitted_id  = isset( $_GET['wpzf_submitted_form'] ) ? absint( $_GET['wpzf_submitted_form'] ) : 0;
+		if ( $submitted_id === $form_id && isset( $_GET['success'] ) ) {
+			if ( '1' === $_GET['success'] ) {
+				$notice_status = 'success';
+				$notice_text   = $success_msg;
+			} else {
+				$notice_status = 'error';
+				$notice_text   = $failure_msg;
+			}
+		}
+
 		$theme_class  = ' wpzf-theme-'  . sanitize_html_class( ! empty( $settings['theme'] )      ? $settings['theme']      : 'default' );
 		$layout_class = ' wpzf-layout-' . sanitize_html_class( ! empty( $settings['formLayout'] ) ? $settings['formLayout'] : 'default' );
 
@@ -85,8 +100,8 @@ class WPZOOM_Forms_Renderer {
 		endif;
 		?>
 		<div id="<?php echo esc_attr( $form_uid ); ?>" class="wpzf-form wpzoom-forms_form<?php echo esc_attr( $theme_class ); ?><?php echo esc_attr( $layout_class ); ?> wpzf-labels-<?php echo esc_attr( $settings['labelsPosition'] ); ?>">
-			<div id="<?php echo esc_attr( $notice_id ); ?>" class="wpzf-notice" hidden></div>
-			<form method="POST" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="wpzf-form__inner wp-block-wpzoom-forms-form" data-form-id="<?php echo esc_attr( $form_id ); ?>" data-success="<?php echo esc_attr( $success_msg ); ?>" data-failure="<?php echo esc_attr( $failure_msg ); ?>" novalidate>
+			<div id="<?php echo esc_attr( $notice_id ); ?>" class="wpzf-notice"<?php if ( $notice_status ) : ?> data-status="<?php echo esc_attr( $notice_status ); ?>"<?php else : ?> hidden<?php endif; ?>><?php echo esc_html( $notice_text ); ?></div>
+			<form method="POST" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="wpzf-form__inner wp-block-wpzoom-forms-form" data-form-id="<?php echo esc_attr( $form_id ); ?>" data-success="<?php echo esc_attr( $success_msg ); ?>" data-failure="<?php echo esc_attr( $failure_msg ); ?>" novalidate<?php if ( 'success' === $notice_status ) echo ' hidden'; ?>>
 				<input type="hidden" name="action" value="wpzf_submit" />
 				<input type="hidden" name="form_id" value="<?php echo esc_attr( $form_id ); ?>" />
 				<?php wp_nonce_field( 'wpzf_submit' ); ?>
