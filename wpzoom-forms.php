@@ -3424,31 +3424,6 @@ add_filter( 'render_block', function( $block_content, $block ) {
 	return $block_styles . WPZOOM_Forms_Renderer::render( $id );
 }, 9, 2 );
 
-/**
- * Frontend asset registration.
- *
- *  - The AJAX submit script always loads (tiny, no styles).
- *  - The default theme stylesheet only loads when the existing
- *    "Load default styling for forms" setting is enabled, mirroring the
- *    legacy behaviour so we don't fight a site owner's theme CSS.
- *  - Enqueueing happens globally when "Load plugin assets globally" is on,
- *    otherwise it's wired up in the renderer the first time a form is output.
- */
-add_action( 'wp_enqueue_scripts', function() {
-	wp_register_script(
-		'wpzf-frontend-form',
-		WPZOOM_FORMS_URL . 'build/frontend-form/script.js',
-		array(),
-		WPZOOM_FORMS_VERSION,
-		true
-	);
-
-	$global_load_assets = class_exists( 'WPZOOM_Forms_Settings' ) ? (bool) WPZOOM_Forms_Settings::get( 'wpzf_global_assets_load' ) : false;
-
-	if ( $global_load_assets ) {
-		wp_enqueue_script( 'wpzf-frontend-form' );
-	}
-}, 20 );
 
 /**
  * Customize the "All Forms" admin list a bit:

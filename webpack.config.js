@@ -31,10 +31,9 @@ module.exports = {
 		'fields/website/index':        path.resolve( __dirname, 'src', 'fields', 'website', 'index.js' ),
 		'fields/datepicker/index':     path.resolve( __dirname, 'src', 'fields', 'datepicker', 'index.js' ),
 
-		// v2: new builder admin app + frontend form JS + submission view styles.
+		// v2: new builder admin app + submission view styles.
 		'builder/script':              path.resolve( __dirname, 'src', 'builder', 'index.js' ),
 		'builder/style':               path.resolve( __dirname, 'src', 'builder', 'style.scss' ),
-		'frontend-form/script':        path.resolve( __dirname, 'src', 'frontend-form', 'script.js' ),
 		'submission-view/style':       path.resolve( __dirname, 'src', 'submission-view', 'style.scss' ),
 	},
 	optimization: {
