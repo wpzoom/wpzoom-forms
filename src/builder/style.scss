@@ -769,8 +769,8 @@ textarea.wpzf-input { resize: none; }
 
 	&__ai-upsell {
 		display: flex; align-items: center; gap: 14px;
-		margin: 14px 28px 0;
-		padding: 14px 18px;
+		margin-left: auto;
+		padding: 10px 16px;
 		background: linear-gradient(135deg, #eef2ff, #f5f3ff);
 		border: 1px solid #c7d2fe;
 		border-radius: $radius-medium;
