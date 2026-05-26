@@ -324,27 +324,46 @@ class WPZOOM_Forms_Submission_Handler {
 
 		$from_email = $reply_to_email ?: $to;
 
+		// Stacked label / value rows (bold label, value underneath) — a clean,
+		// simple layout that renders well everywhere.
 		$rows = '';
 		foreach ( $fields as $label => $val ) {
-			$rows .= '<tr>'
-				. '<td style="padding:8px 12px;border-bottom:1px solid #eee;font-weight:600;color:#1a1a1a;vertical-align:top;width:30%;">' . esc_html( $label ) . '</td>'
-				. '<td style="padding:8px 12px;border-bottom:1px solid #eee;color:#444;">' . nl2br( esc_html( $val ) ) . '</td>'
-				. '</tr>';
+			$rows .= '<tr><td style="padding:0 0 18px 0;color:#222222;font-size:14px;line-height:1.6;vertical-align:top;">'
+				. '<strong style="display:block;margin-bottom:3px;color:#1a1a1a;">' . esc_html( $label ) . '</strong>'
+				. '<span style="color:#555555;">' . nl2br( esc_html( $val ) ) . '</span>'
+				. '</td></tr>';
 		}
 
-		$body = '<!doctype html><html><body style="margin:0;padding:24px;background:#f4f5f7;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;color:#222;">'
-			. '<div style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08);">'
-			.   '<div style="padding:18px 24px;background:#1a1a1a;color:#fff;font-size:16px;font-weight:600;">' . esc_html( $base_subject ) . '</div>'
-			.   '<table style="width:100%;border-collapse:collapse;font-size:14px;line-height:1.5;">' . $rows . '</table>'
-			.   '<div style="padding:14px 24px;color:#888;font-size:12px;border-top:1px solid #eee;">'
-			.     sprintf(
-					/* translators: 1: site name (linked), 2: plugin name */
-					esc_html__( 'Sent from %1$s using the %2$s plugin.', 'wpzoom-forms' ),
-					'<a href="' . esc_url( home_url() ) . '" style="color:#888;">' . esc_html( $site_name ) . '</a>',
-					'<strong>WPZOOM Forms</strong>'
-				  )
+		$footer = sprintf(
+			/* translators: 1: site name (linked), 2: plugin name */
+			esc_html__( 'Sent from %1$s using the %2$s plugin.', 'wpzoom-forms' ),
+			'<a href="' . esc_url( home_url() ) . '" style="color:#888888;">' . esc_html( $site_name ) . '</a>',
+			'<strong>WPZOOM Forms</strong>'
+		);
+
+		// All visual styling is inline (best for email clients). The small <style>
+		// block carries only the things inline CSS can't express: the iOS
+		// data-detector reset (stops Apple Mail recoloring dates/phones/addresses
+		// inside submitted values) and Outlook/mobile text-size hardening.
+		$body = '<!doctype html><html><head>'
+			. '<meta charset="utf-8">'
+			. '<meta name="viewport" content="width=device-width,initial-scale=1">'
+			. '<style>'
+			.   'a[x-apple-data-detectors]{color:inherit!important;text-decoration:none!important;font-size:inherit!important;font-family:inherit!important;font-weight:inherit!important;line-height:inherit!important;}'
+			.   'table{mso-table-lspace:0pt;mso-table-rspace:0pt;}'
+			.   'body,table,td,a{-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;}'
+			. '</style>'
+			. '</head>'
+			. '<body style="margin:0;padding:24px;background:#f4f3f3;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;color:#222222;">'
+			.   '<div style="max-width:600px;margin:0 auto;background:#ffffff;border:1px solid #eaeaea;border-radius:10px;overflow:hidden;">'
+			.     '<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">'
+			.       '<tr><td style="padding:28px 28px 10px 28px;">'
+			.         '<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">' . $rows . '</table>'
+			.       '</td></tr>'
+			.       '<tr><td style="padding:18px 28px;border-top:1px solid #eaeaea;color:#888888;font-size:12px;line-height:1.5;">' . $footer . '</td></tr>'
+			.     '</table>'
 			.   '</div>'
-			. '</div></body></html>';
+			. '</body></html>';
 
 		$headers = array(
 			'Content-Type: text/html; charset=UTF-8',
