@@ -435,12 +435,14 @@ class Wpzoom_Forms_Cpt extends Widget_Base {
 
 		$form = get_post( intval( $post_id ) );
 
-		if ( ! class_exists( '\WPZOOM_Forms_Renderer' ) ) {
+		if ( ! function_exists( 'wpzoom_forms_render_embed' ) ) {
 			return;
 		}
 
+		// Route through the shared embed helper: v2 renderer for forms saved in
+		// the new builder, legacy block render for everything else.
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo \WPZOOM_Forms_Renderer::render( intval( $post_id ) );
+		echo wpzoom_forms_render_embed( intval( $post_id ) );
 
 	}
 
