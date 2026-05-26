@@ -544,6 +544,36 @@ textarea.wpzf-input { resize: none; }
 	p  { margin: 0 0 16px; font-size: 13px; }
 }
 
+.wpzf-inspector-tip {
+	display: flex;
+	gap: 10px;
+	margin-top: 32px;
+	padding: 14px;
+	text-align: left;
+	background: rgba($brand, .06);
+	border: 1px solid rgba($brand, .15);
+	border-radius: $radius-large;
+
+	&__icon {
+		flex-shrink: 0;
+		margin-top: 1px;
+		color: var(--wp-admin-theme-color, #{$brand});
+	}
+	&__body { min-width: 0; }
+	&__label {
+		display: block;
+		font-size: 11px; font-weight: 600;
+		text-transform: uppercase; letter-spacing: .02em;
+		color: var(--wp-admin-theme-color, #{$brand});
+		margin-bottom: 3px;
+	}
+	&__text {
+		margin: 0 !important;
+		font-size: 12px; line-height: 1.5;
+		color: $text;
+	}
+}
+
 .wpzf-row { margin-bottom: 14px;
 	&__label {
 		display: block; font-size: 11px; color: $text;
