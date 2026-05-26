@@ -1,6 +1,6 @@
 # WPZOOM Forms
 
-A simple, user-friendly contact form plugin for WordPress that uses Gutenberg blocks. Create beautiful, responsive forms in minutes with drag-and-drop interface.
+A simple, user-friendly contact form plugin for WordPress with a dedicated drag-and-drop builder. Build beautiful, responsive forms in minutes, then embed them anywhere — as a block, an Elementor widget, or a shortcode.
 
 [![WordPress Plugin Version](https://img.shields.io/wordpress/plugin/v/wpzoom-forms)](https://wordpress.org/plugins/wpzoom-forms/)
 [![WordPress Plugin Rating](https://img.shields.io/wordpress/plugin/stars/wpzoom-forms)](https://wordpress.org/plugins/wpzoom-forms/)
@@ -10,25 +10,32 @@ A simple, user-friendly contact form plugin for WordPress that uses Gutenberg bl
 ## Features
 
 ### Free Features
-- **Drag-and-Drop Builder** - Build forms using Gutenberg's editor
-- **Ready-to-Use Templates** - Contact, feedback, appointment forms
+- **Dedicated Drag-and-Drop Builder** - Build and manage forms in a standalone WPZOOM Forms admin screen, independent of the block editor
+- **Embed Anywhere** - Block, Elementor widget, or shortcode
+- **Ready-to-Use Templates** - Contact, feedback, appointment forms and more
 - **Advanced Spam Protection**:
   - Google reCAPTCHA (v2 and v3)
   - Akismet anti-spam
   - Cloudflare Turnstile
+  - Honeypot
 - **Email Notifications** - Instant alerts on submissions
-- **Elementor Widget** - Works with Elementor page builder
-- **Shortcode Support** - Embed forms anywhere
+- **Submission Management** - Submissions saved in WordPress, exportable via Tools > Export
 - **Date Picker Field** - For bookings and appointments
 - **Multi Checkboxes** - Multiple selection options
-- **Submission Management** - View and export submissions
 - **Predefined Lists** - Countries and US states
 
 ### PRO Features
-- Custom Email Notifications with visual editor
-- AJAX Form Submissions (no page reload)
-- File Upload Fields (PDF, images)
-- Premium Support
+- AI Form Generator
+- Mailchimp integration
+- Custom email notifications with a visual editor
+- AJAX form submissions (no page reload)
+- File upload fields (PDF, images)
+- Time Picker, GDPR consent, Hidden, and Number fields
+- Conditional logic
+- Import/export forms and CSV submission export
+- Duplicate forms
+- 20+ PRO templates
+- Premium support
 
 ### Included Templates
 - Contact Form
@@ -64,18 +71,18 @@ git clone https://github.com/wpzoom/wpzoom-forms.git
 ### Creating a Form
 
 1. Go to **WPZOOM Forms** in your WordPress admin
-2. Click **Add New** to create a form
+2. Click **Add New** to open the drag-and-drop builder
 3. Choose a template or start from scratch
-4. Add fields using the block editor
-5. Configure email settings
-6. Publish your form
+4. Drag in fields and arrange your layout
+5. Configure notifications and form settings
+6. Save your form
 
 ### Embedding Forms
 
 #### Using Shortcode
 Copy the shortcode from your form and paste anywhere:
 ```
-[wpzoom_form id="123"]
+[wpzf_form id="123"]
 ```
 
 #### Using Block
@@ -131,34 +138,26 @@ npm install
 ### Build Commands
 
 ```bash
-# Start development mode for block editor
+# Start development mode (watch + rebuild on change)
 npm run start
 
-# Build block editor assets for production
+# Build all assets for production
 npm run build
-
-# Build frontend assets (minified JS)
-npm run build:frontend
-
-# Watch and build frontend assets
-npm run watch:frontend
-
-# Build both block editor and frontend assets
-npm run build:all
 ```
+
+> Tip: if a source change doesn't appear after a build, clear the cache with `rm -rf node_modules/.cache && npm run build`.
 
 ### Plugin Structure
 
 ```
 wpzoom-forms/
-├── assets/           # Source files for frontend
-│   └── frontend/
-│       ├── js/       # Frontend JavaScript
-│       └── css/      # Frontend CSS
-├── src/              # Block editor source files
-├── dist/             # Compiled assets
-├── includes/         # PHP classes and functions
-└── blocks/           # Block definitions
+├── classes/          # PHP classes (builder page, REST API, renderer, schema, migration, submissions…)
+├── src/              # JavaScript/SCSS source (builder app, form block, fields)
+├── build/            # Compiled assets (from `npm run build`)
+├── elementor/        # Elementor widget integration
+├── templates/        # Predefined form templates
+├── languages/        # Translations
+└── wpzoom-forms.php  # Main plugin file
 ```
 
 ### Performance Notes
@@ -177,7 +176,7 @@ Important plugin settings that affect performance:
 
 ## Requirements
 
-- WordPress 6.0 or higher
+- WordPress 6.5 or higher
 - PHP 7.4 or higher
 
 ## Contributing
