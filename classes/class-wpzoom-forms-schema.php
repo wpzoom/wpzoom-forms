@@ -15,6 +15,18 @@ class WPZOOM_Forms_Schema {
 	const META_KEY        = '_wpzf_schema';
 	const SCHEMA_VERSION  = 2;
 
+	/**
+	 * Per-form flag (postmeta) that opts a form into the v2 renderer on the
+	 * frontend. It is set ONLY when a form is explicitly saved through the new
+	 * builder — never as a side effect of viewing, opening, or submitting a form.
+	 *
+	 * This is deliberately separate from META_KEY (the editing schema, which may
+	 * be created lazily): a form keeps its original legacy block rendering across
+	 * every embed type (block, shortcode, Elementor) until the admin saves it in
+	 * the builder, so existing forms are never silently restyled on update.
+	 */
+	const RENDER_FLAG     = '_wpzf_v2';
+
 	/** Field types supported by the builder. */
 	public static function field_types() {
 		return array(
@@ -225,7 +237,12 @@ class WPZOOM_Forms_Schema {
 			}
 			$clean['width']        = self::enum( isset( $f['width'] ) ? $f['width'] : 'full', self::field_widths(), 'full' );
 			$clean['cssClass']     = isset( $f['cssClass'] ) ? sanitize_html_class( $f['cssClass'], '' ) : '';
-			$clean['customCSS']    = isset( $f['customCSS'] ) ? wp_strip_all_tags( wp_unslash( $f['customCSS'] ) ) : '';
+			// Custom CSS: strip tags and cap length to avoid unbounded payloads
+			// being stored and printed inside a <style> tag on the frontend.
+			// substr (byte-based) is used instead of mb_substr so this never
+			// fatals on hosts without the mbstring extension; an exact char count
+			// is unnecessary for a safety cap.
+			$clean['customCSS']    = isset( $f['customCSS'] ) ? substr( wp_strip_all_tags( wp_unslash( $f['customCSS'] ) ), 0, 5000 ) : '';
 
 			switch ( $type ) {
 				case 'textarea':
@@ -321,6 +338,19 @@ class WPZOOM_Forms_Schema {
 	public static function form_has_schema( $form_id ) {
 		$raw = get_post_meta( $form_id, self::META_KEY, true );
 		return ! empty( $raw );
+	}
+
+	/**
+	 * Opt a form into the v2 renderer. Call this ONLY from an explicit builder
+	 * save (REST create/update/duplicate) or when seeding a v2 form.
+	 */
+	public static function enable_v2_render( $form_id ) {
+		update_post_meta( (int) $form_id, self::RENDER_FLAG, '1' );
+	}
+
+	/** Should this form render with the v2 renderer on the frontend? */
+	public static function uses_v2_render( $form_id ) {
+		return (bool) get_post_meta( (int) $form_id, self::RENDER_FLAG, true );
 	}
 
 	/** Find the field marked as reply-to email, or the first email field. */

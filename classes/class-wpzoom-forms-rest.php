@@ -213,6 +213,9 @@ class WPZOOM_Forms_REST {
 			WPZOOM_Forms_Schema::save_for_form( $id, WPZOOM_Forms_Schema::defaults() );
 		}
 
+		// Forms created in the builder render with the v2 renderer.
+		WPZOOM_Forms_Schema::enable_v2_render( $id );
+
 		update_post_meta( $id, '_form_method', 'combined' );
 		update_post_meta( $id, '_form_email', get_option( 'admin_email' ) );
 		update_post_meta( $id, '_form_subject', __( 'New Form Submission', 'wpzoom-forms' ) );
@@ -279,6 +282,8 @@ class WPZOOM_Forms_REST {
 		// Update schema (fields + form settings)
 		if ( isset( $body['schema'] ) ) {
 			WPZOOM_Forms_Schema::save_for_form( $id, $body['schema'] );
+			// An explicit builder save opts the form into the v2 renderer.
+			WPZOOM_Forms_Schema::enable_v2_render( $id );
 		}
 
 		// Update notification settings
@@ -340,8 +345,9 @@ class WPZOOM_Forms_REST {
 			return new WP_Error( 'wpzf_dup_failed', __( 'Could not duplicate form.', 'wpzoom-forms' ), array( 'status' => 500 ) );
 		}
 
-		// Copy all relevant meta.
-		foreach ( array( WPZOOM_Forms_Schema::META_KEY, '_form_method', '_form_email', '_form_subject', '_form_success_message', '_form_failure_message' ) as $key ) {
+		// Copy all relevant meta (including the v2-render flag, so the copy
+		// inherits the original's rendering mode — legacy stays legacy).
+		foreach ( array( WPZOOM_Forms_Schema::META_KEY, WPZOOM_Forms_Schema::RENDER_FLAG, '_form_method', '_form_email', '_form_subject', '_form_success_message', '_form_failure_message' ) as $key ) {
 			$val = get_post_meta( $src_id, $key, true );
 			if ( $val !== '' ) update_post_meta( $new_id, $key, $val );
 		}

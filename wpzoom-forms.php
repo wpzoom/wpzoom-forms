@@ -14,6 +14,8 @@
  * Author:      WPZOOM
  * Author URI:  https://www.wpzoom.com
  * Version:     2.0.0
+ * Requires at least: 6.5
+ * Requires PHP: 7.4
  * License:     GPL2+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
@@ -407,7 +409,7 @@ class WPZOOM_Forms {
 		// If this is the first time activating the plugin...
 		if ( ! get_option( 'wpzf-form_first-activate' ) ) {
 			// Insert an initial example form post
-			wp_insert_post( array(
+			$example_id = wp_insert_post( array(
 				'post_type'    => 'wpzf-form',
 				'post_status'  => 'publish',
 				'post_title'   => __( 'Example Form', 'wpzoom-forms' ),
@@ -451,6 +453,15 @@ class WPZOOM_Forms {
 					
 				)
 			) );
+
+			// Seed the example form as a v2 form so fresh installs showcase the
+			// new builder/renderer out of the box. (Existing forms on upgrades are
+			// left as legacy until the admin saves them — see the backfill below.)
+			if ( $example_id && ! is_wp_error( $example_id )
+				&& class_exists( 'WPZOOM_Forms_Schema' ) && class_exists( 'WPZOOM_Forms_Migration' ) ) {
+				WPZOOM_Forms_Schema::save_for_form( $example_id, WPZOOM_Forms_Migration::build_from_post_content( $example_id ) );
+				WPZOOM_Forms_Schema::enable_v2_render( $example_id );
+			}
 
 			// Make sure we don't insert an example form on every activation
 			update_option( 'wpzf-form_first-activate', true );
@@ -3373,16 +3384,44 @@ add_action( 'init', function() {
 }, 11 ); // After main class init (priority 9).
 
 /**
- * Override the legacy form-block render callback + the shortcode to use the
- * v2 renderer — but only for forms that have been saved through the new builder
- * (i.e. the _wpzf_schema postmeta exists). Old forms that haven't been touched
- * fall back to the original render path so their styling is fully preserved.
+ * Render an embedded form by id, choosing the renderer based on whether the
+ * form has been explicitly saved in the new builder.
+ *
+ * Forms opted into v2 (RENDER_FLAG set on builder save) use the new renderer.
+ * Everything else — including all forms that existed before the v2 update —
+ * falls back to the original legacy block render so their markup and styling
+ * are byte-for-byte preserved. This keeps ~20k existing installs unaffected
+ * until the admin deliberately re-saves a form in the builder.
+ *
+ * @param int    $id           Form post id.
+ * @param string $root_classes Extra wrapper classes for v2 (e.g. alignwide).
+ * @return string Rendered HTML.
+ */
+function wpzoom_forms_render_embed( $id, $root_classes = '' ) {
+	$id = (int) $id;
+	if ( $id < 1 || ! class_exists( 'WPZOOM_Forms_Schema' ) ) return '';
+
+	if ( WPZOOM_Forms_Schema::uses_v2_render( $id ) ) {
+		return WPZOOM_Forms_Renderer::render( $id, $root_classes );
+	}
+
+	// Legacy fallback: original block-based rendering (do_blocks of post_content).
+	global $wpzoom_forms;
+	if ( $wpzoom_forms instanceof WPZOOM_Forms ) {
+		return $wpzoom_forms->form_block_render( array( 'formId' => $id ) );
+	}
+	return '';
+}
+
+/**
+ * Point the [wpzf_form] shortcode at the embed router. Only forms saved in the
+ * new builder render with v2; legacy forms keep their original output.
  */
 add_action( 'init', function() {
 	remove_shortcode( 'wpzf_form' );
 	add_shortcode( 'wpzf_form', function( $atts ) {
 		$atts = shortcode_atts( array( 'id' => 0 ), $atts, 'wpzf_form' );
-		return WPZOOM_Forms_Renderer::render( (int) $atts['id'] );
+		return wpzoom_forms_render_embed( (int) $atts['id'] );
 	} );
 }, 12 );
 
@@ -3399,10 +3438,12 @@ add_filter( 'render_block', function( $block_content, $block ) {
 	$id = isset( $block['attrs']['formId'] ) ? (int) $block['attrs']['formId'] : 0;
 	if ( $id < 1 ) return $block_content;
 
-	// Only switch to the v2 renderer when the form has been saved through the new
-	// builder (_wpzf_schema exists). Otherwise return the original block output
-	// unchanged so old forms keep all their existing styling and behaviour.
-	if ( ! get_post_meta( $id, WPZOOM_Forms_Schema::META_KEY, true ) ) {
+	// Only switch to the v2 renderer when the form has been explicitly saved
+	// through the new builder (RENDER_FLAG set). Otherwise return the original
+	// block output unchanged so old forms keep all their existing styling and
+	// behaviour. Note: the schema meta alone is NOT a sufficient signal — it can
+	// be created lazily by opening/submitting a form — so we gate on the flag.
+	if ( ! WPZOOM_Forms_Schema::uses_v2_render( $id ) ) {
 		return $block_content;
 	}
 
@@ -3422,6 +3463,35 @@ add_filter( 'render_block', function( $block_content, $block ) {
 
 	return $block_styles . WPZOOM_Forms_Renderer::render( $id, $root_classes );
 }, 9, 2 );
+
+/**
+ * One-time backfill of the v2-render flag.
+ *
+ * On a clean upgrade from the old (block-only) plugin no form has a schema, so
+ * this matches nothing and every form correctly stays on legacy rendering until
+ * its admin re-saves it in the builder. It exists only so sites that ran a
+ * pre-release/beta build — where forms were already saved through the new
+ * builder (and therefore have a schema) — keep rendering with v2 after this
+ * safeguard lands, instead of silently dropping back to legacy.
+ */
+add_action( 'init', function() {
+	if ( get_option( 'wpzf_v2_flag_backfilled' ) ) return;
+	if ( ! class_exists( 'WPZOOM_Forms_Schema' ) ) return;
+
+	$ids = get_posts( array(
+		'post_type'      => 'wpzf-form',
+		'post_status'    => 'any',
+		'numberposts'    => -1,
+		'fields'         => 'ids',
+		'meta_key'       => WPZOOM_Forms_Schema::META_KEY, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+		'no_found_rows'  => true,
+	) );
+	foreach ( $ids as $fid ) {
+		WPZOOM_Forms_Schema::enable_v2_render( $fid );
+	}
+
+	update_option( 'wpzf_v2_flag_backfilled', 1 );
+}, 13 );
 
 
 /**
