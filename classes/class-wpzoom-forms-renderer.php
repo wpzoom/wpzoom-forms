@@ -354,7 +354,7 @@ class WPZOOM_Forms_Renderer {
 
 		if ( $config['active'] === 'recaptcha' && ! empty( $config['site_key'] ) ) {
 			// reCAPTCHA v3 — invisible: load the api.js with ?render=<key> and
-			// expose the key to our frontend script so it can call grecaptcha.execute().
+			// intercept form submit to call grecaptcha.execute() before posting.
 			if ( $config['type'] === 'v3' ) {
 				wp_enqueue_script(
 					'wpzf-google-recaptcha',
@@ -363,7 +363,16 @@ class WPZOOM_Forms_Renderer {
 					null,
 					true
 				);
-				// Inline JSON tag rather than wp_localize_script so it's idempotent per render.
+				// Add the submit-intercept handler once per page load (static guard prevents
+				// duplicates when multiple v3 forms are rendered on the same page).
+				static $v3_inline_added = false;
+				if ( ! $v3_inline_added ) {
+					wp_add_inline_script(
+						'wpzf-google-recaptcha',
+						'(function(){document.addEventListener("submit",function(e){var f=e.target;if(!f.classList.contains("wpzf-form__inner"))return;var t=f.querySelector(".wpzf-recaptcha-token");if(!t||t.value)return;e.preventDefault();grecaptcha.ready(function(){grecaptcha.execute(t.dataset.sitekey,{action:t.dataset.action||"wpzf_submit"}).then(function(token){t.value=token;f.submit();});});},true);})();'
+					);
+					$v3_inline_added = true;
+				}
 				return sprintf(
 					'<input type="hidden" name="recaptcha_token" class="wpzf-recaptcha-token" data-sitekey="%1$s" data-action="wpzf_submit" />',
 					esc_attr( $config['site_key'] )
