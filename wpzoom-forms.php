@@ -3414,7 +3414,13 @@ add_filter( 'render_block', function( $block_content, $block ) {
 		$block_styles = $m[1];
 	}
 
-	return $block_styles . WPZOOM_Forms_Renderer::render( $id );
+	// Preserve the block's alignment (wide/full) on the rendered wrapper. The
+	// render callback no longer produces this output, so the align class set in
+	// the editor must be re-applied here or the frontend ignores it.
+	$align        = isset( $block['attrs']['align'] ) ? $block['attrs']['align'] : '';
+	$root_classes = ( $align && 'none' !== $align ) ? 'align' . $align : '';
+
+	return $block_styles . WPZOOM_Forms_Renderer::render( $id, $root_classes );
 }, 9, 2 );
 
 

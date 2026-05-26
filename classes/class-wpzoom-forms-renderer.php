@@ -15,8 +15,12 @@ class WPZOOM_Forms_Renderer {
 
 	/**
 	 * Render a form by id. Returns HTML string, never echoes.
+	 *
+	 * @param int    $form_id      The form post id.
+	 * @param string $root_classes Extra CSS classes for the wrapper (e.g. block
+	 *                             alignment classes like "alignwide"/"alignfull").
 	 */
-	public static function render( $form_id ) {
+	public static function render( $form_id, $root_classes = '' ) {
 		$form_id = (int) $form_id;
 		if ( $form_id < 1 ) return self::error_html( __( 'Invalid form id.', 'wpzoom-forms' ), false );
 
@@ -33,7 +37,7 @@ class WPZOOM_Forms_Renderer {
 			$schema = WPZOOM_Forms_Migration::migrate( $form_id );
 		}
 
-		return self::render_schema( $form_id, $schema );
+		return self::render_schema( $form_id, $schema, $root_classes );
 	}
 
 	private static function error_html( $msg, $show_for_admins_only ) {
@@ -44,7 +48,7 @@ class WPZOOM_Forms_Renderer {
 		);
 	}
 
-	private static function render_schema( $form_id, $schema ) {
+	private static function render_schema( $form_id, $schema, $root_classes = '' ) {
 		$settings  = $schema['settings'];
 		$fields    = $schema['fields'];
 
@@ -80,6 +84,15 @@ class WPZOOM_Forms_Renderer {
 		$theme_class  = ' wpzf-theme-'  . sanitize_html_class( ! empty( $settings['theme'] )      ? $settings['theme']      : 'default' );
 		$layout_class = ' wpzf-layout-' . sanitize_html_class( ! empty( $settings['formLayout'] ) ? $settings['formLayout'] : 'default' );
 
+		// Extra wrapper classes supplied by the caller (e.g. block alignment).
+		$extra_class = '';
+		if ( ! empty( $root_classes ) ) {
+			$parts = array_filter( array_map( 'sanitize_html_class', preg_split( '/\s+/', trim( $root_classes ) ) ) );
+			if ( $parts ) {
+				$extra_class = ' ' . implode( ' ', $parts );
+			}
+		}
+
 		// Collect per-field custom CSS.
 		$field_css = '';
 		foreach ( $fields as $field ) {
@@ -99,7 +112,7 @@ class WPZOOM_Forms_Renderer {
 			echo '<style>' . $field_css . '</style>';
 		endif;
 		?>
-		<div id="<?php echo esc_attr( $form_uid ); ?>" class="wpzf-form wpzoom-forms_form<?php echo esc_attr( $theme_class ); ?><?php echo esc_attr( $layout_class ); ?> wpzf-labels-<?php echo esc_attr( $settings['labelsPosition'] ); ?>">
+		<div id="<?php echo esc_attr( $form_uid ); ?>" class="wpzf-form wpzoom-forms_form<?php echo esc_attr( $theme_class ); ?><?php echo esc_attr( $layout_class ); ?><?php echo esc_attr( $extra_class ); ?> wpzf-labels-<?php echo esc_attr( $settings['labelsPosition'] ); ?>">
 			<div id="<?php echo esc_attr( $notice_id ); ?>" class="wpzf-notice"<?php if ( $notice_status ) : ?> data-status="<?php echo esc_attr( $notice_status ); ?>"<?php else : ?> hidden<?php endif; ?>><?php echo esc_html( $notice_text ); ?></div>
 			<form method="POST" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="wpzf-form__inner wp-block-wpzoom-forms-form" data-form-id="<?php echo esc_attr( $form_id ); ?>" data-success="<?php echo esc_attr( $success_msg ); ?>" data-failure="<?php echo esc_attr( $failure_msg ); ?>" novalidate<?php if ( 'success' === $notice_status ) echo ' hidden'; ?>>
 				<input type="hidden" name="action" value="wpzf_submit" />
