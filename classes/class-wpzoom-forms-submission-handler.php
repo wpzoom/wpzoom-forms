@@ -62,7 +62,12 @@ class WPZOOM_Forms_Submission_Handler {
 
 		$schema = WPZOOM_Forms_Schema::get_for_form( $form_id );
 		if ( $schema === null ) {
-			$schema = WPZOOM_Forms_Migration::migrate( $form_id );
+			// No schema means this is a legacy block-based form — hand off to the
+			global $wpzoom_forms;
+			if ( $wpzoom_forms ) {
+				$wpzoom_forms->action_form_post();
+			}
+			exit;
 		}
 
 		// CAPTCHA check via main plugin's existing infrastructure (delegates to its config).

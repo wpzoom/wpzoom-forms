@@ -234,8 +234,9 @@ class WPZOOM_Forms_REST {
 	private function read_form_payload( $id ) {
 		$schema = WPZOOM_Forms_Schema::get_for_form( $id );
 		if ( $schema === null ) {
-			// Auto-migrate legacy block form.
-			$schema = WPZOOM_Forms_Migration::migrate( $id );
+			// Build schema in memory for the builder UI — do not persist. Schema is
+			// only written to postmeta when the user explicitly clicks Save.
+			$schema = WPZOOM_Forms_Migration::build_from_post_content( $id );
 		}
 
 		$post = get_post( $id );
