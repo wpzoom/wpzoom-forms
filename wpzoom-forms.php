@@ -3469,7 +3469,7 @@ add_action( 'admin_footer-edit.php', function() {
 			// Drop the upsell into the right rail next to the posts table.
 			var $filter = $('#posts-filter');
 			if ( $filter.length ) {
-				$banner.css({ 'float':'right', 'margin-left':'20px', 'max-width':'280px' });
+				$banner.css({ 'float':'right', 'margin-left':'20px', 'max-width':'340px' });
 				$filter.before( $banner );
 			}
 		});
