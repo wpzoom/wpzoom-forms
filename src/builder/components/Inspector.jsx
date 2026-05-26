@@ -34,6 +34,7 @@ export default function Inspector({
 	onUpdateSettings,
 	onUpdateNotifications,
 	onTab,
+	onShowGuide,
 }) {
 	// Pick a tip once per mount so it stays stable while the user works.
 	const [ tip ] = useState( () => WPZF_TIPS[ Math.floor( Math.random() * WPZF_TIPS.length ) ] );
@@ -44,6 +45,7 @@ export default function Inspector({
 				<FieldSettings
 					field={ selectedField }
 					onChange={ onUpdateField }
+					onShowGuide={ onShowGuide }
 				/>
 			) }
 
@@ -72,11 +74,11 @@ export default function Inspector({
 			) }
 
 			{ activeTab === 'form-settings' && (
-				<FormSettings settings={ form.schema.settings } onChange={ onUpdateSettings } />
+				<FormSettings settings={ form.schema.settings } onChange={ onUpdateSettings } onShowGuide={ onShowGuide } />
 			) }
 
 			{ activeTab === 'notifications' && (
-				<NotificationsTab notifications={ form.notifications } onChange={ onUpdateNotifications } />
+				<NotificationsTab notifications={ form.notifications } onChange={ onUpdateNotifications } onShowGuide={ onShowGuide } />
 			) }
 		</aside>
 	);

@@ -1,4 +1,6 @@
 import { useEffect, useReducer, useCallback, useMemo, useState } from '@wordpress/element';
+import { useDispatch } from '@wordpress/data';
+import { store as preferencesStore } from '@wordpress/preferences';
 import { __ } from '@wordpress/i18n';
 import { api } from './api';
 import { clone, makeField, moveItem } from './utils';
@@ -10,6 +12,7 @@ import Inspector from './components/Inspector.jsx';
 import Notices from './components/Notices.jsx';
 import EmbedModal from './components/EmbedModal.jsx';
 import TemplatePicker from './components/TemplatePicker.jsx';
+import WelcomeGuide from './components/WelcomeGuide.jsx';
 
 const TABS = {
 	FIELDS:        'fields',
@@ -111,6 +114,8 @@ function reducer( state, action ) {
 
 export default function App({ formId, presetTemplate }) {
 	const [ state, dispatch ] = useReducer( reducer, initialState );
+	const { set: setPref } = useDispatch( preferencesStore );
+	const showGuide = useCallback( () => setPref( 'wpzoom-forms', 'builderWelcomeGuide', true ), [ setPref ] );
 
 	// Load on mount — only when we have a form id.
 	useEffect( () => {
@@ -236,6 +241,7 @@ export default function App({ formId, presetTemplate }) {
 					onUpdateSettings={ ( patch ) => dispatch( { type: 'UPDATE_SETTINGS', patch } ) }
 					onUpdateNotifications={ ( patch ) => dispatch( { type: 'UPDATE_NOTIFICATIONS', patch } ) }
 					onTab={ ( tab ) => dispatch( { type: 'SET_TAB', tab } ) }
+					onShowGuide={ showGuide }
 				/>
 			</div>
 
@@ -247,6 +253,8 @@ export default function App({ formId, presetTemplate }) {
 					onClose={ () => dispatch( { type: 'TOGGLE_EMBED', show: false } ) }
 				/>
 			) }
+
+			<WelcomeGuide />
 		</div>
 	);
 }

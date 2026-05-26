@@ -5,6 +5,7 @@ import {
 	RadioControl,
 	Button,
 } from '@wordpress/components';
+import { help } from '@wordpress/icons';
 
 const NOTIFICATION_EMAIL_URL = 'https://www.wpzoom.com/plugins/wpzoom-forms/?utm_source=wpadmin&utm_medium=wpzoom-forms-free&utm_campaign=builder-notification-email-upsell';
 
@@ -14,11 +15,12 @@ const METHODS = [
 	{ value: 'combined', label: __( 'Email + Database', 'wpzoom-forms' ) },
 ];
 
-export default function NotificationsTab({ notifications, onChange }) {
+export default function NotificationsTab({ notifications, onChange, onShowGuide }) {
 	return (
 		<div className="wpzf-inspector">
 			<div className="wpzf-inspector__header">
 				<h3>{ __( 'Notifications & Confirmation', 'wpzoom-forms' ) }</h3>
+				<Button icon={ help } size="small" label={ __( 'Show Welcome Guide', 'wpzoom-forms' ) } showTooltip onClick={ onShowGuide } />
 			</div>
 			<div className="wpzf-inspector__body">
 				<RadioControl

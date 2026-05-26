@@ -11,7 +11,7 @@ import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
-import { plus, reset } from '@wordpress/icons';
+import { plus, reset, help } from '@wordpress/icons';
 import { api } from '../api';
 
 const HAS_LABEL    = [ 'text', 'name', 'email', 'tel', 'url', 'number', 'textarea', 'date', 'select', 'radio', 'checkboxes', 'checkbox', 'hidden' ];
@@ -43,14 +43,17 @@ const TABS = [
 	{ name: 'advanced', title: __( 'Advanced', 'wpzoom-forms' ) },
 ];
 
-export default function FieldSettings({ field, onChange }) {
+export default function FieldSettings({ field, onChange, onShowGuide }) {
 	const set = ( patch ) => onChange( patch );
 
 	return (
 		<div className="wpzf-inspector">
 			<div className="wpzf-inspector__header">
 				<h3>{ __( 'Field Settings', 'wpzoom-forms' ) }</h3>
-				<span className="wpzf-inspector__type">{ field.type }</span>
+				<div className="wpzf-inspector__header-right">
+					<span className="wpzf-inspector__type">{ field.type }</span>
+					<Button icon={ help } size="small" label={ __( 'Show Welcome Guide', 'wpzoom-forms' ) } showTooltip onClick={ onShowGuide } />
+				</div>
 			</div>
 
 			<TabPanel

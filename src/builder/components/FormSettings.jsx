@@ -3,9 +3,11 @@ import { __ } from '@wordpress/i18n';
 import {
 	TextControl,
 	ToggleControl,
+	Button,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
+import { help } from '@wordpress/icons';
 import ProModal from './ProModal.jsx';
 
 const FORM_STYLES = [
@@ -119,11 +121,12 @@ function StylePicker( { value, onChange } ) {
 	);
 }
 
-export default function FormSettings({ settings, onChange }) {
+export default function FormSettings({ settings, onChange, onShowGuide }) {
 	return (
 		<div className="wpzf-inspector">
 			<div className="wpzf-inspector__header">
 				<h3>{ __( 'Form Settings', 'wpzoom-forms' ) }</h3>
+				<Button icon={ help } size="small" label={ __( 'Show Welcome Guide', 'wpzoom-forms' ) } showTooltip onClick={ onShowGuide } />
 			</div>
 			<div className="wpzf-inspector__body">
 				<TextControl

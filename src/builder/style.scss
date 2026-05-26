@@ -476,6 +476,9 @@ textarea.wpzf-input { resize: none; }
 		background: $border-soft; color: $muted;
 		border-radius: $radius-full; text-transform: uppercase; letter-spacing: 0.4px;
 	}
+	&__header-right {
+		display: flex; align-items: center; gap: 4px;
+	}
 	&__body { padding: 14px 16px; overflow-y: auto; flex: 1; min-height: 0; }
 
 	&__tabs {
@@ -1115,4 +1118,38 @@ textarea.wpzf-input { resize: none; }
 .wpzf-preview .wpzf-submit__btn {
 	cursor: default !important;
 	pointer-events: none !important;
+}
+
+/* welcome guide ------------------------------------------------------------ */
+.wpzf-welcome-guide {
+	.components-guide__page
+	{
+		max-width: 320px;
+		img {
+			display: block;
+			width: 100%;
+			// max-height: 260px;
+			object-fit: cover;
+			border-radius: $radius-large $radius-large 0 0;
+		}
+	}
+}
+
+.wpzf-welcome-guide__page {
+	padding: 16px 24px 8px;
+}
+
+.wpzf-welcome-guide__heading {
+	margin: 0 0 10px;
+	font-size: 18px;
+	font-weight: 600;
+	line-height: 1.3;
+	color: $text;
+}
+
+.wpzf-welcome-guide__text {
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.6;
+	color: $muted;
 }
