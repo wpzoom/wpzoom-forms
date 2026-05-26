@@ -218,7 +218,10 @@ function PreviewField({ field }) {
 			return <Tag className="wpzf-preview-form__heading">{ field.text }</Tag>;
 		}
 		case 'paragraph':
-			return <div className="wpzf-preview-form__paragraph">{ field.text }</div>;
+			// Paragraph text may contain inline HTML (e.g. <strong>, <a>) which the
+			// frontend renders via wp_kses_post(). Mirror that here so the preview
+			// shows the formatting instead of raw tags.
+			return <div className="wpzf-preview-form__paragraph" dangerouslySetInnerHTML={ { __html: field.text || '' } } />;
 		case 'divider':
 			return <hr className="wpzf-preview-form__divider" />;
 		case 'textarea':
