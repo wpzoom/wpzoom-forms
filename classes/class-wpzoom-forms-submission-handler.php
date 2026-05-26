@@ -333,10 +333,10 @@ class WPZOOM_Forms_Submission_Handler {
 			.   '<table style="width:100%;border-collapse:collapse;font-size:14px;line-height:1.5;">' . $rows . '</table>'
 			.   '<div style="padding:14px 24px;color:#888;font-size:12px;border-top:1px solid #eee;">'
 			.     sprintf(
-					/* translators: 1: site URL, 2: site name */
-					esc_html__( 'Sent from %2$s', 'wpzoom-forms' ),
-					esc_url( home_url() ),
-					'<a href="' . esc_url( home_url() ) . '" style="color:#888;">' . esc_html( $site_name ) . '</a>'
+					/* translators: 1: site name (linked), 2: plugin name */
+					esc_html__( 'Sent from %1$s using the %2$s plugin.', 'wpzoom-forms' ),
+					'<a href="' . esc_url( home_url() ) . '" style="color:#888;">' . esc_html( $site_name ) . '</a>',
+					'<strong>WPZOOM Forms</strong>'
 				  )
 			.   '</div>'
 			. '</div></body></html>';
