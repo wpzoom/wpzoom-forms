@@ -3339,6 +3339,37 @@ require_once WPZOOM_FORMS_PATH . 'classes/class-wpzoom-forms-submission-handler.
 require_once WPZOOM_FORMS_PATH . 'classes/class-wpzoom-forms-builder-page.php';
 require_once WPZOOM_FORMS_PATH . 'classes/class-wpzoom-forms-submission-view.php';
 
+/**
+ * Shared embed helper used by the shortcode and the Elementor widget.
+ *
+ * Routes to the v2 renderer for forms saved through the new builder
+ * (_wpzf_schema postmeta present) and to the legacy block renderer for
+ * old block-based forms that have no schema yet.
+ *
+ * @param int $id Form post ID.
+ * @return string Rendered HTML.
+ */
+function wpzoom_forms_render_embed( $id ) {
+	global $wpzoom_forms;
+	$id = (int) $id;
+	if ( $id < 1 ) {
+		return '';
+	}
+
+	if ( get_post_meta( $id, WPZOOM_Forms_Schema::META_KEY, true ) ) {
+		return WPZOOM_Forms_Renderer::render( $id );
+	}
+
+	// Legacy form — fall back to the block-based renderer.
+	if ( $wpzoom_forms ) {
+		wp_enqueue_script( 'wpzoom-forms-js-frontend-formblock' );
+		wp_enqueue_style( 'wpzoom-forms-css-frontend-formblock' );
+		return $wpzoom_forms->form_block_render( array( 'formId' => $id ) );
+	}
+
+	return '';
+}
+
 add_action( 'init', function() {
 	global $wpzoom_forms;
 
@@ -3376,16 +3407,14 @@ add_action( 'init', function() {
 }, 11 ); // After main class init (priority 9).
 
 /**
- * Override the legacy form-block render callback + the shortcode to use the
- * v2 renderer — but only for forms that have been saved through the new builder
- * (i.e. the _wpzf_schema postmeta exists). Old forms that haven't been touched
- * fall back to the original render path so their styling is fully preserved.
+ * Override the legacy shortcode to route through the shared embed helper,
+ * which selects v2 or legacy renderer based on whether _wpzf_schema exists.
  */
 add_action( 'init', function() {
 	remove_shortcode( 'wpzf_form' );
 	add_shortcode( 'wpzf_form', function( $atts ) {
 		$atts = shortcode_atts( array( 'id' => 0 ), $atts, 'wpzf_form' );
-		return WPZOOM_Forms_Renderer::render( (int) $atts['id'] );
+		return wpzoom_forms_render_embed( (int) $atts['id'] );
 	} );
 }, 12 );
 
