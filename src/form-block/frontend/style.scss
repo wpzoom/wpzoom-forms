@@ -418,16 +418,10 @@
     .wpzf-label {
         display: block;
         margin-bottom: .35em;
-        font-size: .875em;
-        font-weight: 600;
     }
 
     .wpzf-input {
         @extend %wpzf-input-base;
-        background: var(--wpzf-bg);
-        color: var(--wpzf-text);
-        border: 1px solid var(--wpzf-border);
-        border-radius: var(--wpzf-radius);
         transition: border-color .15s, box-shadow .15s;
 
         &::placeholder {
