@@ -93,6 +93,7 @@ export default function FieldSettings({ field, onChange }) {
 								{ field.type === 'paragraph' && (
 									<TextareaControl
 										label={ __( 'Text', 'wpzoom-forms' ) }
+										help={ __( 'Basic HTML is allowed, e.g. <strong>, <em>, <a>, <br>, <span>, <code>.', 'wpzoom-forms' ) }
 										rows={ 4 }
 										value={ field.text || '' }
 										onChange={ ( v ) => set( { text: v } ) }
