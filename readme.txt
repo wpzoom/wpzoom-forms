@@ -5,7 +5,7 @@ Author URI:        https://www.wpzoom.com/
 Requires at least: 6.5
 Requires PHP:      7.4
 Tested up to:      7.0
-Stable tag:        1.3.9
+Stable tag:        2.0.0
 License:           GNU General Public License v2
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 Tags:              contact form, form builder, contact, forms, email form
@@ -215,6 +215,15 @@ Yes! Use shortcodes to embed your contact forms in the Classic Editor or any the
 
 
 == Changelog ==
+
+= 2.0.0 =
+* New: A completely rebuilt, dedicated drag-and-drop form builder — no longer dependent on the block editor, so it's faster, more reliable, and free of conflicts with other plugins and themes.
+* New: Redesigned, professional form-building interface focused on ease of use for beginners.
+* New: Form templates library with a searchable template picker.
+* New: Built-in spam protection (honeypot, reCAPTCHA, and Cloudflare Turnstile) and improved email notifications.
+* New: Submissions are now saved in WordPress and viewable in the admin.
+* Improved: Cleaner, lighter frontend markup and styling, with optional form themes and wide/full alignment support.
+* Compatibility: Your existing forms are preserved and keep rendering exactly as before. They are only upgraded to the new builder when you open and save them — nothing changes automatically on update.
 
 = 1.3.9 =
 * Added compatibility for WordPress 7.0
