@@ -959,39 +959,41 @@ class WPZOOM_Forms {
 		$captcha_type  = $captcha['type'];
 		$active_method = $captcha['active_service'];
 
-		if ( 'recaptcha' === $active_method ) {
-			$site_key = ( 'v3' === $captcha_type ) ? $captcha['recaptcha_v3_site_key'] : $captcha['recaptcha_v2_site_key'];
+		if ( ! is_admin() ) {
+			if ( 'recaptcha' === $active_method ) {
+				$site_key = ( 'v3' === $captcha_type ) ? $captcha['recaptcha_v3_site_key'] : $captcha['recaptcha_v2_site_key'];
 
-			if ( 'v2' === $captcha_type ) {
+				if ( 'v2' === $captcha_type ) {
+					wp_register_script(
+						'google-recaptcha',
+						'https://www.google.com/recaptcha/api.js',
+						array(),
+						WPZOOM_FORMS_VERSION,
+						true
+					);
+				}
+				elseif ( 'v3' === $captcha_type ) {
+					wp_register_script(
+						'google-recaptcha',
+						"https://www.google.com/recaptcha/api.js?render={$site_key}",
+						array(),
+						WPZOOM_FORMS_VERSION,
+						true
+					);
+				}
+
+				$depends[] = 'google-recaptcha';
+			} elseif ( 'turnstile' === $active_method ) {
 				wp_register_script(
-					'google-recaptcha',
-					'https://www.google.com/recaptcha/api.js',
+					'turnstile-recaptcha',
+					'https://challenges.cloudflare.com/turnstile/v0/api.js',
 					array(),
-					WPZOOM_FORMS_VERSION,
-					true
+					null,
+					array( 'strategy' => 'defer' ),
 				);
-			}
-			elseif ( 'v3' === $captcha_type ) {
-				wp_register_script(
-					'google-recaptcha',
-					"https://www.google.com/recaptcha/api.js?render={$site_key}",
-					array(),
-					WPZOOM_FORMS_VERSION,
-					true
-				);
-			}
 
-			$depends[] = 'google-recaptcha';
-		} elseif ( 'turnstile' === $active_method ) {
-			wp_register_script(
-				'turnstile-recaptcha',
-				'https://challenges.cloudflare.com/turnstile/v0/api.js',
-				array(),
-				null,
-				array( 'strategy' => 'defer' ),
-			);
-
-			$depends[] = 'turnstile-recaptcha';
+				$depends[] = 'turnstile-recaptcha';
+			}
 		}
 		
 		wp_register_script(
