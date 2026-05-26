@@ -23,7 +23,7 @@ export const makeField = ( type ) => {
 	};
 	switch ( type ) {
 		case 'textarea':
-			return { ...base, label: 'Paragraph Text', rows: 4 };
+			return { ...base, label: 'Text', rows: 4 };
 		case 'number':
 			return { ...base, label: 'Number', min: null, max: null, step: null };
 		case 'date':
@@ -32,7 +32,7 @@ export const makeField = ( type ) => {
 		case 'radio':
 			return {
 				...base,
-				label: type === 'select' ? 'Dropdown' : 'Multiple Choice',
+				label: type === 'select' ? 'Dropdown' : 'Single Choice',
 				options: [
 					{ label: 'Option 1', value: 'option-1' },
 					{ label: 'Option 2', value: 'option-2' },
@@ -61,11 +61,11 @@ export const makeField = ( type ) => {
 		case 'name':
 			return { ...base, label: 'Name' };
 		case 'text':
-			return { ...base, label: 'Single Line Text', isSubject: false };
+			return { ...base, label: 'Text', isSubject: false };
 		case 'hidden':
 			return { ...base, label: 'Hidden Field' };
 		case 'heading':
-			return { ...base, label: '', text: 'Section Heading', level: 'h3' };
+			return { ...base, label: '', text: 'Section Name', level: 'h3' };
 		case 'paragraph':
 			return { ...base, label: '', text: 'Paragraph text describing the next section of the form.' };
 		case 'divider':

@@ -20,7 +20,8 @@ const WPZF_TIPS = [
 	__( 'Customize the success and failure messages visitors see after submitting in Form Settings.', 'wpzoom-forms' ),
 	__( 'Change where labels sit (above or beside fields) and the form layout under Form Settings.', 'wpzoom-forms' ),
 	__( 'All submissions are saved in WordPress, so you never lose a lead even if an email fails to send.', 'wpzoom-forms' ),
-	__( 'Set up who receives notification emails — and the reply-to address — in the Notifications tab.', 'wpzoom-forms' ),
+	__( 'Set who receives notification emails in the Notifications tab.', 'wpzoom-forms' ),
+	__( 'Enable "Use as reply-to address" on an Email field so you can reply straight to the person who submitted the form.', 'wpzoom-forms' ),
 	__( 'Speed things up with keyboard shortcuts: press Cmd/Ctrl+S to save, or Delete/Backspace to remove the selected field.', 'wpzoom-forms' ),
 ];
 

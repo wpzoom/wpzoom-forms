@@ -18,15 +18,15 @@ class WPZOOM_Forms_Schema {
 	/** Field types supported by the builder. */
 	public static function field_types() {
 		return array(
-			'text'       => array( 'label' => 'Single Line Text', 'group' => 'standard', 'icon' => 'text',     'is_input' => true ),
+			'text'       => array( 'label' => 'Text', 'group' => 'standard', 'icon' => 'text',     'is_input' => true ),
 			'name'       => array( 'label' => 'Name',             'group' => 'standard', 'icon' => 'user',     'is_input' => true ),
 			'email'      => array( 'label' => 'Email',            'group' => 'standard', 'icon' => 'email',    'is_input' => true ),
 			'tel'        => array( 'label' => 'Phone',            'group' => 'standard', 'icon' => 'phone',    'is_input' => true ),
 			'url'        => array( 'label' => 'Website / URL',    'group' => 'standard', 'icon' => 'link',     'is_input' => true ),
 			'number'     => array( 'label' => 'Number',           'group' => 'standard', 'icon' => 'number',   'is_input' => true ),
-			'textarea'   => array( 'label' => 'Paragraph Text',   'group' => 'standard', 'icon' => 'paragraph','is_input' => true ),
+			'textarea'   => array( 'label' => 'Message',   'group' => 'standard', 'icon' => 'paragraph','is_input' => true ),
 			'select'     => array( 'label' => 'Dropdown',         'group' => 'choice',   'icon' => 'select',   'is_input' => true ),
-			'radio'      => array( 'label' => 'Multiple Choice',  'group' => 'choice',   'icon' => 'radio',    'is_input' => true ),
+			'radio'      => array( 'label' => 'Single Choice',  'group' => 'choice',   'icon' => 'radio',    'is_input' => true ),
 			'checkboxes' => array( 'label' => 'Checkboxes',       'group' => 'choice',   'icon' => 'checkboxes','is_input' => true ),
 			'checkbox'   => array( 'label' => 'Single Checkbox',  'group' => 'choice',   'icon' => 'checkbox', 'is_input' => true ),
 			'date'       => array( 'label' => 'Date',             'group' => 'standard', 'icon' => 'date',     'is_input' => true ),
@@ -81,7 +81,7 @@ class WPZOOM_Forms_Schema {
 		switch ( $type ) {
 			case 'textarea':
 				$base['rows']     = 4;
-				$base['label']    = __( 'Paragraph Text', 'wpzoom-forms' );
+				$base['label']    = __( 'Text', 'wpzoom-forms' );
 				break;
 			case 'number':
 				$base['min']  = null;
@@ -103,7 +103,7 @@ class WPZOOM_Forms_Schema {
 					array( 'label' => __( 'Option 3', 'wpzoom-forms' ), 'value' => 'option-3' ),
 				);
 				if ( 'select' === $type ) $base['label'] = __( 'Dropdown', 'wpzoom-forms' );
-				if ( 'radio' === $type )  $base['label'] = __( 'Multiple Choice', 'wpzoom-forms' );
+				if ( 'radio' === $type )  $base['label'] = __( 'Single Choice', 'wpzoom-forms' );
 				if ( 'checkboxes' === $type ) $base['label'] = __( 'Checkboxes', 'wpzoom-forms' );
 				break;
 			case 'checkbox':
@@ -124,7 +124,7 @@ class WPZOOM_Forms_Schema {
 				$base['label'] = __( 'Name', 'wpzoom-forms' );
 				break;
 			case 'text':
-				$base['label']     = __( 'Single Line Text', 'wpzoom-forms' );
+				$base['label']     = __( 'Text', 'wpzoom-forms' );
 				$base['isSubject'] = false;
 				break;
 			case 'hidden':
@@ -132,7 +132,7 @@ class WPZOOM_Forms_Schema {
 				break;
 			case 'heading':
 				$base['label']  = '';
-				$base['text']   = __( 'Section Heading', 'wpzoom-forms' );
+				$base['text']   = __( 'Section Name', 'wpzoom-forms' );
 				$base['level']  = 'h3';
 				break;
 			case 'paragraph':
