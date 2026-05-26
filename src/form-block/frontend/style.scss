@@ -407,34 +407,51 @@
    still giving the form a consistent, polished look.
    ──────────────────────────────────────────────────────────────────────────── */
 .wpzf-form.wpzf-theme-default {
-	--wpzf-accent:        #2271b1;
-	--wpzf-text:          #1e1e1e;
-	--wpzf-muted:         #757575;
-	--wpzf-border:        #c9c9c9;
-	--wpzf-bg:            #ffffff;
-	--wpzf-radius:        2px;
-	--wpzf-check-radius:  2px;
+    --wpzf-accent: #2271b1;
+    --wpzf-text: #1e1e1e;
+    --wpzf-muted: #757575;
+    --wpzf-border: #c9c9c9;
+    --wpzf-bg: #ffffff;
+    --wpzf-radius: 2px;
+    --wpzf-check-radius: 2px;
 
-	color: var(--wpzf-text);
+    .wpzf-label {
+        display: block;
+        margin-bottom: .35em;
+        font-size: .875em;
+        font-weight: 600;
+    }
 
-	.wpzf-label {
-		display: block; margin-bottom: .35em;
-		font-size: .875em; font-weight: 600; color: var(--wpzf-text);
-	}
-	.wpzf-input {
-		@extend %wpzf-input-base;
-		background: var(--wpzf-bg); color: var(--wpzf-text);
-		border: 1px solid var(--wpzf-border); border-radius: var(--wpzf-radius);
-		transition: border-color .15s, box-shadow .15s;
-		&::placeholder { color: var(--wpzf-muted); }
-		&:focus { outline: 0; border-color: var(--wpzf-accent); box-shadow: 0 0 0 2px rgba(34,113,177,.18); }
-	}
-	.wpzf-help { margin-top: 4px; font-size: 12px; color: var(--wpzf-muted); }
-	.wpzf-submit__btn {
-		cursor: pointer;
-	}
+    .wpzf-input {
+        @extend %wpzf-input-base;
+        background: var(--wpzf-bg);
+        color: var(--wpzf-text);
+        border: 1px solid var(--wpzf-border);
+        border-radius: var(--wpzf-radius);
+        transition: border-color .15s, box-shadow .15s;
 
-	@include wpzf-custom-controls('%23757575');
+        &::placeholder {
+            color: var(--wpzf-muted);
+        }
+
+        &:focus {
+            outline: 0;
+            border-color: var(--wpzf-accent);
+            box-shadow: 0 0 0 2px rgba(34, 113, 177, .18);
+        }
+    }
+
+    .wpzf-help {
+        margin-top: 4px;
+        font-size: 12px;
+        color: var(--wpzf-muted);
+    }
+
+    .wpzf-submit__btn {
+        cursor: pointer;
+    }
+
+    @include wpzf-custom-controls('%23757575');
 }
 
 /* ──────────────────────────────────────────────────────────────────────────────
