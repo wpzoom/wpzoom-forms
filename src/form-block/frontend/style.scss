@@ -431,14 +431,7 @@
 	}
 	.wpzf-help { margin-top: 4px; font-size: 12px; color: var(--wpzf-muted); }
 	.wpzf-submit__btn {
-		display: inline-block;
-		padding: 9px 22px;
-		background: var(--wpzf-accent); color: #fff;
-		border: 0; border-radius: var(--wpzf-radius);
-		font: inherit; font-weight: 600;
 		cursor: pointer;
-		transition: filter .15s;
-		&:hover { filter: brightness(1.1); }
 	}
 
 	@include wpzf-custom-controls('%23757575');
