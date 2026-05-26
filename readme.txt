@@ -217,13 +217,7 @@ Yes! Use shortcodes to embed your contact forms in the Classic Editor or any the
 == Changelog ==
 
 = 2.0.0 =
-* New: A completely rebuilt, dedicated drag-and-drop form builder — no longer dependent on the block editor, so it's faster, more reliable, and free of conflicts with other plugins and themes.
-* New: Redesigned, professional form-building interface focused on ease of use for beginners.
-* New: Form templates library with a searchable template picker.
-* New: Built-in spam protection (honeypot, reCAPTCHA, and Cloudflare Turnstile) and improved email notifications.
-* New: Submissions are now saved in WordPress and viewable in the admin.
-* Improved: Cleaner, lighter frontend markup and styling, with optional form themes and wide/full alignment support.
-* Compatibility: Your existing forms are preserved and keep rendering exactly as before. They are only upgraded to the new builder when you open and save them — nothing changes automatically on update.
+* New: A completely rebuilt, dedicated drag-and-drop form builder — no longer dependent on the block editor, so it's faster, more reliable, and free of conflicts.
 
 = 1.3.9 =
 * Added compatibility for WordPress 7.0
@@ -337,3 +331,9 @@ Yes! Use shortcodes to embed your contact forms in the Classic Editor or any the
 
 = 1.0.0 =
 * Initial plugin release
+
+
+== Upgrade Notice ==
+
+= 2.0.0 =
+⚠️ IMPORTANT: This update includes major changes. Your existing forms are preserved and keep rendering exactly as before. Please make sure to test all forms and email notifications after updating to ensure everything works correctly on your website.
