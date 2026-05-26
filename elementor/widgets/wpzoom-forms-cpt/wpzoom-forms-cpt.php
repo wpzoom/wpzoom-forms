@@ -435,8 +435,12 @@ class Wpzoom_Forms_Cpt extends Widget_Base {
 
 		$form = get_post( intval( $post_id ) );
 
+		if ( ! class_exists( '\WPZOOM_Forms_Renderer' ) ) {
+			return;
+		}
+
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		echo WPZOOM_Forms_Renderer::render( intval( $post_id ) );
+		echo \WPZOOM_Forms_Renderer::render( intval( $post_id ) );
 
 	}
 
