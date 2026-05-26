@@ -47,7 +47,7 @@ class WPZOOM_Forms_Schema {
 		return array(
 			'version'  => self::SCHEMA_VERSION,
 			'settings' => array(
-				'submitLabel'      => __( 'Send Message', 'wpzoom-forms' ),
+				'submitLabel'      => __( 'Submit', 'wpzoom-forms' ),
 				'submitAlign'      => 'left',
 				'labelsPosition'   => 'top',
 				'theme'            => 'default',
