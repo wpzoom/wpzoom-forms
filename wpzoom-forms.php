@@ -2024,24 +2024,25 @@ class WPZOOM_Forms {
 		$style = $styleOutput = '';
 
 		// Add custom styles to the form
+		$field_sel = '#' . $form_ID . ' input:not([type="submit"]), #' . $form_ID . ' textarea, #' . $form_ID . ' select';
 		if( ! empty( $fieldBgColor ) ) {
-			$styleOutput .= sprintf( '#' . $form_ID . ' input:not([type="submit"]), #' . $form_ID . ' textarea { background-color: %s; }', $fieldBgColor );
+			$styleOutput .= sprintf( $field_sel . ' { background-color: %s; }', $fieldBgColor );
 		}
 		if( ! empty( $fieldBrdStyle ) && 'default' !== $fieldBrdStyle ) {
-			$styleOutput .= sprintf( '#' . $form_ID . ' input:not([type="submit"]), #' . $form_ID . ' textarea { border-style: %s; }', $fieldBrdStyle );
+			$styleOutput .= sprintf( $field_sel . ' { border-style: %s; }', $fieldBrdStyle );
 			if( ! empty( $fieldBrdWidth ) ) {
-				$styleOutput .= sprintf( '#' . $form_ID . ' input:not([type="submit"]), #' . $form_ID . ' textarea { border-width: %s; }', $fieldBrdWidth );
+				$styleOutput .= sprintf( $field_sel . ' { border-width: %s; }', $fieldBrdWidth );
 			}
 			if( ! empty( $fieldBrdRadius ) ) {
-				$styleOutput .= sprintf( '#' . $form_ID . ' input:not([type="submit"]), #' . $form_ID . ' textarea { border-radius: %s; }', $fieldBrdRadius );
+				$styleOutput .= sprintf( $field_sel . ' { border-radius: %s; }', $fieldBrdRadius );
 			}
 		}
 
 		if( ! empty( $fieldBrdColor ) ) {
-			$styleOutput .= sprintf( '#' . $form_ID . ' input:not([type="submit"]), #' . $form_ID . ' textarea { border-color: %s; }', $fieldBrdColor );
+			$styleOutput .= sprintf( $field_sel . ' { border-color: %s; }', $fieldBrdColor );
 		}
 		if( ! empty( $fieldTextColor ) ) {
-			$styleOutput .= sprintf( '#' . $form_ID . ' input:not([type="submit"]), #' . $form_ID . ' textarea { color: %s; }', $fieldTextColor );
+			$styleOutput .= sprintf( $field_sel . ' { color: %s; }', $fieldTextColor );
 		}
 		
 		//Label styles

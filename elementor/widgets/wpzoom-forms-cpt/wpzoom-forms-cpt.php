@@ -248,11 +248,13 @@ class Wpzoom_Forms_Cpt extends Widget_Base {
 			]
 		);
 
+		$fields_selector = '{{WRAPPER}} input:not([type="submit"]), {{WRAPPER}} textarea, {{WRAPPER}} select';
+
 		$this->add_group_control(
 			\Elementor\Group_Control_Border::get_type(),
 			[
 				'name' => 'fields_border',
-				'selector' => '{{WRAPPER}} input:not([type="submit"]), {{WRAPPER}} textarea',
+				'selector' => $fields_selector,
 			]
 		);
 
@@ -263,7 +265,7 @@ class Wpzoom_Forms_Cpt extends Widget_Base {
 				'type' => Controls_Manager::DIMENSIONS,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}} input:not([type="submit"]), {{WRAPPER}} textarea' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					$fields_selector => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -276,7 +278,7 @@ class Wpzoom_Forms_Cpt extends Widget_Base {
 				'separator' => '',
 				'default'   => '',
 				'selectors' => [
-					'{{WRAPPER}} input:not([type="submit"]), {{WRAPPER}} textarea' => 'color: {{VALUE}};'
+					$fields_selector => 'color: {{VALUE}};'
 				]
 			]
 		);
@@ -289,7 +291,7 @@ class Wpzoom_Forms_Cpt extends Widget_Base {
 				'separator' => '',
 				'default'   => '',
 				'selectors' => [
-					'{{WRAPPER}} input:not([type="submit"]), {{WRAPPER}} textarea' => 'background-color: {{VALUE}};'
+					$fields_selector => 'background-color: {{VALUE}};'
 				]
 			]
 		);

@@ -475,6 +475,9 @@
 		border-bottom: 1px solid var(--wpzf-border);
 		border-radius: 0;
 		transition: border-color .2s;
+		border-right-width: 0 !important;
+		border-left-width: 0 !important;
+		border-top-width: 0 !important;
 		&:focus { outline: 0; border-bottom-color: var(--wpzf-accent); box-shadow: none; }
 		&::placeholder { color: var(--wpzf-muted); }
 	}
