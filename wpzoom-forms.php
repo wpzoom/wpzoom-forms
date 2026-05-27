@@ -1966,6 +1966,18 @@ class WPZOOM_Forms {
 			$form_content
 		);
 
+		// If this (legacy) form actually contains a date field, make sure the
+		// datepicker assets load. We enqueue here — at render time — rather than
+		// relying solely on the page-scan in block_frontend_assets(), which only
+		// inspects a single form-block per page and misses multi-form pages,
+		// shortcode and Elementor embeds. The scripts are registered in_footer so
+		// this late enqueue still prints correctly.
+		if ( false !== strpos( $form_content, 'data-datepicker' ) ) {
+			wp_enqueue_style( 'wpzoom-forms-css-frontend-flatpickr' );
+			wp_enqueue_script( 'wpzoom-forms-js-frontend-flatpickr' );
+			wp_enqueue_script( 'wpzoom-forms-js-frontend-datepicker' );
+		}
+
 		$submitted_form_id = isset( $_GET['wpzf_submitted_form'] ) ? intval( $_GET['wpzf_submitted_form'] ) : -1;
 		$show_notice = isset( $_GET['success'] ) && ( -1 === $submitted_form_id || $submitted_form_id === intval( $attributes['formId'] ) );
 
