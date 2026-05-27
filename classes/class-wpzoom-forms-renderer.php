@@ -113,8 +113,7 @@ class WPZOOM_Forms_Renderer {
 		endif;
 		?>
 		<div id="<?php echo esc_attr( $form_uid ); ?>" class="wpzf-form wpzoom-forms_form<?php echo esc_attr( $theme_class ); ?><?php echo esc_attr( $layout_class ); ?><?php echo esc_attr( $extra_class ); ?> wpzf-labels-<?php echo esc_attr( $settings['labelsPosition'] ); ?>">
-			<div id="<?php echo esc_attr( $notice_id ); ?>" class="wpzf-notice"<?php if ( $notice_status ) : ?> data-status="<?php echo esc_attr( $notice_status ); ?>"<?php else : ?> hidden<?php endif; ?>><?php echo esc_html( $notice_text ); ?></div>
-			<form method="POST" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="wpzf-form__inner wp-block-wpzoom-forms-form" data-form-id="<?php echo esc_attr( $form_id ); ?>" data-success="<?php echo esc_attr( $success_msg ); ?>" data-failure="<?php echo esc_attr( $failure_msg ); ?>"<?php if ( 'success' === $notice_status ) echo ' hidden'; ?>>
+			<form method="POST" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="wpzf-form__inner wp-block-wpzoom-forms-form" data-form-id="<?php echo esc_attr( $form_id ); ?>" data-success="<?php echo esc_attr( $success_msg ); ?>" data-failure="<?php echo esc_attr( $failure_msg ); ?>">
 				<input type="hidden" name="action" value="wpzf_submit" />
 				<input type="hidden" name="form_id" value="<?php echo esc_attr( $form_id ); ?>" />
 				<?php wp_nonce_field( 'wpzf_submit' ); ?>
@@ -137,6 +136,7 @@ class WPZOOM_Forms_Renderer {
 					<button type="submit" class="wpzf-submit__btn"><?php echo esc_html( $settings['submitLabel'] ); ?></button>
 				</div>
 			</form>
+			<div id="<?php echo esc_attr( $notice_id ); ?>" class="wpzf-notice" style="margin-top:1em;"<?php if ( $notice_status ) : ?> data-status="<?php echo esc_attr( $notice_status ); ?>"<?php else : ?> hidden<?php endif; ?>><?php echo esc_html( $notice_text ); ?></div>
 		</div>
 		<?php
 		return ob_get_clean();
