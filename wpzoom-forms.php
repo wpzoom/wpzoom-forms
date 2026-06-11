@@ -1001,7 +1001,10 @@ class WPZOOM_Forms {
 			trailingslashit( $this->dist_dir_url ) . 'assets/frontend/js/script.js',
 			$depends,
 			WPZOOM_FORMS_VERSION,
-			true
+			array(
+				'in_footer' => true,
+				'strategy'  => 'defer',
+			)
 		);
 
 		$use_theme_style = boolval( WPZOOM_Forms_Settings::get( 'wpzf_use_theme_styles' ) );
@@ -1027,7 +1030,10 @@ class WPZOOM_Forms {
 			trailingslashit( $this->dist_dir_url ) . 'assets/frontend/flatpickr/js/flatpickr.js',
 			array( 'jquery' ),
 			WPZOOM_FORMS_VERSION,
-			true
+			array(
+				'in_footer' => true,
+				'strategy'  => 'defer',
+			)
 		);
 
 		wp_register_script(
@@ -1035,7 +1041,10 @@ class WPZOOM_Forms {
 			trailingslashit( $this->dist_dir_url ) . 'assets/frontend/js/datepicker.js',
 			array( 'wpzoom-forms-js-frontend-flatpickr' ),
 			WPZOOM_FORMS_VERSION,
-			true
+			array(
+				'in_footer' => true,
+				'strategy'  => 'defer',
+			)
 		);
 	}
 
