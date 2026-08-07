@@ -861,6 +861,8 @@ class WPZOOM_Forms {
 				)
 			);
 
+			wp_set_script_translations( 'wpzoom-forms-js-backend-main', 'wpzoom-forms' );
+
 			wp_register_style(
 				'wpzoom-forms-css-backend-main',
 				trailingslashit( $this->main_dir_url ) . 'main/backend/style.css',
@@ -884,6 +886,8 @@ class WPZOOM_Forms {
 					'admin_email' => '' . get_site_option( 'admin_email', '' )
 				)
 			);
+
+			wp_set_script_translations( 'wpzoom-forms-js-backend-formblock', 'wpzoom-forms' );
 
 			wp_register_style(
 				'wpzoom-forms-css-backend-formblock',
