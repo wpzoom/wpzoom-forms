@@ -1347,7 +1347,7 @@ class WPZOOM_Forms {
 	public function post_list_custom_columns_form( $column, $post_id ) {
 
 		if ( 'shortcode' == $column ) {
-			printf( '<input type="text" value="[wpzf_form id=&quot;%s&quot;]" readonly />', $post_id );
+			printf( '<input type="text" value="[wpzf_form id=&quot;%d&quot;]" readonly />', absint( $post_id ) );
 		}
 
 		if( 'responses' == $column ) {
