@@ -310,7 +310,12 @@ class WPZOOM_Forms_Settings {
 								'type'  => 'note',
 								'args'  => array(
 									'class'       => 'wpzoom-forms-field required-recaptcha',
-									'description' => '<a target="_blank" href="https://www.google.com/recaptcha/admin/create">Click here</a> to generate your reCAPTCHA keys and enter them below.',
+									'description' => sprintf(
+										/* translators: %1$s: opening link tag, %2$s: closing link tag */
+										esc_html__( '%1$sClick here%2$s to generate your reCAPTCHA keys and enter them below.', 'wpzoom-forms' ),
+										'<a target="_blank" href="https://www.google.com/recaptcha/admin/create">',
+										'</a>'
+									),
 								),
 							),
 							array(
@@ -399,7 +404,12 @@ class WPZOOM_Forms_Settings {
 								'type'  => 'note',
 								'args'  => array(
 									'class'       => 'wpzoom-forms-field required-turnstile',
-									'description' => '<a target="_blank" href="https://www.cloudflare.com/application-services/products/turnstile/#turnstile-pricing">Click here</a> to generate your Turnstile keys and enter them below.',
+									'description' => sprintf(
+										/* translators: %1$s: opening link tag, %2$s: closing link tag */
+										esc_html__( '%1$sClick here%2$s to generate your Turnstile keys and enter them below.', 'wpzoom-forms' ),
+										'<a target="_blank" href="https://www.cloudflare.com/application-services/products/turnstile/#turnstile-pricing">',
+										'</a>'
+									),
 								),
 							),
 							array(
