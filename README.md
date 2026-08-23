@@ -38,12 +38,24 @@ A simple, user-friendly contact form plugin for WordPress with a dedicated drag-
 - Premium support
 
 ### Included Templates
+The free plugin ships with 24 ready-made templates, including:
 - Contact Form
-- Advanced Form with Full Address
-- Wedding Invitation
-- Quote Request Form
+- Contact Form (Detailed)
+- Quote Request
 - Feedback Form
-- Appointment Form
+- Lead Capture
+- Demo Request
+- Waitlist Signup
+- Restaurant Callback
+- Partnership Contact
+- Press Inquiry
+- Sponsorship Inquiry
+- Customer Intake
+- Property Lead
+- Local Service Enquiry
+- …and more (Product Feedback, Website Audit Request, Podcast Guest Pitch, Community Join Form, Webinar Interest, Beta Access Request, Maintenance Request, Content Brief Request, Speaker Interest, Student Interest)
+
+Additional templates (Event RSVP, Appointment Request, File Upload, Job Application, Support Request, Volunteer Application, Wholesale Inquiry) are available in [WPZOOM Forms PRO](https://www.wpzoom.com/plugins/wpzoom-forms/).
 
 ## Installation
 
