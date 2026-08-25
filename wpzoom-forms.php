@@ -13,7 +13,7 @@
  * Description: Simple, user-friendly contact form plugin for WordPress with a dedicated drag-and-drop builder.
  * Author:      WPZOOM
  * Author URI:  https://www.wpzoom.com
- * Version:     2.0.7
+ * Version:     2.0.8
  * License:     GPL2+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
@@ -1938,7 +1938,14 @@ class WPZOOM_Forms {
 			return '';
 		}
 
-		$align = isset( $attributes['align'] ) && ! empty( $attributes['align'] ) ? $attributes['align'] : 'none';
+		// The align attribute is printed inside the form's class="" attribute, so it
+		// must be restricted to the known block alignment values — any other value
+		// (e.g. one containing quotes) could break out of the attribute (XSS).
+		// See CVE-2026-66639.
+		$align = isset( $attributes['align'] ) && is_scalar( $attributes['align'] ) ? (string) $attributes['align'] : 'none';
+		if ( ! in_array( $align, array( 'left', 'center', 'right', 'wide', 'full' ), true ) ) {
+			$align = 'none';
+		}
 
 		//Get styles from the block
 
@@ -2028,11 +2035,11 @@ class WPZOOM_Forms {
 		preg_match( '/<input(?:.*)name="([^"]+)"(?:.*)data-subject="true"/is', $content, $match2 );
 
 		if ( ! empty( $match1 ) && is_array( $match1 ) && isset( $match1[1] ) ) {
-			$content = preg_replace( '/<\/form>/is', '<input type="hidden" name="wpzf_replyto" value="' . $match1[1] . '" /></form>', $content );
+			$content = preg_replace( '/<\/form>/is', '<input type="hidden" name="wpzf_replyto" value="' . esc_attr( $match1[1] ) . '" /></form>', $content );
 		}
 
 		if ( ! empty( $match2 ) && is_array( $match2 ) && isset( $match2[1] ) ) {
-			$content = preg_replace( '/<\/form>/is', '<input type="hidden" name="wpzf_subject" value="' . $match2[1] . '" /></form>', $content );
+			$content = preg_replace( '/<\/form>/is', '<input type="hidden" name="wpzf_subject" value="' . esc_attr( $match2[1] ) . '" /></form>', $content );
 		}
 
 		$captcha_config           = $this->get_spam_protection_config();
