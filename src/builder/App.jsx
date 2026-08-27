@@ -103,6 +103,9 @@ function reducer( state, action ) {
 			return { ...state, form: f, dirty: true };
 		}
 
+		case 'ADD_NOTICE':
+			return { ...state, notices: [ ...state.notices, { type: action.noticeType || 'info', text: action.text } ] };
+
 		case 'DISMISS_NOTICE':
 			return { ...state, notices: state.notices.filter( ( _, i ) => i !== action.index ) };
 
@@ -133,9 +136,9 @@ export default function App({ formId, presetTemplate }) {
 	}, [ formId ] );
 
 	const save = useCallback( () => {
-		if ( ! state.form ) return Promise.resolve();
+		if ( ! state.form ) return;
 		dispatch( { type: 'SAVE_START' } );
-		return api.updateForm( formId, {
+		api.updateForm( formId, {
 			title: state.form.title,
 			schema: state.form.schema,
 			notifications: state.form.notifications,
@@ -170,9 +173,9 @@ export default function App({ formId, presetTemplate }) {
 		return () => window.removeEventListener( 'beforeunload', handler );
 	}, [ state.dirty ] );
 
-	// Preview shows the *saved* form, so unsaved edits would be invisible there:
-	// open the tab first (synchronously, or the browser blocks it as a popup),
-	// then save and refresh it once the save lands.
+	// The preview renders the form as stored, so it can lag behind the builder.
+	// Opening it must never save on the user's behalf — say so instead. Opened
+	// synchronously inside the click handler so browsers don't block the tab.
 	const openPreview = useCallback( ( e ) => {
 		if ( e ) e.preventDefault();
 		const url = window.wpzfBuilder.previewUrl;
@@ -181,12 +184,13 @@ export default function App({ formId, presetTemplate }) {
 		const win = window.open( url, 'wpzf-preview' );
 		if ( win ) win.focus();
 
-		if ( state.dirty && ! state.saving ) {
-			save().then( () => {
-				if ( win && ! win.closed ) win.location.reload();
+		if ( state.dirty ) {
+			dispatch( {
+				type: 'ADD_NOTICE',
+				text: __( 'Preview shows the last saved form. Save to include your latest changes.', 'wpzoom-forms' ),
 			} );
 		}
-	}, [ formId, state.dirty, state.saving, save ] );
+	}, [ state.dirty ] );
 
 	const selectedFieldObj = useMemo( () => {
 		if ( ! state.selectedField || ! state.form ) return null;

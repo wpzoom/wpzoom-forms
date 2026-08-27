@@ -3,7 +3,7 @@ import { useEffect } from '@wordpress/element';
 export default function Notices({ items, onDismiss }) {
 	useEffect( () => {
 		const timers = items.map( ( n, i ) => {
-			if ( n.type === 'success' ) {
+			if ( n.type !== 'error' ) {
 				return setTimeout( () => onDismiss( i ), 3000 );
 			}
 			return null;
