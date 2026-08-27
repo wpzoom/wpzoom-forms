@@ -133,9 +133,9 @@ export default function App({ formId, presetTemplate }) {
 	}, [ formId ] );
 
 	const save = useCallback( () => {
-		if ( ! state.form ) return;
+		if ( ! state.form ) return Promise.resolve();
 		dispatch( { type: 'SAVE_START' } );
-		api.updateForm( formId, {
+		return api.updateForm( formId, {
 			title: state.form.title,
 			schema: state.form.schema,
 			notifications: state.form.notifications,
@@ -169,6 +169,24 @@ export default function App({ formId, presetTemplate }) {
 		window.addEventListener( 'beforeunload', handler );
 		return () => window.removeEventListener( 'beforeunload', handler );
 	}, [ state.dirty ] );
+
+	// Preview shows the *saved* form, so unsaved edits would be invisible there:
+	// open the tab first (synchronously, or the browser blocks it as a popup),
+	// then save and refresh it once the save lands.
+	const openPreview = useCallback( ( e ) => {
+		if ( e ) e.preventDefault();
+		const url = window.wpzfBuilder.previewUrl;
+		if ( ! url ) return;
+
+		const win = window.open( url, 'wpzf-preview' );
+		if ( win ) win.focus();
+
+		if ( state.dirty && ! state.saving ) {
+			save().then( () => {
+				if ( win && ! win.closed ) win.location.reload();
+			} );
+		}
+	}, [ formId, state.dirty, state.saving, save ] );
 
 	const selectedFieldObj = useMemo( () => {
 		if ( ! state.selectedField || ! state.form ) return null;
@@ -209,9 +227,11 @@ export default function App({ formId, presetTemplate }) {
 				onTitleChange={ ( title ) => dispatch( { type: 'SET_TITLE', title } ) }
 				onSave={ save }
 				onEmbed={ () => dispatch( { type: 'TOGGLE_EMBED', show: true } ) }
+				onPreview={ openPreview }
 				activeTab={ state.activeTab }
 				onTab={ ( tab ) => dispatch( { type: 'SET_TAB', tab } ) }
 				submissionsUrl={ window.wpzfBuilder.submissionsListUrl + '&form_id_filter=' + formId }
+				previewUrl={ window.wpzfBuilder.previewUrl }
 				exitUrl={ window.wpzfBuilder.formsListUrl }
 			/>
 

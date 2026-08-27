@@ -1,7 +1,7 @@
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Button, TextControl } from '@wordpress/components';
-import { edit, code, settings, chevronLeft } from '@wordpress/icons';
+import { edit, code, settings, chevronLeft, external } from '@wordpress/icons';
 
 const BellIcon = () => (
 	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24px" width="24px">
@@ -27,8 +27,10 @@ export default function Topbar({
 	onTitleChange,
 	onSave,
 	onEmbed,
+	onPreview,
 	onTab,
 	submissionsUrl,
+	previewUrl,
 	exitUrl,
 }) {
 	const [ editing, setEditing ] = useState( false );
@@ -91,6 +93,20 @@ export default function Topbar({
 			</div>
 
 			<div className="wpzf-topbar__right">
+				{ previewUrl && (
+					<Button
+						icon={ external }
+						size="compact"
+						href={ previewUrl }
+						target="wpzf-preview"
+						onClick={ onPreview }
+						label={ __( 'Preview the form in a new tab', 'wpzoom-forms' ) }
+						showTooltip
+					>
+						{ __( 'Preview', 'wpzoom-forms' ) }
+					</Button>
+				) }
+
 				<Button
 					icon={ code }
 					size="compact"

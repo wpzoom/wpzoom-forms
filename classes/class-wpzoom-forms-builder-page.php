@@ -6,6 +6,9 @@
  *   - admin.php?page=wpzf-form-builder&id=<id>   The full-screen React builder
  *   - admin.php?page=wpzf-form-builder           Creates a new form, then redirects
  *
+ * Plus a bare frontend page at ?wpzf_form_preview=<id> that renders nothing but
+ * the form itself, opened by the builder's "Preview" button.
+ *
  * Also intercepts edit links so clicking a form in the CPT list opens the new
  * builder instead of the block editor, and disables Gutenberg for wpzf-form.
  *
@@ -18,6 +21,11 @@ class WPZOOM_Forms_Builder_Page {
 
 	const SLUG = 'wpzf-form-builder';
 
+	/**
+	 * Query var that turns a frontend request into a bare preview of one form.
+	 */
+	const PREVIEW_VAR = 'wpzf_form_preview';
+
 	public function register() {
 		add_action( 'admin_menu',         array( $this, 'register_page' ), 9 );
 		add_action( 'admin_init',         array( $this, 'maybe_intercept_edit_screen' ) );
@@ -26,6 +34,12 @@ class WPZOOM_Forms_Builder_Page {
 		add_filter( 'post_row_actions',   array( $this, 'replace_row_actions' ), 11, 2 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_builder_assets' ) );
 		add_filter( 'wp_redirect',        array( $this, 'rewrite_post_new_redirect' ) );
+		// Priority 1: answer before redirect_canonical() (10) can bounce the request.
+		add_action( 'template_redirect', array( $this, 'maybe_render_preview' ), 1 );
+
+		if ( isset( $_GET[ self::PREVIEW_VAR ] ) ) {
+			add_filter( 'show_admin_bar', '__return_false' );
+		}
 	}
 
 	public function register_page() {
@@ -160,6 +174,7 @@ class WPZOOM_Forms_Builder_Page {
 			'newFormUrl'=> admin_url( 'admin.php?page=' . self::SLUG ),
 			'formsListUrl' => admin_url( 'edit.php?post_type=wpzf-form' ),
 			'submissionsListUrl' => admin_url( 'edit.php?post_type=wpzf-submission' ),
+			'previewUrl' => esc_url_raw( self::preview_url( isset( $_GET['id'] ) ? (int) $_GET['id'] : 0 ) ),
 		) );
 
 		wp_set_script_translations( 'wpzf-builder', 'wpzoom-forms' );
@@ -169,5 +184,81 @@ class WPZOOM_Forms_Builder_Page {
 		$id       = isset( $_GET['id'] ) ? (int) $_GET['id'] : 0;
 		$template = isset( $_GET['template'] ) ? sanitize_key( $_GET['template'] ) : '';
 		echo '<div id="wpzf-builder-root" class="wpzf-builder-root" data-form-id="' . esc_attr( $id ) . '" data-template="' . esc_attr( $template ) . '"></div>';
+	}
+
+	/**
+	 * URL of the standalone preview page for a form.
+	 *
+	 * @param  int $form_id The form post id.
+	 * @return string
+	 */
+	public static function preview_url( $form_id ) {
+		return add_query_arg( self::PREVIEW_VAR, (int) $form_id, home_url( '/' ) );
+	}
+
+	/**
+	 * Serve a bare frontend page containing nothing but one form.
+	 *
+	 * The wpzf-form post type isn't publicly queryable, so previewing rides on a
+	 * query var over a normal frontend request instead: the theme's stylesheet,
+	 * global styles and everything the form itself enqueues still load — the page
+	 * just never reaches the template, so no header, content or sidebar is output.
+	 */
+	public function maybe_render_preview() {
+		if ( ! isset( $_GET[ self::PREVIEW_VAR ] ) ) {
+			return;
+		}
+
+		$form_id = absint( $_GET[ self::PREVIEW_VAR ] );
+
+		if ( $form_id < 1 || 'wpzf-form' !== get_post_type( $form_id ) ) {
+			wp_die( esc_html__( 'Form not found.', 'wpzoom-forms' ), '', array( 'response' => 404 ) );
+		}
+
+		if ( ! current_user_can( 'edit_post', $form_id ) ) {
+			wp_die( esc_html__( 'Sorry, you are not allowed to preview this form.', 'wpzoom-forms' ), '', array( 'response' => 403 ) );
+		}
+
+		global $wpzoom_forms;
+
+		// The renderers enqueue the form's assets (stylesheet, flatpickr, …) while
+		// building the markup, so register those handles and render up front — that
+		// way everything is queued in time to print inside <head>.
+		if ( $wpzoom_forms ) {
+			$wpzoom_forms->register_frontend_assets();
+		}
+
+		$form_html = wpzoom_forms_render_embed( $form_id );
+
+		nocache_headers();
+
+		?><!DOCTYPE html>
+<html <?php language_attributes(); ?>>
+<head>
+	<meta charset="<?php bloginfo( 'charset' ); ?>" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="robots" content="noindex, nofollow" />
+	<title><?php
+		/* translators: %s: form title. */
+		echo esc_html( sprintf( __( 'Preview: %s', 'wpzoom-forms' ), get_the_title( $form_id ) ) );
+	?></title>
+	<?php wp_head(); ?>
+	<style>
+		.wpzf-preview { box-sizing: border-box; width: 100%; padding: clamp( 24px, 6vw, 64px ) 20px; }
+		.wpzf-preview__inner { width: 100%; max-width: 680px; margin: 0 auto; }
+	</style>
+</head>
+<body <?php body_class( 'wpzf-form-preview' ); ?>>
+	<?php wp_body_open(); ?>
+	<div class="wpzf-preview">
+		<div class="wpzf-preview__inner">
+			<?php echo $form_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		</div>
+	</div>
+	<?php wp_footer(); ?>
+</body>
+</html>
+		<?php
+		exit;
 	}
 }
