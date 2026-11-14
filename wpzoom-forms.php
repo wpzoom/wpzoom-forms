@@ -13,7 +13,7 @@
  * Description: Simple, user-friendly contact form plugin for WordPress with a dedicated drag-and-drop builder.
  * Author:      WPZOOM
  * Author URI:  https://www.wpzoom.com
- * Version:     2.0.11
+ * Version:     2.0.12
  * License:     GPL2+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  */
@@ -3386,6 +3386,11 @@ if( ! function_exists ( 'wpzoom_forms_load_files' ) ) {
 		require_once 'classes/class-wpzoom-forms-settings-page.php';
 		require_once 'classes/class-wpzoom-forms-template-manager.php';
 		require_once 'classes/class-wpzoom-forms-settings-upsell.php';
+
+		// Tip on the forms list: build forms by chatting with AI (WPZOOM AI Connect).
+		if ( is_admin() ) {
+			require_once 'classes/class-wpzoom-forms-ai-tip.php';
+		}
 
 	}
 	add_action( 'plugin_loaded', 'wpzoom_forms_load_files' );
