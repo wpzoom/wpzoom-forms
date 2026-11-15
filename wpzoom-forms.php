@@ -47,6 +47,16 @@ if ( is_admin() && ! class_exists( 'WPZOOM_Notice_Center' ) && file_exists( $wpz
 	) );
 }
 
+add_filter( 'wpzoom_notice_center_strings', 'wpzoom_forms_notice_center_strings' );
+function wpzoom_forms_notice_center_strings( $strings ) {
+	return array_merge( (array) $strings, array(
+		'title'          => __( 'WPZOOM Notice Center', 'wpzoom-forms' ),
+		'subtitle'       => __( 'Stay updated with the latest from WPZOOM products and services!', 'wpzoom-forms' ),
+		'dismiss'        => __( 'Dismiss this notice', 'wpzoom-forms' ),
+		'dismiss_screen' => __( 'Dismiss this notice.', 'wpzoom-forms' ),
+	) );
+}
+
 // Instance the plugin
 $wpzoom_forms = new WPZOOM_Forms();
 
