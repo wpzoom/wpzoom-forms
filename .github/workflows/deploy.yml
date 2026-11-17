@@ -12,6 +12,13 @@ jobs:
       with:
         # the notice-center submodule must ship, or wp-admin has no Notice Center
         submodules: recursive
+    - name: Set Notice Center text domain
+      # the shared submodule uses a generic text domain; wp.org requires the plugin slug
+      run: |
+        sed -i -E "s/, '(wpzoom-notice-center|instagram-widget-by-wpzoom)' \)/, 'wpzoom-forms' )/g" classes/notice-center/notice-center.php
+        if grep -nE "'(wpzoom-notice-center|instagram-widget-by-wpzoom)' \)" classes/notice-center/notice-center.php; then
+          echo "::error::Notice Center still has a foreign text domain"; exit 1
+        fi
     - name: WordPress Plugin Deploy
       id: deploy
       uses: 10up/action-wordpress-plugin-deploy@stable
