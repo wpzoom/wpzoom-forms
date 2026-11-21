@@ -1193,36 +1193,23 @@ class WPZOOM_Forms_Settings {
 </svg> <?php esc_html_e( 'Stay Updated on WPZOOM Forms', 'wpzoom-forms' ); ?></h4>
             	<p><?php esc_html_e( 'Subscribe to get notified about new plugin updates and features. We’ll also send you useful tips, tutorials, and limited-time promotions.', 'wpzoom-forms' ); ?></p>
             </div>
-            <form class="ml-block-form" action="https://static.mailerlite.com/webforms/submit/p0c0n3" data-code="p0c0n3" method="post" target="_blank">
+            <form class="ml-block-form" action="<?php echo esc_url( 'https://www.wpzoom.com/wp-json/wpzoom/v1/subscribe/product' ); ?>" method="post" target="_blank">
             	<div class="ml-form-formContent">
             	<div class="ml-form-fieldRow ml-last-item">
             		<div class="ml-field-group ml-field-email ml-validate-email ml-validate-required">
-            		<input aria-label="email" aria-required="true" value="<?php echo esc_attr( $current_user->user_email ); ?>" type="email" class="form-control" data-inputmask="" name="fields[email]" placeholder="<?php echo esc_attr__( 'Email', 'wpzoom-forms' ); ?>" autocomplete="email">
+            		<input aria-label="email" aria-required="true" value="<?php echo esc_attr( $current_user->user_email ); ?>" type="email" class="form-control" name="email" placeholder="<?php echo esc_attr__( 'Email', 'wpzoom-forms' ); ?>" autocomplete="email">
             		</div>
             	</div>
             	</div>
-            	<input type="hidden" name="ml-submit" value="1">
+            	<input type="hidden" name="form" value="product-wpzoom-forms"><input type="text" name="website" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
             	<div class="ml-form-embedSubmit">
             	<button type="submit" class="button button-primary"><?php esc_html_e( 'Subscribe', 'wpzoom-forms' ); ?></button>
-            	<button disabled="disabled" style="display:none" type="button" class="loading"> <div class="ml-form-embedSubmitLoad"></div> <span class="sr-only"><?php esc_html_e( 'Loading...', 'wpzoom-forms' ); ?></span> </button>
             	</div>
-            	<input type="hidden" name="anticsrf" value="true">
             </form>
             </div>
-            <div class="ml-form-successBody row-success" style="display:none">
-            <div class="ml-form-successContent">
-            	<h4><?php esc_html_e( 'Thank you!', 'wpzoom-forms' ); ?></h4>
-            	<p><?php esc_html_e( 'You have successfully joined our subscriber list.', 'wpzoom-forms' ); ?></p>
             </div>
             </div>
             </div>
-            </div>
-            </div>
-            <script>
-            function ml_webform_success_6096806(){var r=ml_jQuery||jQuery;r(".ml-subscribe-form-6096806 .row-success").show(),r(".ml-subscribe-form-6096806 .row-form").hide()}
-            </script>
-            <img src="https://track.mailerlite.com/webforms/o/6096806/p0c0n3?v1750160739" width="1" height="1" style="max-width:1px;max-height:1px;visibility:hidden;padding:0;margin:0;display:block" alt="." border="0">
-            <script src="https://static.mailerlite.com/js/w/webforms.min.js?vd4de52e171e8eb9c47c0c20caf367ddf" type="text/javascript"></script>
 		</div>
 
 	<?php
